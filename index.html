@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Links da Bio</title>
+
   <style>
     body {
       margin: 0;
@@ -11,15 +12,18 @@
       background: linear-gradient(180deg, #000000, #0f172a);
       color: #ffffff;
     }
+
     .container {
       max-width: 420px;
       margin: 0 auto;
       padding: 20px 16px 40px;
     }
+
     .profile {
       text-align: center;
       margin-bottom: 24px;
     }
+
     .profile img {
       width: 96px;
       height: 96px;
@@ -27,14 +31,18 @@
       border: 3px solid #22c55e;
       margin-bottom: 12px;
     }
+
     .profile h1 {
       font-size: 1.4rem;
       margin: 0;
     }
+
     .profile p {
       font-size: 0.9rem;
       color: #a1a1aa;
     }
+
+    /* CARD PADRÃO */
     .card {
       display: flex;
       gap: 12px;
@@ -46,10 +54,12 @@
       box-shadow: 0 8px 20px rgba(0,0,0,0.35);
       transition: transform 0.2s ease, background 0.2s ease;
     }
+
     .card:hover {
       transform: scale(1.02);
       background: #1f2937;
     }
+
     .thumb {
       width: 72px;
       height: 72px;
@@ -58,19 +68,23 @@
       background: #000;
       flex-shrink: 0;
     }
+
     .info {
       flex: 1;
     }
+
     .info h2 {
       font-size: 0.95rem;
       margin: 0 0 6px 0;
       line-height: 1.2;
     }
+
     .info p {
       font-size: 0.8rem;
       margin: 0 0 8px 0;
       color: #d1d5db;
     }
+
     .info a {
       display: inline-block;
       padding: 6px 12px;
@@ -81,9 +95,42 @@
       font-weight: 700;
       text-decoration: none;
     }
+
     .info a:hover {
       background: #16a34a;
     }
+
+    /* CATEGORIA (ATTACK ON TITAN) */
+    .category {
+      cursor: pointer;
+    }
+
+    .cta {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #22c55e;
+    }
+
+    /* SUBCATEGORIA */
+    .subcategory {
+      display: none;
+      margin-bottom: 16px;
+    }
+
+    .subcategory.open {
+      display: block;
+    }
+
+    .subcard {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      background: #020617;
+      border-radius: 14px;
+      padding: 10px;
+      margin: 8px 0 8px 24px;
+    }
+
     footer {
       text-align: center;
       font-size: 0.7rem;
@@ -92,176 +139,181 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container">
+
     <div class="profile">
       <img src="https://via.placeholder.com/96" alt="Perfil" />
       <h1>@_mangadrops</h1>
       <p>Achadinhos, mangás e recomendações</p>
     </div>
 
-    <!-- PRODUTO -->
-    <!--AOT02-->
-    <div class="card" data-url="https://mercadolivre.com/sec/1GCyBNw">
-      <img class="thumb" src="" alt="Produto" />
+    <!-- ATTACK ON TITAN (CARD PRINCIPAL) -->
+    <div class="card category" onclick="toggleCategory(this)">
+      <img class="thumb"
+        src="https://upload.wikimedia.org/wikipedia/en/7/70/Attack_on_Titan_manga_volume_1_cover.jpg"
+        alt="Attack on Titan" />
       <div class="info">
-        <h2>Carregando produto...</h2>
-        <p>Aguarde</p>
-        <a href="https://mercadolivre.com/sec/1GCyBNw" target="_blank">Ver produto</a>
-      </div>
-    </div>
-    
-    <!--AOT02-->
-    <div class="card" data-url="https://mercadolivre.com/sec/2oM4bzu">
-      <img class="thumb" src="" alt="Produto" />
-      <div class="info">
-        <h2>Carregando produto...</h2>
-        <p>Aguarde</p>
-        <a href="https://mercadolivre.com/sec/2oM4bzu" target="_blank">Ver produto</a>
-      </div>
-    </div>
-    <!--AOT03-->
-    <div class="card" data-url="https://mercadolivre.com/sec/1FehwJK">
-      <img class="thumb" src="" alt="Produto" />
-      <div class="info">
-        <h2>Carregando produto...</h2>
-        <p>Aguarde</p>
-        <a href="https://mercadolivre.com/sec/1FehwJK" target="_blank">Ver produto</a>
+        <h2>Attack on Titan</h2>
+        <p>Coleção completa • Mangás</p>
+        <span class="cta">Ver volumes ⌄</span>
       </div>
     </div>
 
-    <!--AOT04-->
-    <div class="card" data-url="https://mercadolivre.com/sec/2MW6XMN">
-      <img class="thumb" src="" alt="Produto" />
-      <div class="info">
-        <h2>Carregando produto...</h2>
-        <p>Aguarde</p>
-        <a href="https://mercadolivre.com/sec/2MW6XMN" target="_blank">Ver produto</a>
-      </div>
-    </div>
+<!-- VOLUMES -->
+<div class="subcategory">
 
-    <!--AOT05-->
-    <div class="card" data-url="https://mercadolivre.com/sec/2wJ2RQ7">
-      <img class="thumb" src="" alt="Produto" />
-      <div class="info">
-        <h2>Carregando produto...</h2>
-        <p>Aguarde</p>
-        <a href="https://mercadolivre.com/sec/2wJ2RQ7" target="_blank">Ver produto</a>
-      </div>
+  <!-- AOT 02 -->
+  <div class="subcard card" data-url="https://mercadolivre.com/sec/2oM4bzu">
+    <img class="thumb" src="" />
+    <div class="info">
+      <h2>Carregando...</h2>
+      <a href="https://mercadolivre.com/sec/2oM4bzu" target="_blank">Comprar</a>
     </div>
+  </div>
 
-    <!--AOT06-->
-    <div class="card" data-url="https://mercadolivre.com/sec/1Uw6w6R">
-      <img class="thumb" src="" alt="Produto" />
-      <div class="info">
-        <h2>Carregando produto...</h2>
-        <p>Aguarde</p>
-        <a href="https://mercadolivre.com/sec/1Uw6w6R" target="_blank">Ver produto</a>
-      </div>
+  <!-- AOT 03 -->
+  <div class="subcard card" data-url="https://mercadolivre.com/sec/1FehwJK">
+    <img class="thumb" src="" />
+    <div class="info">
+      <h2>Carregando...</h2>
+      <a href="https://mercadolivre.com/sec/1FehwJK" target="_blank">Comprar</a>
     </div>
+  </div>
 
-    <!--AOT07-->
-    <div class="card" data-url="https://mercadolivre.com/sec/2wUao2U">
-      <img class="thumb" src="" alt="Produto" />
-      <div class="info">
-        <h2>Carregando produto...</h2>
-        <p>Aguarde</p>
-        <a href="https://mercadolivre.com/sec/2wUao2U" target="_blank">Ver produto</a>
-      </div>
+  <!-- AOT 04 -->
+  <div class="subcard card" data-url="https://mercadolivre.com/sec/2MW6XMN">
+    <img class="thumb" src="" alt="Produto" />
+    <div class="info">
+      <h2>Carregando produto...</h2>
+      <a href="https://mercadolivre.com/sec/2MW6XMN" target="_blank">Comprar</a>
     </div>
-    <!--AOT08-->
-    <div class="card" data-url="https://mercadolivre.com/sec/1vvzTnK">
-      <img class="thumb" src="" alt="Produto" />
-      <div class="info">
-        <h2>Carregando produto...</h2>
-        <p>Aguarde</p>
-        <a href="https://divulgador.magalu.com/L3AKdTVy" target="_blank">Ver produto</a>
-      </div>
+  </div>
+
+  <!-- AOT 05 -->
+  <div class="subcard card" data-url="https://mercadolivre.com/sec/2wJ2RQ7">
+    <img class="thumb" src="" alt="Produto" />
+    <div class="info">
+      <h2>Carregando produto...</h2>
+      <a href="https://mercadolivre.com/sec/2wJ2RQ7" target="_blank">Comprar</a>
     </div>
-    <!--AOT09-->
-    <div class="card" data-url="https://mercadolivre.com/sec/1yoy9Sj">
-      <img class="thumb" src="" alt="Produto" />
-      <div class="info">
-        <h2>Carregando produto...</h2>
-        <p>Aguarde</p>
-        <a href="https://mercadolivre.com/sec/1yoy9Sj" target="_blank">Ver produto</a>
-      </div>
+  </div>
+
+  <!-- AOT 06 -->
+  <div class="subcard card" data-url="https://mercadolivre.com/sec/1Uw6w6R">
+    <img class="thumb" src="" alt="Produto" />
+    <div class="info">
+      <h2>Carregando produto...</h2>
+      <a href="https://mercadolivre.com/sec/1Uw6w6R" target="_blank">Comprar</a>
     </div>
-    <!--AOT010-->
-    <div class="card" data-url="https://mercadolivre.com/sec/1YojQtX">
-      <img class="thumb" src="" alt="Produto" />
-      <div class="info">
-        <h2>Carregando produto...</h2>
-        <p>Aguarde</p>
-        <a href="https://mercadolivre.com/sec/1YojQtX" target="_blank">Ver produto</a>
-      </div>
+  </div>
+
+  <!-- AOT 07 -->
+  <div class="subcard card" data-url="https://mercadolivre.com/sec/2wUao2U">
+    <img class="thumb" src="" alt="Produto" />
+    <div class="info">
+      <h2>Carregando produto...</h2>
+      <a href="https://mercadolivre.com/sec/2wUao2U" target="_blank">Comprar</a>
     </div>
-    <!--AOT011-->
-    <div class="card" data-url="https://mercadolivre.com/sec/1cUGR8k">
-      <img class="thumb" src="" alt="Produto" />
-      <div class="info">
-        <h2>Carregando produto...</h2>
-        <p>Aguarde</p>
-        <a href="https://mercadolivre.com/sec/1cUGR8k" target="_blank">Ver produto</a>
-      </div>
+  </div>
+
+  <!-- AOT 08 -->
+  <div class="subcard card" data-url="https://mercadolivre.com/sec/1vvzTnK">
+    <img class="thumb" src="" alt="Produto" />
+    <div class="info">
+      <h2>Carregando produto...</h2>
+      <a href="https://divulgador.magalu.com/L3AKdTVy" target="_blank">Comprar</a>
     </div>
-    <!--AOT012-->
-    <div class="card" data-url="https://mercadolivre.com/sec/1G6rfuu">
-      <img class="thumb" src="" alt="Produto" />
-      <div class="info">
-        <h2>Carregando produto...</h2>
-        <p>Aguarde</p>
-        <a href="https://mercadolivre.com/sec/1G6rfuu" target="_blank">Ver produto</a>
-      </div>
+  </div>
+
+  <!-- AOT 09 -->
+  <div class="subcard card" data-url="https://mercadolivre.com/sec/1yoy9Sj">
+    <img class="thumb" src="" alt="Produto" />
+    <div class="info">
+      <h2>Carregando produto...</h2>
+      <a href="https://mercadolivre.com/sec/1yoy9Sj" target="_blank">Comprar</a>
     </div>
-    <!--AOT013-->
-   <div class="card" data-url="https://mercadolivre.com/sec/1JFDtC3">
-      <img class="thumb" src="" alt="Produto" />
-      <div class="info">
-        <h2>Carregando produto...</h2>
-        <p>Aguarde</p>
-        <a href="https://mercadolivre.com/sec/1JFDtC3" target="_blank">Ver produto</a>
-      </div>
+  </div>
+
+  <!-- AOT 10 -->
+  <div class="subcard card" data-url="https://mercadolivre.com/sec/1YojQtX">
+    <img class="thumb" src="" alt="Produto" />
+    <div class="info">
+      <h2>Carregando produto...</h2>
+      <a href="https://mercadolivre.com/sec/1YojQtX" target="_blank">Comprar</a>
     </div>
-    <!--AOT014-->
-    <div class="card" data-url="https://mercadolivre.com/sec/1wUbJ4q">
-      <img class="thumb" src="" alt="Produto" />
-      <div class="info">
-        <h2>Carregando produto...</h2>
-        <p>Aguarde</p>
-        <a href="https://mercadolivre.com/sec/1wUbJ4q" target="_blank">Ver produto</a>
-      </div>
+  </div>
+
+  <!-- AOT 11 -->
+  <div class="subcard card" data-url="https://mercadolivre.com/sec/1cUGR8k">
+    <img class="thumb" src="" alt="Produto" />
+    <div class="info">
+      <h2>Carregando produto...</h2>
+      <a href="https://mercadolivre.com/sec/1cUGR8k" target="_blank">Comprar</a>
     </div>
-    
-    <!--AOT015-->
-    <div class="card" data-url="https://mercadolivre.com/sec/1HFVczP">
-      <img class="thumb" src="" alt="Produto" />
-      <div class="info">
-        <h2>Carregando produto...</h2>
-        <p>Aguarde</p>
-        <a href="https://mercadolivre.com/sec/1HFVczP" target="_blank">Ver produto</a>
-      </div>
+  </div>
+
+  <!-- AOT 12 -->
+  <div class="subcard card" data-url="https://mercadolivre.com/sec/1G6rfuu">
+    <img class="thumb" src="" alt="Produto" />
+    <div class="info">
+      <h2>Carregando produto...</h2>
+      <a href="https://mercadolivre.com/sec/1G6rfuu" target="_blank">Comprar</a>
     </div>
-    <!--AOT016-->
-    <div class="card" data-url="https://mercadolivre.com/sec/1FXLtSk">
-      <img class="thumb" src="" alt="Produto" />
-      <div class="info">
-        <h2>Carregando produto...</h2>
-        <p>Aguarde</p>
-        <a href="https://mercadolivre.com/sec/1FXLtSk" target="_blank">Ver produto</a>
-      </div>
+  </div>
+
+  <!-- AOT 13 -->
+  <div class="subcard card" data-url="https://mercadolivre.com/sec/1JFDtC3">
+    <img class="thumb" src="" alt="Produto" />
+    <div class="info">
+      <h2>Carregando produto...</h2>
+      <a href="https://mercadolivre.com/sec/1JFDtC3" target="_blank">Comprar</a>
     </div>
-    
-    
+  </div>
+
+  <!-- AOT 14 -->
+  <div class="subcard card" data-url="https://mercadolivre.com/sec/1wUbJ4q">
+    <img class="thumb" src="" alt="Produto" />
+    <div class="info">
+      <h2>Carregando produto...</h2>
+      <a href="https://mercadolivre.com/sec/1wUbJ4q" target="_blank">Comprar</a>
+    </div>
+  </div>
+
+  <!-- AOT 15 -->
+  <div class="subcard card" data-url="https://mercadolivre.com/sec/1HFVczP">
+    <img class="thumb" src="" alt="Produto" />
+    <div class="info">
+      <h2>Carregando produto...</h2>
+      <a href="https://mercadolivre.com/sec/1HFVczP" target="_blank">Comprar</a>
+    </div>
+  </div>
+
+  <!-- AOT 16 -->
+  <div class="subcard card" data-url="https://mercadolivre.com/sec/1FXLtSk">
+    <img class="thumb" src="" alt="Produto" />
+    <div class="info">
+      <h2>Carregando produto...</h2>
+      <a href="https://mercadolivre.com/sec/1FXLtSk" target="_blank">Comprar</a>
+    </div>
+  </div>
+
+</div>
+
     <footer>
       © 2026 • Links afiliados
     </footer>
   </div>
 
   <script>
-    // Usa Open Graph (og:image, og:title, og:description)
-    // via Microlink (gratuito para uso leve)
-    document.querySelectorAll('.card').forEach(card => {
+    function toggleCategory(card) {
+      const sub = card.nextElementSibling;
+      sub.classList.toggle('open');
+    }
+
+    // Microlink (Mercado Livre funciona)
+    document.querySelectorAll('.card[data-url]').forEach(card => {
       const url = card.getAttribute('data-url');
       fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`)
         .then(res => res.json())
@@ -269,22 +321,12 @@
           if (!data || !data.data) return;
           const img = data.data.image?.url;
           const title = data.data.title;
-          const desc = data.data.description;
-
           if (img) card.querySelector('.thumb').src = img;
           if (title) card.querySelector('h2').innerText = title;
-          if (desc) card.querySelector('p').innerText = desc;
         })
-        .catch(() => {
-          card.querySelector('h2').innerText = 'Produto recomendado';
-          card.querySelector('p').innerText = 'Clique para ver mais';
-        });
+        .catch(() => {});
     });
   </script>
+
 </body>
 </html>
-
-
-
-
-
