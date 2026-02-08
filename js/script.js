@@ -2,10 +2,10 @@
       const sub = card.nextElementSibling;
       sub.classList.toggle('open');
 
-        const cta = card.querySelector('.cta');
-        cta.innerText = sub.classList.contains('open')
-    ? 'Ocultar volumes ⌃'
-    : 'Ver volumes ⌄';
+        const badge = card.querySelector('.badge');
+        badge.innerText = sub.classList.contains('open')
+    ? 'Ocultar volumes ⬆️'
+    : 'Ver volumes ⬇️';
     }
 
     // Microlink — apenas para IMAGEM
