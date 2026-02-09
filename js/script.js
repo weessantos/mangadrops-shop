@@ -24,3 +24,11 @@
         })
         .catch(() => {});
     });
+    
+    document.querySelectorAll('.info a').forEach(link => {
+      link.addEventListener('click', () => {
+        gtag('event', 'click_produto', {
+          produto: link.closest('.card').querySelector('h2')?.innerText || 'desconhecido'
+        });
+      });
+    });
