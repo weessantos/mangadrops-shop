@@ -1,0 +1,2141 @@
+/* =========================================================
+   TOKENS / BASE
+   ========================================================= */
+:root{
+  --bg: #0b0f19;
+  --card: rgba(255,255,255,0.06);
+  --border: rgba(255,255,255,0.12);
+  --text: rgba(255,255,255,0.92);
+  --muted: rgba(255,255,255,0.68);
+  --accent: #7c3aed;
+  --accent2: #22c55e;
+  --danger: #ef4444;
+}
+
+*{ box-sizing: border-box; }
+
+html{ scroll-behavior: smooth; height: 100%; }
+body{
+  height: 100%;
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  color: var(--text);
+  background: var(--bg);
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::before{
+  content:"";
+  position: fixed;
+  inset:0;
+  background: url("/assets/background.jpeg") center/cover no-repeat;
+  filter: blur(10px) brightness(0.35);
+  z-index:-1;
+}
+
+a{ color: inherit; text-decoration: none; }
+
+/* =========================================================
+   LAYOUT
+   ========================================================= */
+.container{
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 28px 16px 56px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+/* =========================================================
+   HERO HEADER (estilo MangaVerse)
+   ========================================================= */
+.heroHeader{
+  position: relative;
+  border-radius: 28px;
+  overflow: hidden;
+  margin: 16px auto 18px;
+  max-width: 1300px;
+  min-height: 220px;
+  box-shadow: 0 22px 70px rgba(0,0,0,0.45);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+/* Fundo */
+.heroBg{
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.05) contrast(1.05);
+  transform: scale(1.03);
+}
+
+.heroShade{
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(1200px 400px at 30% 20%, rgba(0,0,0,0.35), transparent 60%),
+    linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.75));
+}
+
+/* Conteúdo por cima */
+.heroContent{
+  position: relative;
+  z-index: 2;
+  padding: 18px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Linha superior */
+.heroTop{
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Logo */
+/* Logo */
+.heroLogoBtn {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.heroLogo {
+  height: 90px;        /* ajuste */
+  width: auto;
+  display: block;
+  object-fit: contain;
+  /* Se a sua logo for PNG transparente, isso já resolve o “quadrado” */
+}
+.heroLogoBtn:hover .heroLogo{ transform: translateY(-1px) scale(1.03); }
+
+/* Search */
+.heroSearch{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.10);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.heroSearchIcon{ opacity: 0.9; }
+
+.heroSearchInput{
+  flex: 1;
+  min-width: 160px;
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: rgba(255,255,255,0.92);
+  font-size: 14px;
+  font-weight: 650;
+}
+.heroSearchInput::placeholder{ color: rgba(255,255,255,0.55); }
+
+.heroSearchBtn {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: linear-gradient(135deg, rgba(124,58,237,0.75), rgba(59,130,246,0.75));
+  color: rgba(255,255,255,0.95);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 160ms ease;
+  backdrop-filter: blur(6px);
+}
+
+.heroSearchBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.35);
+}
+
+/* Social buttons */
+.heroSocial {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.socialBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+
+  /* visual “premium” */
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(6px);
+
+  transition: transform 0.15s ease, background 0.15s ease, border 0.15s ease;
+}
+
+.socialBtn:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.socialIcon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+/* =========================================================
+   HERO PILLS PREMIUM (2 linhas + scroll lateral)
+   ========================================================= */
+.heroPills{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* Linha principal */
+.pillRowMain{
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Container da linha scrollável + setas */
+.pillRowSecondaryContainer{
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Scroll horizontal (chips) */
+.pillRowSecondaryWrap{
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex: 1;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+
+  padding: 6px 0;
+}
+
+/* Remove scrollbar */
+.pillRowSecondaryWrap::-webkit-scrollbar{ display: none; }
+.pillRowSecondaryWrap{ -ms-overflow-style: none; scrollbar-width: none; }
+
+.pillRowSecondary{
+  display: flex;
+  gap: 10px;
+  flex-wrap: nowrap;
+  width: max-content;
+  padding-right: 8px;
+}
+
+/* Pill base */
+.pill{
+  position: relative;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.15);
+
+  background: linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  color: rgba(255,255,255,0.95);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+
+  cursor: pointer;
+  transition: all .25s cubic-bezier(.2,.8,.2,1);
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.18);
+}
+.pill:hover{
+  transform: translateY(-3px);
+  background: linear-gradient(135deg, rgba(255,255,255,0.22), rgba(255,255,255,0.10));
+  box-shadow:
+    0 20px 50px rgba(0,0,0,0.45),
+    0 0 30px rgba(124,58,237,0.25);
+}
+.pill:active{ transform: scale(0.96); }
+
+/* Principal (Obras) */
+.pill.pillPrimary{
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: linear-gradient(135deg, rgba(239,68,68,0.75), rgba(220,38,38,0.75));
+  color: rgba(255,255,255,0.95);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+  backdrop-filter: blur(6px);
+}
+
+.pill.pillPrimary:hover{
+  background: linear-gradient(135deg, rgba(239,68,68,0.85), rgba(220,38,38,0.85));
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.35);
+  filter: brightness(1.05);
+}
+
+
+/* CTA - Pedir Obra */
+.pill.pillCTA{
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: linear-gradient(135deg, rgba(124,58,237,0.75), rgba(59,130,246,0.75));
+  color: rgba(255,255,255,0.95);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+  backdrop-filter: blur(6px);
+}
+
+.pill.pillCTA:hover{
+  /* ✅ reafirma o background no hover pra não ser sobrescrito */
+  background: linear-gradient(135deg, rgba(124,58,237,0.85), rgba(59,130,246,0.85));
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.35);
+  filter: brightness(1.05);
+}
+
+
+/* Chips (linha de baixo — menos destaque) */
+.pillChip{
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: none;
+  opacity: 0.88;
+}
+.pillChip:hover{
+  opacity: 1;
+  transform: translateY(-1px);
+  background: rgba(255,255,255,0.14);
+}
+
+/* Setas */
+.scrollArrow{
+  position: absolute;
+  z-index: 10;
+
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  color: #fff;
+  font-size: 20px;
+  font-weight: 900;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.scrollArrow:hover{
+  background: rgba(124,58,237,0.7);
+  transform: scale(1.08);
+}
+.scrollArrow.left{ left: -8px; }
+.scrollArrow.right{ right: -8px; }
+
+/* =========================================================
+   UI ELEMENTS
+   ========================================================= */
+.toolbar{
+  display:flex;
+  gap: 10px;
+  margin: 18px 0 14px;
+  align-items:center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.footer{
+  margin-top: 22px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align:center;
+}
+
+/* =========================================================
+   BOTÕES ULTRA PREMIUM
+   ========================================================= */
+.buttons{
+  display:flex;
+  gap: 12px;
+}
+
+.btn{
+  flex: 1;
+  display:flex;
+  position: relative;
+  overflow: hidden;
+  align-items:center;
+  justify-content:center;
+  gap: 10px;
+
+  padding: 13px 14px;
+  min-height: 46px;
+
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.22);
+  color: rgba(255,255,255,0.92);
+
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: .2px;
+
+  cursor: pointer;
+  user-select: none;
+
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.btn:active{ transform: translateY(1px) scale(0.99); }
+
+.btn:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.25);
+  border-color: rgba(124,58,237,0.35);
+}
+
+.btn .icon{
+  width: 18px;
+  height: 18px;
+  display:grid;
+  place-items:center;
+  opacity: .95;
+}
+
+.btn.primary{
+  border-color: rgba(34,197,94,0.28);
+  background:
+    radial-gradient(900px 220px at 30% 20%, rgba(34,197,94,0.22), transparent 60%),
+    linear-gradient(135deg, rgba(34,197,94,0.90), rgba(22,163,74,0.90));
+  color: #fff;
+  box-shadow: 0 14px 40px rgba(34,197,94,0.22);
+}
+.btn.primary:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 18px 55px rgba(34,197,94,0.30);
+}
+.btn.primary::before{
+  content:"";
+  position:absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.18), transparent);
+  transform: translateX(-120%);
+  transition: transform .5s ease;
+  pointer-events:none;
+}
+.btn.primary:hover::before{ transform: translateX(120%); }
+
+.btn.secondary{
+  border-color: rgba(99,102,241,0.28);
+  background:
+    radial-gradient(900px 220px at 30% 20%, rgba(99,102,241,0.22), transparent 60%),
+    linear-gradient(135deg, rgba(99,102,241,0.86), rgba(79,70,229,0.86));
+  color: #fff;
+  box-shadow: 0 14px 40px rgba(99,102,241,0.22);
+}
+.btn.secondary:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 18px 55px rgba(99,102,241,0.30);
+}
+
+.btn.danger{
+  border-color: rgba(239,68,68,0.28);
+  background:
+    radial-gradient(900px 220px at 30% 20%, rgba(239,68,68,0.18), transparent 60%),
+    linear-gradient(135deg, rgba(239,68,68,0.80), rgba(220,38,38,0.80));
+  color: #fff;
+  box-shadow: 0 14px 40px rgba(239,68,68,0.18);
+}
+.btn.danger:hover{
+  transform: none;
+  box-shadow: 0 14px 40px rgba(239,68,68,0.18);
+}
+
+.btn:disabled{
+  cursor: not-allowed;
+  opacity: .85;
+  filter: grayscale(0.12);
+}
+
+.buttons a{
+  flex: 1;
+  display:flex;
+}
+
+@media (max-width: 420px){
+  .buttons{ flex-direction: column; }
+  .btn{ width: 100%; }
+}
+
+.btn.ghost{ background: rgba(255,255,255,0.04); }
+
+/* =========================================================
+   BADGES (modal/hero/cards)
+   ========================================================= */
+.badge{
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  white-space: nowrap;
+}
+
+.badge.subtle{
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.75);
+}
+
+.badge.genre{
+  background: rgba(124,58,237,0.18);
+  border-color: rgba(124,58,237,0.28);
+}
+
+.badge.good{
+  background: rgba(34,197,94,0.12);
+  border-color: rgba(34,197,94,0.25);
+  color: rgba(255,255,255,0.85);
+}
+
+.outOfStockBadge{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 14px;
+  border-radius: 16px;
+  font-weight: 800;
+  font-size: 14px;
+  color: #fff;
+
+  background:
+    radial-gradient(800px 200px at 30% 20%, rgba(239,68,68,0.22), transparent 60%),
+    linear-gradient(135deg, rgba(239,68,68,0.85), rgba(220,38,38,0.85));
+
+  box-shadow: 0 16px 45px rgba(239,68,68,0.25);
+}
+
+/* =========================================================
+   PRODUCT CARD
+   ========================================================= */
+.card{
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.04);
+  border-radius: 18px;
+  overflow: hidden;
+  transition: transform .15s ease, background .15s ease, border-color .15s ease;
+  cursor: pointer;
+}
+
+.card:hover{
+  transform: translateY(-3px);
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.18);
+}
+
+.thumb{
+  aspect-ratio: 3 / 4;
+  width: 100%;
+  background: rgba(0,0,0,0.25);
+  display:block;
+  object-fit: cover;
+}
+
+.content{ padding: 12px 12px 14px; }
+
+.title{
+  margin: 0 0 6px;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.meta{
+  display:flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.price{
+  font-weight: 800;
+  color: rgba(255,255,255,0.90);
+}
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+.modalOverlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  z-index: 999;
+}
+
+.modal{
+  width: min(900px, 100%);
+  border-radius: 22px;
+  border: 1px solid var(--border);
+  background: rgba(20, 24, 36, 0.75);
+  box-shadow: 0 24px 90px rgba(0,0,0,0.55);
+  overflow: hidden;
+  position: relative;
+}
+
+.modalTop{
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 14px 0;
+}
+
+.closeBtn{
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.25);
+  color: var(--text);
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.modalBody{
+  display:grid;
+  grid-template-columns: 320px 1fr;
+  gap: 16px;
+  padding: 14px;
+}
+
+.modalCover{
+  width: 100%;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  background: rgba(0,0,0,0.25);
+}
+
+.modalCover img{
+  width: 100%;
+  display:block;
+  object-fit: cover;
+}
+
+.modalInfo{ padding: 4px 4px 10px; }
+
+.modalTitle{
+  margin: 6px 0 10px;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.modalMetaRow{
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.modalBadges{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  margin-bottom: 14px;
+}
+
+.modalDesc{
+  margin: 0 0 14px;
+  color: var(--muted);
+  line-height: 1.55;
+  font-size: 14px;
+}
+
+.modalActions{
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.modalActions .btn{
+  flex: unset;
+  min-width: 180px;
+}
+
+/* =========================================================
+   HERO CINEMÁTICO 21:9 (BLINDADO)
+   ========================================================= */
+.heroWrap{
+  margin-top: 14px;
+  border-radius: 22px;
+  overflow: hidden;                 /* ✅ garante recorte */
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.25);     /* ✅ evita “quadrado branco” */
+}
+
+.heroBanner{
+  position: relative;               /* ✅ referencia para camadas absolutas */
+  width: 100%;
+  aspect-ratio: 21 / 9;
+  min-height: 360px;                /* um pouco menor p/ mobile */
+  display: grid;
+  place-items: center;
+  padding: 30px 20px;
+  background: #000;
+  overflow: hidden;                 /* ✅ imagem nunca “vaza” */
+}
+
+/* IMAGEM: sempre encaixada e dentro do banner */
+.heroBanner img{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+
+  transform: scale(1.06);
+  filter: saturate(1.05) contrast(1.08) brightness(0.85); /* ✅ volta o mood */
+}
+
+/* Overlay de contraste (não quadrado) */
+.heroBanner::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+
+  background:
+    linear-gradient(to right,
+      rgba(0,0,0,0.75),
+      rgba(0,0,0,0.25) 50%,
+      rgba(0,0,0,0.75)
+    ),
+    linear-gradient(to bottom,
+      rgba(0,0,0,0.15),
+      rgba(0,0,0,0.85)
+    );
+}
+
+/* Glow roxo suave */
+.heroBanner::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  z-index:1;
+  pointer-events:none;
+
+  background:
+    radial-gradient(800px 350px at 50% 25%,
+      rgba(124,58,237,0.32),
+      transparent 60%
+    );
+}
+
+/* Conteúdo do banner (texto e botões) */
+.heroWrap .heroContent{
+  position: relative;
+  z-index: 2;
+  width: min(900px, 100%);
+  text-align: center;
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+}
+
+.heroTitle{
+  margin: 0;
+  font-size: clamp(32px, 4.5vw, 56px);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  text-shadow: 0 40px 120px rgba(0,0,0,0.85);
+}
+
+.heroTitleGlow{
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0.95),
+    rgba(255,255,255,0.7),
+    rgba(255,255,255,0.95)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 200% 100%;
+}
+
+.heroSubtitle{
+  margin: 0;
+  font-size: 16px;
+  color: rgba(255,255,255,0.9);
+  max-width: 700px;
+  line-height: 1.6;
+}
+
+/* Mobile: mantém bonito */
+@media (max-width: 640px){
+  .heroBanner{
+    min-height: 280px;
+    padding: 22px 16px;
+  }
+  .heroSubtitle{
+    font-size: 14px;
+  }
+}
+.heroPremium {
+  width: 100%;
+  padding: 0 16px;
+  margin-top: 24px;
+}
+
+.heroContainerPremium {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 24px;
+  background: #000;
+}
+
+/* SLIDES ABSOLUTOS */
+.heroSlidePremium {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 900ms ease;
+}
+
+.heroSlidePremium.active {
+  opacity: 1;
+  z-index: 2;
+}
+
+/* IMAGEM */
+.heroSlidePremium img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Netflix style */
+  transition: transform 6s ease;
+  transform: scale(1.05);
+}
+
+.heroSlidePremium.active img {
+  transform: scale(1.12);
+}
+
+/* Overlay estilo streaming */
+.heroContainerPremium::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(0,0,0,.65), transparent 60%),
+    linear-gradient(to bottom, rgba(0,0,0,.5), transparent 40%);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* SETAS */
+.heroArrowPremium {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.15);
+  background: rgba(0,0,0,.25);
+  backdrop-filter: blur(12px);
+
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  transition: all .25s ease;
+}
+
+.heroArrowPremium:hover {
+  background: rgba(0,0,0,.5);
+  transform: translateY(-50%) scale(1.08);
+}
+
+.heroArrowPremium.left { left: 16px; }
+.heroArrowPremium.right { right: 16px; }
+
+/* DOTS */
+.heroDotsPremium {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 5;
+}
+
+.heroDotsPremium .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255,255,255,.5);
+  cursor: pointer;
+  transition: all .3s ease;
+}
+
+.heroDotsPremium .dot.active {
+  width: 24px;
+  background: #fff;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .heroContainerPremium {
+    border-radius: 16px;
+  }
+
+  .heroArrowPremium {
+    width: 36px;
+    height: 36px;
+    font-size: 22px;
+  }
+}
+
+/* =========================================================
+   SERIES GALLERY (Netflix-style)
+   ========================================================= */
+.seriesGrid{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+@media (max-width: 1200px){
+  .seriesGrid{ grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 900px){
+  .seriesGrid{ grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 520px){
+  .seriesGrid{ grid-template-columns: 1fr; }
+}
+
+.seriesCard{
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.25);
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+  animation: seriesFade .28s ease both;
+}
+
+@keyframes seriesFade{
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.seriesCard:hover{
+  transform: translateY(-5px) scale(1.01);
+  border-color: rgba(255,255,255,0.22);
+  box-shadow:
+    0 18px 60px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(124,58,237,0.12),
+    0 0 40px rgba(124,58,237,0.25);
+}
+
+.seriesThumb{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display:block;
+  transform: scale(1.02);
+  transition: transform .35s ease, filter .35s ease;
+  filter: saturate(1.05) contrast(1.05);
+}
+
+.seriesCard:hover .seriesThumb{
+  transform: scale(1.10);
+  filter: saturate(1.12) contrast(1.08);
+}
+
+.seriesOverlay{
+  position:absolute;
+  inset:0;
+  background: linear-gradient(to top, rgba(0,0,0,0.82), rgba(0,0,0,0.15) 55%, rgba(0,0,0,0.05));
+  display:flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 14px;
+  gap: 8px;
+}
+
+.seriesTopBadges{
+  position:absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  z-index: 60;
+  display:flex;
+  justify-content: space-between;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.badgePill{
+  font-size: 10px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(0,0,0,0.35);
+  color: rgba(255,255,255,0.88);
+  backdrop-filter: blur(8px);
+  white-space: nowrap;
+}
+
+.badgePill.good{
+  background: rgba(34,197,94,0.20);
+  border-color: rgba(34,197,94,0.30);
+}
+
+.badgePill.warn{
+  background: rgba(245,158,11,0.22);
+  border-color: rgba(245,158,11,0.32);
+}
+
+.badgePill.danger{
+  background: rgba(239,68,68,0.18);
+  border-color: rgba(239,68,68,0.30);
+}
+
+button.badgePill{
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.16);
+}
+
+.seriesName{
+  margin:0;
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.15;
+  text-shadow: 0 10px 30px rgba(0,0,0,0.55);
+}
+
+.seriesMeta{
+  display:flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.seriesChip{
+  font-size: 10px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.35);
+  color: rgba(255,255,255,0.86);
+  backdrop-filter: blur(8px);
+}
+
+.seriesChip.good{
+  background: rgba(124,58,237,0.22);
+  border-color: rgba(124,58,237,0.30);
+}
+
+/* Active + Chevron */
+.seriesTitleRow{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.seriesChevron{
+  width: 28px;
+  height: 28px;
+  display:grid;
+  place-items:center;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.30);
+  color: rgba(255,255,255,0.9);
+  transform: rotate(0deg);
+  transition: transform .18s ease, background .18s ease, border-color .18s ease;
+  backdrop-filter: blur(8px);
+}
+.seriesChevron.open{ transform: rotate(180deg); }
+
+.seriesCard.isActive{
+  border-color: rgba(124,58,237,0.45);
+  box-shadow:
+    0 18px 60px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(124,58,237,0.18),
+    0 0 46px rgba(124,58,237,0.28);
+}
+
+.seriesCard.isActive .seriesThumb{ transform: scale(1.08); }
+
+.seriesChip.selected{
+  background: rgba(124,58,237,0.22);
+  border-color: rgba(124,58,237,0.30);
+}
+
+/* =========================================================
+   VOLUMES WRAP (expand/collapse)
+   ========================================================= */
+.volumesWrap{
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: max-height .25s ease, opacity .2s ease, transform .2s ease;
+}
+
+.volumesWrap.open{
+  max-height: 99999px;
+  opacity: 1;
+  transform: translateY(0px);
+}
+
+.volumesSection{
+  padding-top: 86px;
+  margin-top: -70px;
+}
+
+/* =========================================================
+   POPOVER (Sem estoque)
+   ========================================================= */
+.missingPopover{
+  position: absolute;
+  top: 52px;
+  right: 12px;
+  width: min(360px, calc(100% - 24px));
+  z-index: 80;
+
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(10,12,18,0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 20px 80px rgba(0,0,0,0.70);
+  overflow: hidden;
+}
+
+.missingPopover::before{
+  content:"";
+  position:absolute;
+  top: -6px;
+  right: 18px;
+  width: 12px;
+  height: 12px;
+  transform: rotate(45deg);
+  background: rgba(10,12,18,0.55);
+  border-left: 1px solid rgba(255,255,255,0.14);
+  border-top: 1px solid rgba(255,255,255,0.14);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.missingHeader{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.92);
+  font-size: 12px;
+}
+
+.missingClose{
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.30);
+  color: rgba(255,255,255,0.88);
+  border-radius: 10px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.missingBody{ padding: 12px 12px 14px; }
+
+.missingCount{
+  font-size: 12px;
+  color: rgba(255,255,255,0.80);
+  margin-bottom: 8px;
+}
+
+.missingList{
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(255,255,255,0.88);
+  max-height: 130px;
+  overflow: auto;
+  padding-right: 6px;
+}
+
+.missingList::-webkit-scrollbar{ width: 8px; }
+.missingList::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,0.14);
+  border-radius: 999px;
+}
+
+/* =========================================================
+   SECTION HEADER PREMIUM
+   ========================================================= */
+.sectionHeader{
+  margin-top: 48px;
+  margin-bottom: 28px;
+}
+
+.sectionHeaderInner{
+  display:flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sectionTitle{
+  margin: 0;
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  position: relative;
+  display: inline-block;
+}
+
+.sectionTitle::after{
+  content:"";
+  display:block;
+  width: 60%;
+  height: 3px;
+  margin-top: 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+
+.sectionSubtitle{
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+  max-width: 520px;
+}
+
+.sectionHint{
+  max-width: 1100px;
+  margin: -10px auto 24px auto;
+  padding: 0 4px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* =========================================================
+   BACK ROW PREMIUM
+   ========================================================= */
+.backRow{
+  position: static;
+  top: 12px;
+  z-index: 80;
+
+  display:flex;
+  align-items:center;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  padding: 12px 16px;
+  border-radius: 16px;
+
+  background: rgba(15,18,28,0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.12);
+
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+}
+
+.backButton{
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.infoTag{
+  padding: 10px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.04);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.infoTag strong{
+  color: var(--text);
+  font-weight: 800;
+}
+
+/* =========================================================
+   SHOW MORE ROW (mesma temática do backRow)
+   ========================================================= */
+.showMoreRow{
+  position: static;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  margin: 18px 0 0;
+  padding: 12px 16px;
+  border-radius: 16px;
+
+  background: rgba(15,18,28,0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.12);
+
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+}
+
+.showMoreBtn{
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.showMoreHint{
+  padding: 10px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.04);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   SCROLL TO TOP PREMIUM
+   ========================================================= */
+.scrollTopBtn{
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 120;
+
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+
+  color: #ffffff;
+  background: rgba(15,18,28,0.85);
+  border: 1px solid rgba(255,255,255,0.15);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+
+  cursor: pointer;
+  transition: all .25s ease;
+}
+
+.scrollTopBtn:hover{
+  transform: translateY(-4px) scale(1.06);
+  box-shadow:
+    0 18px 60px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(124,58,237,0.25),
+    0 0 30px rgba(124,58,237,0.35);
+}
+
+.scrollTopBtn:active{ transform: scale(0.95); }
+
+/* =========================================================
+   RESPONSIVO (global)
+   ========================================================= */
+@media (max-width: 1000px){
+  .grid{ grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 820px){
+  .modalBody{ grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px){
+  .grid{ grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 420px){
+  .grid{ grid-template-columns: 1fr; }
+}
+
+/* =========================================================
+   RESPONSIVO (Header — polido)
+   ========================================================= */
+@media (max-width: 980px){
+  .heroTop{
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "logo social"
+      "search search";
+    row-gap: 12px;
+  }
+
+  .heroLogoBtn{ grid-area: logo; }
+  .heroSocial{ grid-area: social; justify-content: flex-end; }
+  .heroSearch{ grid-area: search; }
+
+  .heroSearchInput{ min-width: 0; }
+}
+
+@media (max-width: 640px){
+  .heroHeader{
+    border-radius: 20px;
+    margin: 12px auto 14px;
+  }
+
+  .heroContent{
+    padding: 14px 14px 12px;
+    gap: 12px;
+  }
+
+  .heroTop{
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "logo"
+      "search"
+      "social";
+    gap: 10px;
+  }
+
+  .heroLogo{
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+  }
+
+  .heroSocial{
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .heroSearch{ padding: 10px 10px; }
+  .heroSearchBtn{ display: none; } /* mobile: Enter */
+
+  .pillRowMain{
+    width: 100%;
+    gap: 10px;
+  }
+
+  .pillRowMain .pill{
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+    padding: 12px 14px;
+  }
+
+  .scrollArrow{
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+  }
+  .scrollArrow.left{ left: -6px; }
+  .scrollArrow.right{ right: -6px; }
+
+  /* Respiro pras setas não ficarem em cima dos chips */
+  .pillRowSecondaryWrap{
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+}
+/* Texto do slide no Hero */
+
+.heroTextBlock {
+  position: absolute;
+  bottom: 12%;
+  left: 6%;
+  z-index: 6;
+
+  max-width: 520px;
+  color: white;
+
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 700ms ease;
+}
+
+.heroSlidePremium.active .heroTextBlock {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.heroTextBlock h1 {
+  font-size: clamp(28px, 4vw, 52px);
+  margin: 0 0 8px 0;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.heroTextBlock h3 {
+  font-size: clamp(16px, 2vw, 22px);
+  margin: 0 0 12px 0;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.heroTextBlock p {
+  font-size: clamp(14px, 1.6vw, 18px);
+  opacity: 0.85;
+  margin-bottom: 18px;
+}
+
+.heroCTA {
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  background: #e50914;
+  color: white;
+  cursor: pointer;
+  transition: all .25s ease;
+}
+
+.heroCTA:hover {
+  background: #f40612;
+  transform: scale(1.05);
+}
+
+/* Container do texto */
+.heroTextWrapper {
+  position: absolute;
+  bottom: 12%;
+  left: 6%;
+  z-index: 6;
+}
+
+/* Card do texto (Netflix-like) */
+.heroTextCard {
+  max-width: 520px;
+  padding: 26px 30px;
+  border-radius: 20px;
+
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(1px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+
+  color: #fff;
+
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 700ms ease;
+}
+
+/* Anima quando slide ativo */
+.heroSlidePremium.active .heroTextCard {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ✅ Tipografia fluida (já funciona no desktop e no mobile) */
+.heroTextCard h1 {
+  font-size: clamp(16px, 4.2vw, 48px);
+  margin: 0 0 10px 0;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.heroTextCard h3 {
+  font-size: clamp(12px, 2.6vw, 22px);
+  margin: 0 0 12px 0;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.heroTextCard p {
+  font-size: clamp(10px, 2.2vw, 18px);
+  margin: 0 0 20px 0;
+  opacity: 0.85;
+}
+
+/* CTA (um pouco fluido também) */
+.heroCTA {
+  padding: clamp(10px, 2.2vw, 12px) clamp(16px, 3.2vw, 22px);
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  background: #e50914;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.heroCTA:hover {
+  background: #f40612;
+  transform: scale(1.05);
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .heroTextWrapper {
+    left: 43%;
+    transform: translateX(-50%);
+    bottom: 8%;
+  }
+
+  /* ✅ Card fluido: largura e padding adaptáveis */
+  .heroTextCard {
+    max-width: min(92vw, 520px);
+    padding: clamp(12px, 3.5vw, 16px) clamp(14px, 4vw, 18px);
+    border-radius: clamp(14px, 4vw, 20px);
+  }
+
+  /* ✅ Se quiser reduzir um pouco o espaço do parágrafo no mobile */
+  .heroTextCard p {
+    margin-bottom: 14px;
+  }
+}
+
+/* ✅ Badges editora/vol (se já tiver, mantém; isso só dá um trato) */
+.badgeMain{
+  display:inline-flex;
+  align-items:center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.88);
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.porLabel{
+  font-size: 11px;
+  font-weight: 900;
+  padding: 5px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.18);
+  color: rgba(255,255,255,0.88);
+  white-space: nowrap;
+}
+
+/* Editora • Vol como texto (sem badge) */
+.metaText{
+  display:flex;
+  align-items:center;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  margin: 6px 0 12px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+@media (max-width: 450px){
+  .metaText{ font-size: 10px; }
+}
+
+.metaPublisher,
+.metaVol{
+  color: rgba(255,255,255,0.78);
+}
+
+.metaDot{
+  opacity: 0.7;
+}
+
+/* status discreto (lado direito / fim da linha) */
+.metaStock{
+  margin-left: auto;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .2px;
+  white-space: nowrap;
+}
+
+@media (max-width: 450px){
+  .metaStock{ font-size: 10px; padding: 3px 8px; }
+}
+
+.metaStock.good{
+  border-color: rgba(34,197,94,0.25);
+  background: rgba(34,197,94,0.10);
+  color: rgba(255,255,255,0.90);
+}
+
+.metaStock.danger{
+  border-color: rgba(239,68,68,0.25);
+  background: rgba(239,68,68,0.10);
+  color: rgba(255,255,255,0.90);
+}
+
+/* Botões um embaixo do outro */
+.buttonsCol{
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.buttonsCol a{
+  display:flex;
+}
+
+.buttonsCol a .btn{
+  width: 100%;
+}
+
+/* =========================
+   TIKTOK BLOCK
+   ========================= */
+
+.tiktokBlock {
+  margin-top: 24px;
+  margin-bottom: 32px; /* 🔥 mais espaço antes dos botões */
+}
+
+.tiktokEmbedWrap {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0b0b0b;
+}
+
+.tiktokIframe {
+  width: 100%;
+  height: min(620px, 70vh);
+  border: 0;
+  display: block;
+}
+
+/* Botão externo TikTok */
+.tiktokExternalBtn {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.tiktokExternalBtn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Placeholder */
+.tiktokPlaceholder {
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Overlay continua igual (provavelmente fix) */
+.modalOverlay {
+  /* se já for fixed, ok. Se não, faça: */
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ✅ Modal com altura máxima e sem estourar */
+.modal {
+  width: min(1100px, 96vw);
+  max-height: min(92vh, 900px);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ✅ NOVO: área interna rolável (mobile fix) */
+.modalContent {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px;
+}
+
+/* ✅ Grid 2 colunas */
+.modalBody {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+/* Coluna esquerda */
+.modalLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modalCover img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 14px;
+}
+
+.modalDescLeft {
+  margin: 0;
+  opacity: 0.9;
+  line-height: 1.5;
+}
+
+/* Coluna direita */
+.modalRight {
+  display: flex;
+  flex-direction: column;
+}
+
+/* TikTok block com espaço antes dos botões */
+.tiktokBlock {
+  margin-top: 18px;
+  margin-bottom: 28px; /* respiro maior */
+}
+
+.tiktokEmbedWrap {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0b0b0b;
+}
+
+.tiktokIframe {
+  width: 100%;
+  height: min(620px, 62vh);
+  border: 0;
+  display: block;
+}
+
+.tiktokExternalBtn {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  text-decoration: none;
+  background: rgba(255,255,255,.08);
+  color: white;
+  font-weight: 600;
+}
+
+.tiktokExternalBtn:hover {
+  background: rgba(255,255,255,.14);
+}
+
+/* Placeholder */
+.tiktokPlaceholder {
+  border-radius: 16px;
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.04);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* ✅ Mobile: vira 1 coluna e continua rolando dentro do modal */
+@media (max-width: 900px) {
+  .modal {
+    width: 100vw;
+    max-height: 100vh;
+    border-radius: 0; /* opcional no mobile */
+  }
+
+  .modalContent {
+    padding: 14px;
+  }
+
+  .modalBody {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .tiktokIframe {
+    height: min(520px, 55vh);
+  }
+
+  /* dá mais espaço pro “footer” de botões */
+  .modalActions {
+    margin-top: 18px;
+  }
+}
+/* Modal precisa ser flex vertical */
+.modal {
+  display: flex;
+  flex-direction: column;
+  max-height: min(92vh, 900px);
+}
+
+/* Área rolável */
+.modalContent {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px;
+  flex: 1; /* ocupa o espaço restante */
+}
+
+/* 🔥 Footer fixo */
+.modalFooter {
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    rgba(15,15,20,0.95),
+    rgba(15,15,20,0.85)
+  );
+  backdrop-filter: blur(10px);
+  padding: 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Espaço entre botões */
+.modalActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* 🔥 IMPORTANTE: evita conteúdo ficar escondido atrás do footer */
+.modalBody {
+  padding-bottom: 40px;
+}
+
+/* Botão ocupar largura total quando necessário */
+.modalActions a,
+.modalActions button {
+  flex: 1;
+}
+
+/* Estado desabilitado estilizado */
+.btn.disabledFull {
+  background: #b32626; /* vermelho mais fechado */
+  color: white;
+  opacity: 0.9;
+  cursor: not-allowed;
+  border: none;
+}
+
+
+/* Mantém mesmo padding e tamanho do botão principal */
+.btn {
+  padding: 14px 18px;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+/* Se quiser visual mais suave */
+.btn.disabledFull:hover {
+  transform: none;
+}
+
+/*Dois botões lado a lado (ex: Comprar + TikTok) */
+
+/* Card hover premium */
+.cardHover {
+  position: relative;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  will-change: transform;
+}
+
+.cardHover:hover {
+  transform: scale(1.03);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* Thumb wrap para overlay */
+.thumbWrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px; /* ajuste ao seu layout */
+}
+
+/* Overlay aparece no hover */
+.hoverOverlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 160ms ease, transform 160ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.65),
+    rgba(0, 0, 0, 0.15)
+  );
+}
+
+.cardHover:hover .hoverOverlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Botão do overlay */
+.overlayBtn {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 700;
+
+  background: rgba(0, 0, 0, 0.55);  /* mais transparente */
+  backdrop-filter: blur(6px);       /* efeito fosco */
+  -webkit-backdrop-filter: blur(6px);
+
+  color: #fff;
+  transition: transform 140ms ease, background 140ms ease;
+}
+
+.overlayBtn:hover {
+  transform: scale(1.05);
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* Linha com 2 botões */
+.buyRow {
+  display: flex;
+  gap: 10px;
+}
+
+.buyLink {
+  display: block;
+}
+
+.buyLink.grow {
+  flex: 1;
+}
+
+.buyLink.single {
+  width: 100%;
+}
+
+/* Botões de brand com fundo e hover scale */
+/* Botões com tamanho fixo */
+.brandBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;          /* tamanho fixo do botão */
+  padding: 0;
+  border-radius: 10px;
+  transition: transform 140ms ease, filter 140ms ease;
+}
+
+/* Tamanho padrão da logo */
+.brandIcon {
+  height: 24px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 140ms ease;
+}
+
+/* Mercado Livre */
+.btn.mercado {
+  background: #ffe600;
+}
+
+.btn.mercado .brandIcon {
+  height: 17px;
+}
+
+/* Amazon */
+.btn.amazon {
+  background: #fff;
+  border: 1px solid #ddd;
+}
+
+/* 🔥 Aqui está o segredo */
+.btn.amazon .brandIcon {
+  transform: scale(1.2);
+  transform-origin: center;
+  margin-top: 4px;
+}
+
