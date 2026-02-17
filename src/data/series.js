@@ -1,8 +1,12 @@
+const base = import.meta.env.BASE_URL;
+
+const img = (path) => `${base}assets/${path}`;
+
 export const seriesCatalog = [
   {
     name: "Attack on Titan",
     totalVolumes: 17,
-    thumb: "/assets/aot-series.jpeg",
+    thumb: img("aot-series.jpeg"),
     subtitle: "Titãs, muralhas e caos absoluto.",
     author: "Hajime Isayama",
     genre: "Shounen/Seinen",
@@ -10,7 +14,7 @@ export const seriesCatalog = [
   {
     name: "Jujutsu Kaisen",
     totalVolumes: 30,
-    thumb: "/assets/jjk-series.jpeg",
+    thumb: img("jjk-series.jpeg"),
     subtitle: "Feitiçaria, maldições e pancadaria.",
     author: "Gege Akutami",
     genre: "Shounen",
@@ -18,14 +22,14 @@ export const seriesCatalog = [
   {
     name: "One Piece",
     totalVolumes: 37,
-    thumb: "/assets/op-series.jpeg",
+    thumb: img("op-series.jpeg"),
     subtitle: "Aventuras em alto mar e batalhas épicas.",
     genre: "Shounen",
     author: "Eiichiro Oda",
   },
   {
     name: "Outros",
-    thumb: "/assets/others-series.jpeg",
+    thumb: img("others-series.jpeg"),
     subtitle: "Outras obras e volumes avulsos."
   }
 ];

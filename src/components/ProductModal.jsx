@@ -1,5 +1,9 @@
 import { useEffect, useMemo } from "react";
 
+const base = import.meta.env.BASE_URL;
+
+const img = (path) => `${base}assets/${path}`;
+
 function getTikTokEmbedUrl(tiktokUrl) {
   if (!tiktokUrl) return null;
 
@@ -154,7 +158,7 @@ export default function ProductModal({ product, onClose }) {
                     >
                       <button className="btn brandBtn mercado" type="button">
                         <img
-                          src="/assets/mercadolivre.svg"
+                          src={img("mercadolivre.svg")}
                           alt="Mercado Livre"
                           className="brandIcon"
                         />
@@ -174,7 +178,7 @@ export default function ProductModal({ product, onClose }) {
                     >
                       <button className="btn brandBtn amazon" type="button">
                         <img
-                          src="/assets/amazon.svg"
+                          src={img("amazon.svg")}
                           alt="Amazon"
                           className="brandIcon"
                         />

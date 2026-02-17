@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 
+const base = import.meta.env.BASE_URL;
+
+const img = (path) => `${base}assets/${path}`;
+
+
 export default function Header({ inputValue, setInputValue, onSearch }) {
   const handleKeyDown = (e) => {
     if (e.key === "Enter") onSearch?.(inputValue);
@@ -77,7 +82,7 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
       {/* Background */}
       <div
         className="heroBg"
-        style={{ backgroundImage: "url(/assets/header-bg.jpeg)" }}
+        style={{ backgroundImage: `url(${img("header-bg.jpeg")})` }}
         aria-hidden="true"
       />
       <div className="heroShade" aria-hidden="true" />
@@ -93,7 +98,7 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
             aria-label="Voltar ao topo"
           >
             {/* Troque por uma logo com transparência (PNG alpha ou SVG) */}
-            <img className="heroLogo" src="/assets/logo.png" alt="MangásDrops" />
+            <img className="heroLogo" src={img("logo.png")} alt="MangásDrops" />
           </button>
 
           {/* Search */}
@@ -129,7 +134,7 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
             >
               <img
                 className="socialIcon"
-                src="/assets/tiktok.svg"
+                src={img("tiktok.svg")}
                 alt=""
                 aria-hidden="true"
               />
@@ -144,7 +149,7 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
             >
               <img
                 className="socialIcon"
-                src="/assets/instagram.svg"
+                src={img("instagram.svg")}
                 alt=""
                 aria-hidden="true"
               />
@@ -159,7 +164,7 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
             >
               <img
                 className="socialIcon"
-                src="/assets/youtube.svg"
+                src={img("youtube.svg")}
                 alt=""
                 aria-hidden="true"
               />

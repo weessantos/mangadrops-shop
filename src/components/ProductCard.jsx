@@ -1,5 +1,9 @@
 // ProductCard.jsx
 
+const base = import.meta.env.BASE_URL;
+
+const img = (path) => `${base}assets/${path}`;
+
 export default function ProductCard({ product, onOpen }) {
   const mlUrl =
     product?.affiliate?.mercadoLivre &&
@@ -84,7 +88,7 @@ export default function ProductCard({ product, onOpen }) {
                 >
                   <button className="btn brandBtn mercado" type="button">
                     <img
-                      src="/assets/mercadolivre.svg"
+                      src={img("mercadolivre.svg")}
                       alt="Mercado Livre"
                       className="brandIcon"
                     />
@@ -104,7 +108,7 @@ export default function ProductCard({ product, onOpen }) {
                 >
                   <button className="btn brandBtn amazon" type="button">
                     <img
-                      src="/assets/amazon.svg"
+                      src={img("amazon.svg")}
                       alt="Amazon"
                       className="brandIcon"
                     />

@@ -1,5 +1,9 @@
 import { aotAffiliate, opAffiliate, jjkAffiliate } from "./affiliates";
 
+const base = import.meta.env.BASE_URL;
+
+const img = (path) => `${base}assets/${path}`;
+
 function pad2(n) {
   return String(n).padStart(2, "0");
 }
@@ -56,7 +60,7 @@ function createSeriesVolumes({
       tag,
       author,
       genre,
-      image: `/assets/${prefix}${vv}.${imageExt}`,
+      image: img(`${prefix}${vv}.${imageExt}`),
 
       // ✅ NOVO CAMPO
       affiliate: normalizeAffiliate(affiliateByVolume[volume]),

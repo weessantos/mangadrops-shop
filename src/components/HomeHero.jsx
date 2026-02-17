@@ -1,37 +1,41 @@
 import { useEffect, useState } from "react";
 
+const base = import.meta.env.BASE_URL;
+
+const img = (path) => `${base}assets/${path}`;
+
 export default function HomeHero() {
   const slides = [
     {
-      src: "/assets/banner-1.jpeg",
+      src: img("banner-1.jpeg"),
       alt: "One Piece",
       title: "One Piece",
       subtitle: "Já está disponível",
       description: "Acompanhe Luffy e seus amigos nessa jornada épica.",
     },
     {
-      src: "/assets/banner-2.jpeg",
+      src: img("banner-2.jpeg"),
       alt: "Jujutsu Kaisen",
       title: "Jujutsu Kaisen",
       subtitle: "Já está disponível.",
       description: "O jogo do abate começou. O caos é inevitável.",
     },
     {
-      src: "/assets/banner-3.jpeg",
+      src: img("banner-3.jpeg"),
       alt: "Attack on Titan",
       title: "Attack on Titan",
       subtitle: "Já está disponível.",
       description: "A batalha final se aproxima além das muralhas.",
     },
     {
-      src: "/assets/banner-4.jpeg",
+      src: img("banner-4.jpeg"),
       alt: "Demon Slayer",
       title: "Demon Slayer",
       subtitle: "Em breve.",
       description: "Demon Slayer, incluindo versão com o box",
     },
     {
-      src: "/assets/banner-5.jpeg",
+      src: img("banner-5.jpeg"),
       alt: "Notion",
       title: "Organize sua coleção",
       subtitle: "Em breve",
