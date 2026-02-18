@@ -39,7 +39,7 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
   "GashBell ⚡",
   "Naruto 🍥",
   "Dragon Ball 🐉",
-  "Haikyuu!! 🏐",
+  "Haikyu 🏐",
   "Kagurabachi 🗡️"
   ];
 
@@ -141,7 +141,7 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
             </a>
             <a
               className="socialBtn"
-              href="https://instagram.com/SEU_PERFIL"
+              href="https://instagram.com/"
               target="_blank"
               rel="noreferrer"
               aria-label="Instagram"
@@ -156,7 +156,7 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
             </a>
             <a
               className="socialBtn"
-              href="https://youtube.com/@SEU_CANAL"
+              href="https://youtube.com/"
               target="_blank"
               rel="noreferrer"
               aria-label="YouTube"

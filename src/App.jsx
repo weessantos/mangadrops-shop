@@ -7,7 +7,7 @@ import ProductCard from "./components/ProductCard";
 import ProductModal from "./components/ProductModal";
 import { products } from "./data/products";
 import { seriesCatalog } from "./data/series";
-import { aotAffiliate, opAffiliate, jjkAffiliate } from "./data/affiliates";
+import { aotAffiliate, opAffiliate, jjkAffiliate, haikyuAffiliate } from "./data/affiliates";
 
 const ALIASES = {
   jjk: "jujutsu kaisen",
@@ -301,7 +301,7 @@ export default function App() {
         }}
       />
 
-      <HomeHero />
+      <HomeHero />     
 
       <section id="obras" className="sectionHeader">
         <div className="sectionHeaderInner">

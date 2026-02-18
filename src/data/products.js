@@ -1,4 +1,4 @@
-import { aotAffiliate, opAffiliate, jjkAffiliate } from "./affiliates";
+import { aotAffiliate, opAffiliate, jjkAffiliate, haikyuAffiliate } from "./affiliates";
 
 const base = import.meta.env.BASE_URL;
 
@@ -64,10 +64,6 @@ function createSeriesVolumes({
 
       // ✅ NOVO CAMPO
       affiliate: normalizeAffiliate(affiliateByVolume[volume]),
-
-      // (opcional) mantém o antigo se você ainda usa em algum lugar
-      // affiliateUrl: typeof affiliateByVolume[volume] === "string" ? affiliateByVolume[volume] : "",
-
       tiktokUrl: tiktokByVolume[volume] || "",
       description: descriptionByVolume[volume] || "",
     };
@@ -104,7 +100,11 @@ const opTiktok = {
   2: "",
   // ...
 };
-
+const haikyuTiktok = {
+  1: "",
+  2: "",
+  // ...
+};
 /* =========================
    DESCRIÇÕES DAS OBRAS (POR VOLUMES)
    ========================= */
@@ -284,6 +284,31 @@ export const opDescriptions = {
 
   37: "3 em 1 Vol. 37 (Vols. 109–111): Em Egghead, confrontos e revelações aproximam a história de sua fase final, ampliando os mistérios do mundo."
 };
+
+export const haikyuDescriptions = {
+  1: "2 em 1 Vol. 1 (Vols. 1–2): Hinata entra no Karasuno decidido a provar seu valor, formando uma dupla improvável com Kageyama.",
+  2: "2 em 1 Vol. 2 (Vols. 3–4): O time começa a treinar seriamente e enfrenta seus primeiros grandes desafios.",
+  3: "2 em 1 Vol. 3 (Vols. 5–6): Novas estratégias surgem enquanto o Karasuno tenta se reerguer no cenário competitivo.",
+  4: "2 em 1 Vol. 4 (Vols. 7–8): Partidas intensas colocam à prova a coordenação e confiança da equipe.",
+  5: "2 em 1 Vol. 5 (Vols. 9–10): O espírito de superação do Karasuno começa a chamar atenção dos rivais.",
+  6: "2 em 1 Vol. 6 (Vols. 11–12): Confrontos decisivos revelam o verdadeiro potencial da equipe.",
+  7: "2 em 1 Vol. 7 (Vols. 13–14): A pressão dos campeonatos regionais eleva o nível das partidas.",
+  8: "2 em 1 Vol. 8 (Vols. 15–16): Rivalidades antigas reacendem em jogos eletrizantes.",
+  9: "2 em 1 Vol. 9 (Vols. 17–18): Hinata e Kageyama evoluem e fortalecem sua parceria dentro de quadra.",
+  10: "2 em 1 Vol. 10 (Vols. 19–20): O sonho do Nacional fica cada vez mais real para o Karasuno.",
+  11: "2 em 1 Vol. 11 (Vols. 21–22): A equipe enfrenta adversários imprevisíveis com estilos únicos.",
+  12: "2 em 1 Vol. 12 (Vols. 23–24): Treinos intensos e partidas decisivas moldam o futuro do time.",
+  13: "2 em 1 Vol. 13 (Vols. 25–26): O nível técnico sobe e cada ponto passa a ser crucial.",
+  14: "2 em 1 Vol. 14 (Vols. 27–28): A resistência física e mental dos jogadores é colocada à prova.",
+  15: "2 em 1 Vol. 15 (Vols. 29–30): Confrontos dramáticos mantêm o público sem fôlego.",
+  16: "2 em 1 Vol. 16 (Vols. 31–32): O Karasuno encara partidas que podem definir seu destino.",
+  17: "2 em 1 Vol. 17 (Vols. 33–34): Rivalidades atingem o ápice em confrontos memoráveis.",
+  18: "2 em 1 Vol. 18 (Vols. 35–36): Estratégia e trabalho em equipe fazem a diferença nos momentos decisivos.",
+  19: "2 em 1 Vol. 19 (Vols. 37–38): A busca pelo topo nacional exige o máximo de cada jogador.",
+  20: "2 em 1 Vol. 20 (Vols. 39–40): O Karasuno mostra até onde pode chegar quando joga como um verdadeiro time."
+};
+
+
 /* =========================
    PREÇOS POR VOLUME
    ========================= */
@@ -319,7 +344,7 @@ const jjk = createSeriesVolumes({
   tiktokByVolume: jjkTiktok,
   descriptionByVolume: jjkDescriptions,
   author: "Gege Akutami",
-  genre: "Shonen",
+  genre: "Shounen",
 });
 
 const op = createSeriesVolumes({
@@ -337,6 +362,21 @@ const op = createSeriesVolumes({
   genre: "Shounen",
 });
 
+const haikyu = createSeriesVolumes({
+  series: "Haikyu",
+  prefix: "haikyu",
+  start: 1,
+  end: 20,
+  tag: "Panini",
+  imageExt: "jpeg",
+  affiliateByVolume: haikyuAffiliate,
+  tiktokByVolume: haikyuTiktok,
+  descriptionByVolume: haikyuDescriptions,
+  editionLabel: "2 em 1",
+  author: "Haruichi Furudate",
+  genre: "Shounen",
+});
+
 /* =========================
    EXPORT FINAL
    ========================= */
@@ -345,4 +385,5 @@ export const products = [
   ...aot,
   ...jjk,
   ...op,
+  ...haikyu,
 ];

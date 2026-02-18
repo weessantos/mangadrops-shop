@@ -2,7 +2,7 @@
 export const empty = { mercadoLivre: "", amazon: "" };
 
 // =======================
-// ATTACK ON TITAN
+// ATTACK ON TITAN 2 EM 1
 // =======================
 
 export const aotAffiliate = {
@@ -26,7 +26,7 @@ export const aotAffiliate = {
 };
 
 // =======================
-// ONE PIECE
+// ONE PIECE 3 EM 1
 // =======================
 
 export const opAffiliate = {
@@ -73,34 +73,61 @@ export const opAffiliate = {
 // JUJUTSU KAISEN
 // =======================
 export const jjkAffiliate = {
-  1: { mercadoLivre: "", amazon: "" },
-  2: { mercadoLivre: "", amazon: "" },
-  3: { mercadoLivre: "", amazon: "" },
-  4: { mercadoLivre: "", amazon: "" },
-  5: { mercadoLivre: "", amazon: "" },
-  6: { mercadoLivre: "", amazon: "" },
-  7: { mercadoLivre: "", amazon: "" },
-  8: { mercadoLivre: "", amazon: "" },
-  9: { mercadoLivre: "", amazon: "" },
-  10: { mercadoLivre: "", amazon: "" },
-  11: { mercadoLivre: "", amazon: "" },
-  12: { mercadoLivre: "", amazon: "" },
-  13: { mercadoLivre: "", amazon: "" },
-  14: { mercadoLivre: "", amazon: "" },
-  15: { mercadoLivre: "", amazon: "" },
-  16: { mercadoLivre: "", amazon: "" },
-  17: { mercadoLivre: "", amazon: "" },
+  0: { mercadoLivre: "", amazon: "" },
+  1: { mercadoLivre: "", amazon: "https://amzn.to/4awC6qB" },
+  2: { mercadoLivre: "https://mercadolivre.com/sec/2FhzE1u", amazon: "" },
+  3: { mercadoLivre: "https://mercadolivre.com/sec/1J1BJ9W", amazon: "" },
+  4: { mercadoLivre: "", amazon: "https://amzn.to/4aEiVtJ" },
+  5: { mercadoLivre: "", amazon: "https://amzn.to/40fsE4J" },
+  6: { mercadoLivre: "https://mercadolivre.com/sec/1MwEE2K", amazon: "https://amzn.to/4anCKq9" },
+  7: { mercadoLivre: "", amazon: "https://amzn.to/4rUMP3G" },
+  8: { mercadoLivre: "https://mercadolivre.com/sec/2gfr4fi", amazon: "" },
+  9: { mercadoLivre: "https://mercadolivre.com/sec/2wewnrj", amazon: "" },
+  10: { mercadoLivre: "", amazon: "https://amzn.to/40hkUiA" },
+  11: { mercadoLivre: "https://mercadolivre.com/sec/2HGwpfi", amazon: "" },
+  12: { mercadoLivre: "https://mercadolivre.com/sec/1qwBcm4", amazon: "" },
+  13: { mercadoLivre: "https://mercadolivre.com/sec/1Hv7SY2", amazon: "" },
+  14: { mercadoLivre: "https://mercadolivre.com/sec/1somMiJ", amazon: "" },
+  15: { mercadoLivre: "https://mercadolivre.com/sec/1f9RwhQ", amazon: "" },
+  16: { mercadoLivre: "https://mercadolivre.com/sec/27hiYHS", amazon: "" },
+  17: { mercadoLivre: "https://mercadolivre.com/sec/2nN8Hjq", amazon: "https://amzn.to/4kG42vx" },
   18: { mercadoLivre: "", amazon: "" },
   19: { mercadoLivre: "", amazon: "" },
-  20: { mercadoLivre: "", amazon: "" },
+  20: { mercadoLivre: "https://mercadolivre.com/sec/2Y11XkB", amazon: "" },
   21: { mercadoLivre: "", amazon: "" },
   22: { mercadoLivre: "", amazon: "" },
   23: { mercadoLivre: "", amazon: "" },
-  24: { mercadoLivre: "", amazon: "" },
-  25: { mercadoLivre: "", amazon: "" },
-  26: { mercadoLivre: "", amazon: "" },
-  27: { mercadoLivre: "", amazon: "" },
-  28: { mercadoLivre: "", amazon: "" },
+  24: { mercadoLivre: "https://mercadolivre.com/sec/1ovyWtJ", amazon: "" },
+  25: { mercadoLivre: "https://mercadolivre.com/sec/2BAr4Na", amazon: "https://amzn.to/4cukhcU" },
+  26: { mercadoLivre: "https://mercadolivre.com/sec/1gdpdhx", amazon: "" },
+  27: { mercadoLivre: "https://mercadolivre.com/sec/1x1FdQe", amazon: "" },
+  28: { mercadoLivre: "https://mercadolivre.com/sec/26MjcKi", amazon: "" },
   29: { mercadoLivre: "", amazon: "" },
-  30: { ...empty }
+  30: { mercadoLivre: "https://mercadolivre.com/sec/2tSFJfa", amazon: "" }
+};
+
+// =======================
+// HAIKYU! 2 EM 1
+// =======================
+export const haikyuAffiliate = {
+  1: { mercadoLivre: "", amazon: "https://amzn.to/3ONjpGn" },
+  2: { mercadoLivre: "", amazon: "https://amzn.to/4aolFfS" },
+  3: { mercadoLivre: "", amazon: "https://amzn.to/4rnf9f9" },
+  4: { mercadoLivre: "", amazon: "https://amzn.to/4tCpi9z" },
+  5: { mercadoLivre: "", amazon: "https://amzn.to/4aUWDoF" },
+  6: { mercadoLivre: "", amazon: "https://amzn.to/4tOucjV" },
+  7: { mercadoLivre: "", amazon: "https://amzn.to/46bRWUX" },
+  8: { mercadoLivre: "", amazon: "https://amzn.to/4tGF4A1" },
+  9: { mercadoLivre: "", amazon: "https://amzn.to/4aHDhlT" },
+  10: { mercadoLivre: "", amazon: "https://amzn.to/4tCAweh" },
+  11: { mercadoLivre: "", amazon: "https://amzn.to/4tI1yAE" },
+  12: { mercadoLivre: "", amazon: "https://amzn.to/4tFHBut" },
+  13: { mercadoLivre: "", amazon: "https://amzn.to/4kIrpEK" },
+  14: { mercadoLivre: "", amazon: "https://amzn.to/46To7IQ" },
+  15: { mercadoLivre: "", amazon: "https://amzn.to/3MvZivO" },
+  16: { mercadoLivre: "", amazon: "https://amzn.to/40dgE3F" },
+  17: { mercadoLivre: "", amazon: "https://amzn.to/467cqhC" },
+  18: { mercadoLivre: "", amazon: "" },
+  19: { mercadoLivre: "", amazon: "" },
+  20: { mercadoLivre: "", amazon: "" }
 };

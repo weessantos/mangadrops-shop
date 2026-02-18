@@ -368,6 +368,172 @@ a{ color: inherit; text-decoration: none; }
 .scrollArrow.left{ left: -8px; }
 .scrollArrow.right{ right: -8px; }
 
+/* =========================
+   MOBILE PREMIUM HEADER
+   ========================= */
+@media (max-width: 768px) {
+  /* Wrapper geral */
+  .heroPremium{
+    padding: 0 12px;
+    margin-top: 16px;
+  }
+
+  .heroContainerPremium{
+    border-radius: 22px;
+    overflow: hidden;
+    /* profundidade */
+    box-shadow: 0 18px 60px rgba(0,0,0,.45);
+  }
+
+  /* background um pouco mais “cinema” */
+  .heroShade{
+    background:
+      radial-gradient(80% 60% at 15% 15%, rgba(255,255,255,.08), rgba(0,0,0,0) 60%),
+      linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.65));
+    backdrop-filter: blur(6px);
+  }
+
+  .heroContent{
+    padding: 14px;
+    gap: 12px;
+  }
+
+  /* TOP: logo + sociais alinhados e com cara de “barra” */
+  .heroTop{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "logo social"
+      "search search";
+    align-items: center;
+    gap: 12px;
+  }
+
+  .heroLogoBtn{ grid-area: logo; }
+  .heroLogo{
+    height: 80px;
+    width: auto;
+    filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
+  }
+
+  .heroSocial{
+    grid-area: social;
+    justify-self: end;
+    display: flex;
+    gap: 8px;
+    padding: 6px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.14);
+    backdrop-filter: blur(10px);
+  }
+
+  .socialBtn{
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    background: rgba(0,0,0,.25);
+    border: 1px solid rgba(255,255,255,.14);
+    display: grid;
+    place-items: center;
+  }
+  .socialIcon{ width: 18px; height: 18px; opacity: .95; }
+
+  /* BUSCA: mais premium (glass) e menos “comprida” */
+  .heroSearch{
+    grid-area: search;
+    height: 48px;
+    border-radius: 18px;
+    background: rgba(255,255,255,.10);
+    border: 1px solid rgba(255,255,255,.14);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 14px 40px rgba(0,0,0,.28);
+  }
+
+  .heroSearchIcon{
+    margin-left: 12px;
+    opacity: .9;
+  }
+
+  .heroSearchInput{
+    font-size: 16px; /* evita zoom iOS */
+    padding: 0 10px;
+    color: rgba(255,255,255,.92);
+  }
+  .heroSearchInput::placeholder{
+    color: rgba(255,255,255,.60);
+  }
+
+  .heroSearchBtn{
+    margin-right: 10px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 14px;
+    white-space: nowrap;
+    box-shadow: 0 14px 28px rgba(0,0,0,.25);
+  }
+
+  /* PILLS principais: mais alinhadas e “app-like” */
+  .pillRowMain{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .pillRowMain .pill{
+    width: 100%;
+    justify-content: center;
+    padding: 12px 12px;
+    border-radius: 999px;
+    letter-spacing: .2px;
+  }
+
+  /* CHIPS: premium = scroll suave + fade nas bordas */
+  .pillRowSecondaryContainer{
+    position: relative;
+    margin-top: 10px;
+  }
+
+  .pillRowSecondaryWrap{
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 2px 2px 4px;
+    scroll-snap-type: x proximity;
+
+    /* fade nas laterais (efeito premium) */
+    -webkit-mask-image: linear-gradient(90deg,
+      transparent 0%,
+      #000 8%,
+      #000 92%,
+      transparent 100%);
+            mask-image: linear-gradient(90deg,
+      transparent 0%,
+      #000 8%,
+      #000 92%,
+      transparent 100%);
+  }
+
+  .pillRowSecondary{
+    gap: 10px;
+  }
+
+  .pillRowSecondary .pillChip{
+    scroll-snap-align: start;
+    padding: 10px 12px;
+    border-radius: 999px;
+    font-size: 14px;
+    white-space: nowrap;
+
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.14);
+    backdrop-filter: blur(10px);
+  }
+
+  /* Setas somem no mobile (evita poluição visual) */
+  .scrollArrow{ display: none !important; }
+}
+
+
 /* =========================================================
    UI ELEMENTS
    ========================================================= */
@@ -851,6 +1017,12 @@ a{ color: inherit; text-decoration: none; }
   background: #000;
 }
 
+@media (max-width: 768px) {
+  .heroContainerPremium {
+    aspect-ratio: 4 / 5;
+  }
+}
+
 /* SLIDES ABSOLUTOS */
 .heroSlidePremium {
   position: absolute;
@@ -907,6 +1079,12 @@ a{ color: inherit; text-decoration: none; }
   font-size: 28px;
   cursor: pointer;
   transition: all .25s ease;
+}
+
+@media (max-width: 768px) {
+  .heroArrowPremium {
+    display: none !important;
+  }
 }
 
 .heroArrowPremium:hover {
@@ -1457,66 +1635,6 @@ button.badgePill{
   .heroSearchInput{ min-width: 0; }
 }
 
-@media (max-width: 640px){
-  .heroHeader{
-    border-radius: 20px;
-    margin: 12px auto 14px;
-  }
-
-  .heroContent{
-    padding: 14px 14px 12px;
-    gap: 12px;
-  }
-
-  .heroTop{
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "logo"
-      "search"
-      "social";
-    gap: 10px;
-  }
-
-  .heroLogo{
-    width: 64px;
-    height: 64px;
-    border-radius: 18px;
-  }
-
-  .heroSocial{
-    justify-content: flex-start;
-    gap: 10px;
-  }
-
-  .heroSearch{ padding: 10px 10px; }
-  .heroSearchBtn{ display: none; } /* mobile: Enter */
-
-  .pillRowMain{
-    width: 100%;
-    gap: 10px;
-  }
-
-  .pillRowMain .pill{
-    flex: 1;
-    justify-content: center;
-    text-align: center;
-    padding: 12px 14px;
-  }
-
-  .scrollArrow{
-    width: 30px;
-    height: 30px;
-    font-size: 18px;
-  }
-  .scrollArrow.left{ left: -6px; }
-  .scrollArrow.right{ right: -6px; }
-
-  /* Respiro pras setas não ficarem em cima dos chips */
-  .pillRowSecondaryWrap{
-    padding-left: 28px;
-    padding-right: 28px;
-  }
-}
 /* Texto do slide no Hero */
 
 .heroTextBlock {

@@ -28,6 +28,14 @@ export const seriesCatalog = [
     author: "Eiichiro Oda",
   },
   {
+  name: "Haikyu",
+  totalVolumes: 20,
+  thumb: img("haikyu-series.jpeg"),
+  subtitle: "Vôlei, rivalidade intensa e a corrida para o Nacional.",
+  genre: "Shounen",
+  author: "Haruichi Furudate",
+  },
+  {
     name: "Outros",
     thumb: img("others-series.jpeg"),
     subtitle: "Outras obras e volumes avulsos."
