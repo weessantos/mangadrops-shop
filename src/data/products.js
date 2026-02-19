@@ -1,7 +1,6 @@
 import { aotAffiliate, opAffiliate, jjkAffiliate, haikyuAffiliate } from "./affiliates";
 
 const base = import.meta.env.BASE_URL;
-
 const img = (path) => `${base}assets/${path}`;
 
 function pad2(n) {
