@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from "react";
+import "../styles/product-modal.css";
 
 const base = import.meta.env.BASE_URL;
 

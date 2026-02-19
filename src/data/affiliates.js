@@ -66,7 +66,7 @@ export const opAffiliate = {
   34: { mercadoLivre: "https://mercadolivre.com/sec/2ntaV75", amazon: "" },
   35: { mercadoLivre: "", amazon: "" },
   36: { mercadoLivre: "https://mercadolivre.com/sec/2JFUG8h", amazon: "https://amzn.to/46P9m9V" },
-  37: { mercadoLivre: "https://mercadolivre.com/sec/1Dr95td", amazon: "https://amzn.to/4tH57Hu" },
+  37: { mercadoLivre: "https://mercadolivre.com/sec/1Dr95td", amazon: "https://amzn.to/4qMjMhM" },
 };
 
 // =======================

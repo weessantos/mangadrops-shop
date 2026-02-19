@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import "../styles/series-card.css";
 
 function formatMissingList(missing) {
   return missing.join(", ");
@@ -116,5 +117,6 @@ export default function SeriesCard({
         </div>
       </div>
     </article>
+    
   );
 }

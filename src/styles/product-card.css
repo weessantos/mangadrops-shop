@@ -1,0 +1,70 @@
+/* =========================================================
+   PRODUCT CARD
+   ========================================================= */
+.card{
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.04);
+  border-radius: 18px;
+  overflow: hidden;
+  transition: transform .15s ease, background .15s ease, border-color .15s ease;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+}
+
+.card:hover{
+  transform: translateY(-3px);
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.18);
+}
+
+.thumb{
+  aspect-ratio: 3 / 4;
+  width: 100%;
+  background: rgba(0,0,0,0.25);
+  display:block;
+  object-fit: cover;
+}
+
+.content{ padding: 12px 12px 14px; }
+
+.title{
+  margin: 0 0 6px;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.meta{
+  display:flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.price{
+  font-weight: 800;
+  color: rgba(255,255,255,0.90);
+}
+
+/* ===== Badge NOVO ===== */
+.thumbWrap{
+  position: relative; /* garante que a badge posicione em cima da imagem */
+}
+
+.newBadge{
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 4;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  color: #fff;
+  background: rgba(239,68,68,0.92);
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: 0 12px 30px rgba(239,68,68,0.25);
+}

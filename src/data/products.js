@@ -42,6 +42,10 @@ function createSeriesVolumes({
   editionLabel = "",
   author = "",
   genre = "",
+
+  // 🔥 NOVO
+  addedAtByVolume = {},
+
 }) {
   return Array.from({ length: end - start + 1 }, (_, i) => {
     const volume = start + i;
@@ -61,13 +65,16 @@ function createSeriesVolumes({
       genre,
       image: img(`${prefix}${vv}.${imageExt}`),
 
-      // ✅ NOVO CAMPO
       affiliate: normalizeAffiliate(affiliateByVolume[volume]),
       tiktokUrl: tiktokByVolume[volume] || "",
       description: descriptionByVolume[volume] || "",
+
+      // 🔥 DATA DE ADIÇÃO NO SITE
+      addedAt: addedAtByVolume[volume] || null,
     };
   });
 }
+
 /* =========================
    VÍDEO TIKTOK (por volume)
    ========================= */
@@ -140,7 +147,7 @@ const aotDescriptions = {
   
   16: "2 em 1 Vol. 16 (Vols. 31–32): Antigos aliados se unem em uma missão final desesperada. O confronto inevitável se aproxima, colocando o destino da humanidade em risco.",
   
-  17: "2 em 1 Vol. 17 (Vols. 33–34): A batalha derradeira define o futuro do mundo. Verdades finais trazem consequências irreversíveis e encerram a jornada iniciada dentro das muralhas."
+  16: "2 em 1 Vol. 16 (Vols. 33–34): A batalha derradeira define o futuro do mundo. Verdades finais trazem consequências irreversíveis e encerram a jornada iniciada dentro das muralhas."
 };
 
 const jjkDescriptions = {
@@ -178,11 +185,11 @@ const jjkDescriptions = {
   
   16: "Vol. 16: A hierarquia do mundo jujutsu começa a ruir. Decisões políticas influenciam diretamente o destino dos protagonistas.",
   
-  17: "Vol. 17: O Jogo do Abate tem início. Regras mortais forçam participantes a lutar pela sobrevivência.",
+  16: "Vol. 16: O Jogo do Abate tem início. Regras mortais forçam participantes a lutar pela sobrevivência.",
   
   18: "Vol. 18: Novos feiticeiros e habilidades surpreendentes surgem no Jogo do Abate. Estratégia se torna tão importante quanto força.",
   
-  19: "Vol. 19: Batalhas individuais revelam histórias pessoais e motivações profundas. O conflito se torna cada vez mais imprevisível.",
+  16: "Vol. 16: Batalhas individuais revelam histórias pessoais e motivações profundas. O conflito se torna cada vez mais imprevisível.",
   
   20: "Vol. 20: O equilíbrio entre aliados e inimigos se desfaz. Confrontos decisivos alteram drasticamente o tabuleiro.",
   
@@ -241,11 +248,11 @@ export const opDescriptions = {
 
   16: "3 em 1 Vol. 16 (Vols. 46–48): Após a guerra, a tripulação segue para Thriller Bark, onde novas ameaças surgem nas sombras.",
 
-  17: "3 em 1 Vol. 17 (Vols. 49–51): Thriller Bark apresenta inimigos poderosos e revelações importantes sobre o passado e o futuro da jornada.",
+  16: "3 em 1 Vol. 16 (Vols. 49–51): Thriller Bark apresenta inimigos poderosos e revelações importantes sobre o passado e o futuro da jornada.",
 
   18: "3 em 1 Vol. 18 (Vols. 52–54): No Arquipélago Sabaody, o encontro com os Tenryuubitos muda drasticamente o rumo da história.",
 
-  19: "3 em 1 Vol. 19 (Vols. 55–57): O mundo mergulha na tensão que antecede a Guerra de Marineford, colocando alianças e ideais à prova.",
+  16: "3 em 1 Vol. 16 (Vols. 55–57): O mundo mergulha na tensão que antecede a Guerra de Marineford, colocando alianças e ideais à prova.",
 
   20: "3 em 1 Vol. 20 (Vols. 58–60): A Guerra dos Melhores explode em Marineford, trazendo perdas devastadoras e mudando o equilíbrio do mundo.",
 
@@ -301,9 +308,9 @@ export const haikyuDescriptions = {
   14: "2 em 1 Vol. 14 (Vols. 27–28): A resistência física e mental dos jogadores é colocada à prova.",
   15: "2 em 1 Vol. 15 (Vols. 29–30): Confrontos dramáticos mantêm o público sem fôlego.",
   16: "2 em 1 Vol. 16 (Vols. 31–32): O Karasuno encara partidas que podem definir seu destino.",
-  17: "2 em 1 Vol. 17 (Vols. 33–34): Rivalidades atingem o ápice em confrontos memoráveis.",
+  16: "2 em 1 Vol. 16 (Vols. 33–34): Rivalidades atingem o ápice em confrontos memoráveis.",
   18: "2 em 1 Vol. 18 (Vols. 35–36): Estratégia e trabalho em equipe fazem a diferença nos momentos decisivos.",
-  19: "2 em 1 Vol. 19 (Vols. 37–38): A busca pelo topo nacional exige o máximo de cada jogador.",
+  16: "2 em 1 Vol. 16 (Vols. 37–38): A busca pelo topo nacional exige o máximo de cada jogador.",
   20: "2 em 1 Vol. 20 (Vols. 39–40): O Karasuno mostra até onde pode chegar quando joga como um verdadeiro time."
 };
 
@@ -320,7 +327,7 @@ const aot = createSeriesVolumes({
   series: "Attack on Titan",
   prefix: "aot",
   start: 1,
-  end: 17,
+  end: 16,
   tag: "Panini",
   imageExt: "jpeg",
   affiliateByVolume: aotAffiliate,
@@ -329,6 +336,11 @@ const aot = createSeriesVolumes({
   editionLabel: "2 em 1",
   author: "Hajime Isayama",
   genre: "Shounen/Seinen",
+  addedAtByVolume: {
+    14: "2026-02-16",
+    15: "2026-02-16",
+    16: "2026-02-16",
+  },
 });
 
 
@@ -344,6 +356,11 @@ const jjk = createSeriesVolumes({
   descriptionByVolume: jjkDescriptions,
   author: "Gege Akutami",
   genre: "Shounen",
+    addedAtByVolume: {
+    25: "2026-02-18",
+    26: "2026-02-18",
+    29: "2026-02-18",
+  },
 });
 
 const op = createSeriesVolumes({
@@ -359,6 +376,9 @@ const op = createSeriesVolumes({
   editionLabel: "3 em 1",
   author: "Eiichiro Oda",
   genre: "Shounen",
+    addedAtByVolume: {
+      37: "2026-02-19",
+    },
 });
 
 const haikyu = createSeriesVolumes({
@@ -374,6 +394,26 @@ const haikyu = createSeriesVolumes({
   editionLabel: "2 em 1",
   author: "Haruichi Furudate",
   genre: "Shounen",
+  addedAtByVolume: {
+    1: "2026-02-16",
+    2: "2026-02-16",
+    3: "2026-02-16",
+    4: "2026-02-16",
+    5: "2026-02-16",
+    6: "2026-02-16",
+    7: "2026-02-16",
+    8: "2026-02-16",
+    9: "2026-02-16",
+    10: "2026-02-16",
+    11: "2026-02-16",
+    12: "2026-02-16",
+    13: "2026-02-16",
+    14: "2026-02-16",
+    15: "2026-02-16",
+    16: "2026-02-16",
+    16: "2026-02-16",
+  },
+  
 });
 
 /* =========================

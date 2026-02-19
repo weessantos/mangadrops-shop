@@ -1,10 +1,11 @@
-// ProductCard.jsx
-
 const base = import.meta.env.BASE_URL;
+import "../styles/product-card.css";
+
 
 const img = (path) => `${base}assets/${path}`;
 
-export default function ProductCard({ product, onOpen }) {
+export default function ProductCard(props) {
+  const { product, onOpen, showNewBadge = false } = props;
   const mlUrl =
     product?.affiliate?.mercadoLivre &&
     typeof product.affiliate.mercadoLivre === "string" &&
@@ -23,7 +24,14 @@ export default function ProductCard({ product, onOpen }) {
   const hasAmazon = !!amzUrl;
   const isAvailable = hasML || hasAmazon;
   const hasBoth = hasML && hasAmazon;
-
+    const isNew = (() => {
+    if (!showNewBadge) return false;
+    if (!product?.addedAt) return false;
+    const d = new Date(product.addedAt);
+    if (Number.isNaN(d.getTime())) return false;
+    const diffDays = (new Date() - d) / (1000 * 60 * 60 * 24);
+    return diffDays >= 0 && diffDays <= 30;
+  })();
   return (
     <div
       className="card cardHover"
@@ -34,6 +42,7 @@ export default function ProductCard({ product, onOpen }) {
     >
       <div className="thumbWrap">
         <img className="thumb" src={product.image} alt={product.title} />
+        {isNew ? <div className="newBadge">NOVO</div> : null}
 
         {/* Overlay aparece no hover e o botão abre o modal */}
         <div className="hoverOverlay" aria-hidden="true">

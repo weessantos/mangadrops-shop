@@ -1,0 +1,127 @@
+.railBlock{
+  padding: 0;
+  margin-top: 18px;
+}
+
+.railHeader{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 14px;
+  margin-bottom: 10px;
+}
+
+.railTitle{
+  margin: 0;
+  font-size: clamp(20px, 2vw, 26px);
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: #fff;
+
+  padding-left: 14px;
+  position: relative;
+}
+
+.railTitle::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 4px;
+  height: 70%;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #a855f7, #3b82f6);
+}
+
+.railHint{
+  font-size: 12px;
+  opacity: 0.75;
+  font-weight: 700;
+}
+
+/* ===== Product Rail ===== */
+.productRail{
+  display: grid;
+  grid-auto-flow: column;
+  gap: 12px;
+  padding: 0 14px 6px;
+  position: relative;
+  z-index: 1;
+
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+
+  scrollbar-width: none;
+}
+
+
+.productRail::-webkit-scrollbar{ display: none; }
+
+.productItem{ scroll-snap-align: start; }
+
+/* garante que o ProductCard ocupe o item */
+.productItem > *{ width: 100%; }
+
+/* Responsivo */
+@media (min-width: 420px){
+  .productRail{ grid-auto-columns: 48%; }
+}
+@media (min-width: 700px){
+  .productRail{ grid-auto-columns: 32%; }
+}
+.productRail{
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 320px; /* ✅ no desktop fica consistente */
+  gap: 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.productRail::-webkit-scrollbar{ display: none; }
+.productItem{ scroll-snap-align: start; }
+
+/* ===== Setinhas (somente desktop) ===== */
+.railArrows{
+  margin-left: auto;
+  display: none;
+  gap: 8px;
+  align-items: center;
+  position: relative;
+  z-index: 10;           /* setas acima visualmente */
+  pointer-events: none; /* mas NÃO captura clique no container */
+}
+
+.railArrow{
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.92);
+  font-size: 22px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.railArrows .railArrow{
+  pointer-events: auto;
+}
+
+.railArrow:hover{
+  background: rgba(255,255,255,0.12);
+}
+
+.railArrow.disabled{
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+@media (min-width: 1024px){
+  .railArrows{ display: flex; }
+  .productRail{ grid-auto-columns: 320px; }
+}
+
+
+

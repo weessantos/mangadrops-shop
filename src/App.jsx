@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import "./styles.css";
+import "./styles/global.css";
 import Header from "./components/Header";
 import HomeHero from "./components/HomeHero";
 import SeriesCard from "./components/SeriesCard";
@@ -7,7 +7,8 @@ import ProductCard from "./components/ProductCard";
 import ProductModal from "./components/ProductModal";
 import { products } from "./data/products";
 import { seriesCatalog } from "./data/series";
-import { aotAffiliate, opAffiliate, jjkAffiliate, haikyuAffiliate } from "./data/affiliates";
+import LaunchRail from "./components/LaunchRail";
+//*import { aotAffiliate, opAffiliate, jjkAffiliate, haikyuAffiliate } from "./data/affiliates";*//
 
 const ALIASES = {
   jjk: "jujutsu kaisen",
@@ -289,6 +290,9 @@ export default function App() {
     }, 0);
   };
 
+  const handleOpenProduct = (product) => {
+    setSelected(product);
+  };
   return (
     <div className="container">
       <Header
@@ -303,38 +307,57 @@ export default function App() {
 
       <HomeHero />     
 
-      <section id="obras" className="sectionHeader">
+      <section id="home" className="sectionHeader">
         <div className="sectionHeaderInner">
-          <h2 className="sectionTitle">Obras 📚</h2>
+          <h2 className="sectionTitle">🔥 Mangás Disponíveis Agora</h2>
           <p className="sectionSubtitle">
-            Explore as coleções disponíveis e veja os volumes em estoque.
+            Confira os volumes em estoque e garanta o seu antes que esgote.
           </p>
         </div>
       </section>
 
       {!activeSeries && (
         <div className="sectionHint">
-          Selecione uma obra abaixo para visualizar os volumes disponíveis.
+          Atualizado com lançamentos e reposições recentes.
         </div>
       )}
 
       {!activeSeries && (
-        <section className="seriesGrid">
-          {seriesList.map((s) => (
-            <SeriesCard
-              key={s.name}
-              name={s.name}
-              thumb={s.thumb}
-              subtitle={s.subtitle}
-              rangeLabel={s.rangeLabel}
-              haveLabel={s.haveLabel}
-              statusLabel={s.statusLabel}
-              missing={s.missing}
-              missingCount={s.missingCount}
-              active={activeSeries === s.name}
-              onOpen={openSeries}
-            />
-          ))}
+        <section className="railBlock" id="obras">
+          <div className="railHeader">
+          </div>
+          {/* 🔥 Rail de Lançamentos */}
+          <LaunchRail
+            title="Lançamentos"
+            products={products}
+            limit={30}
+            onOpenProduct={handleOpenProduct}
+          />
+          {/* Rail de Séries */}
+          <section className="railBlock" id="railTitle">
+            <div className="railHeader">
+              <h2 className="railTitle">Coleções</h2>
+            </div>
+
+            <div className="seriesRail">
+              {seriesList.map((s) => (
+                <div className="railItem" key={s.name}>
+                  <SeriesCard
+                    name={s.name}
+                    thumb={s.thumb}
+                    subtitle={s.subtitle}
+                    rangeLabel={s.rangeLabel}
+                    haveLabel={s.haveLabel}
+                    statusLabel={s.statusLabel}
+                    missing={s.missing}
+                    missingCount={s.missingCount}
+                    active={activeSeries === s.name}
+                    onOpen={openSeries}
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
         </section>
       )}
 
@@ -373,7 +396,6 @@ export default function App() {
           )}
         </section>
       )}
-      
       {selected && (
         <ProductModal product={selected} onClose={() => setSelected(null)} />
       )}

@@ -1,0 +1,345 @@
+/* =========================================================
+   SERIES GALLERY (Netflix-style)
+   ========================================================= */
+.seriesGrid{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+@media (max-width: 1200px){
+  .seriesGrid{ grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 900px){
+  .seriesGrid{ grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 520px){
+  .seriesGrid{ grid-template-columns: 1fr; }
+}
+
+.seriesCard{
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.25);
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+  animation: seriesFade .28s ease both;
+}
+
+@keyframes seriesFade{
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.seriesCard:hover{
+  transform: translateY(-5px) scale(1.01);
+  border-color: rgba(255,255,255,0.22);
+  box-shadow:
+    0 18px 60px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(124,58,237,0.12),
+    0 0 40px rgba(124,58,237,0.25);
+}
+
+.seriesThumb{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display:block;
+  transform: scale(1.02);
+  transition: transform .35s ease, filter .35s ease;
+  filter: saturate(1.05) contrast(1.05);
+}
+
+.seriesCard:hover .seriesThumb{
+  transform: scale(1.10);
+  filter: saturate(1.12) contrast(1.08);
+}
+
+.seriesOverlay{
+  position:absolute;
+  inset:0;
+  background: linear-gradient(to top, rgba(0,0,0,0.82), rgba(0,0,0,0.15) 55%, rgba(0,0,0,0.05));
+  display:flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 14px;
+  gap: 8px;
+}
+
+.seriesTopBadges{
+  position:absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  z-index: 60;
+  display:flex;
+  justify-content: space-between;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.badgePill{
+  font-size: 10px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(0,0,0,0.35);
+  color: rgba(255,255,255,0.88);
+  backdrop-filter: blur(8px);
+  white-space: nowrap;
+}
+
+.badgePill.good{
+  background: rgba(34,197,94,0.20);
+  border-color: rgba(34,197,94,0.30);
+}
+
+.badgePill.warn{
+  background: rgba(245,158,11,0.22);
+  border-color: rgba(245,158,11,0.32);
+}
+
+.badgePill.danger{
+  background: rgba(239,68,68,0.18);
+  border-color: rgba(239,68,68,0.30);
+}
+
+button.badgePill{
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.16);
+}
+
+.seriesName{
+  margin:0;
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.15;
+  text-shadow: 0 10px 30px rgba(0,0,0,0.55);
+}
+
+.seriesMeta{
+  display:flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.seriesChip{
+  font-size: 10px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.35);
+  color: rgba(255,255,255,0.86);
+  backdrop-filter: blur(8px);
+}
+
+.seriesChip.good{
+  background: rgba(124,58,237,0.22);
+  border-color: rgba(124,58,237,0.30);
+}
+
+/* Active + Chevron */
+.seriesTitleRow{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.seriesChevron{
+  width: 28px;
+  height: 28px;
+  display:grid;
+  place-items:center;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.30);
+  color: rgba(255,255,255,0.9);
+  transform: rotate(0deg);
+  transition: transform .18s ease, background .18s ease, border-color .18s ease;
+  backdrop-filter: blur(8px);
+}
+.seriesChevron.open{ transform: rotate(180deg); }
+
+.seriesCard.isActive{
+  border-color: rgba(124,58,237,0.45);
+  box-shadow:
+    0 18px 60px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(124,58,237,0.18),
+    0 0 46px rgba(124,58,237,0.28);
+}
+
+.seriesCard.isActive .seriesThumb{ transform: scale(1.08); }
+
+.seriesChip.selected{
+  background: rgba(124,58,237,0.22);
+  border-color: rgba(124,58,237,0.30);
+}
+
+/* =========================================================
+   VOLUMES WRAP (expand/collapse)
+   ========================================================= */
+.volumesWrap{
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: max-height .25s ease, opacity .2s ease, transform .2s ease;
+}
+
+.volumesWrap.open{
+  max-height: 99999px;
+  opacity: 1;
+  transform: translateY(0px);
+}
+
+.volumesSection{
+  padding-top: 86px;
+  margin-top: -70px;
+}
+
+/* =========================================================
+   POPOVER (Sem estoque)
+   ========================================================= */
+.missingPopover{
+  position: absolute;
+  top: 52px;
+  right: 12px;
+  width: min(360px, calc(100% - 24px));
+  z-index: 80;
+
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(10,12,18,0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 20px 80px rgba(0,0,0,0.70);
+  overflow: hidden;
+}
+
+.missingPopover::before{
+  content:"";
+  position:absolute;
+  top: -6px;
+  right: 18px;
+  width: 12px;
+  height: 12px;
+  transform: rotate(45deg);
+  background: rgba(10,12,18,0.55);
+  border-left: 1px solid rgba(255,255,255,0.14);
+  border-top: 1px solid rgba(255,255,255,0.14);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.missingHeader{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.92);
+  font-size: 12px;
+}
+
+.missingClose{
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.30);
+  color: rgba(255,255,255,0.88);
+  border-radius: 10px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.missingBody{ padding: 12px 12px 14px; }
+
+.missingCount{
+  font-size: 12px;
+  color: rgba(255,255,255,0.80);
+  margin-bottom: 8px;
+}
+
+.missingList{
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(255,255,255,0.88);
+  max-height: 130px;
+  overflow: auto;
+  padding-right: 6px;
+}
+
+.missingList::-webkit-scrollbar{ width: 8px; }
+.missingList::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,0.14);
+  border-radius: 999px;
+}
+/* ===== Carrossel de séries ===== */
+.railBlock{
+  padding: 10px 14px 18px;
+}
+
+.railHeader{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.railTitle{
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.4px;
+}
+
+.railSeeAll{
+  border: 0;
+  background: transparent;
+  color: rgba(255,255,255,0.75);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* Mobile-first: vira trilho horizontal */
+.seriesRail{
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 78%;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+
+  /* deixa mais “limpo” */
+  scrollbar-width: none;
+}
+.seriesRail::-webkit-scrollbar{ display: none; }
+
+.railItem{
+  scroll-snap-align: start;
+}
+
+/* Importante: no carrossel, o card precisa ocupar 100% do item */
+.railItem .seriesCard{
+  width: 100%;
+}
+
+/* Telas maiores: pode virar grid (opcional) */
+@media (min-width: 900px){
+  .seriesRail{
+    grid-auto-flow: unset;
+    grid-auto-columns: unset;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+}

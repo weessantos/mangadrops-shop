@@ -1,10 +1,33 @@
 import { useEffect, useRef, useState } from "react";
+import "../styles/home-hero.css";
 
 const base = import.meta.env.BASE_URL;
 const img = (path) => `${base}assets/${path}`;
 
+const handleCTA = (cta) => {
+  if (cta.type === "scroll") {
+    document.getElementById(cta.value)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+
+  if (cta.type === "url") {
+    window.open(cta.value, "_blank");
+  }
+};
+
 export default function HomeHero({ onHeroSearch }) {
   const slides = [
+    {
+      src: img("banner-0.jpeg"),
+      alt: "Mangá Drops banner",
+      title: "Mangá Drops",
+      subtitle: "Do TikTok direto para sua coleção.",
+      description: "Reviews, lançamentos e links organizados para você encontrar seus próximos volumes com facilidade.",
+      ctaLabel: "Ver Mangás Disponíveis",
+      cta: { type: "scroll", value: "obras" },
+    },
     {
       src: img("banner-1.jpeg"),
       alt: "One Piece",

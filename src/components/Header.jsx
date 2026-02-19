@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
+import "../styles/header.css";
+
 const base = import.meta.env.BASE_URL;
 
 const img = (path) => `${base}assets/${path}`;
@@ -11,7 +13,14 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
   };
 
   const scrollToObras = () => {
-    document.getElementById("obras")?.scrollIntoView({
+    document.getElementById("railTitle")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  const scrollToNews = () => {
+  document.getElementById("obras")?.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
@@ -177,7 +186,10 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
           {/* 🔥 Linha principal */}
           <div className="pillRowMain">
             <button className="pill pillPrimary" onClick={scrollToObras} type="button">
-              Obras
+              Coleções
+            </button>
+            <button className="pill pillPrimary" onClick={scrollToNews} type="button">
+              Lançamentos
             </button>
 
             <button className="pill pillCTA" onClick={openRequestForm} type="button">
