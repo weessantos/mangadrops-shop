@@ -5,8 +5,22 @@
     <link rel="icon" type="image/png" href="./favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mangá Drops</title>
-    <script type="module" crossorigin src="./assets/index-BznBGJjL.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-DBCMGUE3.css">
+
+    <!-- ✅ GitHub Pages SPA fallback -->
+    <script>
+      (function () {
+        const params = new URLSearchParams(location.search);
+        const p = params.get("__gh_path__");
+        if (p) {
+          params.delete("__gh_path__");
+          const clean = params.toString();
+          history.replaceState(null, "", p + (clean ? "?" + clean : ""));
+        }
+      })();
+    </script>
+
+    <script type="module" crossorigin src="./assets/index-CXAIPTbb.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-Dpi3x0eW.css">
   </head>
   <body>
     <div id="root"></div>
