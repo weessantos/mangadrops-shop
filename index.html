@@ -5,6 +5,20 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mangá Drops</title>
+
+    <!-- ✅ GitHub Pages SPA fallback -->
+    <script>
+      (function () {
+        const params = new URLSearchParams(location.search);
+        const p = params.get("__gh_path__");
+        if (p) {
+          params.delete("__gh_path__");
+          const clean = params.toString();
+          history.replaceState(null, "", p + (clean ? "?" + clean : ""));
+        }
+      })();
+    </script>
+
   </head>
   <body>
     <div id="root"></div>

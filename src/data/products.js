@@ -1,4 +1,4 @@
-import { aotAffiliate, opAffiliate, jjkAffiliate, haikyuAffiliate } from "./affiliates";
+import { aotAffiliate, opAffiliate, jjkAffiliate, haikyuAffiliate, kgbAffiliate, vinlandAffiliate } from "./affiliates.js";
 
 const base = import.meta.env.BASE_URL;
 const img = (path) => `${base}assets/${path}`;
@@ -42,8 +42,6 @@ function createSeriesVolumes({
   editionLabel = "",
   author = "",
   genre = "",
-
-  // 🔥 NOVO
   addedAtByVolume = {},
 
 }) {
@@ -111,183 +109,112 @@ const haikyuTiktok = {
   2: "",
   // ...
 };
+const kgbTiktok = {
+  1: "",
+  2: "",
+  // ...
+};
+const vinlandTiktok = {
+  1: "",
+  2: "",
+  // ...
+};
+
 /* =========================
    DESCRIÇÕES DAS OBRAS (POR VOLUMES)
    ========================= */
 const aotDescriptions = {
-  1: "2 em 1 Vol. 01 (Vols. 1–2): A humanidade vive protegida por muralhas gigantes contra os Titãs. Quando a Muralha Maria é destruída, Eren presencia uma tragédia devastadora e decide se juntar ao exército para eliminar todos os Titãs.",
-  
+  1: "2 em 1 Vol. 01 (Vols. 1–2): A humanidade vive protegida por muralhas gigantes contra os Titãs. Quando a Muralha Maria é destruída, Eren presencia uma tragédia devastadora e decide se juntar ao exército para eliminar todos os Titãs.", 
   2: "2 em 1 Vol. 02 (Vols. 3–4): Durante o treinamento militar, laços são formados e segredos começam a surgir. Um ataque inesperado revela habilidades ocultas que mudam completamente o rumo da batalha.",
-  
-  3: "2 em 1 Vol. 03 (Vols. 5–6): A batalha pela recuperação do Distrito de Trost coloca os recrutas à prova. Estratégias arriscadas e sacrifícios mostram que a sobrevivência exige coragem e liderança.",
-  
-  4: "2 em 1 Vol. 04 (Vols. 7–8): O Corpo de Exploração parte além das muralhas e enfrenta um inimigo diferente de tudo que já viram. A existência de Titãs inteligentes levanta novas e inquietantes perguntas.",
-  
-  5: "2 em 1 Vol. 05 (Vols. 9–10): Revelações chocantes abalam a confiança entre os soldados. Confrontos intensos expõem traições e mostram que o verdadeiro inimigo pode estar mais próximo do que se imagina.",
-  
-  6: "2 em 1 Vol. 06 (Vols. 11–12): A batalha contra o Titã Fêmea chega ao clímax em um confronto brutal. As consequências deixam cicatrizes profundas e redefinem o futuro do Corpo de Exploração.",
-  
-  7: "2 em 1 Vol. 07 (Vols. 13–14): Novos conflitos colocam antigos aliados frente a frente. Segredos sobre a origem dos Titãs começam a emergir, alterando a percepção sobre o mundo além das muralhas.",
-  
-  8: "2 em 1 Vol. 08 (Vols. 15–16): Conspirações políticas dentro das muralhas ganham destaque. O destino da humanidade passa a depender de decisões estratégicas e perigosas.",
-  
-  9: "2 em 1 Vol. 09 (Vols. 17–18): O passado da família real é revelado, trazendo verdades perturbadoras. Eren enfrenta escolhas que podem redefinir completamente o futuro do mundo.",
-  
-  10: "2 em 1 Vol. 10 (Vols. 19–20): O plano para retomar a Muralha Maria começa. Preparações intensas antecedem uma missão decisiva que exigirá sacrifícios extremos.",
-  
-  11: "2 em 1 Vol. 11 (Vols. 21–22): A batalha em Shiganshina explode com força total. Confrontos épicos revelam o verdadeiro poder dos Titãs e levam os soldados ao limite.",
-  
-  12: "2 em 1 Vol. 12 (Vols. 23–24): Verdades escondidas por gerações vêm à tona. O mundo além das muralhas se revela muito maior — e mais cruel — do que imaginavam.",
-  
-  13: "2 em 1 Vol. 13 (Vols. 25–26): A narrativa se expande para novos territórios e novos conflitos. A guerra assume proporções globais, mudando completamente a perspectiva da história.",
-  
-  14: "2 em 1 Vol. 14 (Vols. 27–28): Ideologias entram em choque e antigos companheiros se dividem. A linha entre herói e vilão se torna cada vez mais tênue.",
-  
-  15: "2 em 1 Vol. 15 (Vols. 29–30): Um plano ousado começa a se concretizar. O mundo entra em colapso diante de uma ameaça que pode mudar a história para sempre.",
-  
-  16: "2 em 1 Vol. 16 (Vols. 31–32): Antigos aliados se unem em uma missão final desesperada. O confronto inevitável se aproxima, colocando o destino da humanidade em risco.",
-  
-  16: "2 em 1 Vol. 16 (Vols. 33–34): A batalha derradeira define o futuro do mundo. Verdades finais trazem consequências irreversíveis e encerram a jornada iniciada dentro das muralhas."
+  3: "2 em 1 Vol. 03 (Vols. 5–6): A batalha pela recuperação do Distrito de Trost coloca os recrutas à prova. Estratégias arriscadas e sacrifícios mostram que a sobrevivência exige coragem e liderança.",  
+  4: "2 em 1 Vol. 04 (Vols. 7–8): O Corpo de Exploração parte além das muralhas e enfrenta um inimigo diferente de tudo que já viram. A existência de Titãs inteligentes levanta novas e inquietantes perguntas.", 
+  5: "2 em 1 Vol. 05 (Vols. 9–10): Revelações chocantes abalam a confiança entre os soldados. Confrontos intensos expõem traições e mostram que o verdadeiro inimigo pode estar mais próximo do que se imagina.", 
+  6: "2 em 1 Vol. 06 (Vols. 11–12): A batalha contra o Titã Fêmea chega ao clímax em um confronto brutal. As consequências deixam cicatrizes profundas e redefinem o futuro do Corpo de Exploração.",  
+  7: "2 em 1 Vol. 07 (Vols. 13–14): Novos conflitos colocam antigos aliados frente a frente. Segredos sobre a origem dos Titãs começam a emergir, alterando a percepção sobre o mundo além das muralhas.",  
+  8: "2 em 1 Vol. 08 (Vols. 15–16): Conspirações políticas dentro das muralhas ganham destaque. O destino da humanidade passa a depender de decisões estratégicas e perigosas.", 
+  9: "2 em 1 Vol. 09 (Vols. 17–18): O passado da família real é revelado, trazendo verdades perturbadoras. Eren enfrenta escolhas que podem redefinir completamente o futuro do mundo.", 
+  10: "2 em 1 Vol. 10 (Vols. 19–20): O plano para retomar a Muralha Maria começa. Preparações intensas antecedem uma missão decisiva que exigirá sacrifícios extremos.",  
+  11: "2 em 1 Vol. 11 (Vols. 21–22): A batalha em Shiganshina explode com força total. Confrontos épicos revelam o verdadeiro poder dos Titãs e levam os soldados ao limite.",  
+  12: "2 em 1 Vol. 12 (Vols. 23–24): Verdades escondidas por gerações vêm à tona. O mundo além das muralhas se revela muito maior — e mais cruel — do que imaginavam.",  
+  13: "2 em 1 Vol. 13 (Vols. 25–26): A narrativa se expande para novos territórios e novos conflitos. A guerra assume proporções globais, mudando completamente a perspectiva da história.",  
+  14: "2 em 1 Vol. 14 (Vols. 27–28): Ideologias entram em choque e antigos companheiros se dividem. A linha entre herói e vilão se torna cada vez mais tênue.", 
+  15: "2 em 1 Vol. 15 (Vols. 29–30): Um plano ousado começa a se concretizar. O mundo entra em colapso diante de uma ameaça que pode mudar a história para sempre.",  
+  16: "2 em 1 Vol. 16 (Vols. 31–32): Antigos aliados se unem em uma missão final desesperada. O confronto inevitável se aproxima, colocando o destino da humanidade em risco.",  
+  17: "2 em 1 Vol. 17 (Vols. 33–34): A batalha derradeira define o futuro do mundo. Verdades finais trazem consequências irreversíveis e encerram a jornada iniciada dentro das muralhas."
 };
 
 const jjkDescriptions = {
   0: "Vol. 00: Yuta Okkotsu é assombrado pelo espírito extremamente poderoso de sua amiga de infância, Rika. Ao ingressar na Escola Técnica de Jujutsu sob orientação de Satoru Gojo, ele aprende a controlar essa força devastadora enquanto descobre seu verdadeiro potencial como feiticeiro.",
-
-  1: "Vol. 01: Yuji Itadori acaba envolvido no mundo das maldições após engolir um objeto amaldiçoado. Agora hospedando o poderoso Sukuna, ele inicia sua jornada na Escola Técnica de Jujutsu sob a supervisão de Satoru Gojo.",
-  
-  2: "Vol. 02: Yuji começa seu treinamento como feiticeiro enquanto enfrenta maldições perigosas ao lado de Megumi e Nobara. A ameaça cresce conforme inimigos organizados entram em cena.",
-  
-  3: "Vol. 03: O confronto contra maldições de alto nível revela o verdadeiro perigo do mundo jujutsu. Yuji encara batalhas que colocam seus limites físicos e mentais à prova.",
-  
-  4: "Vol. 04: A missão em um centro de detenção toma um rumo inesperado. Consequências graves abalam o grupo e reforçam a brutalidade da realidade enfrentada pelos feiticeiros.",
-  
-  5: "Vol. 05: Surge o evento de intercâmbio entre escolas de Jujutsu. Rivalidades se intensificam e novos personagens demonstram habilidades impressionantes.",
-  
-  6: "Vol. 06: O intercâmbio é interrompido por uma invasão inesperada. Maldições poderosas colocam estudantes e professores em perigo real.",
-  
-  7: "Vol. 07: Satoru Gojo mostra por que é considerado o feiticeiro mais forte. Um confronto devastador expõe o abismo de poder entre humanos e maldições especiais.",
-  
-  8: "Vol. 08: A organização das maldições começa a revelar seus planos. O equilíbrio entre os feiticeiros e o mundo amaldiçoado fica cada vez mais instável.",
-  
-  9: "Vol. 09: O Incidente de Shibuya começa a se desenrolar. Armadilhas estratégicas colocam até mesmo os mais fortes em situações desesperadoras.",
-  
-  10: "Vol. 10: O caos em Shibuya se intensifica. Confrontos brutais deixam cicatrizes profundas nos personagens.",
-  
-  11: "Vol. 11: A batalha continua em meio à destruição da cidade. Sacrifícios dolorosos mudam o rumo da guerra contra as maldições.",
-  
-  12: "Vol. 12: Consequências do Incidente de Shibuya abalam toda a estrutura da sociedade jujutsu. Novas ameaças surgem no cenário.",
-  
-  13: "Vol. 13: Yuji enfrenta o peso de suas ações enquanto o mundo jujutsu entra em colapso. A tensão emocional cresce drasticamente.",
-  
-  14: "Vol. 14: Novos jogadores entram em cena. Estratégias complexas começam a moldar o futuro da guerra.",
-  
-  15: "Vol. 15: Confrontos intensos revelam técnicas amaldiçoadas devastadoras. O nível das batalhas atinge um novo patamar.",
-  
-  16: "Vol. 16: A hierarquia do mundo jujutsu começa a ruir. Decisões políticas influenciam diretamente o destino dos protagonistas.",
-  
-  16: "Vol. 16: O Jogo do Abate tem início. Regras mortais forçam participantes a lutar pela sobrevivência.",
-  
-  18: "Vol. 18: Novos feiticeiros e habilidades surpreendentes surgem no Jogo do Abate. Estratégia se torna tão importante quanto força.",
-  
-  16: "Vol. 16: Batalhas individuais revelam histórias pessoais e motivações profundas. O conflito se torna cada vez mais imprevisível.",
-  
-  20: "Vol. 20: O equilíbrio entre aliados e inimigos se desfaz. Confrontos decisivos alteram drasticamente o tabuleiro.",
-  
-  21: "Vol. 21: A tensão atinge níveis críticos. Planos ocultos começam a se revelar.",
-  
-  22: "Vol. 22: Antigos mistérios vêm à tona enquanto a luta pelo controle do Jogo do Abate se intensifica.",
-  
-  23: "Vol. 23: Alianças improváveis se formam em meio ao caos. O futuro do mundo jujutsu depende de decisões arriscadas.",
-  
-  24: "Vol. 24: Batalhas estratégicas redefinem o equilíbrio de poder. Cada movimento pode ser o último.",
-  
-  25: "Vol. 25: Confrontos emocionais colocam antigos companheiros em lados opostos. O destino se aproxima do clímax.",
-  
-  26: "Vol. 26: O plano final começa a tomar forma. Revelações impactantes mudam o entendimento sobre o verdadeiro objetivo do conflito.",
-  
-  27: "Vol. 27: A guerra se aproxima de seu ponto crítico. Sacrifícios se tornam inevitáveis.",
-  
-  28: "Vol. 28: A intensidade das batalhas atinge o ápice. Técnicas lendárias são finalmente reveladas.",
-  
-  29: "Vol. 29: O confronto decisivo se aproxima. Personagens enfrentam seus próprios limites.",
-  
+  1: "Vol. 01: Yuji Itadori acaba envolvido no mundo das maldições após engolir um objeto amaldiçoado. Agora hospedando o poderoso Sukuna, ele inicia sua jornada na Escola Técnica de Jujutsu sob a supervisão de Satoru Gojo.",  
+  2: "Vol. 02: Yuji começa seu treinamento como feiticeiro enquanto enfrenta maldições perigosas ao lado de Megumi e Nobara. A ameaça cresce conforme inimigos organizados entram em cena.", 
+  3: "Vol. 03: O confronto contra maldições de alto nível revela o verdadeiro perigo do mundo jujutsu. Yuji encara batalhas que colocam seus limites físicos e mentais à prova.",  
+  4: "Vol. 04: A missão em um centro de detenção toma um rumo inesperado. Consequências graves abalam o grupo e reforçam a brutalidade da realidade enfrentada pelos feiticeiros.",  
+  5: "Vol. 05: Surge o evento de intercâmbio entre escolas de Jujutsu. Rivalidades se intensificam e novos personagens demonstram habilidades impressionantes.",  
+  6: "Vol. 06: O intercâmbio é interrompido por uma invasão inesperada. Maldições poderosas colocam estudantes e professores em perigo real.", 
+  7: "Vol. 07: Satoru Gojo mostra por que é considerado o feiticeiro mais forte. Um confronto devastador expõe o abismo de poder entre humanos e maldições especiais.", 
+  8: "Vol. 08: A organização das maldições começa a revelar seus planos. O equilíbrio entre os feiticeiros e o mundo amaldiçoado fica cada vez mais instável.",  
+  9: "Vol. 09: O Incidente de Shibuya começa a se desenrolar. Armadilhas estratégicas colocam até mesmo os mais fortes em situações desesperadoras.", 
+  10: "Vol. 10: O caos em Shibuya se intensifica. Confrontos brutais deixam cicatrizes profundas nos personagens.",  
+  11: "Vol. 11: A batalha continua em meio à destruição da cidade. Sacrifícios dolorosos mudam o rumo da guerra contra as maldições.", 
+  12: "Vol. 12: Consequências do Incidente de Shibuya abalam toda a estrutura da sociedade jujutsu. Novas ameaças surgem no cenário.", 
+  13: "Vol. 13: Yuji enfrenta o peso de suas ações enquanto o mundo jujutsu entra em colapso. A tensão emocional cresce drasticamente.", 
+  14: "Vol. 14: Novos jogadores entram em cena. Estratégias complexas começam a moldar o futuro da guerra.",  
+  15: "Vol. 15: Confrontos intensos revelam técnicas amaldiçoadas devastadoras. O nível das batalhas atinge um novo patamar.",  
+  16: "Vol. 16: A hierarquia do mundo jujutsu começa a ruir. Decisões políticas influenciam diretamente o destino dos protagonistas.",  
+  17: "Vol. 17: O Jogo do Abate tem início. Regras mortais forçam participantes a lutar pela sobrevivência.", 
+  18: "Vol. 18: Novos feiticeiros e habilidades surpreendentes surgem no Jogo do Abate. Estratégia se torna tão importante quanto força.", 
+  19: "Vol. 19: Batalhas individuais revelam histórias pessoais e motivações profundas. O conflito se torna cada vez mais imprevisível.", 
+  20: "Vol. 20: O equilíbrio entre aliados e inimigos se desfaz. Confrontos decisivos alteram drasticamente o tabuleiro.", 
+  21: "Vol. 21: A tensão atinge níveis críticos. Planos ocultos começam a se revelar.",  
+  22: "Vol. 22: Antigos mistérios vêm à tona enquanto a luta pelo controle do Jogo do Abate se intensifica.", 
+  23: "Vol. 23: Alianças improváveis se formam em meio ao caos. O futuro do mundo jujutsu depende de decisões arriscadas.", 
+  24: "Vol. 24: Batalhas estratégicas redefinem o equilíbrio de poder. Cada movimento pode ser o último.", 
+  25: "Vol. 25: Confrontos emocionais colocam antigos companheiros em lados opostos. O destino se aproxima do clímax.", 
+  26: "Vol. 26: O plano final começa a tomar forma. Revelações impactantes mudam o entendimento sobre o verdadeiro objetivo do conflito.", 
+  27: "Vol. 27: A guerra se aproxima de seu ponto crítico. Sacrifícios se tornam inevitáveis.", 
+  28: "Vol. 28: A intensidade das batalhas atinge o ápice. Técnicas lendárias são finalmente reveladas.", 
+  29: "Vol. 29: O confronto decisivo se aproxima. Personagens enfrentam seus próprios limites.", 
   30: "Vol. 30: A batalha final redefine o destino do mundo jujutsu. Consequências permanentes encerram um ciclo de maldições e escolhas difíceis."
 };
 
 export const opDescriptions = {
 
   1: "3 em 1 Vol. 01 (Vols. 1–3): Monkey D. Luffy inicia sua jornada para se tornar o Rei dos Piratas. O arco Romance Dawn apresenta Zoro e marca o nascimento dos Chapéus de Palha no East Blue.",
-
   2: "3 em 1 Vol. 02 (Vols. 4–6): Luffy enfrenta Buggy e o Capitão Kuro enquanto a tripulação começa a crescer. Novos aliados entram em cena e os perigos do East Blue se intensificam.",
-
   3: "3 em 1 Vol. 03 (Vols. 7–9): O confronto contra Don Krieg no Baratie coloca Sanji no caminho da tripulação. A Grand Line se aproxima e os sonhos começam a ganhar forma.",
-
   4: "3 em 1 Vol. 04 (Vols. 10–12): O arco de Arlong Park revela o passado de Nami e fortalece os laços dos Chapéus de Palha em uma batalha decisiva pela liberdade.",
-
   5: "3 em 1 Vol. 05 (Vols. 13–15): Após Arlong Park, a tripulação finalmente entra na Grand Line, encarando novos mares e inimigos muito mais perigosos.",
-
   6: "3 em 1 Vol. 06 (Vols. 16–18): Whiskey Peak e Little Garden apresentam a Baroque Works e ampliam o escopo da aventura rumo a Alabasta.",
-
   7: "3 em 1 Vol. 07 (Vols. 19–21): A saga de Drum introduz Tony Tony Chopper e aprofunda o lado emocional da tripulação antes do confronto final em Alabasta.",
-
   8: "3 em 1 Vol. 08 (Vols. 22–24): O arco de Alabasta atinge seu clímax com o confronto contra Crocodile e a luta pelo destino de um reino inteiro.",
-
   9: "3 em 1 Vol. 09 (Vols. 25–27): As consequências de Alabasta ecoam pelo mundo enquanto mistérios sobre o Governo Mundial começam a surgir.",
-
   10: "3 em 1 Vol. 10 (Vols. 28–30): A jornada leva os Chapéus de Palha aos céus em Skypiea, onde lendas antigas e novos inimigos aguardam.",
-
   11: "3 em 1 Vol. 11 (Vols. 31–33): O confronto contra Enel revela segredos do Século Perdido e coloca o sonho de liberdade em jogo nas ilhas do céu.",
-
   12: "3 em 1 Vol. 12 (Vols. 34–36): A conclusão de Skypiea abre caminho para Water 7, onde tensões internas começam a ameaçar a tripulação.",
-
   13: "3 em 1 Vol. 13 (Vols. 37–39): Water 7 marca revelações impactantes envolvendo Robin e coloca os Chapéus de Palha contra o Governo Mundial.",
-
   14: "3 em 1 Vol. 14 (Vols. 40–42): Enies Lobby inicia uma guerra aberta para resgatar uma companheira, desafiando diretamente a autoridade mundial.",
-
   15: "3 em 1 Vol. 15 (Vols. 43–45): O clímax de Enies Lobby traz batalhas intensas e momentos inesquecíveis que redefinem a força da tripulação.",
-
   16: "3 em 1 Vol. 16 (Vols. 46–48): Após a guerra, a tripulação segue para Thriller Bark, onde novas ameaças surgem nas sombras.",
-
-  16: "3 em 1 Vol. 16 (Vols. 49–51): Thriller Bark apresenta inimigos poderosos e revelações importantes sobre o passado e o futuro da jornada.",
-
+  17: "3 em 1 Vol. 17 (Vols. 49–51): Thriller Bark apresenta inimigos poderosos e revelações importantes sobre o passado e o futuro da jornada.",
   18: "3 em 1 Vol. 18 (Vols. 52–54): No Arquipélago Sabaody, o encontro com os Tenryuubitos muda drasticamente o rumo da história.",
-
-  16: "3 em 1 Vol. 16 (Vols. 55–57): O mundo mergulha na tensão que antecede a Guerra de Marineford, colocando alianças e ideais à prova.",
-
+  19: "3 em 1 Vol. 19 (Vols. 55–57): O mundo mergulha na tensão que antecede a Guerra de Marineford, colocando alianças e ideais à prova.",
   20: "3 em 1 Vol. 20 (Vols. 58–60): A Guerra dos Melhores explode em Marineford, trazendo perdas devastadoras e mudando o equilíbrio do mundo.",
-
   21: "3 em 1 Vol. 21 (Vols. 61–63): Após o timeskip, Luffy e sua tripulação retornam mais fortes para iniciar a jornada no Novo Mundo.",
-
   22: "3 em 1 Vol. 22 (Vols. 64–66): Na Ilha dos Homens-Peixe, novas alianças e ameaças consolidam a presença dos Chapéus de Palha no Novo Mundo.",
-
   23: "3 em 1 Vol. 23 (Vols. 67–69): Punk Hazard apresenta alianças inesperadas e o início do plano contra um dos Yonkou.",
-
   24: "3 em 1 Vol. 24 (Vols. 70–72): Dressrosa começa com intrigas políticas e batalhas que envolvem todo o submundo.",
-
   25: "3 em 1 Vol. 25 (Vols. 73–75): O confronto contra Doflamingo atinge seu auge em uma das batalhas mais intensas da série.",
-
   26: "3 em 1 Vol. 26 (Vols. 76–78): As consequências de Dressrosa expandem a influência dos Chapéus de Palha pelo mundo.",
-
   27: "3 em 1 Vol. 27 (Vols. 79–81): Zou revela segredos fundamentais sobre os Road Poneglyphs e o verdadeiro caminho até Laugh Tale.",
-
   28: "3 em 1 Vol. 28 (Vols. 82–84): Whole Cake Island coloca Sanji no centro da narrativa em meio a conflitos familiares e alianças perigosas.",
-
   29: "3 em 1 Vol. 29 (Vols. 85–87): A fuga do território de Big Mom exige estratégia e sacrifícios que fortalecem ainda mais a tripulação.",
-
   30: "3 em 1 Vol. 30 (Vols. 88–90): A jornada avança para Wano, onde samurais e piratas se unem contra uma ameaça colossal.",
-
   31: "3 em 1 Vol. 31 (Vols. 91–93): O arco de Wano começa com conspirações e preparativos para a guerra contra Kaido.",
-
   32: "3 em 1 Vol. 32 (Vols. 94–96): A batalha se aproxima enquanto alianças estratégicas se formam nas sombras de Wano.",
-
   33: "3 em 1 Vol. 33 (Vols. 97–99): A guerra em Onigashima explode em confrontos decisivos entre os piores inimigos do Novo Mundo.",
-
   34: "3 em 1 Vol. 34 (Vols. 100–102): O clímax contra Kaido redefine o futuro dos mares e eleva Luffy a um novo patamar.",
-
   35: "3 em 1 Vol. 35 (Vols. 103–105): As consequências da guerra em Wano alteram o equilíbrio global e abrem caminho para uma nova era.",
-
   36: "3 em 1 Vol. 36 (Vols. 106–108): O arco de Egghead inicia revelações científicas e políticas que abalam os pilares do Governo Mundial.",
-
   37: "3 em 1 Vol. 37 (Vols. 109–111): Em Egghead, confrontos e revelações aproximam a história de sua fase final, ampliando os mistérios do mundo."
 };
 
@@ -314,6 +241,30 @@ export const haikyuDescriptions = {
   20: "2 em 1 Vol. 20 (Vols. 39–40): O Karasuno mostra até onde pode chegar quando joga como um verdadeiro time."
 };
 
+export const vinlandDescriptions = {
+  1: "2 em 1 Vol. 1 (Vols. 1–2): Thorfinn cresce em meio à guerra após a morte de seu pai, jurando vingança contra Askeladd enquanto mergulha no brutal mundo dos vikings.",
+  2: "2 em 1 Vol. 2 (Vols. 3–4): Thorfinn participa das campanhas militares de Askeladd, enfrentando batalhas sangrentas e fortalecendo sua obsessão por vingança.",
+  3: "2 em 1 Vol. 3 (Vols. 5–6): Intrigas políticas e conflitos internos colocam o bando de Askeladd no centro da disputa pelo trono da Inglaterra.",
+  4: "2 em 1 Vol. 4 (Vols. 7–8): O príncipe Canute começa sua transformação, enquanto Thorfinn encara os limites de sua própria fúria e propósito.",
+  5: "2 em 1 Vol. 5 (Vols. 9–10): A guerra atinge seu clímax e decisões inesperadas mudam drasticamente o rumo da vida de Thorfinn.",
+  6: "2 em 1 Vol. 6 (Vols. 11–12): Agora escravizado, Thorfinn vive uma nova realidade, distante da guerra, refletindo sobre culpa e significado.",
+  7: "2 em 1 Vol. 7 (Vols. 13–14): Ao lado de Einar, Thorfinn começa uma jornada de redenção enquanto aprende o valor do trabalho e da paz.",
+  8: "2 em 1 Vol. 8 (Vols. 15–16): Confrontos do passado retornam, colocando à prova a nova filosofia de vida que Thorfinn tenta construir.",
+  9: "2 em 1 Vol. 9 (Vols. 17–18): Determinado a criar uma terra sem guerra, Thorfinn inicia os preparativos para buscar a lendária Vinland.",
+  10: "2 em 1 Vol. 10 (Vols. 19–20): A tripulação começa a se formar e antigos aliados e inimigos reaparecem no caminho da nova expedição.",
+  11: "2 em 1 Vol. 11 (Vols. 21–22): Tensões culturais e conflitos ideológicos desafiam o sonho de construir uma sociedade pacífica.",
+  12: "2 em 1 Vol. 12 (Vols. 23–24): A viagem avança rumo ao desconhecido, enquanto desafios externos testam a união do grupo.",
+  13: "2 em 1 Vol. 13 (Vols. 25–26): A chegada à nova terra traz esperança e perigos, colocando à prova o ideal de um mundo sem violência."
+};
+
+export const kgbDescriptions = {
+  1: "Vol. 1: Chihiro Rokuhira vive tranquilamente como aprendiz de ferreiro até que uma tragédia brutal muda seu destino, levando-o a trilhar um caminho de vingança com uma espada lendária.",
+  2: "Vol. 2: Em busca dos responsáveis pelo massacre de sua família, Chihiro mergulha no submundo dos feiticeiros, enfrentando inimigos que dominam poderes sobrenaturais.",
+  3: "Vol. 3: Confrontos intensos revelam segredos sobre as espadas encantadas, enquanto Chihiro começa a entender o verdadeiro peso do legado deixado por seu pai.",
+  4: "Vol. 4: Novos aliados surgem no caminho, mas as batalhas se tornam ainda mais perigosas conforme organizações ocultas entram em cena.",
+  5: "Vol. 5: O conflito escala para um nível inesperado, colocando à prova a determinação de Chihiro e sua habilidade com a lâmina amaldiçoada.",
+  6: "Vol. 6: Revelações sobre o passado e as espadas sagradas ampliam a guerra no submundo, preparando o terreno para confrontos ainda mais devastadores."
+};
 
 /* =========================
    PREÇOS POR VOLUME
@@ -416,6 +367,58 @@ const haikyu = createSeriesVolumes({
   
 });
 
+const kgb = createSeriesVolumes({
+  series: "Kagurabachi",
+  prefix: "kgb",
+  start: 1,
+  end: 6,
+  tag: "Panini",
+  imageExt: "jpeg",
+  affiliateByVolume: kgbAffiliate,
+  tiktokByVolume: kgbTiktok,
+  descriptionByVolume: kgbDescriptions,
+  editionLabel: "",
+  author: "Takeru Hokazono",
+  genre: "Shounen",
+  addedAtByVolume: {
+  1: "2026-02-20",
+  2: "2026-02-20",
+  3: "2026-02-20",
+  4: "2026-02-20",
+  5: "2026-02-20",
+  },
+});
+
+const vinland = createSeriesVolumes({
+  series: "Vinland Saga",
+  prefix: "vinland",
+  start: 1,
+  end: 13,
+  tag: "Panini",
+  imageExt: "jpeg",
+  affiliateByVolume: vinlandAffiliate,
+  tiktokByVolume: vinlandTiktok,
+  descriptionByVolume: vinlandDescriptions,
+  editionLabel: "Deluxe",
+  author: "Makoto Yukimura",
+  genre: "Seinen",
+  addedAtByVolume: {
+  1: "2026-02-20",
+  2: "2026-02-20",
+  3: "2026-02-20",
+  4: "2026-02-20",
+  5: "2026-02-20",
+  6: "2026-02-20",
+  7: "2026-02-20",
+  8: "2026-02-20",
+  9: "2026-02-20",
+  10: "2026-02-20",
+  11: "2026-02-20",
+  12: "2026-02-20",
+  13: "2026-02-20",
+  },
+});
+
 /* =========================
    EXPORT FINAL
    ========================= */
@@ -425,4 +428,6 @@ export const products = [
   ...jjk,
   ...op,
   ...haikyu,
+  ...kgb,
+  ...vinland,
 ];

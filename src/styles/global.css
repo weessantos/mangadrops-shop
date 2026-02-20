@@ -293,42 +293,61 @@ a{ color: inherit; text-decoration: none; }
 /* =========================================================
    BACK ROW PREMIUM
    ========================================================= */
+/* Linha de ações (Voltar / Exibindo...) */
 .backRow{
-  position: static;
-  top: 12px;
-  z-index: 80;
-
-  display:flex;
-  align-items:center;
-  gap: 16px;
-  flex-wrap: wrap;
-
-  padding: 12px 16px;
-  border-radius: 16px;
-
-  background: rgba(15,18,28,0.78);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.12);
-
-  box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
 }
 
+/* Os 2 blocos com o mesmo tamanho no desktop */
+.backRow > *{
+  flex: 1 1 0;
+  min-width: 0; /* evita overflow por texto longo */
+}
+
+/* Botão "Voltar" pode quebrar em 2 linhas */
 .backButton{
-  padding: 10px 16px;
-  border-radius: 14px;
-  font-weight: 700;
-  font-size: 13px;
+  white-space: normal;
+  line-height: 1.15;
+}
+
+/* ✅ Mobile: quebra em 2 linhas e mantém os 2 blocos iguais */
+@media (max-width: 520px){
+  .backRow{
+    flex-direction: column;
+  }
+
+  .backRow > *{
+    flex: 0 0 auto;
+    width: 100%; /* os dois ficam do mesmo tamanho */
+  }
+
+  /* opcional: centralizar o texto no mobile */
+  .backButton{
+    text-align: center;
+    justify-content: center;
+  }
 }
 
 .infoTag{
-  padding: 10px 16px;
-  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px; /* 👈 controla o espaço aqui */
+  text-align: center;        /* ✅ centraliza texto */
+  
+  padding: 12px 18px;
+  border-radius: 16px;
   border: 1px solid var(--border);
   background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(6px); /* deixa no mesmo padrão glass */
+  
   color: var(--muted);
   font-size: 13px;
   font-weight: 600;
+
+  width: 100%;               /* ✅ mesmo tamanho do botão no mobile */
 }
 
 .infoTag strong{

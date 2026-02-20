@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Routes, Route, useNavigate, useParams } from "react-router-dom";
 import "./styles/global.css";
 import Header from "./components/Header";
 import HomeHero from "./components/HomeHero";
@@ -8,13 +9,15 @@ import ProductModal from "./components/ProductModal";
 import { products } from "./data/products";
 import { seriesCatalog } from "./data/series";
 import LaunchRail from "./components/LaunchRail";
-//*import { aotAffiliate, opAffiliate, jjkAffiliate, haikyuAffiliate } from "./data/affiliates";*//
 
 const ALIASES = {
   jjk: "jujutsu kaisen",
   aot: "attack on titan",
   snk: "shingeki no kyojin",
   op: "one piece",
+  kgb: "kagurabachi",
+  vinland: "vinland saga",
+  haikyu: "haikyu",
 };
 
 function normalizeText(s) {
@@ -24,6 +27,15 @@ function normalizeText(s) {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
+}
+
+function slugify(s) {
+  return String(s || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 }
 
 function expandAliases(tokens) {
@@ -62,9 +74,9 @@ function uniqueSortedAvailableVolumes(items) {
   for (const p of items) {
     const v = Number(p.volume);
 
-  const isAvailable =
-    (p.affiliate?.mercadoLivre && p.affiliate.mercadoLivre.trim() !== "") ||
-    (p.affiliate?.amazon && p.affiliate.amazon.trim() !== "");
+    const isAvailable =
+      (p.affiliate?.mercadoLivre && p.affiliate.mercadoLivre.trim() !== "") ||
+      (p.affiliate?.amazon && p.affiliate.amazon.trim() !== "");
 
     if (Number.isFinite(v) && v > 0 && isAvailable) {
       set.add(v);
@@ -83,15 +95,6 @@ function computeMissing(vols, total) {
   return missing;
 }
 
-function formatMissing(missing, limit = 8) {
-  if (!missing.length) return "Completo ✅";
-
-  const shown = missing.slice(0, limit).join(", ");
-  const rest = missing.length - Math.min(missing.length, limit);
-
-  return rest > 0 ? `Sem estoque: ${shown} +${rest}` : `Sem estoque: ${shown}`;
-}
-
 function pickSeriesFromQuery(query, seriesNames) {
   const { words } = parseQuery(query);
   if (!words.length) return null;
@@ -108,16 +111,20 @@ function pickSeriesFromQuery(query, seriesNames) {
       }
     }
 
-    if (score > best.score) {
-      best = { name, score };
-    }
+    if (score > best.score) best = { name, score };
   }
 
   return best.score >= 1 ? best.name : null;
 }
 
-export default function App() {
+/* =======================================================
+   APP "REAL" (o seu layout), agora lendo a rota
+======================================================= */
+function AppShell() {
   const PAGE_SIZE = 12;
+  const navigate = useNavigate();
+  const { seriesSlug, volumeId } = useParams();
+
   const [page, setPage] = useState(1);
   const lastAppliedQueryRef = useRef("");
   const [inputValue, setInputValue] = useState("");
@@ -175,6 +182,7 @@ export default function App() {
 
         return {
           name,
+          slug: slugify(name),
           thumb: cat.thumb || "/assets/aot-series.jpeg",
           subtitle: cat.subtitle || "Clique para ver os volumes disponíveis.",
           rangeLabel,
@@ -187,16 +195,32 @@ export default function App() {
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [catalogMap]);
 
+  const seriesBySlug = useMemo(() => {
+    const map = new Map();
+    for (const s of seriesList) map.set(s.slug, s.name);
+    return map;
+  }, [seriesList]);
+
   const seriesNames = useMemo(() => seriesList.map((s) => s.name), [seriesList]);
 
+  // ✅ Sync: rota -> activeSeries
+  useEffect(() => {
+    if (!seriesSlug) {
+      setActiveSeries(null);
+      setSelected(null);
+      return;
+    }
+    const name = seriesBySlug.get(seriesSlug) || null;
+    setActiveSeries(name);
+  }, [seriesSlug, seriesBySlug]);
+
+  // seu search que “pula” pra série
   useEffect(() => {
     const q = query.trim();
-
     if (!q) {
       lastAppliedQueryRef.current = "";
       return;
     }
-
     if (q === lastAppliedQueryRef.current) return;
     lastAppliedQueryRef.current = q;
 
@@ -204,7 +228,10 @@ export default function App() {
     if (!picked) return;
 
     setSelected(null);
-    setActiveSeries(picked);
+    setPage(1);
+
+    // ✅ em vez de setar state, navega pra URL da série
+    navigate(`/${slugify(picked)}`);
 
     setTimeout(() => {
       document.getElementById("volumes")?.scrollIntoView({
@@ -212,7 +239,7 @@ export default function App() {
         block: "start",
       });
     }, 0);
-  }, [query, seriesNames]);
+  }, [query, seriesNames, navigate]);
 
   const filtered = useMemo(() => {
     const { words, numbers } = parseQuery(query);
@@ -256,18 +283,27 @@ export default function App() {
 
   const hasMore = pagedProducts.length < filtered.length;
 
+  // ✅ Sync: rota -> modal aberto
+  useEffect(() => {
+    if (!volumeId) {
+      setSelected(null);
+      return;
+    }
+    const prod = filtered.find((p) => p.id === volumeId) || null;
+    setSelected(prod);
+  }, [volumeId, filtered]);
+
   const openSeries = (name) => {
     setPage(1);
     setSelected(null);
-
-    setActiveSeries((prev) => {
-      if (prev === name) return null;
-      return name;
-    });
-
     setQuery("");
     setInputValue("");
     lastAppliedQueryRef.current = "";
+
+    const slug = slugify(name);
+
+    // ✅ troca a URL pra rota da série
+    navigate(`/${slug}`);
 
     setTimeout(() => {
       document.getElementById("volumes")?.scrollIntoView({
@@ -277,11 +313,15 @@ export default function App() {
     }, 0);
   };
 
+
   const clearSeries = () => {
     setPage(1);
-    setActiveSeries(null);
     setQuery("");
     setSelected(null);
+
+    // ✅ volta pra home e troca histórico (melhora botão voltar)
+    navigate(`/`, { replace: true });
+
     setTimeout(() => {
       document.getElementById("obras")?.scrollIntoView({
         behavior: "smooth",
@@ -290,9 +330,40 @@ export default function App() {
     }, 0);
   };
 
-  const handleOpenProduct = (product) => {
+  const openProduct = (product) => {
     setSelected(product);
+
+    // 1) Descobre o slug da série de forma segura
+    const seriesName = product?.series || activeSeries; // preferir a série do produto
+    const parentSlug = seriesSlug || (seriesName ? slugify(seriesName) : null);
+
+    // 2) Se tiver série, usa /serie/produto
+    if (parentSlug) {
+      navigate(`/${parentSlug}/${product.id}`);
+      return;
+    }
+
+    // 3) Fallback: se por algum motivo não tiver série, pelo menos abre /produto
+    navigate(`/${product.id}`);
   };
+
+  const closeModal = () => {
+    setSelected(null);
+
+    // Volta pra rota pai correta (ou home)
+    if (seriesSlug) {
+      navigate(`/${seriesSlug}`, { replace: true });
+      return;
+    }
+
+    if (activeSeries) {
+      navigate(`/${slugify(activeSeries)}`, { replace: true });
+      return;
+    }
+
+    navigate(`/`, { replace: true }); // ✅ sempre limpa a URL
+  };
+
   return (
     <div className="container">
       <Header
@@ -305,7 +376,7 @@ export default function App() {
         }}
       />
 
-      <HomeHero />     
+      <HomeHero />
 
       <section id="home" className="sectionHeader">
         <div className="sectionHeaderInner">
@@ -324,16 +395,13 @@ export default function App() {
 
       {!activeSeries && (
         <section className="railBlock" id="obras">
-          <div className="railHeader">
-          </div>
-          {/* 🔥 Rail de Lançamentos */}
           <LaunchRail
             title="Lançamentos"
             products={products}
             limit={30}
-            onOpenProduct={handleOpenProduct}
+            onOpenProduct={openProduct}
           />
-          {/* Rail de Séries */}
+
           <section className="railBlock" id="railTitle">
             <div className="railHeader">
               <h2 className="railTitle">Coleções</h2>
@@ -368,7 +436,9 @@ export default function App() {
           </button>
 
           <div className="infoTag">
-            Exibindo <strong>{activeSeries}</strong> • {pagedProducts.length}/{filtered.length} volume(s)
+            <span>Exibindo</span>
+            <strong>{activeSeries}</strong>
+            <span>• {pagedProducts.length}/{filtered.length} volume(s)</span>
           </div>
         </div>
       )}
@@ -377,7 +447,7 @@ export default function App() {
         <section className="volumesSection">
           <section className="grid">
             {pagedProducts.map((p) => (
-              <ProductCard key={p.id} product={p} onOpen={setSelected} />
+              <ProductCard key={p.id} product={p} onOpen={openProduct} />
             ))}
           </section>
 
@@ -396,11 +466,11 @@ export default function App() {
           )}
         </section>
       )}
+
       {selected && (
-        <ProductModal product={selected} onClose={() => setSelected(null)} />
+        <ProductModal product={selected} onClose={closeModal} />
       )}
 
-      {/* ✅ Botão de subir para o topo */}
       {showScrollTop && (
         <button
           className="scrollTopBtn"
@@ -412,5 +482,18 @@ export default function App() {
         </button>
       )}
     </div>
+  );
+}
+
+/* =======================================================
+   ROTAS
+======================================================= */
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<AppShell />} />
+      <Route path="/:seriesSlug" element={<AppShell />} />
+      <Route path="/:seriesSlug/:volumeId" element={<AppShell />} />
+    </Routes>
   );
 }

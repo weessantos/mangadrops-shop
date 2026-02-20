@@ -36,6 +36,22 @@ export const seriesCatalog = [
     author: "Haruichi Furudate",
   },
   {
+    name: "Kagurabachi",
+    totalVolumes: 6,
+    thumb: img("kgb-series.jpeg"),
+    subtitle: "Espadas lendárias, vingança e batalhas intensas no submundo.",
+    genre: "Shounen",
+    author: "Takeru Hokazono",
+  },
+  {
+    name: "Vinland Saga",
+    totalVolumes: 13,
+    thumb: img("vinland-series.jpeg"),
+    subtitle: "Vikings, batalhas brutais e a jornada de Thorfinn em busca de um verdadeiro propósito.",
+    genre: "Seinen",
+    author: "Makoto Yukimura"
+  },
+  {
     name: "Outros",
     thumb: img("others-series.jpeg"),
     subtitle: "Outras obras e volumes avulsos."
