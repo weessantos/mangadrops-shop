@@ -1,9 +1,11 @@
 /* =========================================================
-   PRODUCT MODAL (clean + dedup + TikTok fix)
+   PRODUCT MODAL (clean + dedup + mobile app mode)
    ========================================================= */
 
 :root{
-  --modal-pad: 16px; /* padding único para alinhar tudo */
+  --modal-pad: 16px;      /* padding único para alinhar tudo */
+  --topbar-h: 68px;       /* usado no mobile fullscreen */
+  --footer-h: 116px;      /* espaço para CTA/footer fixo (ajuste se necessário) */
 }
 
 /* =========================================================
@@ -103,7 +105,7 @@
 .desktopOnly{ display: block; }
 .mobileOnly{ display: none; }
 
-/* espaço pro footer fixo não cobrir conteúdo */
+/* espaço pro footer fixo não cobrir conteúdo (desktop / fallback) */
 .modalFooterSpacer{ height: 110px; }
 
 /* =========================================================
@@ -118,7 +120,7 @@
 }
 
 /* =========================================================
-   SHARED: TIKTOK (fix: tall only when video exists)
+   SHARED: TIKTOK (tall only when video exists)
    ========================================================= */
 .tiktokEmbedWrap{
   aspect-ratio: 9 / 16;
@@ -143,10 +145,7 @@
   text-align: center;
 }
 
-/* ✅ Só quando TEM vídeo */
-.tiktokTall{
-  aspect-ratio: 9 / 16;
-}
+.tiktokTall{ aspect-ratio: 9 / 16; }
 
 /* ✅ Quando NÃO tem vídeo: compacto, sem “retângulo vazio” */
 .tiktokCompact{
@@ -191,6 +190,31 @@
 }
 
 /* =========================================================
+   MEDIA CARD (base + hasVideo)
+   ========================================================= */
+.mediaCard{
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.18);
+  box-shadow:
+    0 18px 60px rgba(0,0,0,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+  padding: 14px;
+  width: fit-content;
+  max-width: 100%;
+  transition: all 240ms ease;
+}
+
+.mediaCard.hasVideo{
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.45),
+    0 0 40px rgba(124,58,237,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* =========================================================
    DESKTOP (layout premium + toggle)
    ========================================================= */
 @media (min-width: 721px){
@@ -204,9 +228,7 @@
 
   .modalLeft, .modalRight{ min-width: 0; }
 
-  .desktopCover{
-    position: relative;
-  }
+  .desktopCover{ position: relative; }
 
   .desktopCover img{
     width: 100%;
@@ -227,9 +249,7 @@
     gap: 14px;
   }
 
-  .modalRightTop{
-    padding: 6px 2px 0;
-  }
+  .modalRightTop{ padding: 6px 2px 0; }
 
   .modalTitle{
     margin: 4px 0 10px;
@@ -312,28 +332,20 @@
     color: rgba(255,255,255,0.60);
   }
 
-  /* Card do vídeo */
-  .mediaCard{
-    border-radius: 18px;
-    border: 1px solid rgba(255,255,255,0.10);
-    background: rgba(0,0,0,0.18);
-    box-shadow: 0 18px 60px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06);
-    padding: 14px;
-    width: fit-content;
-    max-width: 100%;
-  }
-
   /* TikTok no desktop (limita largura) */
   .tiktokEmbedWrap.tiktokTall{
     width: 380px;
     max-width: 100%;
-    max-height: 540px;
+    max-height: 600px;
   }
 
   .tiktokPlaceholder.tiktokCompact{
     width: 380px;
     max-width: 100%;
   }
+
+  /* mediaCard com vídeo ganha largura */
+  .mediaCard.hasVideo{ width: 420px; }
 
   /* descrição fora da imagem (clean) */
   .modalDescLeft{
@@ -348,221 +360,226 @@
     font-size: 14px;
     line-height: 1.6;
     color: var(--muted);
-
     max-width: 32ch;
   }
 
   .modalDescLeft::before,
-  .modalDescLeft::after{
-    display: none !important;
-  }
+  .modalDescLeft::after{ display: none !important; }
 }
 
 /* =========================================================
-   MOBILE: RAIL PREMIUM (2 páginas)
+   MOBILE (APP MODE + RAIL)
    ========================================================= */
 @media (max-width: 720px){
-  .modalOverlay{ padding: 12px; }
+  /* overlay vira "app root" */
+  .modalOverlay{
+    padding: 0;
+    place-items: stretch;
+    align-items: stretch;
+    background: rgba(0,0,0,0.62);
+    backdrop-filter: blur(10px);
+  }
 
+  /* modal tela cheia */
   .modal{
-    width: min(96vw, 520px);
-    max-height: 92vh;
-    border-radius: 16px;
+    width: 100vw;
+    height: 100dvh;
+    max-height: none;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
+    overflow: hidden;
+
+    /* app-like mais sólido */
+    background: #0f1420;
   }
 
   .desktopOnly{ display: none; }
   .mobileOnly{ display: block; }
 
-  /* no mobile, o scroll vertical fica “dentro da página”, não no container */
-  .modalContent{
-    overflow: hidden;
-    max-height: calc(92vh - 74px);
-    padding-bottom: 0;
+  /* header fixo (não sobe na imagem) */
+  .modalTop{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+
+    padding: calc(env(safe-area-inset-top) + 12px) 14px 12px;
+    background: rgba(15,20,32,0.92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
   }
 
-  /* rail com "peek" e espaço */
+  /* heading mais "native" */
+  .modalHeading{
+    margin-left: 0;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+  }
+
+  .modalHeading::before{
+    width: 4px;
+    height: 20px;
+    border-radius: 3px;
+    box-shadow: none;
+  }
+
+  .closeBtn{
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: rgba(0,0,0,0.30);
+  }
+
+  /* conteúdo rola dentro, com espaço do header + footer */
+  .modalContent{
+    height: 100%;
+    max-height: none;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-top: calc(var(--topbar-h) + env(safe-area-inset-top));
+    padding-bottom: calc(var(--footer-h) + env(safe-area-inset-bottom));
+  }
+
+  /* rail: 2 páginas (produto / tiktok) sem peek */
   .modalRail{
     display: flex;
-    gap: 12px;
-    padding: 12px 14px;
+    gap: 0;
+    padding: 14px;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    scroll-padding-left: 14px;
+    scroll-padding-right: 14px;
   }
   .modalRail::-webkit-scrollbar{ display:none; }
 
   .railPage{
-    flex: 0 0 90%;
-    min-width: 90%;
-    scroll-snap-align: center;
+    flex: 0 0 100%;
+    min-width: 100%;
+    scroll-snap-align: start;
     scroll-snap-stop: always;
 
     border-radius: 18px;
-    border: 1px solid rgba(255,255,255,0.08);
-    background: rgba(0,0,0,0.18);
-    box-shadow: 0 18px 60px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.05);
+    background: rgba(255,255,255,0.02);
+    box-shadow: none;
 
-    padding: 12px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
     gap: 12px;
-
-    /* mantém UX “cheia” no mobile */
-    min-height: 64vh;
+    min-height: auto;
   }
 
   /* capa */
+  .railProduct .modalCover{
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
   .railProduct .modalCover img{
     width: 100%;
     display: block;
     object-fit: contain;
-    max-height: 40vh;
+    max-height: 44vh;
     height: auto;
   }
 
+  /* título/descrição/badges */
   .productInfoUnder .modalTitle{
     margin: 4px 0 8px;
-    font-size: 18px;
+    font-size: 17px;
+    font-weight: 600;
     letter-spacing: -0.2px;
+    line-height: 1.3;
   }
 
-  .modalHint{
-    color: rgba(255,255,255,0.55);
-    font-size: 13px;
-    margin-top: 2px;
+  .detailsText,
+  .productInfoUnder p,
+  .modalDescLeft{
+    line-height: 1.7;
+    font-size: 14px;
+    color: rgba(255,255,255,0.78);
   }
 
-  /* TikTok alto só pro embed */
-  .tiktokTall{
-    max-height: 68vh;
-  }
+  .productInfoUnder{ gap: 10px; }
 
-  .tiktokEmbedWrap.tiktokTall{
-    border-radius: 16px;
-  }
-
-  /* placeholder compacto não reserva altura */
-  .tiktokPlaceholder.tiktokCompact{
-    border-radius: 16px;
-  }
-
-  /* opcional: se você adicionar a classe .noVideo no JSX da página TikTok,
-     isso remove o “vazio” quando não há vídeo */
-  .railTikTok.noVideo{
-    min-height: auto;
-  }
-
-  .modalFooterSpacer{ height: 120px; }
-}
-
-/* telas bem pequenas */
-@media (max-width: 380px){
-  .railProduct .modalCover img{ max-height: 36vh; }
-  .tiktokTall{ max-height: 66vh; }
-  .modalFooterSpacer{ height: 130px; }
-}
-/* =========================================================
-   MEDIA CARD: comportamento diferente com vídeo
-   ========================================================= */
-
-/* Base */
-.mediaCard{
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(0,0,0,0.18);
-  box-shadow: 
-    0 18px 60px rgba(0,0,0,0.25),
-    inset 0 1px 0 rgba(255,255,255,0.06);
-  padding: 14px;
-  width: fit-content;
-  max-width: 100%;
-  transition: all 240ms ease;
-}
-
-/* 🔥 Quando TEM vídeo */
-.mediaCard.hasVideo{
-  padding: 18px;
-  border: 1px solid rgba(255,255,255,0.14);
-  box-shadow:
-    0 30px 80px rgba(0,0,0,0.45),
-    0 0 40px rgba(124,58,237,0.12),
-    inset 0 1px 0 rgba(255,255,255,0.08);
-}
-
-/* Aumenta a largura no desktop */
-@media (min-width: 721px){
-  .mediaCard.hasVideo{
-    width: 420px;
-  }
-
-  .tiktokEmbedWrap.tiktokTall{
-    width: 100%;
-    max-height: 600px;
-  }
-}
-
-/* Mobile: deixa ocupar melhor a tela */
-@media (max-width: 720px){
-  .mediaCard.hasVideo{
-    width: 100%;
-  }
-
-  .tiktokTall{
-    max-height: 72vh;
-  }
-}
-
-@media (max-width: 720px){
-  .modalRail{
-    gap: 0;                 /* tira o peek */
-    padding: 12px 14px;
-  }
-
-  .railPage{
-    flex: 0 0 100%;
-    min-width: 100%;
-    scroll-snap-align: start; /* fica mais “travado” */
-    scroll-snap-stop: always;
-  }
-}
-
-@media (max-width: 720px){
   .modalBadges{
     display: flex;
-    flex-wrap: wrap;      /* ✅ quebra em linhas */
-    gap: 10px 10px;       /* ✅ espaço horizontal e vertical */
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
   }
 
   .modalBadges .badge,
   .modalBadges .pill,
   .modalBadges > *{
-    flex: 0 0 auto;       /* ✅ não deixa o badge “espremer” */
-    white-space: nowrap;  /* ✅ não quebra dentro do badge */
+    flex: 0 0 auto;
+    white-space: nowrap;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    font-weight: 500;
   }
+
+  .modalHint{
+    color: rgba(255,255,255,0.55);
+    font-size: 12px;
+    margin-top: 2px;
+  }
+
+  /* TikTok: alto só pro embed */
+  .tiktokTall{ max-height: 72vh; }
+  .tiktokEmbedWrap.tiktokTall{ border-radius: 16px; }
+  .tiktokPlaceholder.tiktokCompact{ border-radius: 16px; }
+
+  /* mediaCard no mobile ocupa melhor */
+  .mediaCard{ width: 100%; }
+  .mediaCard.hasVideo{ width: 100%; }
+
+  /* spacer desnecessário (padding-bottom já resolve) */
+  .modalFooterSpacer{ height: 0; }
 }
 
-@media (max-width: 720px){
+/* telas pequenas: tipografia reduz um pouco pra não cortar */
+@media (max-width: 480px){
+  .productInfoUnder .modalTitle{
+    font-size: clamp(15px, 4.2vw, 17px);
+  }
+
   .detailsText,
   .productInfoUnder p,
   .modalDescLeft{
-    line-height: 1.65;   /* ✅ respira melhor */
+    font-size: clamp(13px, 3.6vw, 14px);
   }
 
-  .productInfoUnder{
-    gap: 10px;           /* ✅ mais espaço entre blocos */
-  }
-}
-
-@media (max-width: 720px){
-  .modalRail{
-    scroll-padding-left: 14px;
-    scroll-padding-right: 14px;
+  .modalHeading{
+    font-size: clamp(18px, 4.5vw, 20px);
   }
 }
 
+/* telas MUITO pequenas (ex: 320–360px) */
+@media (max-width: 380px){
+  :root{ --topbar-h: 64px; }
+
+  .railProduct .modalCover img{ max-height: 40vh; }
+
+  .productInfoUnder .modalTitle{ font-size: 15px; }
+  .modalHeading{ font-size: 18px; }
+}
+
+/* =========================================================
+   RAIL DOTS
+   ========================================================= */
 .railDots{
   display:flex;
   justify-content:center;
