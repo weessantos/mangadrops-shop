@@ -190,7 +190,7 @@
   background: #ffe600;
   color: #111;
   /* ✅ mantém “bordinha” interna mesmo quando o botão estreitar */
-  padding: 0 5px;
+  padding: 0 1px;
 }
 .btn.amazon{ background: #fff; color: #111; }
 
@@ -203,7 +203,7 @@
 
 /* ✅ Mercado Livre: evita a logo encostar nas bordas em telas pequenas */
 .btn.mercado .brandIcon{
-  max-width: 78%;
+  max-width: 90%;
 }
 
 .btn.amazon .brandIcon{ height: 24px; }
