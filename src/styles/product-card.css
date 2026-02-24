@@ -190,7 +190,7 @@
   background: #ffe600;
   color: #111;
   /* ✅ mantém “bordinha” interna mesmo quando o botão estreitar */
-  padding: 0 18px;
+  padding: 0 5px;
 }
 .btn.amazon{ background: #fff; color: #111; }
 
