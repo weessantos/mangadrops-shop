@@ -10,7 +10,7 @@ export default function HomeHero({ onHeroSearch }) {
       {
         src: img("banner-0.jpeg"),
         alt: "Mangá Drops banner",
-        title: "Mangá Drops",
+        title: "Do Hype à Estante",
         subtitle: "Do TikTok direto para sua coleção.",
         description:
           "Reviews, lançamentos e links organizados para você encontrar seus próximos volumes com facilidade.",

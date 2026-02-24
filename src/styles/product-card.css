@@ -186,7 +186,12 @@
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.10);
 }
 
-.btn.mercado{ background: #ffe600; color: #111; }
+.btn.mercado{
+  background: #ffe600;
+  color: #111;
+  /* ✅ mantém “bordinha” interna mesmo quando o botão estreitar */
+  padding: 0 18px;
+}
 .btn.amazon{ background: #fff; color: #111; }
 
 .brandIcon{
@@ -194,6 +199,11 @@
   height: 22px;
   width: auto;
   object-fit: contain;
+}
+
+/* ✅ Mercado Livre: evita a logo encostar nas bordas em telas pequenas */
+.btn.mercado .brandIcon{
+  max-width: 78%;
 }
 
 .btn.amazon .brandIcon{ height: 24px; }

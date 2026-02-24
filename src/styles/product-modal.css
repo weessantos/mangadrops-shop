@@ -437,12 +437,28 @@
 
   /* conteúdo rola dentro, com espaço do header + footer */
   .modalContent{
-    height: 100%;
+    /* ocupa o espaço entre topbar e footer */
+    flex: 1 1 auto;
+    min-height: 0;
     max-height: none;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     padding-top: calc(var(--topbar-h) + env(safe-area-inset-top));
     padding-bottom: calc(var(--footer-h) + env(safe-area-inset-bottom));
+  }
+
+  /* ✅ footer aparece no mobile (fixo) */
+  .modalFooter{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+
+    padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+    background: rgba(15,20,32,0.92);
+    backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(255,255,255,0.06);
   }
 
   /* rail: 2 páginas (produto / tiktok) sem peek */

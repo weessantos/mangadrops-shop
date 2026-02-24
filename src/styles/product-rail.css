@@ -7,41 +7,17 @@
   margin-top: 18px;
 }
 
-.railHeader{
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
+/* alinha o header padrão com o padding do rail */
+.railBlock > .sectionHeader{
   padding: 0 14px;
   margin-bottom: 10px;
 }
 
-.railTitle{
-  margin: 0;
-  font-size: clamp(20px, 2vw, 26px);
-  font-weight: 800;
-  letter-spacing: -0.4px;
-  color: #fff;
-  padding-left: 14px;
-  position: relative;
-}
-
-.railTitle::before{
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 6px;
-  width: 4px;
-  height: 70%;
-  border-radius: 4px;
-  background: linear-gradient(180deg, #a855f7, #3b82f6);
-}
-
-.railHint{
-  font-size: 12px;
-  opacity: 0.75;
-  font-weight: 700;
-}
+/*
+  Header do rail agora usa o padrão global:
+  .sectionHeader, .sectionTitle, .sectionSubtitle, .sectionMeta
+  (definidos no seu global.css)
+*/
 
 /* rail */
 .productRail{
@@ -77,7 +53,6 @@
 
 /* setinhas (apenas desktop) */
 .railArrows{
-  margin-left: auto;
   display: none;
   gap: 8px;
   align-items: center;

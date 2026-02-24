@@ -289,10 +289,15 @@ a{ color: inherit; text-decoration: none; }
 /* =========================================================
    SECTION HEADER PREMIUM
    ========================================================= */
+
 .sectionHeader{
-  margin-top: 48px;
-  margin-bottom: 28px;
+  margin: 0 0 28px 15px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
 }
+
 
 .sectionHeaderInner{
   display:flex;
@@ -301,7 +306,7 @@ a{ color: inherit; text-decoration: none; }
 }
 
 .sectionTitle{
-  margin: 0;
+  margin: 0 0 20px 0;
   font-size: clamp(22px, 3vw, 32px);
   font-weight: 900;
   letter-spacing: -0.02em;
@@ -333,6 +338,138 @@ a{ color: inherit; text-decoration: none; }
   color: var(--muted);
   font-size: 14px;
   font-weight: 500;
+}
+
+.sectionHeaderLeft{
+  flex: 1;
+  min-width: 0;
+}
+
+.sectionHeaderRight{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0; /* impede quebrar */
+}
+
+/* Garante que as setas nunca quebrem linha */
+.railArrows{
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Remove qualquer margem que possa estar empurrando */
+.sectionSubtitle{
+  margin-bottom: 0;
+}
+
+/* ====== CHAPTER (nível acima das sections) ====== */
+
+.chapterBlock{
+  margin-top: 24px;
+}
+
+.chapterHeader{
+  margin: 12px 0 32px;
+  padding: 8px 4px 0;
+}
+
+.chapterTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+
+.chapterTitle{
+  margin:0;
+  font-size: 32px;
+  font-weight: 950;
+  letter-spacing: -0.5px;
+  color: rgba(255,255,255,0.96);
+}
+
+.chapterPill{
+  font-size: 12px;
+  font-weight: 900;
+  padding: 7px 12px;
+  border-radius: 999px;
+  color: rgba(255,255,255,0.75);
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(6px);
+}
+
+.chapterDesc{
+  margin: 12px 0 16px;
+  max-width: 70ch;
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.75);
+}
+
+.chapterLine{
+  height: 3px;
+  width: min(820px, 95%);
+  background: linear-gradient(
+    to right,
+    rgba(139,92,246,0.0),
+    rgba(139,92,246,0.85),
+    rgba(139,92,246,0.0)
+  );
+  border-radius: 999px;
+}
+
+@media (max-width:720px){
+  .chapterTitle{ font-size: 26px; }
+  .chapterDesc{ font-size: 14px; }
+}
+
+/* ====== Separação Lançamentos -> Coleções ====== */
+.sectionBreak{
+  margin: 56px 0 28px;
+  display: flex;
+  justify-content: center;
+}
+
+.sectionBreakLine{
+  height: 1px;
+  width: min(900px, 92%);
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(139,92,246,0.55),
+    transparent
+  );
+  opacity: 0.9;
+}
+
+/* “Faixa” diferente para Coleções */
+.collectionsSection{
+  margin-top: 0;
+  padding: 42px 0 8px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.02),
+    rgba(255,255,255,0.035)
+  );
+  border-radius: 18px;
+}
+
+/* Subtítulo do header da seção */
+.railSubtitle{
+  margin: 10px 0 0;
+  color: rgba(255,255,255,0.75);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+/* Mobile ajusta o respiro */
+@media (max-width: 720px){
+  .sectionBreak{ margin: 44px 0 22px; }
+  .collectionsSection{ padding: 34px 0 6px; border-radius: 16px; }
 }
 
 /* =========================================================

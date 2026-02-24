@@ -10,6 +10,8 @@ export default function LaunchRail({
   title = "Lançamentos",
   products = [],
   limit = 30,
+  subtitle = "Atualizado com lançamentos e reposições recentes.",
+  meta = "",
   onOpenProduct,
 }) {
   const railRef = useRef(null);
@@ -67,37 +69,53 @@ export default function LaunchRail({
 
   return (
     <section className="railBlock">
-      <div className="railHeader">
-        <h2 className="railTitle">{title}</h2>
-        <span className="railHint">últimos 30 dias</span>
+      {/* ✅ Header padrão (igual em todas as sections) */}
+      <div className="sectionHeader">
+        <div className="sectionHeaderLeft">
+          <h2 className="sectionTitle">
+            <span className="sectionAccent" aria-hidden="true" />
+            {title}
+          </h2>
+          {subtitle ? <p className="sectionSubtitle">{subtitle}</p> : null}
+        </div>
 
-        {/* Setinhas só aparecem no desktop via CSS */}
-        <div className="railArrows" aria-hidden="true">
-          <button
-            type="button"
-            className={`railArrow ${canLeft ? "" : "disabled"}`}
-            onClick={() => scrollByAmount(-1)}
-            disabled={!canLeft}
-            aria-label="Anterior"
-            title="Anterior"
-          >
-            ‹
-          </button>
-          <button
-            type="button"
-            className={`railArrow ${canRight ? "" : "disabled"}`}
-            onClick={() => scrollByAmount(1)}
-            disabled={!canRight}
-            aria-label="Próximo"
-            title="Próximo"
-          >
-            ›
-          </button>
+        <div className="sectionHeaderRight">
+          {meta ? <span className="sectionMeta">{meta}</span> : null}
+
+          {/* Setinhas só aparecem no desktop via CSS */}
+          <div className="railArrows" aria-hidden="true">
+            <button
+              type="button"
+              className={`railArrow ${canLeft ? "" : "disabled"}`}
+              onClick={() => scrollByAmount(-1)}
+              disabled={!canLeft}
+              aria-label="Anterior"
+              title="Anterior"
+            >
+              ‹
+            </button>
+            <button
+              type="button"
+              className={`railArrow ${canRight ? "" : "disabled"}`}
+              onClick={() => scrollByAmount(1)}
+              disabled={!canRight}
+              aria-label="Próximo"
+              title="Próximo"
+            >
+              ›
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="productRail" ref={railRef} aria-label={title}>
-        {items.map((p) => (
+        {items
+          .filter((p) => {
+            const ml = p.affiliate?.mercadoLivre?.trim();
+            const amz = p.affiliate?.amazon?.trim();
+            return ml || amz; // só passa se tiver pelo menos um link
+          })
+          .map((p) => (
           <div className="railItem productItem" key={p.id}>
             {/* ✅ badge NOVO automática (vamos implementar no ProductCard) */}
             <ProductCard

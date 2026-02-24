@@ -208,7 +208,7 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
 
               <div className="sideMenuDivider" />
 
-              <div className="sideMenuSection">
+              <div className="sideMenuSection sideMenuSectionGrow">
                 <div className="sideMenuSectionTitle">Obras</div>
                 <div className="sideMenuList">
                   {obras.map((obra) => (

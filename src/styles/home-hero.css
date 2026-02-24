@@ -192,8 +192,8 @@
 }
 
 .heroDotsPremium .dot{
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 999px;
   border: none;
   background: rgba(255,255,255,.5);
@@ -202,10 +202,7 @@
 }
 
 .heroDotsPremium .dot.active{
-  width: 24px;
+  width: 22px;         /* pílula mais “cheia”, sem ficar achatada */
+  height: 10px;
   background: #fff;
-}
-
-@media (max-width: 768px){
-  .heroDotsPremium{ display: none !important; }
 }

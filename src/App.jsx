@@ -9,6 +9,7 @@ import ProductModal from "./components/ProductModal";
 import { products } from "./data/products";
 import { seriesCatalog } from "./data/series";
 import LaunchRail from "./components/LaunchRail";
+import BrandStats from "./components/BrandStats";
 
 const ALIASES = {
   jjk: "jujutsu kaisen",
@@ -115,6 +116,30 @@ function pickSeriesFromQuery(query, seriesNames) {
   }
 
   return best.score >= 1 ? best.name : null;
+}
+
+/* =======================================================
+   SECTION HEADER (padrão único para qualquer seção)
+   - title: título da seção
+   - subtitle: texto menor abaixo do título (opcional)
+   - meta: tag à direita (opcional)
+======================================================= */
+function SectionHeader({ title, subtitle, meta }) {
+  return (
+    <div className="sectionHeader">
+      <div className="sectionHeaderLeft">
+        <h2 className="sectionTitle">
+          <span className="sectionAccent" aria-hidden="true" />
+          {title}
+        </h2>
+        {subtitle ? <p className="sectionSubtitle">{subtitle}</p> : null}
+      </div>
+
+      <div className="sectionHeaderRight">
+        {meta ? <span className="sectionMeta">{meta}</span> : null}
+      </div>
+    </div>
+  );
 }
 
 /* =======================================================
@@ -378,20 +403,37 @@ function AppShell() {
 
       <HomeHero />
 
-      <section id="home" className="sectionHeader">
-        <div className="sectionHeaderInner">
-          <h2 className="sectionTitle">🔥 Mangás Disponíveis Agora</h2>
-          <p className="sectionSubtitle">
-            Confira os volumes em estoque e garanta o seu antes que esgote.
+      <section className="brandBlock">
+        <div className="brandHeader">
+          <h2 className="brandTitle">
+            Mangá Drops no TikTok
+          </h2>
+          <p className="brandSubtitle">
+            Reviews, indicações e novidades toda semana.
           </p>
         </div>
+
+        <BrandStats />
       </section>
 
-      {!activeSeries && (
-        <div className="sectionHint">
-          Atualizado com lançamentos e reposições recentes.
+      <section id="home" className="chapterBlock">
+        <div className="chapterHeader">
+          <div className="chapterTop">
+            <h1 className="chapterTitle">
+              Mangás Disponíveis
+            </h1>
+          </div>
+
+          <p className="chapterDesc">
+            {!activeSeries
+              ? "Confira os volumes em estoque e garanta o seu antes que esgote. Atualizado com lançamentos e reposições recentes."
+              : "Adquira seu mangá preferido com os melhores preços do mercado. Links atualizados."
+            }
+          </p>
+
+          <div className="chapterLine" aria-hidden="true" />
         </div>
-      )}
+      </section>
 
       {!activeSeries && (
         <section className="railBlock" id="obras">
@@ -402,10 +444,17 @@ function AppShell() {
             onOpenProduct={openProduct}
           />
 
-          <section className="railBlock" id="railTitle">
-            <div className="railHeader">
-              <h2 className="railTitle">Coleções</h2>
-            </div>
+          {/* ✅ Quebra visual + respiro */}
+          <div className="sectionBreak" aria-hidden="true">
+            <span className="sectionBreakLine" />
+          </div>
+
+          {/* ✅ Coleções em "faixa" separada */}
+          <section className="collectionsSection" id="railTitle">
+            <SectionHeader
+              title="Coleções"
+              subtitle="Explore por obra e veja os volumes disponíveis."
+            />
 
             <div className="seriesRail">
               {seriesList.map((s) => (
