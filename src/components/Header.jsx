@@ -288,51 +288,37 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
         <div className="heroContent">
           {isMobile ? (
             /* ✅ Mobile: arrumado (logo integrada + ícone menor + botão compacto) */
-            <div className="mobileTopBar">
-              <button
-                className="mobileMenuBtn"
-                onClick={toggleMenu}
-                type="button"
-                aria-label="Abrir menu"
-                title="Menu"
-              >
-                ☰
-              </button>
+        <div className="mobileTopBar">
+          <button className="mobileMenuBtn" onClick={toggleMenu} type="button" aria-label="Abrir menu">
+            ☰
+          </button>
 
-              {/* 🔎 Search (logo dentro = não fica avulsa) */}
-              <div className="mobileSearch" role="search" aria-label="Buscar no Mangá Drops">
-                <button
-                  className="mobileLogoMiniBtn"
-                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                  type="button"
-                  aria-label="Voltar ao topo"
-                  title="Voltar ao topo"
-                >
-                  <img className="mobileSearchLogo" src={img("logo.png")} alt="" aria-hidden="true" />
-                </button>
+          <div className="mobileSearch">
+            <button
+              className="mobileLogoMiniBtn"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              type="button"
+              aria-label="Voltar ao topo"
+              title="Voltar ao topo"
+            >
+              <img className="mobileSearchLogo" src={img("logo.png")} alt="MangásDrops" />
+            </button>
 
+            <span className="mobileSearchIcon" aria-hidden="true">🔎</span>
 
-                <input
-                  className="mobileSearchInput"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Buscar mangá..."
-                  inputMode="search"
-                  autoComplete="off"
-                />
+            <input
+              className="mobileSearchInput"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Buscar mangá..."
+            />
 
-                <button
-                  className="mobileSearchBtn"
-                  onClick={() => onSearch?.(inputValue)}
-                  type="button"
-                  aria-label="Buscar"
-                  title="Buscar"
-                >
-                  Buscar
-                </button>
-              </div>
-            </div>
+            <button className="mobileSearchBtn" onClick={() => onSearch?.(inputValue)} type="button">
+              Buscar
+            </button>
+          </div>
+        </div>
           ) : (
             <>
               <div className="heroTop">

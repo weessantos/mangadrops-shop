@@ -19,7 +19,8 @@
   display: grid;
   place-items: center;
   padding: 18px;
-  z-index: 999;
+  /* fica acima do header fixo (mobile) e da maioria dos elementos */
+  z-index: 12000;
 }
 
 .modal{

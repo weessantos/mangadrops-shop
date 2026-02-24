@@ -68,3 +68,185 @@
   border: 1px solid rgba(255,255,255,0.18);
   box-shadow: 0 12px 30px rgba(239,68,68,0.25);
 }
+
+/* =========================================================
+   EXTRA (recuperado): overlay + meta + botões
+   ========================================================= */
+
+/* Hover overlay */
+.cardHover{ position: relative; }
+
+.hoverOverlay{
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: end start;
+  padding: 10px;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0.0) 55%);
+  transition: opacity 160ms ease;
+}
+
+.card:hover .hoverOverlay{ opacity: 1; }
+
+.overlayBtn{
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 800;
+  background: rgba(0, 0, 0, 0.55);
+  color: rgba(255,255,255,0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.35);
+  pointer-events: auto;
+}
+
+/* Meta row (Panini • Vol • Estoque) */
+.metaText{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  color: rgba(255,255,255,0.70);
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.metaPublisher{ font-weight: 800; opacity: 0.95; }
+.metaVol{ font-weight: 800; opacity: 0.9; }
+.metaDot{ opacity: 0.5; }
+
+/* =========================
+   Stock Tag Suave 
+========================= */
+
+.metaStock{
+  margin-left: auto;
+  font-weight: 700;
+  font-size: 13px;
+  border-radius: 999px;
+  padding: 6px 12px;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* 🟢 Disponível – suave */
+.metaStock.good{
+  color: rgba(34,197,94,0.9);
+  background: rgba(34,197,94,0.12);
+  border-color: rgba(34,197,94,0.25);
+}
+
+/* 🔴 Indisponível – suave */
+.metaStock.danger{
+  color: rgba(239,68,68,0.9);
+  background: rgba(239,68,68,0.12);
+  border-color: rgba(239,68,68,0.25);
+}
+
+/* Buy buttons (Mercado Livre / Amazon) */
+.buttonsCol{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.buyRow{
+  display: flex;
+  gap: 10px;
+}
+
+.buyLink{
+  display: block;
+  text-decoration: none;
+}
+
+.buyLink.grow{ flex: 1 1 0; min-width: 0; }
+.buyLink.single{ width: 100%; }
+
+.btn{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 0;
+  cursor: pointer;
+  font-weight: 900;
+  border-radius: 12px;
+  height: 44px;
+  padding: 0 12px;
+}
+
+.brandBtn{
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.10);
+}
+
+.btn.mercado{ background: #ffe600; color: #111; }
+.btn.amazon{ background: #fff; color: #111; }
+
+.brandIcon{
+  display: block;
+  height: 22px;
+  width: auto;
+  object-fit: contain;
+}
+
+.btn.amazon .brandIcon{ height: 24px; }
+
+.btn.danger{
+  background: #dc2626 !important; /* vermelho firme */
+  border: none !important;
+  color: #fff !important;
+  font-weight: 800;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(220,38,38,0.35);
+}
+
+.btn.danger:hover{
+  background: #b91c1c !important;
+}
+.btn.ghost{
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.92);
+}
+
+@media (max-width: 420px){
+  /* título/meta com fonte menor e sem “estourar” */
+  .productTitle{ font-size: 14px !important; }
+  .productMeta{ font-size: 12px !important; }
+
+  /* ações sempre cabem: 1 coluna (um embaixo do outro) */
+  .buyLinks,
+  .buyButtons,
+  .productActions{
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  /* botões com altura fixa e ícone alinhado */
+  .brandBtn,
+  .btn.brandBtn{
+    height: 44px !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 14px !important;
+  }
+
+  .brandIcon{
+    height: 22px !important;
+    width: auto !important;
+    object-fit: contain !important;
+    display: block !important;
+  }
+
+  .btn.brandBtn.amazon .brandIcon{ height: 24px !important; }
+}

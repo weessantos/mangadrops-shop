@@ -1,133 +1,15 @@
 /* =========================================================
-   HERO CINEMÁTICO 21:9 (BLINDADO)
+   HOME HERO (Slider premium)
+   - Usado pelo HomeHero.jsx
    ========================================================= */
-.heroWrap{
-  margin-top: 14px;
-  border-radius: 22px;
-  overflow: hidden;                 /* ✅ garante recorte */
-  border: 1px solid var(--border);
-  background: rgba(0,0,0,0.25);     /* ✅ evita “quadrado branco” */
-}
 
-.heroBanner{
-  position: relative;               /* ✅ referencia para camadas absolutas */
-  width: 100%;
-  aspect-ratio: 21 / 9;
-  min-height: 360px;                /* um pouco menor p/ mobile */
-  display: grid;
-  place-items: center;
-  padding: 30px 20px;
-  background: #000;
-  overflow: hidden;                 /* ✅ imagem nunca “vaza” */
-}
-
-/* IMAGEM: sempre encaixada e dentro do banner */
-.heroBanner img{
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  object-position: center;
-  z-index: 0;
-
-  transform: scale(1.06);
-  filter: saturate(1.05) contrast(1.08) brightness(0.85); /* ✅ volta o mood */
-}
-
-/* Overlay de contraste (não quadrado) */
-.heroBanner::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  z-index:1;
-  pointer-events:none;
-
-  background:
-    linear-gradient(to right,
-      rgba(0,0,0,0.75),
-      rgba(0,0,0,0.25) 50%,
-      rgba(0,0,0,0.75)
-    ),
-    linear-gradient(to bottom,
-      rgba(0,0,0,0.15),
-      rgba(0,0,0,0.85)
-    );
-}
-
-/* Glow roxo suave */
-.heroBanner::before{
-  content:"";
-  position:absolute;
-  inset:-2px;
-  z-index:1;
-  pointer-events:none;
-
-  background:
-    radial-gradient(800px 350px at 50% 25%,
-      rgba(124,58,237,0.32),
-      transparent 60%
-    );
-}
-
-/* Conteúdo do banner (texto e botões) */
-.heroWrap .heroContent{
-  position: relative;
-  z-index: 2;
-  width: min(900px, 100%);
-  text-align: center;
-  display: grid;
-  gap: 14px;
-  justify-items: center;
-}
-
-.heroTitle{
-  margin: 0;
-  font-size: clamp(32px, 4.5vw, 56px);
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  line-height: 1.05;
-  text-shadow: 0 40px 120px rgba(0,0,0,0.85);
-}
-
-.heroTitleGlow{
-  background: linear-gradient(90deg,
-    rgba(255,255,255,0.95),
-    rgba(255,255,255,0.7),
-    rgba(255,255,255,0.95)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  background-size: 200% 100%;
-}
-
-.heroSubtitle{
-  margin: 0;
-  font-size: 16px;
-  color: rgba(255,255,255,0.9);
-  max-width: 700px;
-  line-height: 1.6;
-}
-
-/* Mobile: mantém bonito */
-@media (max-width: 640px){
-  .heroBanner{
-    min-height: 280px;
-    padding: 22px 16px;
-  }
-  .heroSubtitle{
-    font-size: 14px;
-  }
-}
-.heroPremium {
+.heroPremium{
   width: 100%;
   padding: 0 16px;
   margin-top: 24px;
 }
 
-.heroContainerPremium {
+.heroContainerPremium{
   position: relative;
   width: 100%;
   max-width: 1400px;
@@ -136,58 +18,141 @@
   overflow: hidden;
   border-radius: 24px;
   background: #000;
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 18px 60px rgba(0,0,0,0.35);
 }
 
-@media (max-width: 768px) {
-  .heroContainerPremium {
-    aspect-ratio: 4 / 5;
-  }
+@media (max-width: 768px){
+  .heroPremium{ padding: 0 12px; margin-top: 18px; }
+  .heroContainerPremium{ aspect-ratio: 4 / 5; border-radius: 16px; }
 }
 
-/* SLIDES ABSOLUTOS */
-.heroSlidePremium {
+/* SLIDES */
+.heroSlidePremium{
   position: absolute;
   inset: 0;
   opacity: 0;
   transition: opacity 900ms ease;
 }
 
-.heroSlidePremium.active {
+.heroSlidePremium.active{
   opacity: 1;
   z-index: 2;
 }
 
-/* IMAGEM */
-.heroSlidePremium img {
+.heroSlidePremium img{
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Netflix style */
-  transition: transform 6s ease;
+  object-fit: cover;
   transform: scale(1.05);
+  transition: transform 6s ease;
 }
 
-.heroSlidePremium.active img {
-  transform: scale(1.12);
-}
+.heroSlidePremium.active img{ transform: scale(1.12); }
 
-/* Overlay estilo streaming */
-.heroContainerPremium::after {
+/* Overlay streaming */
+.heroContainerPremium::after{
   content: "";
   position: absolute;
   inset: 0;
   background:
     linear-gradient(to top, rgba(0,0,0,.65), transparent 60%),
-    linear-gradient(to bottom, rgba(0,0,0,.5), transparent 40%);
+    linear-gradient(to bottom, rgba(0,0,0,.50), transparent 40%);
   z-index: 3;
   pointer-events: none;
 }
 
-/* SETAS */
-.heroArrowPremium {
+/* TEXT WRAPPER */
+.heroTextWrapper{
+  position: absolute;
+  bottom: 12%;
+  left: 6%;
+  z-index: 6;
+}
+
+.heroTextCard{
+  max-width: 520px;
+  padding: 26px 30px;
+  border-radius: 20px;
+
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+
+  color: #fff;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 700ms ease;
+}
+
+.heroSlidePremium.active .heroTextCard{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.heroTextCard h1{
+  font-size: clamp(16px, 4.2vw, 48px);
+  margin: 0 0 10px 0;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.heroTextCard h3{
+  font-size: clamp(12px, 2.6vw, 22px);
+  margin: 0 0 12px 0;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.heroTextCard p{
+  font-size: clamp(10px, 2.2vw, 18px);
+  margin: 0 0 20px 0;
+  opacity: 0.85;
+}
+
+.heroCTA{
+  padding: clamp(10px, 2.2vw, 12px) clamp(16px, 3.2vw, 22px);
+  border-radius: 10px;
+  border: none;
+  font-weight: 800;
+  background: #e50914;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.heroCTA:hover{
+  background: #f40612;
+  transform: scale(1.04);
+}
+
+@media (max-width: 600px){
+  .heroTextWrapper{
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 8%;
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  .heroTextCard{
+    max-width: min(92vw, 520px);
+    padding: clamp(12px, 3.5vw, 16px) clamp(14px, 4vw, 18px);
+    border-radius: clamp(14px, 4vw, 20px);
+  }
+
+  .heroTextCard p{ margin-bottom: 14px; }
+}
+
+/* ARROWS */
+.heroArrowPremium{
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 5;
+  z-index: 7;
 
   width: 46px;
   height: 46px;
@@ -195,39 +160,38 @@
   border: 1px solid rgba(255,255,255,.15);
   background: rgba(0,0,0,.25);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 
   color: white;
   font-size: 28px;
   cursor: pointer;
-  transition: all .25s ease;
+  transition: transform .25s ease, background .25s ease;
 }
 
-@media (max-width: 768px) {
-  .heroArrowPremium {
-    display: none !important;
-  }
-}
-
-.heroArrowPremium:hover {
+.heroArrowPremium:hover{
   background: rgba(0,0,0,.5);
   transform: translateY(-50%) scale(1.08);
 }
 
-.heroArrowPremium.left { left: 16px; }
-.heroArrowPremium.right { right: 16px; }
+.heroArrowPremium.left{ left: 16px; }
+.heroArrowPremium.right{ right: 16px; }
+
+@media (max-width: 768px){
+  .heroArrowPremium{ display: none !important; }
+}
 
 /* DOTS */
-.heroDotsPremium {
+.heroDotsPremium{
   position: absolute;
   bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   gap: 8px;
-  z-index: 5;
+  z-index: 7;
 }
 
-.heroDotsPremium .dot {
+.heroDotsPremium .dot{
   width: 8px;
   height: 8px;
   border-radius: 999px;
@@ -237,20 +201,11 @@
   transition: all .3s ease;
 }
 
-.heroDotsPremium .dot.active {
+.heroDotsPremium .dot.active{
   width: 24px;
   background: #fff;
 }
 
-/* MOBILE */
-@media (max-width: 768px) {
-  .heroContainerPremium {
-    border-radius: 16px;
-  }
-
-  .heroArrowPremium {
-    width: 36px;
-    height: 36px;
-    font-size: 22px;
-  }
+@media (max-width: 768px){
+  .heroDotsPremium{ display: none !important; }
 }

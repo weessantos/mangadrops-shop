@@ -1,3 +1,7 @@
+/* =========================================================
+   PRODUCT RAIL (horizontal)
+   ========================================================= */
+
 .railBlock{
   padding: 0;
   margin-top: 18px;
@@ -18,7 +22,6 @@
   font-weight: 800;
   letter-spacing: -0.4px;
   color: #fff;
-
   padding-left: 14px;
   position: relative;
 }
@@ -40,57 +43,47 @@
   font-weight: 700;
 }
 
-/* ===== Product Rail ===== */
+/* rail */
 .productRail{
   display: grid;
   grid-auto-flow: column;
   gap: 12px;
   padding: 0 14px 6px;
-  position: relative;
-  z-index: 1;
 
-  scroll-snap-type: x mandatory;
+  overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
 
   scrollbar-width: none;
 }
 
-
 .productRail::-webkit-scrollbar{ display: none; }
 
 .productItem{ scroll-snap-align: start; }
-
-/* garante que o ProductCard ocupe o item */
 .productItem > *{ width: 100%; }
 
-/* Responsivo */
+/* responsivo: largura dos cards */
 @media (min-width: 420px){
   .productRail{ grid-auto-columns: 48%; }
 }
+
 @media (min-width: 700px){
   .productRail{ grid-auto-columns: 32%; }
 }
-.productRail{
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 320px; /* ✅ no desktop fica consistente */
-  gap: 12px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-.productRail::-webkit-scrollbar{ display: none; }
-.productItem{ scroll-snap-align: start; }
 
-/* ===== Setinhas (somente desktop) ===== */
+@media (min-width: 1024px){
+  .productRail{ grid-auto-columns: 320px; }
+}
+
+/* setinhas (apenas desktop) */
 .railArrows{
   margin-left: auto;
   display: none;
   gap: 8px;
   align-items: center;
   position: relative;
-  z-index: 10;           /* setas acima visualmente */
-  pointer-events: none; /* mas NÃO captura clique no container */
+  z-index: 10;
+  pointer-events: none;
 }
 
 .railArrow{
@@ -105,13 +98,9 @@
   cursor: pointer;
 }
 
-.railArrows .railArrow{
-  pointer-events: auto;
-}
+.railArrows .railArrow{ pointer-events: auto; }
 
-.railArrow:hover{
-  background: rgba(255,255,255,0.12);
-}
+.railArrow:hover{ background: rgba(255,255,255,0.12); }
 
 .railArrow.disabled{
   opacity: 0.35;
@@ -120,8 +109,29 @@
 
 @media (min-width: 1024px){
   .railArrows{ display: flex; }
-  .productRail{ grid-auto-columns: 320px; }
 }
 
+@media (max-width: 420px){
+  /* garante que o rail não “cresça” o card ativo */
+  .productRail .productCard,
+  .productRail .railCard,
+  .productRail .card{
+    width: min(84vw, 320px) !important;
+    min-width: min(84vw, 320px) !important;
+    max-width: min(84vw, 320px) !important;
+  }
 
+  /* se você tiver efeito de “active scale”, mata no mobile pequeno */
+  .productRail .active,
+  .productRail .isActive{
+    transform: none !important;
+  }
 
+  /* dá um respiro lateral pra não cortar bordas */
+  .productRail,
+  .railViewport,
+  .railWrap{
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+}

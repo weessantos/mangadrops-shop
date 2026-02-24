@@ -1,10 +1,16 @@
 /* =========================================================
-   HERO HEADER (estilo MangaVerse)
+   HEADER (Mangá Drops)
+   - Desktop: header com BG + busca + sociais + pills
+   - Mobile: topbar fixa (amazon-like) + side menu (portal)
    ========================================================= */
+
+/* =========================
+   DESKTOP / BASE
+   ========================= */
 .heroHeader{
   position: relative;
   border-radius: 28px;
-  overflow: hidden; /* pode ser hidden no desktop */
+  overflow: hidden;
   margin: 16px auto 18px;
   max-width: 1300px;
   min-height: 220px;
@@ -12,7 +18,6 @@
   border: 1px solid rgba(255,255,255,0.10);
 }
 
-/* Fundo */
 .heroBg{
   position: absolute;
   inset: 0;
@@ -20,22 +25,19 @@
   background-position: center;
   filter: saturate(1.05) contrast(1.05);
   border-radius: inherit;
-
 }
 
 .heroShade{
   position: absolute;
   inset: 0;
+  border-radius: inherit;
   background:
     radial-gradient(1200px 400px at 30% 20%, rgba(0,0,0,0.35), transparent 60%),
     linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.75));
-  border-radius: inherit;
 }
 
-/* Conteúdo por cima */
 .heroContent{
   position: relative;
-  overflow: visible !important;
   z-index: 2;
   padding: 18px 18px 16px;
   display: flex;
@@ -43,7 +45,6 @@
   gap: 14px;
 }
 
-/* Linha superior */
 .heroTop{
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -51,30 +52,29 @@
   gap: 14px;
 }
 
-/* Logo */
-/* Logo */
-.heroLogoBtn {
+.heroLogoBtn{
   background: transparent;
   border: 0;
   padding: 0;
   cursor: pointer;
 }
 
-.heroLogo {
-  height: 90px;        /* ajuste */
+.heroLogo{
+  height: 90px;
   width: auto;
   display: block;
   object-fit: contain;
-  /* Se a sua logo for PNG transparente, isso já resolve o “quadrado” */
 }
-.heroLogoBtn:hover .heroLogo{ transform: translateY(-1px) scale(1.03); }
 
-/* Search */
+.heroLogoBtn:hover .heroLogo{
+  transform: translateY(-1px) scale(1.03);
+}
+
 .heroSearch{
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 12px;
+  padding: 12px;
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,0.14);
   background: rgba(255,255,255,0.10);
@@ -95,62 +95,60 @@
   font-size: 14px;
   font-weight: 650;
 }
+
 .heroSearchInput::placeholder{ color: rgba(255,255,255,0.55); }
 
-.heroSearchBtn {
+.heroSearchBtn{
   padding: 8px 14px;
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,0.18);
   background: linear-gradient(135deg, rgba(124,58,237,0.75), rgba(59,130,246,0.75));
   color: rgba(255,255,255,0.95);
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 160ms ease;
+  transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
   backdrop-filter: blur(6px);
 }
 
-.heroSearchBtn:hover {
+.heroSearchBtn:hover{
   transform: translateY(-1px);
   box-shadow: 0 8px 22px rgba(0,0,0,0.35);
+  filter: brightness(1.05);
 }
 
-/* Social buttons */
-.heroSocial {
+.heroSocial{
   display: flex;
   gap: 10px;
   align-items: center;
 }
 
-.socialBtn {
+.socialBtn{
   width: 40px;
   height: 40px;
   border-radius: 999px;
   display: grid;
   place-items: center;
-
-  /* visual “premium” */
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(6px);
-
   transition: transform 0.15s ease, background 0.15s ease, border 0.15s ease;
 }
 
-.socialBtn:hover {
+.socialBtn:hover{
   transform: translateY(-1px);
   background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
-.socialIcon {
+.socialIcon{
   width: 18px;
   height: 18px;
   display: block;
 }
 
-/* =========================================================
-   HERO PILLS PREMIUM (2 linhas + scroll lateral)
-   ========================================================= */
+/* =========================
+   PILLS
+   ========================= */
 .heroPills{
   display: flex;
   flex-direction: column;
@@ -158,32 +156,27 @@
   margin-top: 8px;
 }
 
-/* Linha principal */
 .pillRowMain{
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
 }
 
-/* Container da linha scrollável + setas */
 .pillRowSecondaryContainer{
   position: relative;
   display: flex;
   align-items: center;
 }
 
-/* Scroll horizontal (chips) */
 .pillRowSecondaryWrap{
   overflow-x: auto;
   overflow-y: hidden;
   flex: 1;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-
   padding: 6px 0;
 }
 
-/* Remove scrollbar */
 .pillRowSecondaryWrap::-webkit-scrollbar{ display: none; }
 .pillRowSecondaryWrap{ -ms-overflow-style: none; scrollbar-width: none; }
 
@@ -195,132 +188,88 @@
   padding-right: 8px;
 }
 
-/* Pill base */
 .pill{
   position: relative;
   padding: 8px 14px;
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,0.15);
-
   background: linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-
   color: rgba(255,255,255,0.95);
   font-size: 14px;
   font-weight: 800;
   letter-spacing: 0.3px;
-
   cursor: pointer;
-  transition: all .25s cubic-bezier(.2,.8,.2,1);
+  transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s cubic-bezier(.2,.8,.2,1), background .25s;
   box-shadow:
     0 12px 30px rgba(0,0,0,0.35),
     inset 0 1px 0 rgba(255,255,255,0.18);
 }
+
 .pill:hover{
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   background: linear-gradient(135deg, rgba(255,255,255,0.22), rgba(255,255,255,0.10));
   box-shadow:
     0 20px 50px rgba(0,0,0,0.45),
     0 0 30px rgba(124,58,237,0.25);
 }
+
 .pill:active{ transform: scale(0.96); }
 
-/* Principal (Obras) */
 .pill.pillPrimary{
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: linear-gradient(135deg, rgba(239,68,68,0.75), rgba(220,38,38,0.75));
-  color: rgba(255,255,255,0.95);
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
-  backdrop-filter: blur(6px);
-}
-
-.pill.pillPrimary:hover{
+  border-color: rgba(255,255,255,0.18);
   background: linear-gradient(135deg, rgba(239,68,68,0.85), rgba(220,38,38,0.85));
-  transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(0,0,0,0.35);
-  filter: brightness(1.05);
 }
 
-
-/* CTA - Pedir Obra */
 .pill.pillCTA{
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: linear-gradient(135deg, rgba(124,58,237,0.75), rgba(59,130,246,0.75));
-  color: rgba(255,255,255,0.95);
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
-  backdrop-filter: blur(6px);
+  border-color: rgba(255,255,255,0.18);
+  background: linear-gradient(135deg, rgba(124,58,237,0.82), rgba(59,130,246,0.82));
 }
 
-.pill.pillCTA:hover{
-  /* ✅ reafirma o background no hover pra não ser sobrescrito */
-  background: linear-gradient(135deg, rgba(124,58,237,0.85), rgba(59,130,246,0.85));
-  transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(0,0,0,0.35);
-  filter: brightness(1.05);
-}
-
-
-/* Chips (linha de baixo — menos destaque) */
 .pillChip{
   flex: 0 0 auto;
-  padding: 8px 14px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 750;
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.10);
   box-shadow: none;
   opacity: 0.88;
 }
+
 .pillChip:hover{
   opacity: 1;
   transform: translateY(-1px);
   background: rgba(255,255,255,0.14);
 }
 
-/* Setas */
 .scrollArrow{
   position: absolute;
   z-index: 10;
-
   width: 36px;
   height: 36px;
   border-radius: 50%;
-
   border: 1px solid rgba(255,255,255,0.15);
   background: rgba(0,0,0,0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-
   color: #fff;
   font-size: 20px;
   font-weight: 900;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   cursor: pointer;
-  transition: all .2s ease;
+  transition: transform .2s ease, background .2s ease;
 }
-.scrollArrow:hover{
-  background: rgba(124,58,237,0.7);
-  transform: scale(1.08);
-}
+
+.scrollArrow:hover{ background: rgba(124,58,237,0.7); transform: scale(1.08); }
 .scrollArrow.left{ left: -8px; }
 .scrollArrow.right{ right: -8px; }
 
-/* =========================================================
-   RESPONSIVO (Header — polido)
-   ========================================================= */
+/* =========================
+   RESPONSIVO (DESKTOP -> TABLET)
+   ========================= */
 @media (max-width: 980px){
   .heroTop{
     grid-template-columns: auto 1fr;
@@ -337,1027 +286,64 @@
   .heroSearchInput{ min-width: 0; }
 }
 
-/* Texto do slide no Hero */
-
-.heroTextBlock {
-  position: absolute;
-  bottom: 12%;
-  left: 6%;
-  z-index: 6;
-
-  max-width: 520px;
-  color: white;
-
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 700ms ease;
-}
-
-.heroSlidePremium.active .heroTextBlock {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.heroTextBlock h1 {
-  font-size: clamp(28px, 4vw, 52px);
-  margin: 0 0 8px 0;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-}
-
-.heroTextBlock h3 {
-  font-size: clamp(16px, 2vw, 22px);
-  margin: 0 0 12px 0;
-  font-weight: 500;
-  opacity: 0.9;
-}
-
-.heroTextBlock p {
-  font-size: clamp(14px, 1.6vw, 18px);
-  opacity: 0.85;
-  margin-bottom: 18px;
-}
-
-.heroCTA {
-  padding: 12px 20px;
-  border-radius: 8px;
-  border: none;
-  font-weight: 600;
-  background: #e50914;
-  color: white;
-  cursor: pointer;
-  transition: all .25s ease;
-}
-
-.heroCTA:hover {
-  background: #f40612;
-  transform: scale(1.05);
-}
-
-/* Container do texto */
-.heroTextWrapper {
-  position: absolute;
-  bottom: 12%;
-  left: 6%;
-  z-index: 6;
-}
-
-/* Card do texto (Netflix-like) */
-.heroTextCard {
-  max-width: 520px;
-  padding: 26px 30px;
-  border-radius: 20px;
-
-  background: rgba(0, 0, 0, 0.28);
-  backdrop-filter: blur(2px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
-
-  color: #fff;
-
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 700ms ease;
-}
-
-/* Anima quando slide ativo */
-.heroSlidePremium.active .heroTextCard {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ✅ Tipografia fluida (já funciona no desktop e no mobile) */
-.heroTextCard h1 {
-  font-size: clamp(16px, 4.2vw, 48px);
-  margin: 0 0 10px 0;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-}
-
-.heroTextCard h3 {
-  font-size: clamp(12px, 2.6vw, 22px);
-  margin: 0 0 12px 0;
-  font-weight: 500;
-  opacity: 0.9;
-}
-
-.heroTextCard p {
-  font-size: clamp(10px, 2.2vw, 18px);
-  margin: 0 0 20px 0;
-  opacity: 0.85;
-}
-
-/* CTA (um pouco fluido também) */
-.heroCTA {
-  padding: clamp(10px, 2.2vw, 12px) clamp(16px, 3.2vw, 22px);
-  border-radius: 8px;
-  border: none;
-  font-weight: 700;
-  background: #e50914;
-  color: #fff;
-  cursor: pointer;
-  transition: transform 0.25s ease, background 0.25s ease;
-}
-
-.heroCTA:hover {
-  background: #f40612;
-  transform: scale(1.05);
-}
-
-/* Mobile */
-@media (max-width: 600px) {
-  .heroTextWrapper {
-    left: 43%;
-    transform: translateX(-50%);
-    bottom: 8%;
-  }
-
-  /* ✅ Card fluido: largura e padding adaptáveis */
-  .heroTextCard {
-    max-width: min(92vw, 520px);
-    padding: clamp(12px, 3.5vw, 16px) clamp(14px, 4vw, 18px);
-    border-radius: clamp(14px, 4vw, 20px);
-  }
-
-  /* ✅ Se quiser reduzir um pouco o espaço do parágrafo no mobile */
-  .heroTextCard p {
-    margin-bottom: 14px;
-  }
-}
-
-/* ✅ Badges editora/vol (se já tiver, mantém; isso só dá um trato) */
-.badgeMain{
-  display:inline-flex;
-  align-items:center;
-  gap: 6px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.06);
-  color: rgba(255,255,255,0.88);
-  font-size: 12px;
-  font-weight: 800;
-  white-space: nowrap;
-}
-
-.porLabel{
-  font-size: 11px;
-  font-weight: 900;
-  padding: 5px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(0,0,0,0.18);
-  color: rgba(255,255,255,0.88);
-  white-space: nowrap;
-}
-
-/* Editora • Vol como texto (sem badge) */
-.metaText{
-  display:flex;
-  align-items:center;
-  flex-wrap: wrap;
-  gap: 6px;
-
-  margin: 6px 0 12px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 650;
-}
-
-@media (max-width: 450px){
-  .metaText{ font-size: 10px; }
-}
-
-.metaPublisher,
-.metaVol{
-  color: rgba(255,255,255,0.78);
-}
-
-.metaDot{
-  opacity: 0.7;
-}
-
-/* status discreto (lado direito / fim da linha) */
-.metaStock{
-  margin-left: auto;
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.04);
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: .2px;
-  white-space: nowrap;
-}
-
-@media (max-width: 450px){
-  .metaStock{ font-size: 10px; padding: 3px 8px; }
-}
-
-.metaStock.good{
-  border-color: rgba(34,197,94,0.25);
-  background: rgba(34,197,94,0.10);
-  color: rgba(255,255,255,0.90);
-}
-
-.metaStock.danger{
-  border-color: rgba(239,68,68,0.25);
-  background: rgba(239,68,68,0.10);
-  color: rgba(255,255,255,0.90);
-}
-
-/* Botões um embaixo do outro */
-.buttonsCol{
-  display:flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.buttonsCol a{
-  display:flex;
-}
-
-.buttonsCol a .btn{
-  width: 100%;
-}
-
-/* =========================
-   TIKTOK BLOCK
-   ========================= */
-
-.tiktokBlock {
-  margin-top: 24px;
-  margin-bottom: 32px; /* 🔥 mais espaço antes dos botões */
-}
-
-.tiktokEmbedWrap {
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: #0b0b0b;
-}
-
-.tiktokIframe {
-  width: 100%;
-  height: min(620px, 70vh);
-  border: 0;
-  display: block;
-}
-
-/* Botão externo TikTok */
-.tiktokExternalBtn {
-  display: inline-block;
-  margin-top: 14px;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
-  transition: all 0.2s ease;
-}
-
-.tiktokExternalBtn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
-}
-
-/* Placeholder */
-.tiktokPlaceholder {
-  border-radius: 16px;
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.04);
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-/* Overlay continua igual (provavelmente fix) */
-.modalOverlay {
-  /* se já for fixed, ok. Se não, faça: */
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* ✅ Modal com altura máxima e sem estourar */
-.modal {
-  width: min(1100px, 96vw);
-  max-height: min(92vh, 900px);
-  display: flex;
-  flex-direction: column;
-}
-
-/* ✅ NOVO: área interna rolável (mobile fix) */
-.modalContent {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding: 16px;
-}
-
-/* ✅ Grid 2 colunas */
-.modalBody {
-  display: grid;
-  grid-template-columns: 420px 1fr;
-  gap: 20px;
-  align-items: start;
-}
-
-/* Coluna esquerda */
-.modalLeft {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.modalCover img {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 14px;
-}
-
-.modalDescLeft {
-  margin: 0;
-  opacity: 0.9;
-  line-height: 1.5;
-}
-
-/* Coluna direita */
-.modalRight {
-  display: flex;
-  flex-direction: column;
-}
-
-/* TikTok block com espaço antes dos botões */
-.tiktokBlock {
-  margin-top: 18px;
-  margin-bottom: 28px; /* respiro maior */
-}
-
-.tiktokEmbedWrap {
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: #0b0b0b;
-}
-
-.tiktokIframe {
-  width: 100%;
-  height: min(620px, 62vh);
-  border: 0;
-  display: block;
-}
-
-.tiktokExternalBtn {
-  display: inline-block;
-  margin-top: 12px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  text-decoration: none;
-  background: rgba(255,255,255,.08);
-  color: white;
-  font-weight: 600;
-}
-
-.tiktokExternalBtn:hover {
-  background: rgba(255,255,255,.14);
-}
-
-/* Placeholder */
-.tiktokPlaceholder {
-  border-radius: 16px;
-  padding: 18px;
-  border: 1px solid rgba(255,255,255,.08);
-  background: rgba(255,255,255,.04);
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-/* ✅ Mobile: vira 1 coluna e continua rolando dentro do modal */
-@media (max-width: 900px) {
-  .modal {
-    width: 100vw;
-    max-height: 100vh;
-    border-radius: 0; /* opcional no mobile */
-  }
-
-  .modalContent {
-    padding: 14px;
-  }
-
-  .modalBody {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .tiktokIframe {
-    height: min(520px, 55vh);
-  }
-
-  /* dá mais espaço pro “footer” de botões */
-  .modalActions {
-    margin-top: 18px;
-  }
-}
-/* Modal precisa ser flex vertical */
-.modal {
-  display: flex;
-  flex-direction: column;
-  max-height: min(92vh, 900px);
-}
-
-/* Área rolável */
-.modalContent {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding: 16px;
-  flex: 1; /* ocupa o espaço restante */
-}
-
-/* 🔥 Footer fixo */
-.modalFooter {
-  position: sticky;
-  bottom: 0;
-  background: linear-gradient(
-    to top,
-    rgba(15,15,20,0.95),
-    rgba(15,15,20,0.85)
-  );
-  backdrop-filter: blur(10px);
-  padding: 16px;
-  border-top: 1px solid rgba(255,255,255,0.08);
-}
-
-/* Espaço entre botões */
-.modalActions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-/* 🔥 IMPORTANTE: evita conteúdo ficar escondido atrás do footer */
-.modalBody {
-  padding-bottom: 40px;
-}
-
-/* Botão ocupar largura total quando necessário */
-.modalActions a,
-.modalActions button {
-  flex: 1;
-}
-
-/* Estado desabilitado estilizado */
-.btn.disabledFull {
-  background: #b32626; /* vermelho mais fechado */
-  color: white;
-  opacity: 0.9;
-  cursor: not-allowed;
-  border: none;
-}
-
-
-/* Mantém mesmo padding e tamanho do botão principal */
-.btn {
-  padding: 14px 18px;
-  font-weight: 600;
-  border-radius: 10px;
-}
-
-/* Se quiser visual mais suave */
-.btn.disabledFull:hover {
-  transform: none;
-}
-
-/*Dois botões lado a lado (ex: Comprar + TikTok) */
-
-/* Card hover premium */
-.cardHover {
-  position: relative;
-  transition: transform 160ms ease, box-shadow 160ms ease;
-  will-change: transform;
-}
-
-.cardHover:hover {
-  transform: scale(1.03);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-}
-
-/* Thumb wrap para overlay */
-.thumbWrap {
-  position: relative;
-  overflow: hidden;
-  border-radius: 12px; /* ajuste ao seu layout */
-}
-
-/* Overlay aparece no hover */
-.hoverOverlay {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transform: translateY(4px);
-  transition: opacity 160ms ease, transform 160ms ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.65),
-    rgba(0, 0, 0, 0.15)
-  );
-}
-
-.cardHover:hover .hoverOverlay {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Botão do overlay */
-.overlayBtn {
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  padding: 10px 14px;
-  cursor: pointer;
-  font-weight: 700;
-
-  background: rgba(0, 0, 0, 0.55);  /* mais transparente */
-  backdrop-filter: blur(6px);       /* efeito fosco */
-  -webkit-backdrop-filter: blur(6px);
-
-  color: #fff;
-  transition: transform 140ms ease, background 140ms ease;
-}
-
-.overlayBtn:hover {
-  transform: scale(1.05);
-  background: rgba(0, 0, 0, 0.7);
-}
-
-/* Linha com 2 botões */
-.buyRow {
-  display: flex;
-  gap: 10px;
-}
-
-.buyLink {
-  display: block;
-}
-
-.buyLink.grow {
-  flex: 1;
-}
-
-.buyLink.single {
-  width: 100%;
-}
-
-/* Botões de brand com fundo e hover scale */
-/* Botões com tamanho fixo */
-.brandBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 48px;          /* tamanho fixo do botão */
-  padding: 0;
-  border-radius: 10px;
-  transition: transform 140ms ease, filter 140ms ease;
-}
-
-/* Tamanho padrão da logo */
-.brandIcon {
-  height: 24px;
-  width: auto;
-  object-fit: contain;
-  transition: transform 140ms ease;
-}
-
-/* Mercado Livre */
-.btn.mercado {
-  background: #ffe600;
-}
-
-.btn.mercado .brandIcon {
-  height: 17px;
-}
-
-/* Amazon */
-.btn.amazon {
-  background: #fff;
-  border: 1px solid #ddd;
-}
-
-/* 🔥 Aqui está o segredo */
-.btn.amazon .brandIcon {
-  transform: scale(1.2);
-  transform-origin: center;
-  margin-top: 4px;
-}
 /* =========================================================
-   MOBILE (único bloco) — TopBar + SideMenu + camadas
+   MOBILE: TOPBAR FIXA + MENU
    ========================================================= */
-@media (max-width: 768px) {
-
-  /* --- HERO: não pode cortar overlay e nem criar “mundo” novo --- */
-  .heroHeader{
-    margin: 12px 12px 14px;
-    border-radius: 18px;
-    min-height: auto;               /* tira gigantão */
-    overflow: visible !important;   /* não recorta overlay */
-    transform: none !important;     /* evita fixed quebrar */
-    filter: none !important;
-  }
-
-  /* força fundo do hero ficar SEMPRE atrás */
-  .heroBg,
-  .heroShade{
-    position: absolute;
-    inset: 0;
-    z-index: 0 !important;
-    pointer-events: none;
-  }
-
-  .heroContent{
-    position: relative;
-    z-index: 1;
-    padding: 10px;  /* header menor */
-    gap: 10px;
-  }
-
-  /* =========================================================
-     TOP BAR (amazon-like)
-     ========================================================= */
-@media (max-width: 768px) {
-  /* BAR “APP” (uma cápsula única) */
-  .mobileTopBar{
-    display: grid;
-    grid-template-columns: 44px 44px 1fr 84px; /* botão menor e fixo */
-    align-items: center;
-    gap: 10px;
-
-    padding: 10px;
-    border-radius: 999px;
-
-    background: rgba(20,20,24,0.62);
-    border: 1px solid rgba(255,255,255,0.10);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-
-    box-shadow:
-      0 16px 50px rgba(0,0,0,0.45),
-      inset 0 1px 0 rgba(255,255,255,0.08);
-  }
-
-  @media (max-width: 768px) {
-  /* evita heranças antigas quebrarem o input */
-  .mobileTopBar * { box-sizing: border-box; }
-
-  .mobileTopBar{
-    grid-template-columns: 44px 44px 1fr 88px; /* garante espaço do botão */
-    padding: 10px;
-    border-radius: 999px;
-    overflow: hidden; /* impede "vazar" coisa pra fora da pill */
-  }
-
-  /* cápsulas dos botões (menu/logo) */
-  .mobileMenuBtn,
-  .mobileLogoBtn{
-    width: 44px;
-    height: 44px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.10);
-    background: rgba(255,255,255,0.06);
-  }
-
-  /* search container */
-  .mobileSearch{
-    height: 44px;
-    border-radius: 999px;
-    padding: 0 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.10);
-    min-width: 0; /* MUITO importante no grid */
-  }
-
-  /* o input é transparente e ocupa tudo */
-  .mobileSearchInput{
-    flex: 1;
-    min-width: 0;             /* evita quebrar layout */
-    width: 100%;
-
-    background: transparent !important;
-    border: 0 !important;
-    outline: none !important;
-    box-shadow: none !important;
-
-    color: rgba(255,255,255,0.92);
-    font-size: 15px;
-    font-weight: 750;
-    padding: 0 !important;    /* mata padding antigo */
-    border-radius: 0 !important;
-  }
-
-  .mobileSearchInput::placeholder{
-    color: rgba(255,255,255,0.55);
-  }
-
-  /* botão buscar sem cortar */
-  .mobileSearchBtn{
-    height: 44px;
-    width: 88px;              /* fixa e não “some” */
-    padding: 0;
-    border-radius: 999px;
-
-    display: grid;
-    place-items: center;
-
-    border: 1px solid rgba(255,255,255,0.14);
-    background: linear-gradient(135deg, rgba(124,58,237,0.92), rgba(59,130,246,0.92));
-    color: rgba(255,255,255,0.95);
-    font-weight: 900;
-    white-space: nowrap;
-  }
-}
-
-  /* MENU + LOGO como “chips” suaves */
-  .mobileMenuBtn,
-  .mobileLogoBtn{
-    width: 44px;
-    height: 44px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.10);
-    background: rgba(255,255,255,0.06);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
-  }
-
-  .mobileMenuBtn{
-    font-size: 20px;
-  }
-
-  .mobileLogo{
-    height: 22px; /* mais clean */
-    filter: drop-shadow(0 10px 18px rgba(0,0,0,.18));
-  }
-
-  /* INPUT virando uma cápsula de verdade */
-  .mobileSearch{
-    height: 44px;
-    border-radius: 999px;
-    padding: 0 14px;
-    gap: 10px;
-
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.10);
-  }
-
-  .mobileSearchIcon{
-    opacity: 0.85;
-  }
-
-  .mobileSearchInput{
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: -0.1px;
-  }
-
-  /* BOTÃO Buscar mais integrado e “chique” */
-  .mobileSearchBtn{
-    height: 44px;
-    border-radius: 999px;
-    padding: 0 14px;
-
-    border: 1px solid rgba(255,255,255,0.14);
-    background: linear-gradient(135deg, rgba(124,58,237,0.92), rgba(59,130,246,0.92));
-    box-shadow:
-      0 14px 34px rgba(59,130,246,0.25),
-      inset 0 1px 0 rgba(255,255,255,0.20);
-
-    font-weight: 900;
-  }
-
-  .mobileSearchBtn:active,
-  .mobileMenuBtn:active,
-  .mobileLogoBtn:active{
-    transform: scale(0.985);
-  }
-}
-
-  /* =========================================================
-     SIDE MENU (sempre acima de tudo e SEMPRE “cobrindo”)
-     ========================================================= */
-  .sideMenuOverlay{
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-
-    z-index: 2147483647 !important; /* máximo prático */
-    background: rgba(0,0,0,0.62);
-    backdrop-filter: blur(7px);
-    -webkit-backdrop-filter: blur(7px);
-  }
-
-  .sideMenu{
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-
-    width: min(76vw, 280px);  /* menor */
-    max-width: 280px;
-
-    z-index: 2147483647 !important;
-
-    background: rgba(15,15,20,0.94);
-    color: rgba(255,255,255,0.95);
-
-    border-right: 1px solid rgba(255,255,255,0.10);
-    box-shadow: 18px 0 60px rgba(0,0,0,0.55);
-
-    padding: 12px;
-    overflow: hidden;
-    animation: sideIn 220ms ease;
-  }
-
-  @keyframes sideIn{
-    from{ transform: translateX(-18px); opacity: 0; }
-    to{ transform: translateX(0); opacity: 1; }
-  }
-
-  .sideMenuTop{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding-bottom: 8px;
-  }
-
-  .sideMenuTitle{
-    font-weight: 900;
-    font-size: 18px;
-    letter-spacing: 0.2px;
-  }
-
-  .sideMenuClose{
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.14);
-    background: rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.95);
-    cursor: pointer;
-    display: grid;
-    place-items: center;
-    font-weight: 900;
-  }
-
-  .sideMenuDivider{
-    height: 1px;
-    background: rgba(255,255,255,0.10);
-    margin: 10px 0;
-  }
-
-  .sideMenuSection{
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .sideMenuSectionTitle{
-    font-size: 11px;
-    font-weight: 900;
-    opacity: 0.75;
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
-    margin-top: 6px;
-  }
-
-  .sideMenuList{
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    max-height: 42vh; /* menor pra não ficar gigantão */
-    overflow: auto;
-    padding-right: 4px;
-  }
-
-  .sideMenuBtn{
-    width: 100%;
-    text-align: left;
-    padding: 9px 10px;
-    border-radius: 12px;
-    font-size: 14px;
-
-    border: 1px solid rgba(255,255,255,0.10);
-    background: rgba(255,255,255,0.06);
-    color: rgba(255,255,255,0.95);
-
-    font-weight: 750;
-    cursor: pointer;
-    transition: transform 120ms ease, background 120ms ease, border 120ms ease;
-  }
-
-  .sideMenuBtn:active{ transform: scale(0.99); }
-
-  .sideMenuSocial{
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .sideMenuSocialBtn{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border-radius: 14px;
-
-    border: 1px solid rgba(255,255,255,0.10);
-    background: rgba(255,255,255,0.06);
-    color: rgba(255,255,255,0.95);
-    text-decoration: none;
-    font-weight: 800;
-  }
-
-  .sideMenuSocialBtn .socialIcon{
-    width: 18px;
-    height: 18px;
-  }
-
-  /* setas do chips não fazem sentido no mobile (e você nem renderiza chips no mobile) */
-  .scrollArrow{ display: none !important; }
-}
-/* o fundo respeita o mesmo raio do header (some o quadrado) */
-.heroHeader{
-  overflow: hidden; /* recorta o bg certinho no desktop */
-}
 @media (max-width: 768px){
+  :root{ --topbar-h: 74px; }
 
-  .mobileTopBar{
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-    border-radius: 0;
-    padding: 10px 12px !important;  /* só o padding interno */
-  }
+  /* header vira topbar fixa */
   .heroHeader{
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     width: 100%;
+    max-width: 100%;
     margin: 0 !important;
     border-radius: 0 !important;
-    min-height: 0 !important;     /* tira altura extra */
+    min-height: 0 !important;
     padding: 0 !important;
     z-index: 5000;
+    overflow: visible !important;
+    box-shadow: 0 16px 50px rgba(0,0,0,0.35);
   }
 
-  /* remove altura extra do hero no mobile */
-  .heroBg,
-  .heroShade{
-    display: none !important;
-  }
+  /* no mobile, header não usa bg (hero é outro componente) */
+  .heroBg, .heroShade{ display: none !important; }
 
   .heroContent{
-    padding: 0 !important;
+    padding: 10px 12px !important;
     margin: 0 !important;
     gap: 0 !important;
   }
-}
 
-  /* Mantém o espaço do topo, sem que a barra coma o site */
+  /* começa tudo abaixo da barra */
+  .container{ padding-top: var(--topbar-h); }
 
-@media (max-width: 768px){
-  :root{ --topbar-h: 84px; }
-
-  .container{
-    padding-top: var(--topbar-h);
-  }
-
-  body{
-    padding-top: 0; /* evita duplicar */
-  }
-}
-
-@media (max-width: 768px){
-  /* agora o search é a peça principal */
+  /* MOBILE TOPBAR */
   .mobileTopBar{
     display: grid;
     grid-template-columns: 44px 1fr;
-    gap: 10px;
     align-items: center;
+    gap: 10px;
     width: 100%;
   }
+
+  .mobileMenuBtn{
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.92);
+    font-size: 20px;
+    font-weight: 900;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+  .mobileMenuBtn:active{ transform: scale(0.98); }
 
   .mobileSearch{
     height: 46px;
@@ -1366,6 +352,7 @@
     gap: 10px;
     padding: 0 10px;
     border-radius: 999px;
+    min-width: 0;
 
     background: rgba(20,20,24,0.62);
     border: 1px solid rgba(255,255,255,0.10);
@@ -1375,32 +362,28 @@
     box-shadow:
       0 16px 50px rgba(0,0,0,0.35),
       inset 0 1px 0 rgba(255,255,255,0.08);
-
-    min-width: 0;
   }
 
-  /* “bolinha” da logo dentro do search */
   .mobileLogoMiniBtn{
     width: 34px;
     height: 34px;
     border-radius: 999px;
-    border: 0px solid rgba(255,255,255,0.10);
+    border: 0;
     background: transparent;
-    display: grid;
-    place-items: center;
     padding: 0;
     cursor: pointer;
+    display: grid;
+    place-items: center;
     flex: 0 0 auto;
   }
 
   .mobileSearchLogo{
-    height: 30px;
+    height: 26px;
     width: auto;
-    opacity: 0.95;
     object-fit: contain;
+    opacity: 0.95;
   }
 
-  /* lupa menor e discreta */
   .mobileSearchIcon{
     font-size: 14px;
     opacity: 0.75;
@@ -1408,10 +391,10 @@
     flex: 0 0 auto;
   }
 
-  /* input transparente SEM “caixa branca” */
   .mobileSearchInput{
     flex: 1;
     min-width: 0;
+    width: 100%;
 
     background: transparent !important;
     border: 0 !important;
@@ -1423,9 +406,9 @@
     font-size: 15px;
     font-weight: 750;
   }
+
   .mobileSearchInput::placeholder{ color: rgba(255,255,255,0.55); }
 
-  /* botão buscar mais compacto (dentro do search) */
   .mobileSearchBtn{
     height: 34px;
     padding: 0 12px;
@@ -1438,5 +421,212 @@
     flex: 0 0 auto;
     white-space: nowrap;
   }
+
+  /* no mobile, não mostra header desktop */
+  .heroTop, .heroPills{ display: none; }
 }
 
+/* =========================================================
+   SIDE MENU (Portal)
+   ========================================================= */
+.sideMenuOverlay{
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2147483647 !important;
+  background: rgba(0,0,0,0.62);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+
+.sideMenu{
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: min(76vw, 280px);
+  max-width: 280px;
+  z-index: 2147483647 !important;
+
+  background: rgba(15,15,20,0.94);
+  color: rgba(255,255,255,0.95);
+  border-right: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 18px 0 60px rgba(0,0,0,0.55);
+  padding: 12px;
+  overflow: hidden;
+  animation: sideIn 220ms ease;
+}
+
+@keyframes sideIn{
+  from{ transform: translateX(-18px); opacity: 0; }
+  to{ transform: translateX(0); opacity: 1; }
+}
+
+.sideMenuTop{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 8px;
+}
+
+.sideMenuTitle{
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: 0.2px;
+}
+
+.sideMenuClose{
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.95);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+}
+
+.sideMenuDivider{
+  height: 1px;
+  background: rgba(255,255,255,0.10);
+  margin: 10px 0;
+}
+
+.sideMenuSection{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sideMenuSectionTitle{
+  font-size: 11px;
+  font-weight: 900;
+  opacity: 0.75;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+.sideMenuList{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 42vh;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.sideMenuBtn{
+  width: 100%;
+  text-align: left;
+  padding: 9px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.95);
+  font-weight: 750;
+  cursor: pointer;
+  transition: transform 120ms ease, background 120ms ease, border 120ms ease;
+}
+
+.sideMenuBtn:hover{
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.16);
+}
+
+.sideMenuBtn:active{ transform: scale(0.99); }
+
+.sideMenuSocial{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sideMenuSocialBtn{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.95);
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.sideMenuSocialBtn .socialIcon{
+  width: 18px;
+  height: 18px;
+}
+
+/* =========================================================
+   Compat: se seu JSX ainda usa mobileLogoBtn/mobileLogo fora da barra
+   (não quebra — só deixa bonito)
+   ========================================================= */
+@media (max-width: 768px){
+  .mobileLogoBtn{
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.06);
+    padding: 0;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+
+  .mobileLogo{
+    height: 26px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+  }
+}
+
+@media (max-width: 768px){
+
+    /* fundo sólido da barra inteira */
+  .heroHeader{
+    overflow: hidden;
+    background: #0b1220; /* mesma base do site */
+  }
+
+  .heroHeader::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: url("/assets/background.jpeg") center/cover no-repeat;
+
+    filter:
+      blur(20px)
+      brightness(0.25)
+      contrast(0.8)
+      saturate(0.4);
+
+    transform: scale(1.25); /* evita borda branca do blur */
+
+    z-index: 500000;
+  }
+
+  .heroContent{
+  position: relative;
+  z-index: 500002;
+  }
+  
+  /* campo de busca sólido */
+  .mobileSearch{
+    background: linear-gradient(to bottom,#252627,#000000) !important;
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+}
