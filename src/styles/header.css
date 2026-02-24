@@ -4,7 +4,7 @@
 .heroHeader{
   position: relative;
   border-radius: 28px;
-  overflow: hidden;
+  overflow: hidden; /* pode ser hidden no desktop */
   margin: 16px auto 18px;
   max-width: 1300px;
   min-height: 220px;
@@ -19,7 +19,8 @@
   background-size: cover;
   background-position: center;
   filter: saturate(1.05) contrast(1.05);
-  transform: scale(1.03);
+  border-radius: inherit;
+
 }
 
 .heroShade{
@@ -28,11 +29,13 @@
   background:
     radial-gradient(1200px 400px at 30% 20%, rgba(0,0,0,0.35), transparent 60%),
     linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.75));
+  border-radius: inherit;
 }
 
 /* Conteúdo por cima */
 .heroContent{
   position: relative;
+  overflow: visible !important;
   z-index: 2;
   padding: 18px 18px 16px;
   display: flex;
@@ -315,172 +318,6 @@
 .scrollArrow.left{ left: -8px; }
 .scrollArrow.right{ right: -8px; }
 
-/* =========================
-   MOBILE PREMIUM HEADER
-   ========================= */
-@media (max-width: 768px) {
-  /* Wrapper geral */
-  .heroPremium{
-    padding: 0 12px;
-    margin-top: 16px;
-  }
-
-  .heroContainerPremium{
-    border-radius: 22px;
-    overflow: hidden;
-    /* profundidade */
-    box-shadow: 0 18px 60px rgba(0,0,0,.45);
-  }
-
-  /* background um pouco mais “cinema” */
-  .heroShade{
-    background:
-      radial-gradient(80% 60% at 15% 15%, rgba(255,255,255,.08), rgba(0,0,0,0) 60%),
-      linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.65));
-    backdrop-filter: blur(6px);
-  }
-
-  .heroContent{
-    padding: 14px;
-    gap: 12px;
-  }
-
-  /* TOP: logo + sociais alinhados e com cara de “barra” */
-  .heroTop{
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-areas:
-      "logo social"
-      "search search";
-    align-items: center;
-    gap: 12px;
-  }
-
-  .heroLogoBtn{ grid-area: logo; }
-  .heroLogo{
-    height: 80px;
-    width: auto;
-    filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
-  }
-
-  .heroSocial{
-    grid-area: social;
-    justify-self: end;
-    display: flex;
-    gap: 8px;
-    padding: 6px;
-    border-radius: 999px;
-    background: rgba(255,255,255,.08);
-    border: 1px solid rgba(255,255,255,.14);
-    backdrop-filter: blur(10px);
-  }
-
-  .socialBtn{
-    width: 40px;
-    height: 40px;
-    border-radius: 999px;
-    background: rgba(0,0,0,.25);
-    border: 1px solid rgba(255,255,255,.14);
-    display: grid;
-    place-items: center;
-  }
-  .socialIcon{ width: 18px; height: 18px; opacity: .95; }
-
-  /* BUSCA: mais premium (glass) e menos “comprida” */
-  .heroSearch{
-    grid-area: search;
-    height: 48px;
-    border-radius: 18px;
-    background: rgba(255,255,255,.10);
-    border: 1px solid rgba(255,255,255,.14);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 14px 40px rgba(0,0,0,.28);
-  }
-
-  .heroSearchIcon{
-    margin-left: 12px;
-    opacity: .9;
-  }
-
-  .heroSearchInput{
-    font-size: 16px; /* evita zoom iOS */
-    padding: 0 10px;
-    color: rgba(255,255,255,.92);
-  }
-  .heroSearchInput::placeholder{
-    color: rgba(255,255,255,.60);
-  }
-
-  .heroSearchBtn{
-    margin-right: 10px;
-    padding: 10px 14px;
-    border-radius: 14px;
-    font-size: 14px;
-    white-space: nowrap;
-    box-shadow: 0 14px 28px rgba(0,0,0,.25);
-  }
-
-  /* PILLS principais: mais alinhadas e “app-like” */
-  .pillRowMain{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  .pillRowMain .pill{
-    width: 100%;
-    justify-content: center;
-    padding: 12px 12px;
-    border-radius: 999px;
-    letter-spacing: .2px;
-  }
-
-  /* CHIPS: premium = scroll suave + fade nas bordas */
-  .pillRowSecondaryContainer{
-    position: relative;
-    margin-top: 10px;
-  }
-
-  .pillRowSecondaryWrap{
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 2px 2px 4px;
-    scroll-snap-type: x proximity;
-
-    /* fade nas laterais (efeito premium) */
-    -webkit-mask-image: linear-gradient(90deg,
-      transparent 0%,
-      #000 8%,
-      #000 92%,
-      transparent 100%);
-            mask-image: linear-gradient(90deg,
-      transparent 0%,
-      #000 8%,
-      #000 92%,
-      transparent 100%);
-  }
-
-  .pillRowSecondary{
-    gap: 10px;
-  }
-
-  .pillRowSecondary .pillChip{
-    scroll-snap-align: start;
-    padding: 10px 12px;
-    border-radius: 999px;
-    font-size: 14px;
-    white-space: nowrap;
-
-    background: rgba(255,255,255,.08);
-    border: 1px solid rgba(255,255,255,.14);
-    backdrop-filter: blur(10px);
-  }
-
-  /* Setas somem no mobile (evita poluição visual) */
-  .scrollArrow{ display: none !important; }
-}
-
-
 /* =========================================================
    RESPONSIVO (Header — polido)
    ========================================================= */
@@ -572,7 +409,7 @@
   border-radius: 20px;
 
   background: rgba(0, 0, 0, 0.28);
-  backdrop-filter: blur(1px);
+  backdrop-filter: blur(2px);
   border: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
 
@@ -1121,3 +958,485 @@
   transform-origin: center;
   margin-top: 4px;
 }
+/* =========================================================
+   MOBILE (único bloco) — TopBar + SideMenu + camadas
+   ========================================================= */
+@media (max-width: 768px) {
+
+  /* --- HERO: não pode cortar overlay e nem criar “mundo” novo --- */
+  .heroHeader{
+    margin: 12px 12px 14px;
+    border-radius: 18px;
+    min-height: auto;               /* tira gigantão */
+    overflow: visible !important;   /* não recorta overlay */
+    transform: none !important;     /* evita fixed quebrar */
+    filter: none !important;
+  }
+
+  /* força fundo do hero ficar SEMPRE atrás */
+  .heroBg,
+  .heroShade{
+    position: absolute;
+    inset: 0;
+    z-index: 0 !important;
+    pointer-events: none;
+  }
+
+  .heroContent{
+    position: relative;
+    z-index: 1;
+    padding: 10px;  /* header menor */
+    gap: 10px;
+  }
+
+  /* =========================================================
+     TOP BAR (amazon-like)
+     ========================================================= */
+@media (max-width: 768px) {
+  /* BAR “APP” (uma cápsula única) */
+  .mobileTopBar{
+    display: grid;
+    grid-template-columns: 44px 44px 1fr 84px; /* botão menor e fixo */
+    align-items: center;
+    gap: 10px;
+
+    padding: 10px;
+    border-radius: 999px;
+
+    background: rgba(20,20,24,0.62);
+    border: 1px solid rgba(255,255,255,0.10);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow:
+      0 16px 50px rgba(0,0,0,0.45),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+
+  @media (max-width: 768px) {
+  /* evita heranças antigas quebrarem o input */
+  .mobileTopBar * { box-sizing: border-box; }
+
+  .mobileTopBar{
+    grid-template-columns: 44px 44px 1fr 88px; /* garante espaço do botão */
+    padding: 10px;
+    border-radius: 999px;
+    overflow: hidden; /* impede "vazar" coisa pra fora da pill */
+  }
+
+  /* cápsulas dos botões (menu/logo) */
+  .mobileMenuBtn,
+  .mobileLogoBtn{
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.06);
+  }
+
+  /* search container */
+  .mobileSearch{
+    height: 44px;
+    border-radius: 999px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.10);
+    min-width: 0; /* MUITO importante no grid */
+  }
+
+  /* o input é transparente e ocupa tudo */
+  .mobileSearchInput{
+    flex: 1;
+    min-width: 0;             /* evita quebrar layout */
+    width: 100%;
+
+    background: transparent !important;
+    border: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+
+    color: rgba(255,255,255,0.92);
+    font-size: 15px;
+    font-weight: 750;
+    padding: 0 !important;    /* mata padding antigo */
+    border-radius: 0 !important;
+  }
+
+  .mobileSearchInput::placeholder{
+    color: rgba(255,255,255,0.55);
+  }
+
+  /* botão buscar sem cortar */
+  .mobileSearchBtn{
+    height: 44px;
+    width: 88px;              /* fixa e não “some” */
+    padding: 0;
+    border-radius: 999px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid rgba(255,255,255,0.14);
+    background: linear-gradient(135deg, rgba(124,58,237,0.92), rgba(59,130,246,0.92));
+    color: rgba(255,255,255,0.95);
+    font-weight: 900;
+    white-space: nowrap;
+  }
+}
+
+  /* MENU + LOGO como “chips” suaves */
+  .mobileMenuBtn,
+  .mobileLogoBtn{
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.06);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+
+  .mobileMenuBtn{
+    font-size: 20px;
+  }
+
+  .mobileLogo{
+    height: 22px; /* mais clean */
+    filter: drop-shadow(0 10px 18px rgba(0,0,0,.18));
+  }
+
+  /* INPUT virando uma cápsula de verdade */
+  .mobileSearch{
+    height: 44px;
+    border-radius: 999px;
+    padding: 0 14px;
+    gap: 10px;
+
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.10);
+  }
+
+  .mobileSearchIcon{
+    opacity: 0.85;
+  }
+
+  .mobileSearchInput{
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.1px;
+  }
+
+  /* BOTÃO Buscar mais integrado e “chique” */
+  .mobileSearchBtn{
+    height: 44px;
+    border-radius: 999px;
+    padding: 0 14px;
+
+    border: 1px solid rgba(255,255,255,0.14);
+    background: linear-gradient(135deg, rgba(124,58,237,0.92), rgba(59,130,246,0.92));
+    box-shadow:
+      0 14px 34px rgba(59,130,246,0.25),
+      inset 0 1px 0 rgba(255,255,255,0.20);
+
+    font-weight: 900;
+  }
+
+  .mobileSearchBtn:active,
+  .mobileMenuBtn:active,
+  .mobileLogoBtn:active{
+    transform: scale(0.985);
+  }
+}
+
+  /* =========================================================
+     SIDE MENU (sempre acima de tudo e SEMPRE “cobrindo”)
+     ========================================================= */
+  .sideMenuOverlay{
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+
+    z-index: 2147483647 !important; /* máximo prático */
+    background: rgba(0,0,0,0.62);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+  }
+
+  .sideMenu{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+
+    width: min(76vw, 280px);  /* menor */
+    max-width: 280px;
+
+    z-index: 2147483647 !important;
+
+    background: rgba(15,15,20,0.94);
+    color: rgba(255,255,255,0.95);
+
+    border-right: 1px solid rgba(255,255,255,0.10);
+    box-shadow: 18px 0 60px rgba(0,0,0,0.55);
+
+    padding: 12px;
+    overflow: hidden;
+    animation: sideIn 220ms ease;
+  }
+
+  @keyframes sideIn{
+    from{ transform: translateX(-18px); opacity: 0; }
+    to{ transform: translateX(0); opacity: 1; }
+  }
+
+  .sideMenuTop{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-bottom: 8px;
+  }
+
+  .sideMenuTitle{
+    font-weight: 900;
+    font-size: 18px;
+    letter-spacing: 0.2px;
+  }
+
+  .sideMenuClose{
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.95);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+  }
+
+  .sideMenuDivider{
+    height: 1px;
+    background: rgba(255,255,255,0.10);
+    margin: 10px 0;
+  }
+
+  .sideMenuSection{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sideMenuSectionTitle{
+    font-size: 11px;
+    font-weight: 900;
+    opacity: 0.75;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  .sideMenuList{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 42vh; /* menor pra não ficar gigantão */
+    overflow: auto;
+    padding-right: 4px;
+  }
+
+  .sideMenuBtn{
+    width: 100%;
+    text-align: left;
+    padding: 9px 10px;
+    border-radius: 12px;
+    font-size: 14px;
+
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.95);
+
+    font-weight: 750;
+    cursor: pointer;
+    transition: transform 120ms ease, background 120ms ease, border 120ms ease;
+  }
+
+  .sideMenuBtn:active{ transform: scale(0.99); }
+
+  .sideMenuSocial{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sideMenuSocialBtn{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 14px;
+
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.95);
+    text-decoration: none;
+    font-weight: 800;
+  }
+
+  .sideMenuSocialBtn .socialIcon{
+    width: 18px;
+    height: 18px;
+  }
+
+  /* setas do chips não fazem sentido no mobile (e você nem renderiza chips no mobile) */
+  .scrollArrow{ display: none !important; }
+}
+/* o fundo respeita o mesmo raio do header (some o quadrado) */
+.heroHeader{
+  overflow: hidden; /* recorta o bg certinho no desktop */
+}
+@media (max-width: 768px){
+
+  .mobileTopBar{
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    border-radius: 0;
+    padding: 10px 12px !important;  /* só o padding interno */
+  }
+  .heroHeader{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    min-height: 0 !important;     /* tira altura extra */
+    padding: 0 !important;
+    z-index: 5000;
+  }
+
+  /* remove altura extra do hero no mobile */
+  .heroBg,
+  .heroShade{
+    display: none !important;
+  }
+
+  .heroContent{
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+  }
+}
+
+  /* Mantém o espaço do topo, sem que a barra coma o site */
+
+@media (max-width: 768px){
+  :root{ --topbar-h: 84px; }
+
+  .container{
+    padding-top: var(--topbar-h);
+  }
+
+  body{
+    padding-top: 0; /* evita duplicar */
+  }
+}
+
+@media (max-width: 768px){
+  /* agora o search é a peça principal */
+  .mobileTopBar{
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+  }
+
+  .mobileSearch{
+    height: 46px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 10px;
+    border-radius: 999px;
+
+    background: rgba(20,20,24,0.62);
+    border: 1px solid rgba(255,255,255,0.10);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow:
+      0 16px 50px rgba(0,0,0,0.35),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+
+    min-width: 0;
+  }
+
+  /* “bolinha” da logo dentro do search */
+  .mobileLogoMiniBtn{
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    border: 0px solid rgba(255,255,255,0.10);
+    background: transparent;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+
+  .mobileSearchLogo{
+    height: 30px;
+    width: auto;
+    opacity: 0.95;
+    object-fit: contain;
+  }
+
+  /* lupa menor e discreta */
+  .mobileSearchIcon{
+    font-size: 14px;
+    opacity: 0.75;
+    line-height: 1;
+    flex: 0 0 auto;
+  }
+
+  /* input transparente SEM “caixa branca” */
+  .mobileSearchInput{
+    flex: 1;
+    min-width: 0;
+
+    background: transparent !important;
+    border: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+
+    color: rgba(255,255,255,0.92);
+    font-size: 15px;
+    font-weight: 750;
+  }
+  .mobileSearchInput::placeholder{ color: rgba(255,255,255,0.55); }
+
+  /* botão buscar mais compacto (dentro do search) */
+  .mobileSearchBtn{
+    height: 34px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: linear-gradient(135deg, rgba(124,58,237,0.92), rgba(59,130,246,0.92));
+    color: rgba(255,255,255,0.95);
+    font-weight: 900;
+    cursor: pointer;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+}
+
