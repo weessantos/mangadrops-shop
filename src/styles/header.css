@@ -1,7 +1,7 @@
 /* =========================================================
    HEADER (Mangá Drops)
-   - Desktop: header com BG + busca + sociais + pills
-   - Mobile: topbar fixa (amazon-like) + side menu (portal)
+   - Desktop: header com wallpaper + busca + sociais + pills
+   - Mobile: topbar fixa (amazon-like) + side menu
    ========================================================= */
 
 /* =========================
@@ -64,12 +64,14 @@
   width: auto;
   display: block;
   object-fit: contain;
+  transition: transform 160ms ease;
 }
 
 .heroLogoBtn:hover .heroLogo{
   transform: translateY(-1px) scale(1.03);
 }
 
+/* ===== Search (desktop) ===== */
 .heroSearch{
   display: flex;
   align-items: center;
@@ -104,10 +106,11 @@
   border: 1px solid rgba(255,255,255,0.18);
   background: linear-gradient(135deg, rgba(124,58,237,0.75), rgba(59,130,246,0.75));
   color: rgba(255,255,255,0.95);
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
   backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .heroSearchBtn:hover{
@@ -116,6 +119,7 @@
   filter: brightness(1.05);
 }
 
+/* ===== Social ===== */
 .heroSocial{
   display: flex;
   gap: 10px;
@@ -128,16 +132,17 @@
   border-radius: 999px;
   display: grid;
   place-items: center;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
   backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   transition: transform 0.15s ease, background 0.15s ease, border 0.15s ease;
 }
 
 .socialBtn:hover{
   transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.18);
 }
 
 .socialIcon{
@@ -147,7 +152,12 @@
 }
 
 /* =========================
-   PILLS
+   PILLS (Coleções / Lançamentos / Pedir / Filtros)
+   Use assim:
+   - <button className="pill pillPrimary">Coleções</button>
+   - <button className="pill pillPrimary">Lançamentos</button>
+   - <button className="pill pillCTA">Pedir uma obra</button>
+   - <button className="pill pillCTA">Filtros</button>
    ========================= */
 .heroPills{
   display: flex;
@@ -160,6 +170,7 @@
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .pillRowSecondaryContainer{
@@ -198,10 +209,13 @@
   -webkit-backdrop-filter: blur(18px);
   color: rgba(255,255,255,0.95);
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0.3px;
   cursor: pointer;
-  transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s cubic-bezier(.2,.8,.2,1), background .25s;
+  transition:
+    transform .25s cubic-bezier(.2,.8,.2,1),
+    box-shadow .25s cubic-bezier(.2,.8,.2,1),
+    background .25s ease;
   box-shadow:
     0 12px 30px rgba(0,0,0,0.35),
     inset 0 1px 0 rgba(255,255,255,0.18);
@@ -212,7 +226,7 @@
   background: linear-gradient(135deg, rgba(255,255,255,0.22), rgba(255,255,255,0.10));
   box-shadow:
     0 20px 50px rgba(0,0,0,0.45),
-    0 0 30px rgba(124,58,237,0.25);
+    0 0 30px rgba(124,58,237,0.22);
 }
 
 .pill:active{ transform: scale(0.96); }
@@ -227,14 +241,15 @@
   background: linear-gradient(135deg, rgba(124,58,237,0.82), rgba(59,130,246,0.82));
 }
 
+/* chips (linha de obras) */
 .pillChip{
   flex: 0 0 auto;
   font-size: 12px;
-  font-weight: 750;
+  font-weight: 850;
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.10);
   box-shadow: none;
-  opacity: 0.88;
+  opacity: 0.90;
 }
 
 .pillChip:hover{
@@ -243,6 +258,7 @@
   background: rgba(255,255,255,0.14);
 }
 
+/* setas do scroller de chips */
 .scrollArrow{
   position: absolute;
   z-index: 10;
@@ -250,7 +266,7 @@
   height: 36px;
   border-radius: 50%;
   border: 1px solid rgba(255,255,255,0.15);
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.60);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: #fff;
@@ -263,7 +279,7 @@
   transition: transform .2s ease, background .2s ease;
 }
 
-.scrollArrow:hover{ background: rgba(124,58,237,0.7); transform: scale(1.08); }
+.scrollArrow:hover{ background: rgba(124,58,237,0.70); transform: scale(1.08); }
 .scrollArrow.left{ left: -8px; }
 .scrollArrow.right{ right: -8px; }
 
@@ -287,7 +303,7 @@
 }
 
 /* =========================================================
-   MOBILE: TOPBAR FIXA (com wallpaper + shade igual desktop)
+   MOBILE: TOPBAR FIXA (wallpaper + shade)
    ========================================================= */
 @media (max-width: 768px){
   :root{ --topbar-h: 78px; }
@@ -307,12 +323,12 @@
     padding: 0 !important;
 
     z-index: 5000;
-    overflow: hidden; /* ✅ precisa pra “recortar” o wallpaper */
+    overflow: hidden;
     box-shadow: 0 16px 50px rgba(0,0,0,0.42);
     border-bottom: 1px solid rgba(255,255,255,0.10);
   }
 
-  /* ✅ wallpaper do desktop, só adaptado pro mobile */
+  /* wallpaper do desktop no mobile */
   .heroBg{
     display: block !important;
     position: absolute;
@@ -338,7 +354,7 @@
     gap: 0 !important;
   }
 
-  /* começa o conteúdo abaixo da barra */
+  /* conteúdo do site começa abaixo da topbar */
   .container{ padding-top: var(--topbar-h); }
 
   /* ===== TOPBAR GRID ===== */
@@ -350,7 +366,7 @@
     width: 100%;
   }
 
-  /* botão menu (glass + sombra) */
+  /* botão menu */
   .mobileMenuBtn{
     width: 46px;
     height: 46px;
@@ -373,9 +389,10 @@
     display: grid;
     place-items: center;
   }
+
   .mobileMenuBtn:active{ transform: scale(0.98); }
 
-  /* ===== SEARCH PILL (igual padrão do desktop/brand-stats) ===== */
+  /* ===== SEARCH PILL ===== */
   .mobileSearch{
     height: 46px;
     min-width: 0;
@@ -398,7 +415,6 @@
       inset 0 1px 0 rgba(255,255,255,0.08);
   }
 
-  /* glow sutil no pill */
   .mobileSearch::before{
     content:"";
     position:absolute;
@@ -406,6 +422,9 @@
     border-radius: inherit;
     pointer-events:none;
     opacity: 0.9;
+    background:
+      radial-gradient(520px 140px at 30% 0%, rgba(142,142,142,0.22), transparent 60%),
+      radial-gradient(520px 140px at 95% 0%, rgba(45,45,45,0.16), transparent 60%);
   }
 
   .mobileLogoMiniBtn{
@@ -449,16 +468,16 @@
 
     color: rgba(255,255,255,0.92);
     font-size: 15px;
-    font-weight: 800;
+    font-weight: 850;
     letter-spacing: 0.2px;
   }
 
   .mobileSearchInput::placeholder{
     color: rgba(255,255,255,0.45);
-    font-weight: 700;
+    font-weight: 750;
   }
 
-  /* botão roxo vivo (sem translucidez) */
+  /* botão roxo (firme) */
   .mobileSearchBtn{
     height: 28px;
     padding: 0 14px;
@@ -480,16 +499,30 @@
     transform: scale(0.9);
   }
 
-  .mobileSearch::before{
-  background:
-    radial-gradient(520px 140px at 30% 0%, rgba(142, 142, 142, 0.22), transparent 60%),
-    radial-gradient(520px 140px at 95% 0%, rgba(45, 45, 45, 0.16), transparent 60%);
+  .mobileSearchBtn:active{ transform: translateY(1px) scale(0.9); }
+
+  /* no mobile, some o header desktop */
+  .heroTop, .heroPills{ display: none; }
+
+  /* compat: se seu JSX ainda usa mobileLogoBtn/mobileLogo */
+  .mobileLogoBtn{
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.06);
+    padding: 0;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
   }
 
-  .mobileSearchBtn:active{ transform: translateY(1px); }
-
-  /* no mobile, não mostra header desktop */
-  .heroTop, .heroPills{ display: none; }
+  .mobileLogo{
+    height: 26px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+  }
 }
 
 /* =========================================================
@@ -571,11 +604,11 @@
   display: flex;
   flex-direction: column;
   flex: 0 0 auto;
-  min-height: 0; /* essencial em flex */
+  min-height: 0;
   gap: 8px;
 }
 
-/* ✅ a seção "Obras" cresce e vira o miolo do menu */
+/* seção "Obras" cresce e vira o miolo do menu */
 .sideMenuSectionGrow{
   flex: 1 1 auto;
   min-height: 0;
@@ -594,10 +627,8 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  /* ✅ rolagem separada só nas obras */
   flex: 1 1 auto;
   min-height: 0;
-  max-height: none;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding-right: 4px;
@@ -612,7 +643,7 @@
   border: 1px solid rgba(255,255,255,0.10);
   background: rgba(255,255,255,0.06);
   color: rgba(255,255,255,0.95);
-  font-weight: 750;
+  font-weight: 800;
   cursor: pointer;
   transition: transform 120ms ease, background 120ms ease, border 120ms ease;
 }
@@ -624,12 +655,19 @@
 
 .sideMenuBtn:active{ transform: scale(0.99); }
 
+/* botão destaque (ex: Filtros) */
+.sideMenuBtnPrimary{
+  border-color: rgba(139,92,246,0.45);
+  background: rgba(139,92,246,0.20);
+  font-weight: 950;
+}
+
 .sideMenuSocial{
   display: flex;
   flex-direction: column;
   gap: 8px;
   flex: 0 0 auto;
-  margin-top: auto; /* empurra redes pro fundo do painel */
+  margin-top: auto;
 }
 
 .sideMenuSocialBtn{
@@ -642,7 +680,7 @@
   background: rgba(255,255,255,0.06);
   color: rgba(255,255,255,0.95);
   text-decoration: none;
-  font-weight: 800;
+  font-weight: 850;
 }
 
 .sideMenuSocialBtn .socialIcon{
@@ -650,73 +688,9 @@
   height: 18px;
 }
 
-/* opcional: deixar a scrollbar discreta */
+/* scrollbar discreta */
 .sideMenuList::-webkit-scrollbar{ width: 8px; }
 .sideMenuList::-webkit-scrollbar-thumb{
   background: rgba(255,255,255,0.10);
   border-radius: 999px;
-}
-
-/* =========================================================
-   Compat: se seu JSX ainda usa mobileLogoBtn/mobileLogo fora da barra
-   (não quebra — só deixa bonito)
-   ========================================================= */
-@media (max-width: 768px){
-  .mobileLogoBtn{
-    width: 40px;
-    height: 40px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.10);
-    background: rgba(255,255,255,0.06);
-    padding: 0;
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-  }
-
-  .mobileLogo{
-    height: 26px;
-    width: auto;
-    object-fit: contain;
-    display: block;
-  }
-}
-
-@media (max-width: 768px){
-
-    /* fundo sólido da barra inteira */
-  .heroHeader{
-    overflow: hidden;
-    background: #0b1220; /* mesma base do site */
-  }
-
-  .heroHeader::before{
-    content: "";
-    position: absolute;
-    inset: 0;
-
-    filter:
-      blur(20px)
-      brightness(0.25)
-      contrast(0.8)
-      saturate(0.4);
-
-    transform: scale(1.25); /* evita borda branca do blur */
-
-    z-index: 500000;
-  }
-
-  .heroContent{
-  position: relative;
-  z-index: 500002;
-  }
-  
-  /* campo de busca sólido */
-  .mobileSearch{
-    background: linear-gradient(to bottom,#252627,#000000) !important;
-    border: 1px solid rgba(255,255,255,0.08);
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
-
 }

@@ -638,3 +638,6 @@ a{ color: inherit; text-decoration: none; }
   .grid{ grid-template-columns: 1fr; }
 }
 
+.chapterFilters{
+  margin: 10px 0 18px;
+}

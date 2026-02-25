@@ -1,0 +1,763 @@
+/* =========================================================
+   SERIES FILTERS (launcher) + FULLSCREEN FILTERS PAGE
+   Arquivo único para o novo fluxo (/filtros)
+   ========================================================= */
+
+/* =========================================
+   FILTER BAR — SLIM VERSION (DESKTOP)
+========================================= */
+
+.filtersPanel{
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 16px;
+
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.28);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filtersTop{
+  width: 100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.filtersHeading{
+  font-weight: 900;
+  font-size: 15px;
+  letter-spacing: .2px;
+  color: rgba(255,255,255,0.92);
+  display:flex;
+  align-items:center;
+  gap: 8px;
+}
+
+.filtersCount{
+  font-size: 12px;
+  opacity: .7;
+  font-weight: 800;
+}
+
+.filtersActions{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+
+/* Botões mais finos */
+.filtersPanel .chip{
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 900;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.9);
+  cursor: pointer;
+  transition: .15s ease;
+}
+
+.filtersPanel .chip:hover{
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.18);
+}
+
+/* Botão principal */
+.filtersPanel .chip.active{
+  border-color: rgba(59,130,246,0.55);
+  background: rgba(59,130,246,0.20);
+  box-shadow: 0 8px 20px rgba(59,130,246,0.12);
+}
+
+/* Limpar */
+.filtersPanel .chip.ghost{
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.75);
+}
+
+@media (max-width: 520px){
+  .filtersPanel{
+    padding: 10px 14px;
+  }
+
+  .filtersPanel .chip{
+    height: 34px;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+}
+/* --------------------------------
+   FULLSCREEN FILTERS (FiltersPage)
+--------------------------------- */
+
+.filtersPage{
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+
+  background:
+    radial-gradient(1200px 600px at 20% 10%, rgba(59,130,246,0.16), transparent 55%),
+    radial-gradient(900px 600px at 80% 30%, rgba(147,51,234,0.14), transparent 60%),
+    linear-gradient(to bottom, rgba(10,12,16,0.92), rgba(10,12,16,0.98));
+  backdrop-filter: blur(10px);
+}
+
+.filtersTop{
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+
+  /* grid do topo do FiltersPage.jsx */
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.filtersTopTitle h1{
+  margin: 0;
+  font-size: 18px;
+  font-weight: 950;
+  letter-spacing: 0.2px;
+  color: rgba(255,255,255,0.95);
+}
+
+.filtersTopTitle p{
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: rgba(255,255,255,0.65);
+}
+
+.filtersIconBtn{
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.92);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.filtersGhost{
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.86);
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.filtersBody{
+  padding: 14px;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.filtersCard{
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.05);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+  margin-bottom: 12px;
+}
+
+.filtersCard h2{
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 950;
+  color: rgba(255,255,255,0.86);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.filtersSearchRow{
+  display: grid;
+  gap: 10px;
+}
+
+.filtersInput{
+  width: 100%;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.25);
+  color: rgba(255,255,255,0.92);
+  padding: 0 12px;
+  outline: none;
+}
+
+.filtersInput::placeholder{
+  color: rgba(255,255,255,0.50);
+}
+
+.filtersChips{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filtersGrid2{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* chips do FiltersPage */
+.filtersPage .chip{
+  height: 40px;
+  border-radius: 999px;
+  padding: 0 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.88);
+  font-weight: 950;
+  letter-spacing: 0.2px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: .15s ease;
+}
+
+.filtersPage .chip:hover{
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.18);
+}
+
+.filtersPage .chip.active{
+  border-color: rgba(59,130,246,0.45);
+  background: rgba(59,130,246,0.18);
+  box-shadow: 0 10px 28px rgba(59,130,246,0.12);
+}
+
+.filtersList{
+  display: grid;
+  gap: 8px;
+}
+
+.filtersRow{
+  width: 100%;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.90);
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  cursor: pointer;
+  transition: .15s ease;
+}
+
+.filtersRow:hover{
+  background: rgba(255,255,255,0.08);
+}
+
+.filtersRow .filtersRadio{
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 2px solid rgba(255,255,255,0.35);
+}
+
+.filtersRow.active{
+  border-color: rgba(59,130,246,0.45);
+  background: rgba(59,130,246,0.16);
+}
+
+.filtersRow.active .filtersRadio{
+  border-color: rgba(59,130,246,0.85);
+  box-shadow: inset 0 0 0 5px rgba(59,130,246,0.85);
+}
+
+.filtersBottom{
+  padding: 12px 14px 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(to bottom, rgba(10,12,16,0.0), rgba(10,12,16,0.85));
+}
+
+.btnPrimary{
+  width: 100%;
+  height: 48px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(59,130,246,0.92);
+  color: rgba(255,255,255,0.95);
+  font-weight: 950;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+}
+
+/* Ajustes mobile */
+@media (max-width: 520px){
+  .filtersBody{ padding: 12px; }
+  .filtersCard{ padding: 12px; border-radius: 16px; }
+  .filtersTop{ padding: 12px 12px 10px; }
+}
+
+.chapterFilters{
+  margin: 14px 0 12px;
+}
+
+/* ================================
+   STICKY FILTER BAR (premium)
+================================ */
+
+/* wrapper do App */
+.chapterFilters{
+  position: sticky;
+  top: 14px;               /* distância do topo */
+  z-index: 50;             /* acima dos cards/rails */
+  margin: 14px 0 14px;
+}
+
+/* barra em si */
+.filtersPanel{
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 16px;
+
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(18,20,24,0.60);
+  backdrop-filter: blur(10px);
+
+  box-shadow: 0 14px 40px rgba(0,0,0,0.35);
+
+  /* ✅ layout alinhado */
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+
+/* mata qualquer linha/divisor herdado */
+.filtersPanel hr,
+.filtersPanel .divider,
+.filtersPanel .line{
+  display:none !important;
+}
+.filtersPanel{
+  background-clip: padding-box;
+}
+
+/* topo interno */
+.filtersTop{
+  width: 100%;
+  display: contents; /* usa o grid do pai */
+}
+
+/* esquerda */
+.filtersHeading{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  min-width: 0;
+
+  font-weight: 950;
+  font-size: 15px;
+  letter-spacing: .2px;
+  color: rgba(255,255,255,0.92);
+}
+
+.filtersCount{
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(255,255,255,0.70);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.05);
+}
+
+/* direita */
+.filtersActions{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  justify-content: flex-end;
+  white-space: nowrap;
+}
+
+/* botões */
+.filtersPanel .chip{
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 950;
+
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.90);
+
+  cursor: pointer;
+  transition: .15s ease;
+}
+
+.filtersPanel .chip:hover{
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.18);
+}
+
+/* CTA */
+.filtersPanel .chip.active{
+  border-color: rgba(59,130,246,0.55);
+  background: rgba(59,130,246,0.22);
+  box-shadow: 0 12px 28px rgba(59,130,246,0.12);
+}
+
+/* limpar */
+.filtersPanel .chip.ghost{
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.80);
+}
+
+/* quando sticky, dá sensação "fixed" */
+.chapterFilters .filtersPanel{
+  transform: translateZ(0);
+}
+
+/* mobile */
+@media (max-width: 520px){
+  .chapterFilters{ top: 10px; }
+
+  .filtersPanel{
+    padding: 10px 12px;
+    border-radius: 14px;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .filtersActions{
+    justify-content: space-between;
+  }
+
+  .filtersPanel .chip{
+    height: 34px;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+}
+
+/* =========================================
+   FIX "torto" — FiltersPage alignment patch
+========================================= */
+
+/* largura consistente do conteúdo */
+.filtersBody,
+.filtersTop,
+.filtersBottom{
+  width: 100%;
+}
+
+.filtersBody{
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* topo: 3 colunas reais e alinhadas */
+.filtersTop{
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 14px 14px 10px;
+
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  gap: 12px;
+
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  background: transparent;
+}
+
+/* botão voltar fica consistente */
+.filtersIconBtn{
+  display: grid;
+  place-items: center;
+}
+
+/* texto do topo alinhado */
+.filtersTopTitle{
+  min-width: 0;
+}
+.filtersTopTitle h1{
+  line-height: 1.1;
+}
+.filtersTopTitle p{
+  line-height: 1.2;
+}
+
+/* botão limpar NÃO vira barra gigante */
+.filtersGhost{
+  height: 40px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+/* cards alinhados e sem “empurrões” */
+.filtersCard{
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+/* input alinhado com os cards */
+.filtersInput{
+  width: 100%;
+}
+
+/* chips: alinhamento e quebra bonita */
+.filtersChips{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filtersGrid2{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* lista ordenar alinhada */
+.filtersList{
+  display: grid;
+  gap: 10px;
+}
+.filtersRow{
+  width: 100%;
+}
+
+/* rodapé alinhado com o conteúdo (não full bleed torto) */
+.filtersBottom{
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 12px 14px 16px;
+
+  border-top: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(to bottom, rgba(10,12,16,0.0), rgba(10,12,16,0.85));
+}
+
+/* botão aplicar com mesma largura do conteúdo */
+.btnPrimary{
+  width: 100%;
+}
+
+/* =======================
+   Mobile ajustes
+======================= */
+@media (max-width: 720px){
+  .filtersBody,
+  .filtersTop,
+  .filtersBottom{
+    max-width: 100%;
+  }
+
+  .filtersTop{
+    padding: 12px 12px 10px;
+    gap: 10px;
+  }
+
+  .filtersGrid2{
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================
+   FiltersPage "floating modal" on desktop
+   (CSS-only, mantém fullscreen por trás)
+========================================= */
+
+@media (min-width: 900px){
+  .filtersPage{
+    /* mantém tela cheia, mas cria espaço ao redor */
+    padding: 28px;
+  }
+
+  /* o "card" flutuante (topo + corpo + bottom alinhados) */
+  .filtersTop,
+  .filtersBody,
+  .filtersBottom{
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* borda/sombra do card: aplica no corpo (principal) */
+  .filtersBody{
+    border-left: 1px solid rgba(255,255,255,0.10);
+    border-right: 1px solid rgba(255,255,255,0.10);
+    background: rgba(12,14,18,0.35);
+    box-shadow: 0 22px 80px rgba(0,0,0,0.55);
+  }
+
+  /* topo e rodapé com o mesmo "card look" */
+  .filtersTop{
+    border: 1px solid rgba(255,255,255,0.10);
+    border-bottom: none;
+    border-radius: 22px 22px 0 0;
+    background: rgba(12,14,18,0.55);
+    backdrop-filter: blur(12px);
+  }
+
+  .filtersBottom{
+    border: 1px solid rgba(255,255,255,0.10);
+    border-top: none;
+    border-radius: 0 0 22px 22px;
+    background: rgba(12,14,18,0.55);
+    backdrop-filter: blur(12px);
+  }
+
+  /* arredondamento e padding do corpo */
+  .filtersBody{
+    padding: 14px;
+  }
+}
+
+/* Mobile continua “app-like” */
+@media (max-width: 899px){
+  .filtersPage{ padding: 0; }
+}
+
+/* Desktop: transformar launcher em "só botão" no header */
+@media (min-width: 900px){
+  /* esconde a caixa inteira */
+  .chapterFilters{
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .chapterFilters .filtersPanel{
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+  }
+
+  /* esconde o texto "Filtros" e o botão limpar no desktop */
+  .chapterFilters .filtersHeading,
+  .chapterFilters .chip.ghost{
+    display: none !important;
+  }
+
+  /* deixa só o botão principal */
+  .chapterFilters .chip.active{
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 999px;
+    font-weight: 950;
+  }
+}
+
+.chapterTop{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap: 14px;
+}
+
+.chapterFiltersInline{
+  display:flex;
+  align-items:center;
+}
+
+/* =========================
+   Active Filters Indicator
+========================= */
+.activeFiltersBar{
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.activeFiltersLeft{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.activeFiltersLabel{
+  font-weight: 900;
+  color: rgba(255,255,255,0.88);
+}
+
+.activeFiltersCount{
+  font-weight: 950;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(59,130,246,0.18);
+  color: rgba(255,255,255,0.92);
+}
+
+.activeFiltersRight{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.activeFiltersBtn{
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-weight: 900;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.92);
+  cursor: pointer;
+  transition: .15s ease;
+}
+
+.activeFiltersBtn:hover{
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.18);
+}
+
+.activeFiltersBtn.ghost{
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.78);
+}
+
+@media (max-width: 520px){
+  .activeFiltersBar{
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .activeFiltersRight{
+    justify-content: flex-end;
+  }
+}

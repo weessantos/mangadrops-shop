@@ -1,234 +1,163 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Routes, Route, useNavigate, useParams } from "react-router-dom";
+import { Routes, Route, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import "./styles/global.css";
+
 import Header from "./components/Header";
 import HomeHero from "./components/HomeHero";
 import SeriesCard from "./components/SeriesCard";
 import ProductCard from "./components/ProductCard";
 import ProductModal from "./components/ProductModal";
-import { products } from "./data/products";
-import { seriesCatalog } from "./data/series";
 import LaunchRail from "./components/LaunchRail";
 import BrandStats from "./components/BrandStats";
+import SectionHeader from "./components/SectionHeader";
+import ActiveFiltersBar from "./components/ActiveFiltersBar";
 
-const ALIASES = {
-  jjk: "jujutsu kaisen",
-  aot: "attack on titan",
-  snk: "shingeki no kyojin",
-  op: "one piece",
-  kgb: "kagurabachi",
-  vinland: "vinland saga",
-  haikyu: "haikyu",
-};
+import FiltersPage from "./pages/FiltersPage";
 
-function normalizeText(s) {
-  return String(s || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim();
-}
+import { products } from "./data/products/index.js";
+import { seriesCatalog } from "./data/products/series.catalog.js";
 
-function slugify(s) {
-  return String(s || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
+import { useSeriesList } from "./hooks/useSeriesList";
+import { useScrollTop } from "./hooks/useScrollTop";
 
-function expandAliases(tokens) {
-  const out = [];
-  for (const t of tokens) {
-    const repl = ALIASES[t];
-    if (repl) out.push(...repl.split(" "));
-    else out.push(t);
-  }
-  return out;
-}
-
-function parseQuery(q) {
-  const norm = normalizeText(q);
-  let tokens = norm.split(/\s+/).filter(Boolean);
-  tokens = expandAliases(tokens);
-
-  const numbers = tokens
-    .map((t) => (/^\d+$/.test(t) ? Number(t) : null))
-    .filter((n) => Number.isFinite(n));
-
-  const words = tokens.filter((t) => !/^\d+$/.test(t));
-
-  return { tokens, words, numbers };
-}
-
-function productSearchText(p) {
-  return normalizeText(
-    `${p.title} ${p.tag ?? ""} ${p.series ?? ""} vol ${p.volume ?? ""}`
-  );
-}
-
-function uniqueSortedAvailableVolumes(items) {
-  const set = new Set();
-
-  for (const p of items) {
-    const v = Number(p.volume);
-
-    const isAvailable =
-      (p.affiliate?.mercadoLivre && p.affiliate.mercadoLivre.trim() !== "") ||
-      (p.affiliate?.amazon && p.affiliate.amazon.trim() !== "");
-
-    if (Number.isFinite(v) && v > 0 && isAvailable) {
-      set.add(v);
-    }
-  }
-
-  return Array.from(set).sort((a, b) => a - b);
-}
-
-function computeMissing(vols, total) {
-  const have = new Set(vols);
-  const missing = [];
-  for (let v = 1; v <= total; v++) {
-    if (!have.has(v)) missing.push(v);
-  }
-  return missing;
-}
-
-function pickSeriesFromQuery(query, seriesNames) {
-  const { words } = parseQuery(query);
-  if (!words.length) return null;
-
-  let best = { name: null, score: 0 };
-
-  for (const name of seriesNames) {
-    const n = normalizeText(name);
-    let score = 0;
-
-    for (const w of words) {
-      if (n.includes(w) || n.split(" ").some((tok) => tok.startsWith(w))) {
-        score++;
-      }
-    }
-
-    if (score > best.score) best = { name, score };
-  }
-
-  return best.score >= 1 ? best.name : null;
-}
+import { parseQuery, pickSeriesFromQuery, productSearchText, slugify } from "./utils/search";
 
 /* =======================================================
-   SECTION HEADER (padrão único para qualquer seção)
-   - title: título da seção
-   - subtitle: texto menor abaixo do título (opcional)
-   - meta: tag à direita (opcional)
+   helpers (robustos)
 ======================================================= */
-function SectionHeader({ title, subtitle, meta }) {
-  return (
-    <div className="sectionHeader">
-      <div className="sectionHeaderLeft">
-        <h2 className="sectionTitle">
-          <span className="sectionAccent" aria-hidden="true" />
-          {title}
-        </h2>
-        {subtitle ? <p className="sectionSubtitle">{subtitle}</p> : null}
-      </div>
+const norm = (v) => String(v || "").trim();
+const normLc = (v) => norm(v).toLowerCase();
 
-      <div className="sectionHeaderRight">
-        {meta ? <span className="sectionMeta">{meta}</span> : null}
-      </div>
-    </div>
+function asList(v) {
+  if (!v) return [];
+  if (Array.isArray(v)) return v.filter(Boolean).map(norm);
+  return [norm(v)].filter(Boolean);
+}
+
+// estoque = existe link amazon OU ML
+function hasAnyAffiliateLink(p) {
+  const amazon =
+    p?.amazon ||
+    p?.amazonLink ||
+    p?.links?.amazon ||
+    p?.affiliate?.amazon ||
+    p?.affiliateLinks?.amazon ||
+    p?.afiliado?.amazon;
+
+  const ml =
+    p?.mercadoLivre ||
+    p?.mercadoLivreLink ||
+    p?.links?.mercadoLivre ||
+    p?.affiliate?.mercadoLivre ||
+    p?.affiliateLinks?.mercadoLivre ||
+    p?.afiliado?.mercadoLivre;
+
+  return Boolean(amazon || ml);
+}
+
+function priceNumber(p) {
+  const raw = p?.priceNumber ?? p?.price ?? p?.value ?? p?.currentPrice;
+  if (raw == null) return null;
+  if (typeof raw === "number" && Number.isFinite(raw)) return raw;
+
+  const s = String(raw).replace(/\./g, "").replace(",", ".").match(/[\d.]+/);
+  if (!s) return null;
+  const n = Number(s[0]);
+  return Number.isFinite(n) ? n : null;
+}
+
+// review = existe tiktokByVolume pra série+volume (ou link direto no produto)
+function hasReview(p) {
+  return Boolean(
+    p?.tiktok ||
+    p?.tiktokUrl ||
+    p?.video ||
+    p?.videoUrl ||
+    p?.tiktokId
   );
 }
 
 /* =======================================================
-   APP "REAL" (o seu layout), agora lendo a rota
+   APP SHELL (home + séries + modal)
 ======================================================= */
 function AppShell() {
   const PAGE_SIZE = 12;
   const navigate = useNavigate();
   const { seriesSlug, volumeId } = useParams();
+  const [sp, setSp] = useSearchParams();
 
   const [page, setPage] = useState(1);
   const lastAppliedQueryRef = useRef("");
+
+  // input controlado no Header
   const [inputValue, setInputValue] = useState("");
-  const [query, setQuery] = useState("");
+
   const [selected, setSelected] = useState(null);
   const [activeSeries, setActiveSeries] = useState(null);
 
-  // ✅ Botão de subir pro topo
-  const [showScrollTop, setShowScrollTop] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setShowScrollTop(window.scrollY > 400);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const { showScrollTop, scrollToTop } = useScrollTop(400);
 
-  const catalogMap = useMemo(() => {
+  const { seriesList, seriesBySlug, seriesNames } = useSeriesList(products, seriesCatalog);
+
+  // =======================================================
+  // meta fallback por série (usa seriesCatalog)
+  // =======================================================
+  const metaBySeries = useMemo(() => {
     const map = new Map();
-    for (const s of seriesCatalog) map.set(s.name, s);
-    return map;
-  }, []);
-
-  const seriesList = useMemo(() => {
-    const groups = new Map();
-
-    for (const p of products) {
-      const key = p.series || "Outros";
-      if (!groups.has(key)) groups.set(key, []);
-      groups.get(key).push(p);
+    for (const s of seriesCatalog || []) {
+      const key = norm(s?.name);
+      if (!key) continue;
+      map.set(key, {
+        brand: asList(s?.brand),
+        author: asList(s?.author),
+        genre: asList(s?.genre),
+        format: asList(s?.format),
+      });
     }
-
-    return Array.from(groups.entries())
-      .map(([name, items]) => {
-        const cat = catalogMap.get(name) || {};
-        const total = Number.isFinite(Number(cat.totalVolumes))
-          ? Number(cat.totalVolumes)
-          : null;
-
-        const vols = uniqueSortedAvailableVolumes(items);
-        const haveCount = vols.length;
-
-        const rangeLabel = total ? `Vol. 1–${total}` : "Volumes";
-        const haveLabel = total
-          ? `Disponível ${haveCount}/${total}`
-          : `${haveCount} volume(s)`;
-
-        const missing = total ? computeMissing(vols, total) : [];
-        const missingCount = missing.length;
-
-        const statusLabel = total
-          ? missingCount === 0
-            ? "Completo ✅"
-            : `Sem estoque (${missingCount})`
-          : "Defina totalVolumes";
-
-        return {
-          name,
-          slug: slugify(name),
-          thumb: cat.thumb || "/assets/aot-series.jpeg",
-          subtitle: cat.subtitle || "Clique para ver os volumes disponíveis.",
-          rangeLabel,
-          haveLabel,
-          statusLabel,
-          missing,
-          missingCount,
-        };
-      })
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }, [catalogMap]);
-
-  const seriesBySlug = useMemo(() => {
-    const map = new Map();
-    for (const s of seriesList) map.set(s.slug, s.name);
     return map;
-  }, [seriesList]);
+  }, []);
 
-  const seriesNames = useMemo(() => seriesList.map((s) => s.name), [seriesList]);
+  const getMeta = (p) => {
+    const seriesName = norm(p?.series);
+    const m = metaBySeries.get(seriesName) || {};
+    return {
+      brand: asList(p?.brand).length ? asList(p?.brand) : (m.brand || []),
+      author: asList(p?.author).length ? asList(p?.author) : (m.author || []),
+      genre: asList(p?.genre).length ? asList(p?.genre) : (m.genre || []),
+      format: asList(p?.format).length ? asList(p?.format) : (m.format || []),
+    };
+  };
 
-  // ✅ Sync: rota -> activeSeries
+  // =======================================================
+  // URL params (fonte de verdade dos filtros)
+  // =======================================================
+  const qParam = sp.get("q") || "";
+
+  const brandParam = sp.getAll("brand");
+  const authorParam = sp.getAll("author");
+  const genreParam = sp.getAll("genre");
+  const formatParam = sp.getAll("format");
+
+  const stParam = sp.get("st") || ""; // "in" | "out" | ""
+  const rvParam = sp.get("rv") || ""; // "1" | ""
+  const sortParam = sp.get("sort") || "relevance";
+
+  const hasAnyFilter =
+    (qParam && qParam.trim().length > 0) ||
+    brandParam.length > 0 ||
+    authorParam.length > 0 ||
+    genreParam.length > 0 ||
+    formatParam.length > 0 ||
+    !!stParam ||
+    rvParam === "1" ||
+    (sortParam && sortParam !== "relevance");
+
+  // mantém o input do Header sincronizado com a URL
+  useEffect(() => {
+    setInputValue(qParam);
+  }, [qParam]);
+
+  // Sync: rota -> activeSeries
   useEffect(() => {
     if (!seriesSlug) {
       setActiveSeries(null);
@@ -239,9 +168,11 @@ function AppShell() {
     setActiveSeries(name);
   }, [seriesSlug, seriesBySlug]);
 
-  // seu search que “pula” pra série
+  // =======================================================
+  // Busca que “pula” pra série (mantém seu comportamento)
+  // =======================================================
   useEffect(() => {
-    const q = query.trim();
+    const q = (qParam || "").trim();
     if (!q) {
       lastAppliedQueryRef.current = "";
       return;
@@ -255,8 +186,7 @@ function AppShell() {
     setSelected(null);
     setPage(1);
 
-    // ✅ em vez de setar state, navega pra URL da série
-    navigate(`/${slugify(picked)}`);
+    navigate(`/${slugify(picked)}${sp.toString() ? `?${sp.toString()}` : ""}`);
 
     setTimeout(() => {
       document.getElementById("volumes")?.scrollIntoView({
@@ -264,15 +194,17 @@ function AppShell() {
         block: "start",
       });
     }, 0);
-  }, [query, seriesNames, navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [qParam, seriesNames, navigate]);
 
-  const filtered = useMemo(() => {
-    const { words, numbers } = parseQuery(query);
+  // =======================================================
+  // Base: série + busca
+  // =======================================================
+  const baseFiltered = useMemo(() => {
+    const { words, numbers } = parseQuery(qParam);
 
     return products
-      .filter((p) =>
-        activeSeries ? (p.series || "Outros") === activeSeries : true
-      )
+      .filter((p) => (activeSeries ? (p.series || "Outros") === activeSeries : true))
       .filter((p) => {
         if (!words.length && !numbers.length) return true;
 
@@ -298,17 +230,91 @@ function AppShell() {
         }
 
         return true;
-      })
-      .sort((a, b) => Number(a.volume ?? 0) - Number(b.volume ?? 0));
-  }, [query, activeSeries]);
+      });
+  }, [qParam, activeSeries]);
 
-  const pagedProducts = useMemo(() => {
-    return filtered.slice(0, page * PAGE_SIZE);
-  }, [filtered, page]);
+  // =======================================================
+  // Aplicar filtros URL: brand/author/genre/format + st/rv + ordenar
+  // =======================================================
+  const filtered = useMemo(() => {
+    let arr = [...baseFiltered];
 
+    const brandSet = brandParam.length ? new Set(brandParam.map(normLc)) : null;
+    const authorSet = authorParam.length ? new Set(authorParam.map(normLc)) : null;
+    const genreSet = genreParam.length ? new Set(genreParam.map(normLc)) : null;
+    const formatSet = formatParam.length ? new Set(formatParam.map(normLc)) : null;
+
+    if (brandSet) {
+      arr = arr.filter((p) => getMeta(p).brand.some((b) => brandSet.has(normLc(b))));
+    }
+    if (authorSet) {
+      arr = arr.filter((p) => getMeta(p).author.some((a) => authorSet.has(normLc(a))));
+    }
+    if (genreSet) {
+      arr = arr.filter((p) => getMeta(p).genre.some((g) => genreSet.has(normLc(g))));
+    }
+    if (formatSet) {
+      arr = arr.filter((p) => getMeta(p).format.some((f) => formatSet.has(normLc(f))));
+    }
+
+    // st (estoque por link)
+    if (stParam === "in") arr = arr.filter((p) => hasAnyAffiliateLink(p));
+    if (stParam === "out") arr = arr.filter((p) => !hasAnyAffiliateLink(p));
+
+    // rv (com review)
+    if (rvParam === "1") arr = arr.filter((p) => hasReview(p));
+
+    // ordenar
+    const sort = sortParam || "relevance";
+    if (sort === "price_asc") {
+      arr.sort((a, b) => (priceNumber(a) ?? 1e15) - (priceNumber(b) ?? 1e15));
+    } else if (sort === "price_desc") {
+      arr.sort((a, b) => (priceNumber(b) ?? -1) - (priceNumber(a) ?? -1));
+    } else if (sort === "new") {
+      arr.sort((a, b) => {
+        const da = new Date(a?.date || a?.releasedAt || a?.createdAt || 0).getTime();
+        const db = new Date(b?.date || b?.releasedAt || b?.createdAt || 0).getTime();
+        return db - da;
+      });
+    } else {
+      arr.sort((a, b) => Number(a.volume ?? 0) - Number(b.volume ?? 0));
+    }
+
+    return arr;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    baseFiltered,
+    brandParam.join("|"),
+    authorParam.join("|"),
+    genreParam.join("|"),
+    formatParam.join("|"),
+    stParam,
+    rvParam,
+    sortParam,
+  ]);
+
+  const pagedProducts = useMemo(() => filtered.slice(0, page * PAGE_SIZE), [filtered, page]);
   const hasMore = pagedProducts.length < filtered.length;
 
-  // ✅ Sync: rota -> modal aberto
+  const showGlobalResults = !activeSeries && hasAnyFilter;
+
+  // =======================================================
+  // URL helpers
+  // =======================================================
+  const updateSearchParams = (patch) => {
+    const next = new URLSearchParams(sp);
+
+    Object.entries(patch).forEach(([k, v]) => {
+      if (v == null || String(v).trim() === "") next.delete(k);
+      else next.set(k, String(v));
+    });
+
+    setSp(next, { replace: true });
+  };
+
+  // =======================================================
+  // Modal via rota
+  // =======================================================
   useEffect(() => {
     if (!volumeId) {
       setSelected(null);
@@ -321,14 +327,10 @@ function AppShell() {
   const openSeries = (name) => {
     setPage(1);
     setSelected(null);
-    setQuery("");
-    setInputValue("");
-    lastAppliedQueryRef.current = "";
 
     const slug = slugify(name);
-
-    // ✅ troca a URL pra rota da série
-    navigate(`/${slug}`);
+    const qs = sp.toString();
+    navigate(`/${slug}${qs ? `?${qs}` : ""}`);
 
     setTimeout(() => {
       document.getElementById("volumes")?.scrollIntoView({
@@ -338,14 +340,12 @@ function AppShell() {
     }, 0);
   };
 
-
   const clearSeries = () => {
     setPage(1);
-    setQuery("");
     setSelected(null);
 
-    // ✅ volta pra home e troca histórico (melhora botão voltar)
-    navigate(`/`, { replace: true });
+    const qs = sp.toString();
+    navigate(`/${qs ? `?${qs}` : ""}`, { replace: true });
 
     setTimeout(() => {
       document.getElementById("obras")?.scrollIntoView({
@@ -358,35 +358,33 @@ function AppShell() {
   const openProduct = (product) => {
     setSelected(product);
 
-    // 1) Descobre o slug da série de forma segura
-    const seriesName = product?.series || activeSeries; // preferir a série do produto
+    const seriesName = product?.series || activeSeries;
     const parentSlug = seriesSlug || (seriesName ? slugify(seriesName) : null);
+    const qs = sp.toString();
 
-    // 2) Se tiver série, usa /serie/produto
     if (parentSlug) {
-      navigate(`/${parentSlug}/${product.id}`);
+      navigate(`/${parentSlug}/${product.id}${qs ? `?${qs}` : ""}`);
       return;
     }
 
-    // 3) Fallback: se por algum motivo não tiver série, pelo menos abre /produto
-    navigate(`/${product.id}`);
+    navigate(`/${product.id}${qs ? `?${qs}` : ""}`);
   };
 
   const closeModal = () => {
     setSelected(null);
+    const qs = sp.toString();
 
-    // Volta pra rota pai correta (ou home)
     if (seriesSlug) {
-      navigate(`/${seriesSlug}`, { replace: true });
+      navigate(`/${seriesSlug}${qs ? `?${qs}` : ""}`, { replace: true });
       return;
     }
 
     if (activeSeries) {
-      navigate(`/${slugify(activeSeries)}`, { replace: true });
+      navigate(`/${slugify(activeSeries)}${qs ? `?${qs}` : ""}`, { replace: true });
       return;
     }
 
-    navigate(`/`, { replace: true }); // ✅ sempre limpa a URL
+    navigate(`/${qs ? `?${qs}` : ""}`, { replace: true });
   };
 
   return (
@@ -396,8 +394,8 @@ function AppShell() {
         setInputValue={setInputValue}
         onSearch={(override) => {
           const q = typeof override === "string" ? override : inputValue;
-          setQuery(q);
           setPage(1);
+          updateSearchParams({ q });
         }}
       />
 
@@ -405,56 +403,63 @@ function AppShell() {
 
       <section className="brandBlock">
         <div className="brandHeader">
-          <h2 className="brandTitle">
-            Mangá Drops no TikTok
-          </h2>
-          <p className="brandSubtitle">
-            Reviews, indicações e novidades toda semana.
-          </p>
+          <h2 className="brandTitle">Mangá Drops no TikTok</h2>
+          <p className="brandSubtitle">Reviews, indicações e novidades toda semana.</p>
         </div>
-
         <BrandStats />
       </section>
 
       <section id="home" className="chapterBlock">
         <div className="chapterHeader">
           <div className="chapterTop">
-            <h1 className="chapterTitle">
-              Mangás Disponíveis
-            </h1>
+            <h1 className="chapterTitle">Mangás Disponíveis</h1>
           </div>
+          
 
           <p className="chapterDesc">
             {!activeSeries
               ? "Confira os volumes em estoque e garanta o seu antes que esgote. Atualizado com lançamentos e reposições recentes."
-              : "Adquira seu mangá preferido com os melhores preços do mercado. Links atualizados."
-            }
+              : "Adquira seu mangá preferido com os melhores preços do mercado. Links atualizados."}
           </p>
+
+          <ActiveFiltersBar />
 
           <div className="chapterLine" aria-hidden="true" />
         </div>
       </section>
 
+      {/* RESULTADOS GLOBAIS (HOME) via URL */}
+      {!activeSeries && showGlobalResults && (
+        <section id="volumes" className="volumesSection">
+          <section className="grid">
+            {pagedProducts.map((p) => (
+              <ProductCard key={p.id} product={p} onOpen={openProduct} />
+            ))}
+          </section>
+
+          {hasMore && (
+            <div className="showMoreRow">
+              <button className="btn showMoreBtn" onClick={() => setPage((prev) => prev + 1)}>
+                Mostrar mais {PAGE_SIZE}
+              </button>
+              <div className="showMoreHint">
+                Exibindo {pagedProducts.length}/{filtered.length}
+              </div>
+            </div>
+          )}
+        </section>
+      )}
+
       {!activeSeries && (
         <section className="railBlock" id="obras">
-          <LaunchRail
-            title="Lançamentos"
-            products={products}
-            limit={30}
-            onOpenProduct={openProduct}
-          />
+          <LaunchRail title="Lançamentos 🔥" products={products} limit={30} onOpenProduct={openProduct} />
 
-          {/* ✅ Quebra visual + respiro */}
           <div className="sectionBreak" aria-hidden="true">
             <span className="sectionBreakLine" />
           </div>
 
-          {/* ✅ Coleções em "faixa" separada */}
           <section className="collectionsSection" id="railTitle">
-            <SectionHeader
-              title="Coleções"
-              subtitle="Explore por obra e veja os volumes disponíveis."
-            />
+            <SectionHeader title="Coleções 📚" subtitle="Explore por obra e veja os volumes disponíveis." />
 
             <div className="seriesRail">
               {seriesList.map((s) => (
@@ -487,7 +492,9 @@ function AppShell() {
           <div className="infoTag">
             <span>Exibindo</span>
             <strong>{activeSeries}</strong>
-            <span>• {pagedProducts.length}/{filtered.length} volume(s)</span>
+            <span>
+              • {pagedProducts.length}/{filtered.length} volume(s)
+            </span>
           </div>
         </div>
       )}
@@ -502,10 +509,7 @@ function AppShell() {
 
           {hasMore && (
             <div className="showMoreRow">
-              <button
-                className="btn showMoreBtn"
-                onClick={() => setPage((prev) => prev + 1)}
-              >
+              <button className="btn showMoreBtn" onClick={() => setPage((prev) => prev + 1)}>
                 Mostrar mais {PAGE_SIZE}
               </button>
               <div className="showMoreHint">
@@ -516,17 +520,10 @@ function AppShell() {
         </section>
       )}
 
-      {selected && (
-        <ProductModal product={selected} onClose={closeModal} />
-      )}
+      {selected && <ProductModal product={selected} onClose={closeModal} />}
 
       {showScrollTop && (
-        <button
-          className="scrollTopBtn"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          aria-label="Voltar ao topo"
-          title="Voltar ao topo"
-        >
+        <button className="scrollTopBtn" onClick={scrollToTop} aria-label="Voltar ao topo" title="Voltar ao topo">
           ↑
         </button>
       )}
@@ -540,6 +537,7 @@ function AppShell() {
 export default function App() {
   return (
     <Routes>
+      <Route path="/filtros" element={<FiltersPage />} />
       <Route path="/" element={<AppShell />} />
       <Route path="/:seriesSlug" element={<AppShell />} />
       <Route path="/:seriesSlug/:volumeId" element={<AppShell />} />

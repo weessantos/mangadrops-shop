@@ -1,0 +1,22 @@
+export const skmtDescriptions = {
+  1: "Vol. 1: Taro Sakamoto já foi o maior assassino do submundo, mas largou tudo por amor. Agora dono de uma loja de conveniência, ele tenta viver em paz — até que antigos inimigos descobrem seu paradeiro.",
+  2: "Vol. 2: Enquanto protege sua família, Sakamoto enfrenta assassinos enviados para eliminá-lo. Ao lado de Shin, um ex-vidente capaz de ler mentes, ele mostra que ainda é imbatível.",
+  3: "Vol. 3: A recompensa pela cabeça de Sakamoto movimenta o submundo, atraindo lutadores cada vez mais perigosos e excêntricos para a pequena loja do ex-assassino.",
+  4: "Vol. 4: Novos aliados entram em cena enquanto a organização secreta que governa os assassinos começa a se movimentar, preparando um confronto inevitável.",
+  5: "Vol. 5: A tensão aumenta quando membros da elite dos assassinos surgem para testar os limites de Sakamoto, colocando sua força e estratégia à prova.",
+  6: "Vol. 6: Conflitos intensos revelam detalhes sobre a antiga vida de Sakamoto e o impacto que suas decisões tiveram no submundo.",
+  7: "Vol. 7: O passado volta com força total quando antigos colegas reaparecem, trazendo disputas internas e batalhas cheias de ação estilizada.",
+  8: "Vol. 8: A luta contra poderosos executores atinge um novo nível, e Sakamoto precisa equilibrar sua vida familiar com confrontos cada vez mais perigosos.",
+  9: "Vol. 9: Segredos sobre a organização dos assassinos vêm à tona, enquanto alianças inesperadas começam a se formar.",
+  10: "Vol. 10: A guerra entre facções explode, arrastando Sakamoto para o centro de um conflito que ameaça todo o submundo.",
+  11: "Vol. 11: Combates estratégicos colocam antigos rivais frente a frente, revelando habilidades surpreendentes e motivações ocultas.",
+  12: "Vol. 12: A pressão aumenta conforme novos inimigos surgem com técnicas mortais, forçando Sakamoto a ultrapassar seus próprios limites.",
+  13: "Vol. 13: O equilíbrio entre paz e violência se rompe quando ameaças se aproximam diretamente de sua família.",
+  14: "Vol. 14: Revelações impactantes mudam o rumo da batalha, redefinindo o papel de Sakamoto dentro do mundo dos assassinos.",
+  15: "Vol. 15: A ofensiva final de uma poderosa facção coloca todos em risco, exigindo união entre aliados improváveis.",
+  16: "Vol. 16: Confrontos decisivos expõem as fraquezas da organização dominante, abrindo espaço para uma nova ordem.",
+  17: "Vol. 17: A escalada do conflito traz perdas dolorosas e decisões difíceis que moldam o futuro de Sakamoto e seus companheiros.",
+  18: "Vol. 18: Um novo inimigo surge das sombras, prometendo elevar o caos a um patamar ainda mais perigoso.",
+  19: "Vol. 19: Estratégias ousadas e batalhas cinematográficas dominam o cenário enquanto o submundo entra em colapso.",
+  20: "Vol. 20: O confronto culmina em uma virada marcante, redefinindo o destino de Sakamoto e o equilíbrio de poder entre os assassinos."
+};

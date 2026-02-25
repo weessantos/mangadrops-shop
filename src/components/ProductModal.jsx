@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import "../styles/product-modal.css";
+import { track } from "../utils/analytics";
 
 const base = import.meta.env.BASE_URL;
 const img = (path) => `${base}assets/${path}`;
@@ -73,6 +74,19 @@ export default function ProductModal({ product, onClose }) {
 
   if (!product) return null;
 
+  const fireBuy = (store) => {
+    track("click_buy", {
+      product_id: product?.id,
+      product_name: product?.title,
+      series: product?.series || "",
+      volume: product?.volume ?? "",
+      store, // "mercadolivre" | "amazon"
+      placement: "modal_footer",
+      available: !!isAvailable,
+      has_both: !!hasBoth,
+    });
+  };
+
   return (
     <div className="modalOverlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -94,9 +108,10 @@ export default function ProductModal({ product, onClose }) {
                 <img src={product.image} alt={product.title} />
               </div>
 
-              {/* descrição curtinha opcional embaixo da capa (fica chique) */}
               <p className="modalDesc modalDescLeft desktopCaption">
-                {"Clique em comprar. Se você comprar pelo link, pode me ajudar sem pagar nada a mais 🙌"}
+                {
+                  "Clique em comprar. Se você comprar pelo link, pode me ajudar sem pagar nada a mais 🙌"
+                }
               </p>
             </div>
 
@@ -106,7 +121,7 @@ export default function ProductModal({ product, onClose }) {
                 <h2 className="modalTitle">{product.title}</h2>
 
                 <div className="modalBadges">
-                  {product.tag && <span className="badge">{product.tag}</span>}
+                  {product.brand && <span className="badge">{product.brand}</span>}
 
                   {Number.isFinite(Number(product.volume)) && (
                     <span className="badge">
@@ -114,21 +129,12 @@ export default function ProductModal({ product, onClose }) {
                     </span>
                   )}
 
-                  {product.author && (
-                    <span className="badge subtle">{product.author}</span>
-                  )}
-
-                  {product.genre && (
-                    <span className="badge subtle genre">{product.genre}</span>
-                  )}
+                  {product.format && <span className="badge subtle">{product.format}</span>}
+                  {product.author && <span className="badge subtle">{product.author}</span>}
+                  {product.genre && <span className="badge subtle genre">{product.genre}</span>}
                 </div>
 
-                {/* ✅ Toggle premium */}
-                <div
-                  className="tabPills"
-                  role="tablist"
-                  aria-label="Alternar conteúdo do modal"
-                >
+                <div className="tabPills" role="tablist" aria-label="Alternar conteúdo do modal">
                   <button
                     type="button"
                     role="tab"
@@ -151,7 +157,6 @@ export default function ProductModal({ product, onClose }) {
                 </div>
               </div>
 
-              {/* ✅ Conteúdo do toggle */}
               {desktopTab === "details" ? (
                 <div className="tabPanel" role="tabpanel">
                   <div className="detailsCard">
@@ -186,6 +191,13 @@ export default function ProductModal({ product, onClose }) {
                           target="_blank"
                           rel="noreferrer"
                           className="tiktokExternalBtn"
+                          onClick={() =>
+                            track("click_tiktok", {
+                              product_id: product?.id,
+                              product_name: product?.title,
+                              placement: "modal_desktop",
+                            })
+                          }
                         >
                           Ver no TikTok
                         </a>
@@ -193,9 +205,7 @@ export default function ProductModal({ product, onClose }) {
                     ) : (
                       <div className="tiktokPlaceholder tiktokDesktop">
                         <div className="tiktokPlaceholderIcon">🎥</div>
-                        <div className="tiktokPlaceholderText">
-                          Vídeo em breve neste volume.
-                        </div>
+                        <div className="tiktokPlaceholderText">Vídeo em breve neste volume.</div>
                       </div>
                     )}
                   </div>
@@ -221,7 +231,7 @@ export default function ProductModal({ product, onClose }) {
                   <h2 className="modalTitle">{product.title}</h2>
 
                   <div className="modalBadges">
-                    {product.tag && <span className="badge">{product.tag}</span>}
+                    {product.brand && <span className="badge">{product.brand}</span>}
 
                     {Number.isFinite(Number(product.volume)) && (
                       <span className="badge">
@@ -229,12 +239,9 @@ export default function ProductModal({ product, onClose }) {
                       </span>
                     )}
 
-                    {product.author && (
-                      <span className="badge subtle">{product.author}</span>
-                    )}
-                    {product.genre && (
-                      <span className="badge subtle genre">{product.genre}</span>
-                    )}
+                    {product.format && <span className="badge subtle">{product.format}</span>}
+                    {product.author && <span className="badge subtle">{product.author}</span>}
+                    {product.genre && <span className="badge subtle genre">{product.genre}</span>}
                   </div>
                 </div>
               </div>
@@ -268,6 +275,13 @@ export default function ProductModal({ product, onClose }) {
                       target="_blank"
                       rel="noreferrer"
                       className="tiktokExternalBtn"
+                      onClick={() =>
+                        track("click_tiktok", {
+                          product_id: product?.id,
+                          product_name: product?.title,
+                          placement: "modal_mobile",
+                        })
+                      }
                     >
                       Ver no TikTok
                     </a>
@@ -275,9 +289,7 @@ export default function ProductModal({ product, onClose }) {
                 ) : (
                   <div className="tiktokPlaceholder tiktokCompact">
                     <div className="tiktokPlaceholderIcon">🎥</div>
-                    <div className="tiktokPlaceholderText">
-                      Vídeo em breve neste volume.
-                    </div>
+                    <div className="tiktokPlaceholderText">Vídeo em breve neste volume.</div>
                   </div>
                 )}
               </div>
@@ -299,7 +311,10 @@ export default function ProductModal({ product, onClose }) {
                       href={mlUrl}
                       target="_blank"
                       rel="noreferrer"
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        fireBuy("mercadolivre");
+                      }}
                       className={hasBoth ? "buyLink grow" : "buyLink single"}
                       aria-label="Comprar no Mercado Livre"
                       title="Comprar no Mercado Livre"
@@ -319,17 +334,16 @@ export default function ProductModal({ product, onClose }) {
                       href={amzUrl}
                       target="_blank"
                       rel="noreferrer"
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        fireBuy("amazon");
+                      }}
                       className={hasBoth ? "buyLink grow" : "buyLink single"}
                       aria-label="Comprar na Amazon"
                       title="Comprar na Amazon"
                     >
                       <button className="btn brandBtn amazon" type="button">
-                        <img
-                          src={img("amazon.svg")}
-                          alt="Amazon"
-                          className="brandIcon"
-                        />
+                        <img src={img("amazon.svg")} alt="Amazon" className="brandIcon" />
                       </button>
                     </a>
                   )}

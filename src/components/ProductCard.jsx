@@ -1,11 +1,12 @@
-const base = import.meta.env.BASE_URL;
 import "../styles/product-card.css";
+import { track } from "../utils/analytics";
 
-
+const base = import.meta.env.BASE_URL;
 const img = (path) => `${base}assets/${path}`;
 
 export default function ProductCard(props) {
-  const { product, onOpen, showNewBadge = false } = props;
+  const { product, onOpen, showNewBadge = false, placement = "grid" } = props;
+
   const mlUrl =
     product?.affiliate?.mercadoLivre &&
     typeof product.affiliate.mercadoLivre === "string" &&
@@ -24,7 +25,8 @@ export default function ProductCard(props) {
   const hasAmazon = !!amzUrl;
   const isAvailable = hasML || hasAmazon;
   const hasBoth = hasML && hasAmazon;
-    const isNew = (() => {
+
+  const isNew = (() => {
     if (!showNewBadge) return false;
     if (!product?.addedAt) return false;
     const d = new Date(product.addedAt);
@@ -32,13 +34,42 @@ export default function ProductCard(props) {
     const diffDays = (new Date() - d) / (1000 * 60 * 60 * 24);
     return diffDays >= 0 && diffDays <= 30;
   })();
+
+  const fireOpen = (via = "card") => {
+    track("open_product", {
+      product_id: product?.id,
+      product_name: product?.title,
+      series: product?.series || "",
+      volume: product?.volume ?? "",
+      available: !!isAvailable,
+      placement,
+      via, // "card" | "overlay" | "keyboard"
+    });
+
+    onOpen?.(product);
+  };
+
+  const fireBuy = (store, url) => {
+    track("click_buy", {
+      product_id: product?.id,
+      product_name: product?.title,
+      series: product?.series || "",
+      volume: product?.volume ?? "",
+      store, // "mercadolivre" | "amazon"
+      placement: `${placement}_card`,
+      available: !!isAvailable,
+    });
+
+    // link abre pelo <a>, aqui é só tracking
+  };
+
   return (
     <div
       className="card cardHover"
-      onClick={() => onOpen(product)}
+      onClick={() => fireOpen("card")}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => e.key === "Enter" && onOpen(product)}
+      onKeyDown={(e) => e.key === "Enter" && fireOpen("keyboard")}
     >
       <div className="thumbWrap">
         <img className="thumb" src={product.image} alt={product.title} />
@@ -51,7 +82,7 @@ export default function ProductCard(props) {
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              onOpen(product);
+              fireOpen("overlay");
             }}
           >
             Ver detalhes
@@ -90,7 +121,10 @@ export default function ProductCard(props) {
                   href={mlUrl}
                   target="_blank"
                   rel="noreferrer"
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    fireBuy("mercadolivre", mlUrl);
+                  }}
                   className={hasBoth ? "buyLink grow" : "buyLink single"}
                   aria-label="Comprar no Mercado Livre"
                   title="Comprar no Mercado Livre"
@@ -110,7 +144,10 @@ export default function ProductCard(props) {
                   href={amzUrl}
                   target="_blank"
                   rel="noreferrer"
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    fireBuy("amazon", amzUrl);
+                  }}
                   className={hasBoth ? "buyLink grow" : "buyLink single"}
                   aria-label="Comprar na Amazon"
                   title="Comprar na Amazon"

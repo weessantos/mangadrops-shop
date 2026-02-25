@@ -132,6 +132,9 @@ export const haikyuAffiliate = {
   20: { mercadoLivre: "", amazon: "" }
 };
 
+// =======================
+// KAGURABACHI
+// =======================
 export const kgbAffiliate = {
   1: { mercadoLivre: "https://mercadolivre.com/sec/2miHnbK", amazon: "https://amzn.to/4ru9012" },
   2: { mercadoLivre: "https://mercadolivre.com/sec/2EKkvq4", amazon: "https://amzn.to/470VVno" },
@@ -141,6 +144,9 @@ export const kgbAffiliate = {
   6: { mercadoLivre: "", amazon: "https://amzn.to/3Otfj6e" }
 };
 
+// =======================
+// VINLAND SAGA 2 EM 1
+// =======================
 export const vinlandAffiliate = {
   1: { mercadoLivre: "", amazon: "" },
   2: { mercadoLivre: "https://mercadolivre.com/sec/21VpM4Z", amazon: "https://amzn.to/4rWkfis" },
@@ -155,4 +161,63 @@ export const vinlandAffiliate = {
   11: { mercadoLivre: "", amazon: "" },
   12: { mercadoLivre: "", amazon: "" },
   13: { mercadoLivre: "https://mercadolivre.com/sec/1agiJVA", amazon: "" }
+};
+
+// =======================
+// SAKAMOTO DAYS
+// =======================
+export const skmtAffiliate = {
+  1: { mercadoLivre: "https://meli.la/2tPSQAY", amazon: "https://amzn.to/4cOKLG5" },
+  2: { mercadoLivre: "https://meli.la/2nNcxNc", amazon: "https://amzn.to/3ZYqJ4x" },
+  3: { mercadoLivre: "https://meli.la/14hhZSJ", amazon: "https://amzn.to/4tWy8yT" },
+  4: { mercadoLivre: "https://meli.la/2ioM4fj", amazon: "https://amzn.to/4aCjh5k" },
+  5: { mercadoLivre: "https://meli.la/2ANX6AG", amazon: "https://amzn.to/4aLeywU" },
+  6: { mercadoLivre: "https://meli.la/2KNiTGL", amazon: "https://amzn.to/3Ozt9Eo" },
+  7: { mercadoLivre: "", amazon: "https://amzn.to/4rA2t4F" },
+  8: { mercadoLivre: "https://meli.la/1aEHPjB", amazon: "https://amzn.to/4rDjP0M" },
+  9: { mercadoLivre: "https://meli.la/1X8MrY5", amazon: "https://amzn.to/4aVa5YE" },
+  10: { mercadoLivre: "https://meli.la/2MRtJpX", amazon: "https://amzn.to/4aVZg8N" },
+  11: { mercadoLivre: "https://meli.la/2gMfxf5", amazon: "https://amzn.to/4aSewDC" },
+  12: { mercadoLivre: "https://meli.la/1399qJM", amazon: "https://amzn.to/4rMZ4zy" },
+  13: { mercadoLivre: "https://meli.la/1CSsbK4", amazon: "https://amzn.to/3ZSlraL" },
+  14: { mercadoLivre: "", amazon: "https://amzn.to/4aQq4XY" },
+  15: { mercadoLivre: "https://meli.la/1CSsbK4", amazon: "https://amzn.to/3MxAaox" },
+  16: { mercadoLivre: "https://meli.la/12gTJSZ", amazon: "" },
+  17: { mercadoLivre: "https://meli.la/1o4c8nB", amazon: "" },
+  18: { mercadoLivre: "https://meli.la/24t9nv3", amazon: "" },
+  19: { mercadoLivre: "https://meli.la/2zELgj6", amazon: "" },
+  20: { mercadoLivre: "", amazon: "" }
+};
+
+// =======================
+// FULLMETAL ALCHEMIST
+// =======================
+export const fmaAffiliate = {
+  1: { mercadoLivre: "", amazon: "" },
+  2: { mercadoLivre: "", amazon: "" },
+  3: { mercadoLivre: "", amazon: "" },
+  4: { mercadoLivre: "", amazon: "" },
+  5: { mercadoLivre: "", amazon: "" },
+  6: { mercadoLivre: "", amazon: "" },
+  7: { mercadoLivre: "", amazon: "" },
+  8: { mercadoLivre: "", amazon: "" },
+  9: { mercadoLivre: "", amazon: "" },
+  10: { mercadoLivre: "", amazon: "" },
+  11: { mercadoLivre: "", amazon: "" },
+  12: { mercadoLivre: "", amazon: "" },
+  13: { mercadoLivre: "", amazon: "" },
+  14: { mercadoLivre: "", amazon: "" },
+  15: { mercadoLivre: "", amazon: "" },
+  16: { mercadoLivre: "", amazon: "" },
+  17: { mercadoLivre: "", amazon: "" },
+  18: { mercadoLivre: "", amazon: "" },
+  19: { mercadoLivre: "", amazon: "" },
+  20: { mercadoLivre: "", amazon: "" },
+  21: { mercadoLivre: "", amazon: "" },
+  22: { mercadoLivre: "", amazon: "" },
+  23: { mercadoLivre: "", amazon: "" },
+  24: { mercadoLivre: "", amazon: "" },
+  25: { mercadoLivre: "", amazon: "" },
+  26: { mercadoLivre: "", amazon: "" },
+  27: { mercadoLivre: "", amazon: "" }
 };

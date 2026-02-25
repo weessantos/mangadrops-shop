@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { track } from "../utils/analytics";
+import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/header.css";
 
 const base = import.meta.env.BASE_URL;
 const img = (path) => `${base}assets/${path}`;
+
 
 // remove emojis/símbolos pra busca ficar consistente
 const toQueryText = (s) =>
@@ -13,6 +16,13 @@ const toQueryText = (s) =>
     .trim();
 
 export default function Header({ inputValue, setInputValue, onSearch }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const openFilters = () => {
+    navigate(`/filtros${location.search}`);
+  };
+
   // =========================
   // Mobile detection
   // =========================
@@ -36,7 +46,16 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
   // =========================
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
-  const toggleMenu = () => setMenuOpen((v) => !v);
+  const toggleMenu = () => {
+    setMenuOpen((v) => {
+      const next = !v;
+      track("menu_toggle", {
+        placement: "header_mobile",
+        state: next ? "open" : "close",
+      });
+      return next;
+    });
+  };
 
   // ESC fecha menu
   useEffect(() => {
@@ -64,11 +83,25 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
   // =========================
   // Actions
   // =========================
+  const fireSearch = (placement) => {
+    const q = String(inputValue || "").trim();
+    track("search", {
+      search_term: q,
+      placement,
+    });
+    onSearch?.(q);
+  };
+
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") onSearch?.(inputValue);
+    if (e.key === "Enter")
+      fireSearch(isMobile ? "header_mobile_enter" : "header_desktop_enter");
   };
 
   const scrollToObras = () => {
+    track("click_nav", {
+      target: "colecoes",
+      placement: isMobile ? "header_mobile" : "header_desktop",
+    });
     (
       document.getElementById("railTitle") ||
       document.getElementById("obras") ||
@@ -77,6 +110,10 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
   };
 
   const scrollToNews = () => {
+    track("click_nav", {
+      target: "lancamentos",
+      placement: isMobile ? "header_mobile" : "header_desktop",
+    });
     (
       document.getElementById("obras") ||
       document.getElementById("lancamentos") ||
@@ -85,11 +122,18 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
   };
 
   const openRequestForm = () => {
+    track("click_request", {
+      placement: isMobile ? "header_mobile" : "header_desktop",
+    });
     window.open("https://forms.gle/Vz1PUw5V9TxSUzqc8", "_blank", "noreferrer");
   };
 
   const quickSearch = (text) => {
     const q = toQueryText(text);
+    track("click_chip", {
+      chip: q,
+      placement: isMobile ? "side_menu" : "header_chips",
+    });
     setInputValue(q);
     onSearch?.(q);
   };
@@ -137,6 +181,10 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
   const scrollChips = (direction) => {
     const el = chipsRef.current;
     if (!el) return;
+    track("scroll_chips", {
+      direction,
+      placement: "header_chips",
+    });
     const amount = 280;
     el.scrollBy({
       left: direction === "left" ? -amount : amount,
@@ -204,6 +252,18 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                 >
                   Pedir uma obra
                 </button>
+
+                <button
+                  className="sideMenuBtn sideMenuBtnPrimary"
+                  onClick={() => {
+                    closeMenu();
+                    openFilters();
+                  }}
+                  type="button"
+                >
+                  Filtros
+                </button>
+                
               </div>
 
               <div className="sideMenuDivider" />
@@ -238,6 +298,9 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                     target="_blank"
                     rel="noreferrer"
                     aria-label="TikTok"
+                    onClick={() =>
+                      track("click_social", { network: "tiktok", placement: "side_menu" })
+                    }
                   >
                     <img className="socialIcon" src={img("tiktok.svg")} alt="" aria-hidden="true" />
                     TikTok
@@ -248,8 +311,16 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                     target="_blank"
                     rel="noreferrer"
                     aria-label="Instagram"
+                    onClick={() =>
+                      track("click_social", { network: "instagram", placement: "side_menu" })
+                    }
                   >
-                    <img className="socialIcon" src={img("instagram.svg")} alt="" aria-hidden="true" />
+                    <img
+                      className="socialIcon"
+                      src={img("instagram.svg")}
+                      alt=""
+                      aria-hidden="true"
+                    />
                     Instagram
                   </a>
                   <a
@@ -258,6 +329,9 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                     target="_blank"
                     rel="noreferrer"
                     aria-label="YouTube"
+                    onClick={() =>
+                      track("click_social", { network: "youtube", placement: "side_menu" })
+                    }
                   >
                     <img className="socialIcon" src={img("youtube.svg")} alt="" aria-hidden="true" />
                     YouTube
@@ -288,44 +362,61 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
         <div className="heroContent">
           {isMobile ? (
             /* ✅ Mobile: arrumado (logo integrada + ícone menor + botão compacto) */
-        <div className="mobileTopBar">
-          <button className="mobileMenuBtn" onClick={toggleMenu} type="button" aria-label="Abrir menu">
-            ☰
-          </button>
+            <div className="mobileTopBar">
+              <button
+                className="mobileMenuBtn"
+                onClick={toggleMenu}
+                type="button"
+                aria-label="Abrir menu"
+              >
+                ☰
+              </button>
 
-          <div className="mobileSearch">
-            <button
-              className="mobileLogoMiniBtn"
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              type="button"
-              aria-label="Voltar ao topo"
-              title="Voltar ao topo"
-            >
-              <img className="mobileSearchLogo" src={img("logo.png")} alt="MangásDrops" />
-            </button>
+              <div className="mobileSearch">
+                <button
+                  className="mobileLogoMiniBtn"
+                  onClick={() => {
+                    track("click_logo", { placement: "header_mobile" });
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  type="button"
+                  aria-label="Voltar ao topo"
+                  title="Voltar ao topo"
+                >
+                  <img className="mobileSearchLogo" src={img("logo.png")} alt="MangásDrops" />
+                </button>
 
-            <span className="mobileSearchIcon" aria-hidden="true">🔎</span>
+                <span className="mobileSearchIcon" aria-hidden="true">
+                  🔎
+                </span>
 
-            <input
-              className="mobileSearchInput"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Buscar mangá..."
-            />
+                <input
+                  className="mobileSearchInput"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Buscar mangá..."
+                />
 
-            <button className="mobileSearchBtn" onClick={() => onSearch?.(inputValue)} type="button">
-              Buscar
-            </button>
-          </div>
-        </div>
+                <button
+                  className="mobileSearchBtn"
+                  onClick={() => fireSearch("header_mobile_btn")}
+                  type="button"
+                >
+                  Buscar
+                </button>
+              </div>
+            </div>
           ) : (
             <>
               <div className="heroTop">
                 {/* Logo */}
                 <button
                   className="heroLogoBtn"
-                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  onClick={() => {
+                    track("click_logo", { placement: "header_desktop" });
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
                   type="button"
                   aria-label="Voltar ao topo"
                 >
@@ -344,7 +435,11 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                     onKeyDown={handleKeyDown}
                     placeholder="Buscar mangá ou volume..."
                   />
-                  <button className="heroSearchBtn" onClick={() => onSearch?.(inputValue)} type="button">
+                  <button
+                    className="heroSearchBtn"
+                    onClick={() => fireSearch("header_desktop_btn")}
+                    type="button"
+                  >
                     Buscar
                   </button>
                 </div>
@@ -358,6 +453,9 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                     rel="noreferrer"
                     aria-label="TikTok"
                     title="TikTok"
+                    onClick={() =>
+                      track("click_social", { network: "tiktok", placement: "header_desktop" })
+                    }
                   >
                     <img className="socialIcon" src={img("tiktok.svg")} alt="" aria-hidden="true" />
                   </a>
@@ -368,8 +466,16 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                     rel="noreferrer"
                     aria-label="Instagram"
                     title="Instagram"
+                    onClick={() =>
+                      track("click_social", { network: "instagram", placement: "header_desktop" })
+                    }
                   >
-                    <img className="socialIcon" src={img("instagram.svg")} alt="" aria-hidden="true" />
+                    <img
+                      className="socialIcon"
+                      src={img("instagram.svg")}
+                      alt=""
+                      aria-hidden="true"
+                    />
                   </a>
                   <a
                     className="socialBtn"
@@ -378,6 +484,9 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                     rel="noreferrer"
                     aria-label="YouTube"
                     title="YouTube"
+                    onClick={() =>
+                      track("click_social", { network: "youtube", placement: "header_desktop" })
+                    }
                   >
                     <img className="socialIcon" src={img("youtube.svg")} alt="" aria-hidden="true" />
                   </a>
@@ -397,6 +506,11 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                   <button className="pill pillCTA" onClick={openRequestForm} type="button">
                     Pedir uma obra
                   </button>
+
+                  <button className="pill pillCTA" type="button" onClick={openFilters}>
+                    Filtros
+                  </button>
+                                    
                 </div>
 
                 <div className="pillRowSecondaryContainer">

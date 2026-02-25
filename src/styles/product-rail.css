@@ -110,3 +110,39 @@
     padding-right: 10px !important;
   }
 }
+
+.productRail{
+  align-items: stretch;
+}
+
+.productItem{
+  display: flex;
+}
+
+.productItem > *{
+  width: 100%;
+  height: 100%;
+}
+
+/* =========================================================
+   FIX DEFINITIVO – alinhar botões no rodapé
+   ========================================================= */
+
+/* faz o card virar coluna e ocupar toda altura */
+.productRail .card{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* faz o conteúdo interno ocupar espaço flexível */
+.productRail .card .content{
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* empurra o último elemento (botões) pro final */
+.productRail .card .content > *:last-child{
+  margin-top: auto;
+}
