@@ -96,7 +96,7 @@ export default function ProductCard(props) {
 
         {/* Editora • Vol */}
         <div className="metaText">
-          <span className="metaPublisher">{product.tag}</span>
+          <span className="metaPublisher">{product.brand}</span>
 
           {product.volume ? (
             <>
