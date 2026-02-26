@@ -181,7 +181,7 @@ export const skmtAffiliate = {
   12: { mercadoLivre: "https://meli.la/1399qJM", amazon: "https://amzn.to/4rMZ4zy" },
   13: { mercadoLivre: "https://meli.la/1CSsbK4", amazon: "https://amzn.to/3ZSlraL" },
   14: { mercadoLivre: "", amazon: "https://amzn.to/4aQq4XY" },
-  15: { mercadoLivre: "https://meli.la/1CSsbK4", amazon: "https://amzn.to/3MxAaox" },
+  15: { mercadoLivre: "https://meli.la/2PhZdRU", amazon: "https://amzn.to/3MxAaox" },
   16: { mercadoLivre: "https://meli.la/12gTJSZ", amazon: "" },
   17: { mercadoLivre: "https://meli.la/1o4c8nB", amazon: "" },
   18: { mercadoLivre: "https://meli.la/24t9nv3", amazon: "" },
