@@ -119,7 +119,7 @@ export const SERIES = {
     prefix: "haikyu",
     start: 1,
     end: 20,
-    brand: "Panini",
+    brand: "JBC",
     imageExt: "jpeg",
     editionLabel: "2 em 1",
     author: "Haruichi Furudate",
