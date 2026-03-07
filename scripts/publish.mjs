@@ -7,34 +7,37 @@ function run(cmd) {
 const msg = process.argv.slice(2).join(" ").trim() || "update";
 
 try {
-
-  // checa status
+  // status atual
   run("git status");
 
-  // build local (só para validar que o site compila)
+  // 1) atualiza preços antes de publicar
+  run("npm run update-prices");
+
+  // 2) build local para validar
   run("npm run build");
 
-  // commit mudanças
+  // 3) adiciona tudo
   run("git add .");
 
+  // 4) commit (sem falhar se não houver mudanças)
   try {
     run(`git commit -m "${msg.replaceAll('"', '\\"')}"`);
   } catch {
     console.log("ℹ️ Nenhuma mudança para commitar.");
   }
 
-  // push para main
+  // 5) push para a main
   run("git push origin main");
 
   console.log(`
-🚀 Código enviado para a main!
+🚀 Publicação enviada para a main com preços atualizados!
 
-GitHub Actions irá agora:
-• atualizar o site
-• rodar o build
-• fazer o deploy automático
+Fluxo final:
+• preços atualizados
+• build validado localmente
+• commit enviado
+• GitHub Actions fará o deploy automático
 `);
-
 } catch (e) {
   console.error("\n❌ Falhou. Veja o erro acima.");
   process.exit(1);

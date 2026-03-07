@@ -30,5 +30,10 @@ jobs:
       - name: Build site
         run: npm run build
 
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
       - name: Deploy to gh-pages
         run: npm run deploy
