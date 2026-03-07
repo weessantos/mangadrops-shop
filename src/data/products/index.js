@@ -10,28 +10,28 @@ import {
   fmaAffiliate,
 } from "./affiliates.js";
 
-import { makeAddedAtByVolume } from "../../utils/volumeDates";
-import { createSeriesVolumes } from "./series.factory";
-import { SERIES } from "./series.catalog";
+import { makeAddedAtByVolume } from "../../utils/volumeDates.js";
+import { createSeriesVolumes } from "./series.factory.js";
+import { SERIES } from "./series.catalog.js";
 
 // descriptions
-import { aotDescriptions } from "./descriptions/aot";
-import { jjkDescriptions } from "./descriptions/jjk";
-import { opDescriptions } from "./descriptions/op";
-import { haikyuDescriptions } from "./descriptions/haikyu";
-import { kgbDescriptions } from "./descriptions/kgb";
-import { vinlandDescriptions } from "./descriptions/vinland";
-import { skmtDescriptions } from "./descriptions/skmt";
+import { aotDescriptions } from "./descriptions/aot.js";
+import { jjkDescriptions } from "./descriptions/jjk.js";
+import { opDescriptions } from "./descriptions/op.js";
+import { haikyuDescriptions } from "./descriptions/haikyu.js";
+import { kgbDescriptions } from "./descriptions/kgb.js";
+import { vinlandDescriptions } from "./descriptions/vinland.js";
+import { skmtDescriptions } from "./descriptions/skmt.js";
 import { fmaDescriptions } from "./descriptions/fma.js";
 
 // tiktok
-import { aotTiktok } from "./tiktok/aot";
-import { jjkTiktok } from "./tiktok/jjk";
-import { opTiktok } from "./tiktok/op";
-import { haikyuTiktok } from "./tiktok/haikyu";
-import { kgbTiktok } from "./tiktok/kgb";
-import { vinlandTiktok } from "./tiktok/vinland";
-import { skmtTiktok } from "./tiktok/skmt";
+import { aotTiktok } from "./tiktok/aot.js";
+import { jjkTiktok } from "./tiktok/jjk.js";
+import { opTiktok } from "./tiktok/op.js";
+import { haikyuTiktok } from "./tiktok/haikyu.js";
+import { kgbTiktok } from "./tiktok/kgb.js";
+import { vinlandTiktok } from "./tiktok/vinland.js";
+import { skmtTiktok } from "./tiktok/skmt.js";
 import { fmaTiktok } from "./tiktok/fma.js";
 
 const aot = createSeriesVolumes({
@@ -39,6 +39,7 @@ const aot = createSeriesVolumes({
   affiliateByVolume: aotAffiliate,
   tiktokByVolume: aotTiktok,
   descriptionByVolume: aotDescriptions,
+  defaultCoverPrice: 78.90,
 });
 
 const jjk = createSeriesVolumes({
@@ -46,6 +47,7 @@ const jjk = createSeriesVolumes({
   affiliateByVolume: jjkAffiliate,
   tiktokByVolume: jjkTiktok,
   descriptionByVolume: jjkDescriptions,
+  defaultCoverPrice: 47.90,
 });
 
 const op = createSeriesVolumes({
@@ -53,6 +55,7 @@ const op = createSeriesVolumes({
   affiliateByVolume: opAffiliate,
   tiktokByVolume: opTiktok,
   descriptionByVolume: opDescriptions,
+  defaultCoverPrice: 99.90,
 });
 
 const haikyu = createSeriesVolumes({
@@ -60,6 +63,7 @@ const haikyu = createSeriesVolumes({
   affiliateByVolume: haikyuAffiliate,
   tiktokByVolume: haikyuTiktok,
   descriptionByVolume: haikyuDescriptions,
+  defaultCoverPrice: 63.90,
 });
 
 const kgb = createSeriesVolumes({
@@ -67,6 +71,7 @@ const kgb = createSeriesVolumes({
   affiliateByVolume: kgbAffiliate,
   tiktokByVolume: kgbTiktok,
   descriptionByVolume: kgbDescriptions,
+  defaultCoverPrice: 47.90,
 });
 
 const vinland = createSeriesVolumes({
@@ -74,6 +79,8 @@ const vinland = createSeriesVolumes({
   affiliateByVolume: vinlandAffiliate,
   tiktokByVolume: vinlandTiktok,
   descriptionByVolume: vinlandDescriptions,
+  defaultCoverPrice: 54.90,
+
 });
 
 const skmt = createSeriesVolumes({
@@ -81,6 +88,7 @@ const skmt = createSeriesVolumes({
   affiliateByVolume: skmtAffiliate,
   tiktokByVolume: skmtTiktok,
   descriptionByVolume: skmtDescriptions,
+  defaultCoverPrice: 47.90,
 });
 
 const fma = createSeriesVolumes({
@@ -88,6 +96,7 @@ const fma = createSeriesVolumes({
   affiliateByVolume: fmaAffiliate,
   tiktokByVolume: fmaTiktok,
   descriptionByVolume: fmaDescriptions,
+  defaultCoverPrice: 43.90,
 });
 
 export const products = [...aot, ...jjk, ...op, ...haikyu, ...kgb, ...vinland, ...skmt, ...fma];

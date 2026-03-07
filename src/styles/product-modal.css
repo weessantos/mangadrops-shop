@@ -5,7 +5,7 @@
 :root{
   --modal-pad: 16px;      /* padding único para alinhar tudo */
   --topbar-h: 68px;       /* usado no mobile fullscreen */
-  --footer-h: 116px;      /* espaço para CTA/footer fixo (ajuste se necessário) */
+  --footer-h: 166px;      /* espaço para CTA/footer fixo */
 }
 
 /* =========================================================
@@ -19,7 +19,6 @@
   display: grid;
   place-items: center;
   padding: 18px;
-  /* fica acima do header fixo (mobile) e da maioria dos elementos */
   z-index: 12000;
 }
 
@@ -216,6 +215,129 @@
 }
 
 /* =========================================================
+   PRICE SUMMARY + STORE CARDS
+   ========================================================= */
+.priceSummary{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.priceSummaryLabel{
+  font-size: 0.92rem;
+  color: rgba(255,255,255,0.72);
+  font-weight: 700;
+}
+
+.priceSummaryValue{
+  font-size: 1.08rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.priceUpdatedAt{
+  margin: -4px 0 12px;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.58);
+}
+
+.buyRowCards{
+  display: grid;
+  gap: 12px;
+}
+
+.buyRowCards.twoCols{
+  grid-template-columns: 1fr 1fr;
+}
+
+.buyRowCards.oneCol{
+  grid-template-columns: 1fr;
+}
+
+.storeBuyCard{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 92px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.08);
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    filter 0.16s ease;
+}
+
+.storeBuyCard:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,0.16);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.24);
+  filter: brightness(1.02);
+}
+
+.storeBuyTop{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.storeBuyCard .brandIcon{
+  height: 24px;
+  width: auto;
+  object-fit: contain;
+}
+
+.storeBuyPrice{
+  font-size: 1.16rem;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.storeBuyMeta{
+  font-size: 0.82rem;
+  font-weight: 700;
+  opacity: 0.78;
+}
+
+.storeBestBadge{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  background: rgba(255,255,255,0.22);
+  color: inherit;
+  white-space: nowrap;
+}
+
+.storeBuyCard.mercado{
+  background: #ffe600;
+  color: #1f1f1f;
+}
+
+.storeBuyCard.amazon{
+  background: #f3f4f6;
+  color: #111111;
+}
+
+/* =========================================================
    DESKTOP (layout premium + toggle)
    ========================================================= */
 @media (min-width: 721px){
@@ -372,7 +494,6 @@
    MOBILE (APP MODE + RAIL)
    ========================================================= */
 @media (max-width: 720px){
-  /* overlay vira "app root" */
   .modalOverlay{
     padding: 0;
     place-items: stretch;
@@ -381,7 +502,6 @@
     backdrop-filter: blur(10px);
   }
 
-  /* modal tela cheia */
   .modal{
     width: 100vw;
     height: 100dvh;
@@ -391,15 +511,12 @@
     border-right: 0;
     border-top: 0;
     overflow: hidden;
-
-    /* app-like mais sólido */
     background: #0f1420;
   }
 
   .desktopOnly{ display: none; }
   .mobileOnly{ display: block; }
 
-  /* header fixo (não sobe na imagem) */
   .modalTop{
     position: fixed;
     top: 0;
@@ -413,7 +530,6 @@
     border-bottom: 1px solid rgba(255,255,255,0.06);
   }
 
-  /* heading mais "native" */
   .modalHeading{
     margin-left: 0;
     font-size: 20px;
@@ -435,9 +551,7 @@
     background: rgba(0,0,0,0.30);
   }
 
-  /* conteúdo rola dentro, com espaço do header + footer */
   .modalContent{
-    /* ocupa o espaço entre topbar e footer */
     flex: 1 1 auto;
     min-height: 0;
     max-height: none;
@@ -447,7 +561,6 @@
     padding-bottom: calc(var(--footer-h) + env(safe-area-inset-bottom));
   }
 
-  /* ✅ footer aparece no mobile (fixo) */
   .modalFooter{
     position: fixed;
     left: 0;
@@ -461,7 +574,6 @@
     border-top: 1px solid rgba(255,255,255,0.06);
   }
 
-  /* rail: 2 páginas (produto / tiktok) sem peek */
   .modalRail{
     display: flex;
     gap: 0;
@@ -495,7 +607,6 @@
     min-height: auto;
   }
 
-  /* capa */
   .railProduct .modalCover{
     border-radius: 14px;
     border: 1px solid rgba(255,255,255,0.06);
@@ -509,7 +620,6 @@
     height: auto;
   }
 
-  /* título/descrição/badges */
   .productInfoUnder .modalTitle{
     margin: 4px 0 8px;
     font-size: 17px;
@@ -554,17 +664,59 @@
     margin-top: 2px;
   }
 
-  /* TikTok: alto só pro embed */
   .tiktokTall{ max-height: 72vh; }
   .tiktokEmbedWrap.tiktokTall{ border-radius: 16px; }
   .tiktokPlaceholder.tiktokCompact{ border-radius: 16px; }
 
-  /* mediaCard no mobile ocupa melhor */
   .mediaCard{ width: 100%; }
   .mediaCard.hasVideo{ width: 100%; }
 
-  /* spacer desnecessário (padding-bottom já resolve) */
   .modalFooterSpacer{ height: 0; }
+
+  .priceSummary{
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+
+  .priceSummaryLabel{
+    font-size: 0.84rem;
+  }
+
+  .priceSummaryValue{
+    font-size: 0.98rem;
+  }
+
+  .priceUpdatedAt{
+    font-size: 0.76rem;
+    margin-bottom: 10px;
+  }
+
+  .buyRowCards{
+    gap: 10px;
+  }
+
+  .storeBuyCard{
+    min-height: 84px;
+    padding: 12px 14px;
+    border-radius: 16px;
+  }
+
+  .storeBuyCard .brandIcon{
+    height: 20px;
+  }
+
+  .storeBuyPrice{
+    font-size: 1rem;
+  }
+
+  .storeBuyMeta{
+    font-size: 0.76rem;
+  }
+
+  .storeBestBadge{
+    font-size: 0.62rem;
+    padding: 4px 7px;
+  }
 }
 
 /* telas pequenas: tipografia reduz um pouco pra não cortar */
@@ -582,16 +734,41 @@
   .modalHeading{
     font-size: clamp(18px, 4.5vw, 20px);
   }
+
+  .buyRowCards.twoCols{
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .storeBuyPrice{
+    font-size: 0.95rem;
+  }
 }
 
 /* telas MUITO pequenas (ex: 320–360px) */
 @media (max-width: 380px){
-  :root{ --topbar-h: 64px; }
+  :root{ --topbar-h: 64px; --footer-h: 172px; }
 
   .railProduct .modalCover img{ max-height: 40vh; }
 
   .productInfoUnder .modalTitle{ font-size: 15px; }
   .modalHeading{ font-size: 18px; }
+
+  .storeBuyCard{
+    padding: 11px 12px;
+  }
+
+  .storeBuyCard .brandIcon{
+    height: 18px;
+  }
+
+  .storeBuyPrice{
+    font-size: 0.9rem;
+  }
+
+  .storeBestBadge{
+    font-size: 0.58rem;
+    padding: 3px 6px;
+  }
 }
 
 /* =========================================================
@@ -618,4 +795,46 @@
   width: 20px;
   background: linear-gradient(90deg,#7c3aed,#3b82f6);
   box-shadow: 0 0 12px rgba(124,58,237,0.6);
+}
+
+.desktopBuySection{
+  margin-top: 14px;
+  max-width: 72ch;
+}
+
+.desktopBuySectionVideo{
+  margin-top: 14px;
+}
+
+.buyBlock{
+  width: 100%;
+}
+
+.mobileVideoBuyBlock{
+  margin-top: 12px;
+}
+
+@media (min-width: 721px){
+  .desktopBuySection .storeBuyCard{
+    min-height: 72px;
+    padding: 12px 14px;
+    border-radius: 16px;
+  }
+
+  .desktopBuySection .storeBuyCard .brandIcon{
+    height: 16px;
+  }
+
+  .desktopBuySection .storeBuyPrice{
+    font-size: 0.95rem;
+  }
+
+  .desktopBuySection .storeBuyMeta{
+    font-size: 0.72rem;
+  }
+
+  .desktopBuySection .storeBestBadge{
+    font-size: 0.54rem;
+    padding: 3px 6px;
+  }
 }

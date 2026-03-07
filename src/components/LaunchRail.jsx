@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import ProductCard from "./ProductCard";
+import ProductCard from "./ProductCard.jsx";
 import "../styles/product-rail.css";
+import { getPrice } from "../utils/priceLoader";
+import { getOfferData } from "../utils/priceUtils";
 
 function isValidDate(v) {
   return typeof v === "string" && !Number.isNaN(new Date(v).getTime());
@@ -111,9 +113,27 @@ export default function LaunchRail({
       <div className="productRail" ref={railRef} aria-label={title}>
         {items
           .filter((p) => {
-            const ml = p.affiliate?.mercadoLivre?.trim();
-            const amz = p.affiliate?.amazon?.trim();
-            return ml || amz; // só passa se tiver pelo menos um link
+            const mlUrl =
+              typeof p?.affiliate?.mercadoLivre === "string"
+                ? p.affiliate.mercadoLivre.trim()
+                : "";
+
+            const amzUrl =
+              typeof p?.affiliate?.amazon === "string"
+                ? p.affiliate.amazon.trim()
+                : "";
+
+            const mlPrice = getPrice(p?.id, "mercadoLivre");
+            const amzPrice = getPrice(p?.id, "amazon");
+
+            const { isAvailable } = getOfferData({
+              mlHref: mlUrl,
+              mlPrice,
+              amazonHref: amzUrl,
+              amazonPrice: amzPrice,
+            });
+
+            return isAvailable;
           })
           .map((p) => (
           <div className="railItem productItem" key={p.id}>

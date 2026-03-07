@@ -2,6 +2,9 @@
    PRODUCT CARD
    ========================================================= */
 .card{
+  display:flex;
+  flex-direction:column;
+  height:100%;
   border: 1px solid var(--border);
   background: rgba(255,255,255,0.04);
   border-radius: 18px;
@@ -26,31 +29,23 @@
   object-fit: cover;
 }
 
-.content{ padding: 12px 12px 14px; }
+.content{
+  padding: 12px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  flex:1;
+  gap: 10px;
+}
 
 .title{
-  margin: 0 0 6px;
+  margin: 0;
   font-size: 14px;
   line-height: 1.3;
 }
 
-.meta{
-  display:flex;
-  justify-content: space-between;
-  gap: 10px;
-  color: var(--muted);
-  font-size: 12px;
-  margin-bottom: 10px;
-}
-
-.price{
-  font-weight: 800;
-  color: rgba(255,255,255,0.90);
-}
-
 /* ===== Badge NOVO ===== */
 .thumbWrap{
-  position: relative; /* garante que a badge posicione em cima da imagem */
+  position: relative;
 }
 
 .newBadge{
@@ -70,11 +65,11 @@
 }
 
 /* =========================================================
-   EXTRA (recuperado): overlay + meta + botões
+   EXTRA: overlay + meta + botões
    ========================================================= */
-
-/* Hover overlay */
-.cardHover{ position: relative; }
+.cardHover{
+  position: relative;
+}
 
 .hoverOverlay{
   position: absolute;
@@ -88,7 +83,9 @@
   transition: opacity 160ms ease;
 }
 
-.card:hover .hoverOverlay{ opacity: 1; }
+.card:hover .hoverOverlay{
+  opacity: 1;
+}
 
 .overlayBtn{
   border: 0;
@@ -104,7 +101,7 @@
   pointer-events: auto;
 }
 
-/* Meta row (Panini • Vol • Estoque) */
+/* Meta row */
 .metaText{
   display: flex;
   align-items: center;
@@ -112,17 +109,23 @@
   flex-wrap: wrap;
   color: rgba(255,255,255,0.70);
   font-size: 12px;
-  margin-bottom: 10px;
 }
 
-.metaPublisher{ font-weight: 800; opacity: 0.95; }
-.metaVol{ font-weight: 800; opacity: 0.9; }
-.metaDot{ opacity: 0.5; }
+.metaPublisher{
+  font-weight: 800;
+  opacity: 0.95;
+}
 
-/* =========================
-   Stock Tag Suave 
-========================= */
+.metaVol{
+  font-weight: 800;
+  opacity: 0.9;
+}
 
+.metaDot{
+  opacity: 0.5;
+}
+
+/* Stock */
 .metaStock{
   margin-left: auto;
   font-weight: 700;
@@ -133,25 +136,69 @@
   border: 1px solid rgba(255,255,255,0.08);
 }
 
-/* 🟢 Disponível – suave */
 .metaStock.good{
   color: rgba(34,197,94,0.9);
   background: rgba(34,197,94,0.12);
   border-color: rgba(34,197,94,0.25);
 }
 
-/* 🔴 Indisponível – suave */
 .metaStock.danger{
   color: rgba(239,68,68,0.9);
   background: rgba(239,68,68,0.12);
   border-color: rgba(239,68,68,0.25);
 }
 
-/* Buy buttons (Mercado Livre / Amazon) */
+/* =========================================================
+   PRICE BOX
+   ========================================================= */
+.cardPriceBox{
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 9px 10px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.cardPriceTop{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cardPriceKicker{
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.58);
+}
+
+.cardPriceStore{
+  font-size: 11px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.72);
+}
+
+.cardPriceValue{
+  font-size: 18px;
+  line-height: 1.05;
+  font-weight: 900;
+  color: rgba(255,255,255,0.96);
+  letter-spacing: -0.02em;
+}
+
+/* =========================================================
+   BUY BUTTONS
+   ========================================================= */
 .buttonsCol{
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin-top: auto;
 }
 
 .buyRow{
@@ -164,8 +211,14 @@
   text-decoration: none;
 }
 
-.buyLink.grow{ flex: 1 1 0; min-width: 0; }
-.buyLink.single{ width: 100%; }
+.buyLink.grow{
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.buyLink.single{
+  width: 100%;
+}
 
 .btn{
   width: 100%;
@@ -189,10 +242,13 @@
 .btn.mercado{
   background: #ffe600;
   color: #111;
-  /* ✅ mantém “bordinha” interna mesmo quando o botão estreitar */
   padding: 0 1px;
 }
-.btn.amazon{ background: #fff; color: #111; }
+
+.btn.amazon{
+  background: #fff;
+  color: #111;
+}
 
 .brandIcon{
   display: block;
@@ -201,15 +257,16 @@
   object-fit: contain;
 }
 
-/* ✅ Mercado Livre: evita a logo encostar nas bordas em telas pequenas */
 .btn.mercado .brandIcon{
   max-width: 90%;
 }
 
-.btn.amazon .brandIcon{ height: 24px; }
+.btn.amazon .brandIcon{
+  height: 24px;
+}
 
 .btn.danger{
-  background: #dc2626 !important; /* vermelho firme */
+  background: #dc2626 !important;
   border: none !important;
   color: #fff !important;
   font-weight: 800;
@@ -220,6 +277,7 @@
 .btn.danger:hover{
   background: #b91c1c !important;
 }
+
 .btn.ghost{
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.12);
@@ -227,11 +285,6 @@
 }
 
 @media (max-width: 420px){
-  /* título/meta com fonte menor e sem “estourar” */
-  .productTitle{ font-size: 14px !important; }
-  .productMeta{ font-size: 12px !important; }
-
-  /* ações sempre cabem: 1 coluna (um embaixo do outro) */
   .buyLinks,
   .buyButtons,
   .productActions{
@@ -240,7 +293,6 @@
     gap: 10px !important;
   }
 
-  /* botões com altura fixa e ícone alinhado */
   .brandBtn,
   .btn.brandBtn{
     height: 44px !important;
@@ -258,5 +310,98 @@
     display: block !important;
   }
 
-  .btn.brandBtn.amazon .brandIcon{ height: 24px !important; }
+  .btn.brandBtn.amazon .brandIcon{
+    height: 24px !important;
+  }
+
+  .cardPriceBox{
+    padding: 8px 9px;
+  }
+
+  .cardPriceValue{
+    font-size: 16px;
+  }
+
+  .cardPriceKicker,
+  .cardPriceStore{
+    font-size: 10px;
+  }
+
+  .cardPriceDiscount{
+  margin-top: 4px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: #22c55e;
+  }
+
+  .cardPriceEmpty{
+    min-height: 58px;
+  }
+}
+
+.cardPriceBox{
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:12px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(6px);
+}
+
+.cardPriceOld{
+  font-size:0.75rem;
+  color:rgba(255,255,255,0.45);
+  text-decoration: line-through;
+  font-weight:600;
+  margin-bottom:2px;
+}
+
+.cardPriceMainRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.cardPriceValue{
+  font-size:1.35rem;
+  font-weight:900;
+  letter-spacing:-0.02em;
+}
+
+.cardDiscountBadge{
+  background:#22c55e;
+  color:white;
+  font-size:0.75rem;
+  font-weight:800;
+  padding:3px 7px;
+  border-radius:6px;
+}
+
+.cardPriceStore{
+  margin-top:4px;
+  font-size:0.72rem;
+  color:rgba(255,255,255,0.55);
+  font-weight:600;
+}
+.discountBadge{
+  position:absolute;
+  top:10px;
+  right:10px;
+
+  background:#ef4444;
+  color:white;
+
+  font-weight:900;
+  font-size:0.75rem;
+
+  padding:4px 8px;
+  border-radius:6px;
+
+  box-shadow:0 4px 10px rgba(0,0,0,0.35);
+
+  z-index:3;
+}
+
+.thumbWrap{
+  position:relative;
 }

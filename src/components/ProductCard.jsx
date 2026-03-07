@@ -1,5 +1,7 @@
 import "../styles/product-card.css";
-import { track } from "../utils/analytics";
+import { track } from "../utils/analytics.js";
+import { getBestPrice, formatPrice, getPrice } from "../utils/priceLoader";
+import { getOfferData, getDiscountData } from "../utils/priceUtils";
 
 const base = import.meta.env.BASE_URL;
 const img = (path) => `${base}assets/${path}`;
@@ -8,29 +10,43 @@ export default function ProductCard(props) {
   const { product, onOpen, showNewBadge = false, placement = "grid" } = props;
 
   const mlUrl =
-    product?.affiliate?.mercadoLivre &&
-    typeof product.affiliate.mercadoLivre === "string" &&
-    product.affiliate.mercadoLivre.trim() !== ""
-      ? product.affiliate.mercadoLivre
+    typeof product?.affiliate?.mercadoLivre === "string"
+      ? product.affiliate.mercadoLivre.trim()
       : "";
 
   const amzUrl =
-    product?.affiliate?.amazon &&
-    typeof product.affiliate.amazon === "string" &&
-    product.affiliate.amazon.trim() !== ""
-      ? product.affiliate.amazon
+    typeof product?.affiliate?.amazon === "string"
+      ? product.affiliate.amazon.trim()
       : "";
 
-  const hasML = !!mlUrl;
-  const hasAmazon = !!amzUrl;
-  const isAvailable = hasML || hasAmazon;
-  const hasBoth = hasML && hasAmazon;
+  const mlPrice = getPrice(product?.id, "mercadoLivre");
+  const amzPrice = getPrice(product?.id, "amazon");
+
+  const { hasML, hasAmazon, hasBoth, isAvailable } = getOfferData({
+    mlHref: mlUrl,
+    mlPrice,
+    amazonHref: amzUrl,
+    amazonPrice: amzPrice,
+  });
+
+  const bestPrice = getBestPrice(product?.id);
+
+  const bestStoreLabel =
+    bestPrice?.store === "amazon"
+      ? "Amazon"
+      : bestPrice?.store === "mercadoLivre"
+      ? "Mercado Livre"
+      : null;
+
+  const discountData = getDiscountData(product, bestPrice?.value ?? null);
 
   const isNew = (() => {
     if (!showNewBadge) return false;
     if (!product?.addedAt) return false;
+
     const d = new Date(product.addedAt);
     if (Number.isNaN(d.getTime())) return false;
+
     const diffDays = (new Date() - d) / (1000 * 60 * 60 * 24);
     return diffDays >= 0 && diffDays <= 30;
   })();
@@ -43,24 +59,22 @@ export default function ProductCard(props) {
       volume: product?.volume ?? "",
       available: !!isAvailable,
       placement,
-      via, // "card" | "overlay" | "keyboard"
+      via,
     });
 
     onOpen?.(product);
   };
 
-  const fireBuy = (store, url) => {
+  const fireBuy = (store) => {
     track("click_buy", {
       product_id: product?.id,
       product_name: product?.title,
       series: product?.series || "",
       volume: product?.volume ?? "",
-      store, // "mercadolivre" | "amazon"
+      store,
       placement: `${placement}_card`,
       available: !!isAvailable,
     });
-
-    // link abre pelo <a>, aqui é só tracking
   };
 
   return (
@@ -73,9 +87,15 @@ export default function ProductCard(props) {
     >
       <div className="thumbWrap">
         <img className="thumb" src={product.image} alt={product.title} />
+
+        {discountData?.hasDiscount && discountData.discountPercent >= 30 && (
+          <div className="discountBadge">
+            {"🔥"} -{discountData.discountPercent}%
+          </div>
+        )}
+
         {isNew ? <div className="newBadge">NOVO</div> : null}
 
-        {/* Overlay aparece no hover e o botão abre o modal */}
         <div className="hoverOverlay" aria-hidden="true">
           <button
             className="overlayBtn"
@@ -91,10 +111,8 @@ export default function ProductCard(props) {
       </div>
 
       <div className="content">
-        {/* Obra */}
         <h3 className="title">{product.title}</h3>
 
-        {/* Editora • Vol */}
         <div className="metaText">
           <span className="metaPublisher">{product.brand}</span>
 
@@ -112,7 +130,38 @@ export default function ProductCard(props) {
           </span>
         </div>
 
-        {/* Botões de compra (SVG only) */}
+        <div className="cardPriceBox">
+          {isAvailable && bestPrice ? (
+            <>
+              {discountData?.hasDiscount && (
+                <div className="cardPriceOld">
+                  De {formatPrice(discountData.listPrice)}
+                </div>
+              )}
+
+              <div className="cardPriceMainRow">
+                <div className="cardPriceValue">
+                  {formatPrice(bestPrice.value)}
+                </div>
+
+                {discountData?.hasDiscount && (
+                  <span className="cardDiscountBadge">
+                    -{discountData.discountPercent}%
+                  </span>
+                )}
+              </div>
+
+              {bestStoreLabel && (
+                <div className="cardPriceStore">
+                  {bestStoreLabel}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="cardPriceEmpty" aria-hidden="true" />
+          )}
+        </div>
+
         <div className="buttonsCol" onClick={(e) => e.stopPropagation()}>
           {isAvailable ? (
             <div className={hasBoth ? "buyRow" : ""}>
@@ -123,7 +172,7 @@ export default function ProductCard(props) {
                   rel="noreferrer"
                   onClick={(e) => {
                     e.stopPropagation();
-                    fireBuy("mercadolivre", mlUrl);
+                    fireBuy("mercadolivre");
                   }}
                   className={hasBoth ? "buyLink grow" : "buyLink single"}
                   aria-label="Comprar no Mercado Livre"
@@ -146,7 +195,7 @@ export default function ProductCard(props) {
                   rel="noreferrer"
                   onClick={(e) => {
                     e.stopPropagation();
-                    fireBuy("amazon", amzUrl);
+                    fireBuy("amazon");
                   }}
                   className={hasBoth ? "buyLink grow" : "buyLink single"}
                   aria-label="Comprar na Amazon"

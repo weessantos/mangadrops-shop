@@ -1,5 +1,11 @@
 // src/data/products/series.factory.js
-const base = import.meta.env.BASE_URL;
+const base =
+  typeof import.meta !== "undefined" &&
+  import.meta.env &&
+  import.meta.env.BASE_URL
+    ? import.meta.env.BASE_URL
+    : "/";
+
 export const img = (path) => `${base}assets/${path}`;
 
 function pad2(n) {
@@ -27,6 +33,17 @@ export function normalizeAffiliate(value) {
   return { mercadoLivre: "", amazon: "" };
 }
 
+function normalizePrice(value) {
+  if (value == null || value === "") return null;
+
+  const num =
+    typeof value === "number"
+      ? value
+      : Number(String(value).replace(",", ".").trim());
+
+  return Number.isFinite(num) ? num : null;
+}
+
 export function createSeriesVolumes({
   series,
   prefix,
@@ -37,12 +54,16 @@ export function createSeriesVolumes({
   affiliateByVolume = {},
   tiktokByVolume = {},
   descriptionByVolume = {},
+  defaultCoverPrice = null,
+  coverPriceByVolume = {},
   editionLabel = "",
   author = "",
   genre = "",
   addedAtByVolume = {},
   format = "",
 }) {
+  const normalizedDefaultCoverPrice = normalizePrice(defaultCoverPrice);
+
   return Array.from({ length: end - start + 1 }, (_, i) => {
     const volume = start + i;
     const vv = pad2(volume);
@@ -51,8 +72,11 @@ export function createSeriesVolumes({
       ? `${series} – ${editionLabel} Vol. ${vv}`
       : `${series} Vol. ${vv}`;
 
-    // 🔥 garante consistência do formato
     const finalFormat = format || editionLabel || "";
+
+    const coverPrice =
+      normalizePrice(coverPriceByVolume?.[volume]) ??
+      normalizedDefaultCoverPrice;
 
     return {
       id: `${prefix}-${vv}`,
@@ -64,7 +88,6 @@ export function createSeriesVolumes({
       author: (author || "").trim(),
       genre: (genre || "").trim(),
 
-      // ✅ CAMPOS IMPORTANTES PARA FILTRO
       authorList: splitMulti(author),
       genreList: splitMulti(genre),
       format: finalFormat.trim(),
@@ -75,6 +98,9 @@ export function createSeriesVolumes({
       tiktokUrl: tiktokByVolume[volume] || "",
       description: descriptionByVolume[volume] || "",
       addedAt: addedAtByVolume[volume] || null,
+
+      // preço de capa / tabela da obra
+      coverPrice,
     };
   });
 }

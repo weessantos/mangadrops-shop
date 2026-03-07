@@ -1,7 +1,12 @@
 // src/data/products/series.catalog.js
+const base =
+  typeof import.meta !== "undefined" &&
+  import.meta.env &&
+  import.meta.env.BASE_URL
+    ? import.meta.env.BASE_URL
+    : "/";
 
-const base = import.meta.env.BASE_URL;
-const img = (path) => `${base}assets/${path}`;
+export const img = (path) => `${base}assets/${path}`;
 
 // ✅ util (se você usa)
 import { makeAddedAtByVolume } from "../../utils/volumeDates.js";

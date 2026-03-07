@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { track } from "../utils/analytics";
+import { track } from "../utils/analytics.js";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/header.css";
 

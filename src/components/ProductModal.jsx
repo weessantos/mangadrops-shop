@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import "../styles/product-modal.css";
-import { track } from "../utils/analytics";
+import { track } from "../utils/analytics.js";
+import {
+  getPrice,
+  formatPrice,
+  getBestPrice,
+} from "../utils/priceLoader";
 
 const base = import.meta.env.BASE_URL;
 const img = (path) => `${base}assets/${path}`;
@@ -13,14 +18,44 @@ function getTikTokEmbedUrl(tiktokUrl) {
   return `https://www.tiktok.com/embed/v2/${videoId}`;
 }
 
+function StoreButton({ href, store, logo, alt, price, isBest, onClick }) {
+  const storeClass = store === "Mercado Livre" ? "mercado" : "amazon";
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      onClick={onClick}
+      className={`storeBuyCard ${storeClass}`}
+      aria-label={`Comprar na ${store}`}
+      title={`Comprar na ${store}`}
+    >
+      <div className="storeBuyTop">
+        <img src={logo} alt={alt} className="brandIcon" />
+        {isBest ? <span className="storeBestBadge">melhor oferta</span> : null}
+      </div>
+
+      <div className="storeBuyPrice">
+        {price != null ? formatPrice(price) : "Ver oferta"}
+      </div>
+
+      <div className="storeBuyMeta">
+        {price != null ? "Ver oferta na loja" : "Consultar oferta"}
+      </div>
+    </a>
+  );
+}
+
 export default function ProductModal({ product, onClose }) {
   const railRef = useRef(null);
-  const [desktopTab, setDesktopTab] = useState("details"); // "details" | "video"
+  const [desktopTab, setDesktopTab] = useState("details");
 
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") onClose();
     };
+
     document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
 
@@ -30,7 +65,6 @@ export default function ProductModal({ product, onClose }) {
     };
   }, [onClose]);
 
-  // (opcional) wheel -> scroll horizontal no rail (quando estiver visível)
   useEffect(() => {
     const el = railRef.current;
     if (!el) return;
@@ -74,17 +108,72 @@ export default function ProductModal({ product, onClose }) {
 
   if (!product) return null;
 
-  const fireBuy = (store) => {
+  const mlPrice = getPrice(product.id, "mercadoLivre");
+  const amazonPrice = getPrice(product.id, "amazon");
+  const bestPrice = getBestPrice(product.id);
+
+  const isMlBest = bestPrice?.store === "mercadoLivre";
+  const isAmazonBest = bestPrice?.store === "amazon";
+
+  const fireBuy = (store, placement) => {
     track("click_buy", {
       product_id: product?.id,
       product_name: product?.title,
       series: product?.series || "",
       volume: product?.volume ?? "",
-      store, // "mercadolivre" | "amazon"
-      placement: "modal_footer",
+      store,
+      placement,
       available: !!isAvailable,
       has_both: !!hasBoth,
     });
+  };
+
+  const renderBuyButtons = (placement = "modal_inline") => {
+    if (!isAvailable) {
+      return (
+        <div className="buyBlock">
+          <button className="btn danger" type="button" disabled>
+            Em falta
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="buyBlock">
+        <div className={`buyRow buyRowCards ${hasBoth ? "twoCols" : "oneCol"}`}>
+          {hasML && (
+            <StoreButton
+              href={mlUrl}
+              store="Mercado Livre"
+              logo={img("mercadolivre.svg")}
+              alt="Mercado Livre"
+              price={mlPrice}
+              isBest={isMlBest}
+              onClick={(e) => {
+                e.stopPropagation();
+                fireBuy("mercadolivre", placement);
+              }}
+            />
+          )}
+
+          {hasAmazon && (
+            <StoreButton
+              href={amzUrl}
+              store="Amazon"
+              logo={img("amazon.svg")}
+              alt="Amazon"
+              price={amazonPrice}
+              isBest={isAmazonBest}
+              onClick={(e) => {
+                e.stopPropagation();
+                fireBuy("amazon", placement);
+              }}
+            />
+          )}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -98,24 +187,18 @@ export default function ProductModal({ product, onClose }) {
         </div>
 
         <div className="modalContent">
-          {/* =======================
-              DESKTOP PREMIUM (toggle)
-              ======================= */}
           <div className="modalBody desktopOnly">
-            {/* LEFT: capa */}
             <div className="modalLeft">
               <div className="modalCover desktopCover">
                 <img src={product.image} alt={product.title} />
               </div>
 
               <p className="modalDesc modalDescLeft desktopCaption">
-                {
-                  "Clique em comprar. Se você comprar pelo link, pode me ajudar sem pagar nada a mais 🙌"
-                }
+                Clique em comprar. Se você comprar pelo link, pode me ajudar sem
+                pagar nada a mais 🙌
               </p>
             </div>
 
-            {/* RIGHT: header + toggle + conteúdo */}
             <div className="modalRight">
               <div className="modalRightTop">
                 <h2 className="modalTitle">{product.title}</h2>
@@ -129,12 +212,22 @@ export default function ProductModal({ product, onClose }) {
                     </span>
                   )}
 
-                  {product.format && <span className="badge subtle">{product.format}</span>}
-                  {product.author && <span className="badge subtle">{product.author}</span>}
-                  {product.genre && <span className="badge subtle genre">{product.genre}</span>}
+                  {product.format && (
+                    <span className="badge subtle">{product.format}</span>
+                  )}
+                  {product.author && (
+                    <span className="badge subtle">{product.author}</span>
+                  )}
+                  {product.genre && (
+                    <span className="badge subtle genre">{product.genre}</span>
+                  )}
                 </div>
 
-                <div className="tabPills" role="tablist" aria-label="Alternar conteúdo do modal">
+                <div
+                  className="tabPills"
+                  role="tablist"
+                  aria-label="Alternar conteúdo do modal"
+                >
                   <button
                     type="button"
                     role="tab"
@@ -167,8 +260,13 @@ export default function ProductModal({ product, onClose }) {
                     </p>
 
                     <div className="detailsNote">
-                      Dica: troque para <b>Vídeo</b> para ver o review/mostrando o volume.
+                      Dica: troque para <b>Vídeo</b> para ver o review/mostrando
+                      o volume.
                     </div>
+                  </div>
+
+                  <div className="desktopBuySection">
+                    {renderBuyButtons("modal_desktop_details")}
                   </div>
                 </div>
               ) : (
@@ -205,22 +303,22 @@ export default function ProductModal({ product, onClose }) {
                     ) : (
                       <div className="tiktokPlaceholder tiktokDesktop">
                         <div className="tiktokPlaceholderIcon">🎥</div>
-                        <div className="tiktokPlaceholderText">Vídeo em breve neste volume.</div>
+                        <div className="tiktokPlaceholderText">
+                          Vídeo em breve neste volume.
+                        </div>
                       </div>
                     )}
                   </div>
+
+                  <div className="desktopBuySection desktopBuySectionVideo">
+                    {renderBuyButtons("modal_desktop_video")}
+                  </div>
                 </div>
               )}
-
-              <div className="modalFooterSpacer" />
             </div>
           </div>
 
-          {/* =======================
-              MOBILE (RAIL) - mantém
-              ======================= */}
           <div className="modalRail mobileOnly" ref={railRef}>
-            {/* PAGE 1 — Produto */}
             <section className="railPage railProduct">
               <div className="productHero">
                 <div className="modalCover">
@@ -239,9 +337,15 @@ export default function ProductModal({ product, onClose }) {
                       </span>
                     )}
 
-                    {product.format && <span className="badge subtle">{product.format}</span>}
-                    {product.author && <span className="badge subtle">{product.author}</span>}
-                    {product.genre && <span className="badge subtle genre">{product.genre}</span>}
+                    {product.format && (
+                      <span className="badge subtle">{product.format}</span>
+                    )}
+                    {product.author && (
+                      <span className="badge subtle">{product.author}</span>
+                    )}
+                    {product.genre && (
+                      <span className="badge subtle genre">{product.genre}</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -255,7 +359,6 @@ export default function ProductModal({ product, onClose }) {
               <div className="modalFooterSpacer" />
             </section>
 
-            {/* PAGE 2 — TikTok */}
             <section className="railPage railTikTok">
               <div className="tiktokBlock">
                 {tiktokEmbedUrl ? (
@@ -289,9 +392,15 @@ export default function ProductModal({ product, onClose }) {
                 ) : (
                   <div className="tiktokPlaceholder tiktokCompact">
                     <div className="tiktokPlaceholderIcon">🎥</div>
-                    <div className="tiktokPlaceholderText">Vídeo em breve neste volume.</div>
+                    <div className="tiktokPlaceholderText">
+                      Vídeo em breve neste volume.
+                    </div>
                   </div>
                 )}
+
+                <div className="mobileVideoBuyBlock">
+                  {renderBuyButtons("modal_mobile_video")}
+                </div>
               </div>
 
               <div className="modalHint">⟵ Voltar para o produto</div>
@@ -300,54 +409,11 @@ export default function ProductModal({ product, onClose }) {
           </div>
         </div>
 
-        {/* FOOTER fixo (mantém o seu) */}
-        <div className="modalFooter">
+        <div className="modalFooter mobileOnly">
           <div className="buttonsCol" onClick={(e) => e.stopPropagation()}>
             {isAvailable ? (
               <>
-                <div className={hasBoth ? "buyRow" : ""}>
-                  {hasML && (
-                    <a
-                      href={mlUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        fireBuy("mercadolivre");
-                      }}
-                      className={hasBoth ? "buyLink grow" : "buyLink single"}
-                      aria-label="Comprar no Mercado Livre"
-                      title="Comprar no Mercado Livre"
-                    >
-                      <button className="btn brandBtn mercado" type="button">
-                        <img
-                          src={img("mercadolivre.svg")}
-                          alt="Mercado Livre"
-                          className="brandIcon"
-                        />
-                      </button>
-                    </a>
-                  )}
-
-                  {hasAmazon && (
-                    <a
-                      href={amzUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        fireBuy("amazon");
-                      }}
-                      className={hasBoth ? "buyLink grow" : "buyLink single"}
-                      aria-label="Comprar na Amazon"
-                      title="Comprar na Amazon"
-                    >
-                      <button className="btn brandBtn amazon" type="button">
-                        <img src={img("amazon.svg")} alt="Amazon" className="brandIcon" />
-                      </button>
-                    </a>
-                  )}
-                </div>
+                {renderBuyButtons("modal_mobile_footer")}
 
                 <button className="btn ghost" onClick={onClose} type="button">
                   Voltar
