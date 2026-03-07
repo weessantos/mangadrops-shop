@@ -2,8 +2,11 @@ name: Update Prices
 
 on:
   schedule:
-    - cron: "0 */8 * * *"   # roda a cada 8 horas
+    - cron: "0 */8 * * *"
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   update:
@@ -11,10 +14,12 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
@@ -29,5 +34,6 @@ jobs:
           git config --global user.name "price-bot"
           git config --global user.email "bot@mangadrops"
           git add src/data/prices.json
-          git commit -m "update prices" || echo "no changes"
+          git diff --cached --quiet && exit 0
+          git commit -m "update prices"
           git push

@@ -98,11 +98,11 @@ export const jjkAffiliate = {
   22: { mercadoLivre: "", amazon: "" },
   23: { mercadoLivre: "", amazon: "" },
   24: { mercadoLivre: "https://mercadolivre.com/sec/1ovyWtJ", amazon: "" },
-  25: { mercadoLivre: "https://mercadolivre.com/sec/2BAr4Na", amazon: "https://amzn.to/4cukhcU" },
+  25: { mercadoLivre: "https://meli.la/2BrAyoG", amazon: "" },
   26: { mercadoLivre: "https://meli.la/2oTNrm7", amazon: "" },
   27: { mercadoLivre: "https://mercadolivre.com/sec/1x1FdQe", amazon: "" },
   28: { mercadoLivre: "https://mercadolivre.com/sec/26MjcKi", amazon: "" },
-  29: { mercadoLivre: "", amazon: "" },
+  29: { mercadoLivre: "", amazon: "https://amzn.to/4cukhcU" },
   30: { mercadoLivre: "https://mercadolivre.com/sec/2tSFJfa", amazon: "" }
 };
 
