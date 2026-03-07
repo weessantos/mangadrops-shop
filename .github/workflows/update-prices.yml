@@ -1,0 +1,33 @@
+name: Update Prices
+
+on:
+  schedule:
+    - cron: "0 */8 * * *"   # roda a cada 8 horas
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run price script
+        run: npm run update-prices
+
+      - name: Commit prices
+        run: |
+          git config --global user.name "price-bot"
+          git config --global user.email "bot@mangadrops"
+          git add src/data/prices.json
+          git commit -m "update prices" || echo "no changes"
+          git push
