@@ -8,9 +8,13 @@ import SeriesCard from "./components/SeriesCard";
 import ProductCard from "./components/ProductCard";
 import ProductModal from "./components/ProductModal";
 import LaunchRail from "./components/LaunchRail";
+import PromoRail from "./components/PromoRail.jsx";
+import CheapRail from "./components/CheapRail.jsx";
 import BrandStats from "./components/BrandStats";
 import SectionHeader from "./components/SectionHeader";
 import ActiveFiltersBar from "./components/ActiveFiltersBar";
+import { getBestPrice } from "./utils/priceLoader";
+import { getDiscountData } from "./utils/priceUtils";
 
 import FiltersPage from "./pages/FiltersPage";
 
@@ -21,6 +25,7 @@ import { useSeriesList } from "./hooks/useSeriesList";
 import { useScrollTop } from "./hooks/useScrollTop";
 
 import { parseQuery, pickSeriesFromQuery, productSearchText, slugify } from "./utils/search";
+import Footer from "./components/Footer";
 
 /* =======================================================
    helpers (robustos)
@@ -56,24 +61,79 @@ function hasAnyAffiliateLink(p) {
 }
 
 function priceNumber(p) {
+  const best = getBestPrice(p?.id);
+  const value = best?.value;
+
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+
   const raw = p?.priceNumber ?? p?.price ?? p?.value ?? p?.currentPrice;
   if (raw == null) return null;
   if (typeof raw === "number" && Number.isFinite(raw)) return raw;
 
   const s = String(raw).replace(/\./g, "").replace(",", ".").match(/[\d.]+/);
   if (!s) return null;
+
   const n = Number(s[0]);
   return Number.isFinite(n) ? n : null;
+}
+
+function discountPercentNumber(p) {
+  const best = getBestPrice(p?.id);
+  const discountData = getDiscountData(p, best?.value ?? null);
+
+  if (!discountData?.hasDiscount) return 0;
+  return Number(discountData.discountPercent) || 0;
+}
+
+function getDiscountPercent(p) {
+  const direct =
+    p?.discountData?.discountPercent ??
+    p?.discountPercent ??
+    p?.discount?.percent ??
+    null;
+
+  const directNum = Number(direct);
+  if (Number.isFinite(directNum)) return directNum;
+
+  const listRaw =
+    p?.discountData?.listPrice ??
+    p?.listPrice ??
+    p?.oldPrice ??
+    p?.originalPrice ??
+    null;
+
+  const listNum =
+    typeof listRaw === "number"
+      ? listRaw
+      : Number(String(listRaw ?? "").replace(/\./g, "").replace(",", ".").match(/[\d.]+/)?.[0]);
+
+  const current = priceNumber(p);
+
+  if (
+    Number.isFinite(listNum) &&
+    Number.isFinite(current) &&
+    listNum > 0 &&
+    listNum > current
+  ) {
+    return Math.round(((listNum - current) / listNum) * 100);
+  }
+
+  return 0;
 }
 
 // review = existe tiktokByVolume pra série+volume (ou link direto no produto)
 function hasReview(p) {
   return Boolean(
     p?.tiktok ||
-    p?.tiktokUrl ||
-    p?.video ||
-    p?.videoUrl ||
-    p?.tiktokId
+      p?.tiktokUrl ||
+      p?.video ||
+      p?.videoUrl ||
+      p?.tiktokId ||
+      p?.review ||
+      p?.reviewText ||
+      p?.reviewTitle ||
+      p?.reviewContent ||
+      p?.reviews?.length
   );
 }
 
@@ -121,10 +181,10 @@ function AppShell() {
     const seriesName = norm(p?.series);
     const m = metaBySeries.get(seriesName) || {};
     return {
-      brand: asList(p?.brand).length ? asList(p?.brand) : (m.brand || []),
-      author: asList(p?.author).length ? asList(p?.author) : (m.author || []),
-      genre: asList(p?.genre).length ? asList(p?.genre) : (m.genre || []),
-      format: asList(p?.format).length ? asList(p?.format) : (m.format || []),
+      brand: asList(p?.brand).length ? asList(p?.brand) : m.brand || [],
+      author: asList(p?.author).length ? asList(p?.author) : m.author || [],
+      genre: asList(p?.genre).length ? asList(p?.genre) : m.genre || [],
+      format: asList(p?.format).length ? asList(p?.format) : m.format || [],
     };
   };
 
@@ -138,6 +198,9 @@ function AppShell() {
   const genreParam = sp.getAll("genre");
   const formatParam = sp.getAll("format");
 
+  const priceParam = sp.get("price") || "";
+  const discountParam = sp.get("discount") || "";
+
   const stParam = sp.get("st") || ""; // "in" | "out" | ""
   const rvParam = sp.get("rv") || ""; // "1" | ""
   const sortParam = sp.get("sort") || "relevance";
@@ -148,6 +211,8 @@ function AppShell() {
     authorParam.length > 0 ||
     genreParam.length > 0 ||
     formatParam.length > 0 ||
+    !!priceParam ||
+    !!discountParam ||
     !!stParam ||
     rvParam === "1" ||
     (sortParam && sortParam !== "relevance");
@@ -234,7 +299,7 @@ function AppShell() {
   }, [qParam, activeSeries]);
 
   // =======================================================
-  // Aplicar filtros URL: brand/author/genre/format + st/rv + ordenar
+  // Aplicar filtros URL: brand/author/genre/format + price/discount + st/rv + ordenar
   // =======================================================
   const filtered = useMemo(() => {
     let arr = [...baseFiltered];
@@ -244,28 +309,43 @@ function AppShell() {
     const genreSet = genreParam.length ? new Set(genreParam.map(normLc)) : null;
     const formatSet = formatParam.length ? new Set(formatParam.map(normLc)) : null;
 
+    const maxPrice = priceParam ? Number(priceParam) : null;
+    const minDiscount = discountParam ? Number(discountParam) : null;
+
     if (brandSet) {
       arr = arr.filter((p) => getMeta(p).brand.some((b) => brandSet.has(normLc(b))));
     }
+
     if (authorSet) {
       arr = arr.filter((p) => getMeta(p).author.some((a) => authorSet.has(normLc(a))));
     }
+
     if (genreSet) {
       arr = arr.filter((p) => getMeta(p).genre.some((g) => genreSet.has(normLc(g))));
     }
+
     if (formatSet) {
       arr = arr.filter((p) => getMeta(p).format.some((f) => formatSet.has(normLc(f))));
     }
 
-    // st (estoque por link)
+    if (Number.isFinite(maxPrice)) {
+      arr = arr.filter((p) => {
+        const value = priceNumber(p);
+        return Number.isFinite(value) && value <= maxPrice;
+      });
+    }
+
+    if (Number.isFinite(minDiscount)) {
+      arr = arr.filter((p) => discountPercentNumber(p) >= minDiscount);
+    }
+
     if (stParam === "in") arr = arr.filter((p) => hasAnyAffiliateLink(p));
     if (stParam === "out") arr = arr.filter((p) => !hasAnyAffiliateLink(p));
 
-    // rv (com review)
     if (rvParam === "1") arr = arr.filter((p) => hasReview(p));
 
-    // ordenar
     const sort = sortParam || "relevance";
+
     if (sort === "price_asc") {
       arr.sort((a, b) => (priceNumber(a) ?? 1e15) - (priceNumber(b) ?? 1e15));
     } else if (sort === "price_desc") {
@@ -281,13 +361,14 @@ function AppShell() {
     }
 
     return arr;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     baseFiltered,
     brandParam.join("|"),
     authorParam.join("|"),
     genreParam.join("|"),
     formatParam.join("|"),
+    priceParam,
+    discountParam,
     stParam,
     rvParam,
     sortParam,
@@ -414,7 +495,6 @@ function AppShell() {
           <div className="chapterTop">
             <h1 className="chapterTitle">Mangás Disponíveis</h1>
           </div>
-          
 
           <p className="chapterDesc">
             {!activeSeries
@@ -428,7 +508,6 @@ function AppShell() {
         </div>
       </section>
 
-      {/* RESULTADOS GLOBAIS (HOME) via URL */}
       {!activeSeries && showGlobalResults && (
         <section id="volumes" className="volumesSection">
           <section className="grid">
@@ -452,14 +531,45 @@ function AppShell() {
 
       {!activeSeries && (
         <section className="railBlock" id="obras">
-          <LaunchRail title="Lançamentos 🔥" products={products} limit={30} onOpenProduct={openProduct} />
+          <LaunchRail
+            title="Lançamentos 🔥"
+            products={products}
+            limit={30}
+            onOpenProduct={openProduct}
+          />
+
+          <div className="sectionBreak" aria-hidden="true">
+            <span className="sectionBreakLine" />
+          </div>
+
+          <PromoRail
+            title="Promoções 💸"
+            products={products}
+            limit={30}
+            onOpenProduct={openProduct}
+          />
+
+          <div className="sectionBreak" aria-hidden="true">
+            <span className="sectionBreakLine" />
+          </div>
+
+          <CheapRail
+            title="Baratinhos da galera 🪙"
+            subtitle="Mangás por até R$30."
+            products={products}
+            limit={30}
+            onOpenProduct={openProduct}
+          />
 
           <div className="sectionBreak" aria-hidden="true">
             <span className="sectionBreakLine" />
           </div>
 
           <section className="collectionsSection" id="railTitle">
-            <SectionHeader title="Coleções 📚" subtitle="Explore por obra e veja os volumes disponíveis." />
+            <SectionHeader
+              title="Coleções 📚"
+              subtitle="Explore por obra e veja os volumes disponíveis."
+            />
 
             <div className="seriesRail">
               {seriesList.map((s) => (
@@ -523,11 +633,18 @@ function AppShell() {
       {selected && <ProductModal product={selected} onClose={closeModal} />}
 
       {showScrollTop && (
-        <button className="scrollTopBtn" onClick={scrollToTop} aria-label="Voltar ao topo" title="Voltar ao topo">
+        <button
+          className="scrollTopBtn"
+          onClick={scrollToTop}
+          aria-label="Voltar ao topo"
+          title="Voltar ao topo"
+        >
           ↑
         </button>
       )}
+      <Footer />
     </div>
+    
   );
 }
 
@@ -544,3 +661,4 @@ export default function App() {
     </Routes>
   );
 }
+

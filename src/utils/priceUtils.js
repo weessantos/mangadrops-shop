@@ -1,17 +1,28 @@
-export function getStoreAvailability({ href, price }) {
-  return Boolean(href) && price != null;
+export function getStoreAvailability({ price }) {
+  // disponibilidade baseada apenas em preço
+  return price != null;
 }
 
 export function getOfferData({ amazonHref, amazonPrice, mlHref, mlPrice }) {
-  const hasAmazon = Boolean(amazonHref) && amazonPrice != null;
-  const hasML = Boolean(mlHref) && mlPrice != null;
+  // preço detectado pelo crawler
+  const hasAmazonPrice = amazonPrice != null;
+  const hasMLPrice = mlPrice != null;
 
-  const isAvailable = hasAmazon || hasML;
+  // link afiliado existente
+  const hasAmazonLink = Boolean(amazonHref);
+  const hasMLLink = Boolean(mlHref);
+
+  // botão da loja só aparece se tiver link + preço
+  const hasAmazon = hasAmazonPrice && hasAmazonLink;
+  const hasML = hasMLPrice && hasMLLink;
+
+  // disponibilidade geral do produto
+  const isAvailable = hasAmazonPrice || hasMLPrice;
 
   let bestStore = null;
   let bestPrice = null;
 
-  if (hasAmazon && hasML) {
+  if (hasAmazonPrice && hasMLPrice) {
     if (amazonPrice <= mlPrice) {
       bestStore = "amazon";
       bestPrice = amazonPrice;
@@ -19,10 +30,10 @@ export function getOfferData({ amazonHref, amazonPrice, mlHref, mlPrice }) {
       bestStore = "mercadoLivre";
       bestPrice = mlPrice;
     }
-  } else if (hasAmazon) {
+  } else if (hasAmazonPrice) {
     bestStore = "amazon";
     bestPrice = amazonPrice;
-  } else if (hasML) {
+  } else if (hasMLPrice) {
     bestStore = "mercadoLivre";
     bestPrice = mlPrice;
   }

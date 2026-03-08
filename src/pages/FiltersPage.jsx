@@ -5,7 +5,6 @@ import "../styles/series-filters.css";
 // ✅ seu catálogo (ajuste o path se seu arquivo estiver em outro lugar)
 import { SERIES } from "../data/products/series.catalog";
 
-
 /* =========================
    Helpers (robustos)
 ========================= */
@@ -59,6 +58,20 @@ const SORTS = [
   { key: "new", label: "Novidades" },
 ];
 
+const PRICE_OPTIONS = [
+  { key: "20", label: "Até R$20" },
+  { key: "30", label: "Até R$30" },
+  { key: "40", label: "Até R$40" },
+  { key: "50", label: "Até R$50" },
+];
+
+const DISCOUNT_OPTIONS = [
+  { key: "20", label: "20% OFF+" },
+  { key: "30", label: "30% OFF+" },
+  { key: "40", label: "40% OFF+" },
+  { key: "50", label: "50% OFF+" },
+];
+
 export default function FiltersPage() {
   const navigate = useNavigate();
   const [sp] = useSearchParams();
@@ -76,6 +89,9 @@ export default function FiltersPage() {
       genre: sp.getAll("genre"),
       format: sp.getAll("format"),
 
+      price: sp.get("price") || "",      // "20" | "30" | "40" | "50" | ""
+      discount: sp.get("discount") || "", // "20" | "30" | "40" | "50" | ""
+
       st: sp.get("st") || "", // "in" | "out" | ""
       rv: sp.get("rv") || "", // "1" | ""
       sort: sp.get("sort") || "relevance",
@@ -88,6 +104,9 @@ export default function FiltersPage() {
   const [author, setAuthor] = useState(initial.author);
   const [genre, setGenre] = useState(initial.genre);
   const [format, setFormat] = useState(initial.format);
+
+  const [price, setPrice] = useState(initial.price);
+  const [discount, setDiscount] = useState(initial.discount);
 
   const [st, setSt] = useState(initial.st);
   const [rv, setRv] = useState(initial.rv);
@@ -118,6 +137,8 @@ export default function FiltersPage() {
     setAuthor([]);
     setGenre([]);
     setFormat([]);
+    setPrice("");
+    setDiscount("");
     setSt("");
     setRv("");
     setSort("relevance");
@@ -133,6 +154,8 @@ export default function FiltersPage() {
     genre.forEach((x) => params.append("genre", x));
     format.forEach((x) => params.append("format", x));
 
+    if (price) params.set("price", price);
+    if (discount) params.set("discount", discount);
     if (st) params.set("st", st);
     if (rv) params.set("rv", "1");
     if (sort && sort !== "relevance") params.set("sort", sort);
@@ -148,6 +171,8 @@ export default function FiltersPage() {
     (author.length ? 1 : 0) +
     (genre.length ? 1 : 0) +
     (format.length ? 1 : 0) +
+    (price ? 1 : 0) +
+    (discount ? 1 : 0) +
     (st ? 1 : 0) +
     (rv === "1" ? 1 : 0) +
     (sort !== "relevance" ? 1 : 0);
@@ -247,6 +272,40 @@ export default function FiltersPage() {
                 onClick={() => toggleMulti(setFormat)(f)}
               >
                 {f}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* Preço */}
+        <section className="filtersCard">
+          <h2>Preço</h2>
+          <div className="filtersGrid2">
+            {PRICE_OPTIONS.map((p) => (
+              <button
+                key={p.key}
+                type="button"
+                className={`chip ${price === p.key ? "active" : ""}`}
+                onClick={() => setPrice((curr) => (curr === p.key ? "" : p.key))}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* Desconto */}
+        <section className="filtersCard">
+          <h2>Desconto</h2>
+          <div className="filtersGrid2">
+            {DISCOUNT_OPTIONS.map((d) => (
+              <button
+                key={d.key}
+                type="button"
+                className={`chip ${discount === d.key ? "active" : ""}`}
+                onClick={() => setDiscount((curr) => (curr === d.key ? "" : d.key))}
+              >
+                {d.label}
               </button>
             ))}
           </div>

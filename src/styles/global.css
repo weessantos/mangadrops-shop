@@ -39,6 +39,15 @@ a{ color: inherit; text-decoration: none; }
 /* =========================================================
    LAYOUT
    ========================================================= */
+button,
+a,
+[role="button"],
+.productCard,
+.seriesCard,
+.modalTrigger {
+  -webkit-tap-highlight-color: transparent;
+}
+
 .container{
   max-width: 1120px;
   margin: 0 auto;

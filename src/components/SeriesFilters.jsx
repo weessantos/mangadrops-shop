@@ -14,6 +14,10 @@ export default function SeriesFilters() {
   const author = sp.getAll("author");
   const genre = sp.getAll("genre");
   const format = sp.getAll("format");
+
+  const price = sp.get("price") || "";
+  const discount = sp.get("discount") || "";
+
   const st = sp.get("st") || ""; // "in" | "out"
   const rv = sp.get("rv") || ""; // "1"
   const sort = sp.get("sort") || "relevance";
@@ -24,19 +28,19 @@ export default function SeriesFilters() {
     author.length ||
     genre.length ||
     format.length ||
+    price ||
+    discount ||
     !!st ||
     rv === "1" ||
     (sort && sort !== "relevance");
 
   const openFilters = () => {
-    // mantém a query atual ao abrir os filtros
     navigate(`/filtros${location.search}`);
   };
 
   const clearFilters = () => {
     const next = new URLSearchParams(sp);
 
-    // limpa tudo que é filtro, mas mantém outras coisas se tiver
     next.delete("q");
     next.delete("sort");
     next.delete("st");
@@ -45,6 +49,8 @@ export default function SeriesFilters() {
     next.delete("author");
     next.delete("genre");
     next.delete("format");
+    next.delete("price");
+    next.delete("discount");
 
     setSp(next, { replace: true });
   };
@@ -55,11 +61,14 @@ export default function SeriesFilters() {
     (author.length ? 1 : 0) +
     (genre.length ? 1 : 0) +
     (format.length ? 1 : 0) +
+    (price ? 1 : 0) +
+    (discount ? 1 : 0) +
     (st ? 1 : 0) +
     (rv === "1" ? 1 : 0) +
     (sort !== "relevance" ? 1 : 0);
 
   const stLabel = st === "in" ? "Em estoque" : st === "out" ? "Sem estoque" : "";
+
   const sortLabel =
     sort === "new"
       ? "Novidades"
@@ -69,37 +78,72 @@ export default function SeriesFilters() {
       ? "Maior preço"
       : "";
 
-  // resumo “compacto” pros chips
-  const chips = uniq([
-    q.trim() ? `Busca: ${q.trim()}` : null,
-    brand.length ? `Editora: ${brand.length}` : null,
-    author.length ? `Autor: ${author.length}` : null,
-    genre.length ? `Gênero: ${genre.length}` : null,
-    format.length ? `Tipo: ${format.length}` : null,
-    stLabel ? stLabel : null,
-    rv === "1" ? "Com review" : null,
-    sortLabel ? `Ordenar: ${sortLabel}` : null,
-  ].filter(Boolean));
+  const priceLabel =
+    price === "20"
+      ? "Até R$20"
+      : price === "30"
+      ? "Até R$30"
+      : price === "40"
+      ? "Até R$40"
+      : price === "50"
+      ? "Até R$50"
+      : "";
 
-return (
-  <div className="filtersPanel" role="region" aria-label="Filtros">
-    <div className="filtersTop">
-      <div className="filtersHeading">
-        Filtros {hasAny ? <span className="filtersCount">• {activeCount}</span> : null}
-      </div>
+  const discountLabel =
+    discount === "20"
+      ? "20% OFF+"
+      : discount === "30"
+      ? "30% OFF+"
+      : discount === "40"
+      ? "40% OFF+"
+      : discount === "50"
+      ? "50% OFF+"
+      : "";
 
-      <div className="filtersActions">
-        {hasAny && (
-          <button type="button" className="chip ghost" onClick={clearFilters}>
-            Limpar
+  const chips = uniq(
+    [
+      q.trim() ? `Busca: ${q.trim()}` : null,
+      brand.length ? `Editora: ${brand.length}` : null,
+      author.length ? `Autor: ${author.length}` : null,
+      genre.length ? `Gênero: ${genre.length}` : null,
+      format.length ? `Tipo: ${format.length}` : null,
+      priceLabel,
+      discountLabel,
+      stLabel,
+      rv === "1" ? "Com review" : null,
+      sortLabel ? `Ordenar: ${sortLabel}` : null,
+    ].filter(Boolean)
+  );
+
+  return (
+    <div className="filtersPanel" role="region" aria-label="Filtros">
+      <div className="filtersTop">
+        <div className="filtersHeading">
+          Filtros {hasAny ? <span className="filtersCount">• {activeCount}</span> : null}
+        </div>
+
+        <div className="filtersActions">
+          {hasAny && (
+            <button type="button" className="chip ghost" onClick={clearFilters}>
+              Limpar
+            </button>
+          )}
+
+          <button type="button" className="chip active" onClick={openFilters}>
+            Abrir filtros
           </button>
-        )}
-
-        <button type="button" className="chip active" onClick={openFilters}>
-          Abrir filtros
-        </button>
+        </div>
       </div>
+
+      {chips.length > 0 && (
+        <div className="filtersChipsActive">
+          {chips.map((c) => (
+            <span key={c} className="chip small">
+              {c}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
-  </div>
-);
+  );
 }

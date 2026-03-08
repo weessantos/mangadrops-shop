@@ -7,7 +7,13 @@ const base = import.meta.env.BASE_URL;
 const img = (path) => `${base}assets/${path}`;
 
 export default function ProductCard(props) {
-  const { product, onOpen, showNewBadge = false, placement = "grid" } = props;
+  const {
+    product,
+    onOpen,
+    showNewBadge = false,
+    placement = "grid",
+    topBadge = null,
+  } = props;
 
   const mlUrl =
     typeof product?.affiliate?.mercadoLivre === "string"
@@ -51,6 +57,31 @@ export default function ProductCard(props) {
     return diffDays >= 0 && diffDays <= 30;
   })();
 
+  const resolvedTopBadge = (() => {
+    if (topBadge?.label) {
+      return {
+        label: topBadge.label,
+        className: topBadge.className || "",
+      };
+    }
+
+    if (discountData?.hasDiscount && discountData.discountPercent >= 30) {
+      return {
+        label: `🔥 -${discountData.discountPercent}%`,
+        className: "discountBadge",
+      };
+    }
+
+    if (isNew) {
+      return {
+        label: "NOVO",
+        className: "newBadge",
+      };
+    }
+
+    return null;
+  })();
+
   const fireOpen = (via = "card") => {
     track("open_product", {
       product_id: product?.id,
@@ -88,13 +119,11 @@ export default function ProductCard(props) {
       <div className="thumbWrap">
         <img className="thumb" src={product.image} alt={product.title} />
 
-        {discountData?.hasDiscount && discountData.discountPercent >= 30 && (
-          <div className="discountBadge">
-            {"🔥"} -{discountData.discountPercent}%
+        {resolvedTopBadge ? (
+          <div className={resolvedTopBadge.className}>
+            {resolvedTopBadge.label}
           </div>
-        )}
-
-        {isNew ? <div className="newBadge">NOVO</div> : null}
+        ) : null}
 
         <div className="hoverOverlay" aria-hidden="true">
           <button
@@ -151,11 +180,7 @@ export default function ProductCard(props) {
                 )}
               </div>
 
-              {bestStoreLabel && (
-                <div className="cardPriceStore">
-                  {bestStoreLabel}
-                </div>
-              )}
+              {bestStoreLabel && <div className="cardPriceStore">{bestStoreLabel}</div>}
             </>
           ) : (
             <div className="cardPriceEmpty" aria-hidden="true" />

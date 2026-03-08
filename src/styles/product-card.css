@@ -48,20 +48,41 @@
   position: relative;
 }
 
-.newBadge{
+.newBadge {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 12px;
+  right: 12px;
   z-index: 4;
-  padding: 6px 10px;
-  border-radius: 999px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 32px;
+  padding: 0 12px;
+
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.22);
+
+  font-size: 0.78rem;
   font-weight: 900;
-  font-size: 12px;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.02em;
+
   color: #fff;
-  background: rgba(239,68,68,0.92);
-  border: 1px solid rgba(255,255,255,0.18);
-  box-shadow: 0 12px 30px rgba(239,68,68,0.25);
+
+  background: linear-gradient(
+    135deg,
+    #ff7868 0%,
+    #ff4d5e 55%,
+    #ff3552 100%
+  );
+
+  box-shadow:
+    0 10px 24px rgba(0,0,0,0.28),
+    0 2px 8px rgba(0,0,0,0.16),
+    inset 0 1px 0 rgba(255,255,255,0.18);
+
+  transform: rotate(2deg);
 }
 
 /* =========================================================
@@ -404,4 +425,105 @@
 
 .thumbWrap{
   position:relative;
+}
+
+.cheapBadge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #2f1900;
+  background: linear-gradient(135deg, #f7b733, #fc8f2d);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+}
+
+.newBadge,
+.discountBadge,
+.cheapBadge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 4;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 34px;
+  padding: 0 12px;
+
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+
+  font-size: 0.82rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.28),
+    0 2px 8px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+
+  backdrop-filter: blur(8px);
+  transform: rotate(2deg);
+  transform-origin: top right;
+
+  overflow: hidden;
+}
+
+.newBadge::before,
+.discountBadge::before,
+.cheapBadge::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.18),
+    rgba(255, 255, 255, 0.04) 42%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.newBadge::after,
+.discountBadge::after,
+.cheapBadge::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.65);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+}
+
+.discountBadge {
+  color: #fff;
+  background:
+    linear-gradient(135deg, #ff7b5b 0%, #ff5b4d 45%, #ff3e56 100%);
+}
+
+.cheapBadge {
+  color: #402200;
+  background:
+    linear-gradient(135deg, #ffd85a 0%, #ffbf3f 48%, #ff9e2f 100%);
+}
+
+.newBadge:hover,
+.discountBadge:hover,
+.cheapBadge:hover {
+  transform: rotate(0deg) scale(1.04);
 }

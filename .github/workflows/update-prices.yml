@@ -1,7 +1,8 @@
-name: Update Prices
+name: Update Prices and Deploy
 
 on:
   schedule:
+    # roda a cada 8 horas
     - cron: "0 */8 * * *"
   workflow_dispatch:
 
@@ -9,31 +10,48 @@ permissions:
   contents: write
 
 jobs:
-  update:
+  update-prices:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          persist-credentials: true
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Run price script
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Restore ML session
+        run: |
+          echo "${{ secrets.ML_SESSION }}" | base64 -d > ml-session.json
+
+      - name: Run price update
         run: npm run update-prices
 
-      - name: Commit prices
+      - name: Commit updated prices
         run: |
           git config --global user.name "price-bot"
           git config --global user.email "bot@mangadrops"
           git add src/data/prices.json
-          git diff --cached --quiet && exit 0
+          git diff --cached --quiet && echo "No changes" && exit 0
           git commit -m "update prices"
           git push
+
+      - name: Build site
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist

@@ -4,15 +4,11 @@ import "../styles/product-rail.css";
 import { getPrice } from "../utils/priceLoader";
 import { getOfferData } from "../utils/priceUtils";
 
-function isValidDate(v) {
-  return typeof v === "string" && !Number.isNaN(new Date(v).getTime());
-}
-
-export default function LaunchRail({
-  title = "Lançamentos",
+export default function CheapRail({
+  title = "Mais baratos 💰",
+  subtitle = "Os mangás com menor preço do site.",
   products = [],
   limit = 30,
-  subtitle = "Atualizado com lançamentos e reposições recentes.",
   meta = "",
   onOpenProduct,
 }) {
@@ -20,23 +16,45 @@ export default function LaunchRail({
   const [canLeft, setCanLeft] = useState(false);
   const [canRight, setCanRight] = useState(false);
 
-  // últimos 30 dias
   const items = useMemo(() => {
-    const now = new Date();
     return [...products]
-      .filter((p) => isValidDate(p.addedAt))
-      .filter((p) => {
-        const d = new Date(p.addedAt);
-        const diffDays = (now - d) / (1000 * 60 * 60 * 24);
-        return diffDays >= 0 && diffDays <= 30;
+      .map((p) => {
+        const mlUrl =
+          typeof p?.affiliate?.mercadoLivre === "string"
+            ? p.affiliate.mercadoLivre.trim()
+            : "";
+
+        const amzUrl =
+          typeof p?.affiliate?.amazon === "string"
+            ? p.affiliate.amazon.trim()
+            : "";
+
+        const mlPrice = getPrice(p?.id, "mercadoLivre");
+        const amzPrice = getPrice(p?.id, "amazon");
+
+        const offer = getOfferData({
+          mlHref: mlUrl,
+          mlPrice,
+          amazonHref: amzUrl,
+          amazonPrice: amzPrice,
+        });
+
+        return {
+          ...p,
+          _offer: offer,
+          _bestPriceValue: offer?.bestPrice ?? Infinity,
+        };
       })
-      .sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt))
+      .filter((p) => p?._offer?.isAvailable)
+      .filter((p) => p._bestPriceValue <= 30)
+      .sort((a, b) => a._bestPriceValue - b._bestPriceValue)
       .slice(0, limit);
   }, [products, limit]);
 
   const updateArrows = () => {
     const el = railRef.current;
     if (!el) return;
+
     const maxScroll = el.scrollWidth - el.clientWidth;
     setCanLeft(el.scrollLeft > 2);
     setCanRight(el.scrollLeft < maxScroll - 2);
@@ -44,14 +62,14 @@ export default function LaunchRail({
 
   useEffect(() => {
     updateArrows();
+
     const el = railRef.current;
     if (!el) return;
 
     const onScroll = () => updateArrows();
-    el.addEventListener("scroll", onScroll, { passive: true });
-
-    // resize muda overflow
     const onResize = () => updateArrows();
+
+    el.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
 
     return () => {
@@ -63,8 +81,13 @@ export default function LaunchRail({
   const scrollByAmount = (dir) => {
     const el = railRef.current;
     if (!el) return;
-    const amount = Math.round(el.clientWidth * 0.85) * dir; // “quase uma tela”
-    el.scrollBy({ left: amount, behavior: "smooth" });
+
+    const amount = Math.round(el.clientWidth * 0.85) * dir;
+
+    el.scrollBy({
+      left: amount,
+      behavior: "smooth",
+    });
   };
 
   if (!items.length) return null;
@@ -78,7 +101,10 @@ export default function LaunchRail({
               <span className="sectionAccent" aria-hidden="true" />
               {title}
             </h2>
-            {subtitle ? <p className="sectionSubtitle">{subtitle}</p> : null}
+
+            {subtitle ? (
+              <p className="sectionSubtitle">{subtitle}</p>
+            ) : null}
           </div>
 
           <div className="sectionHeaderRight">
@@ -95,6 +121,7 @@ export default function LaunchRail({
               >
                 ‹
               </button>
+
               <button
                 type="button"
                 className={`railArrow ${canRight ? "" : "disabled"}`}
@@ -110,42 +137,18 @@ export default function LaunchRail({
         </div>
 
         <div className="productRail" ref={railRef} aria-label={title}>
-          {items
-            .filter((p) => {
-              const mlUrl =
-                typeof p?.affiliate?.mercadoLivre === "string"
-                  ? p.affiliate.mercadoLivre.trim()
-                  : "";
-
-              const amzUrl =
-                typeof p?.affiliate?.amazon === "string"
-                  ? p.affiliate.amazon.trim()
-                  : "";
-
-              const mlPrice = getPrice(p?.id, "mercadoLivre");
-              const amzPrice = getPrice(p?.id, "amazon");
-
-              const { isAvailable } = getOfferData({
-                mlHref: mlUrl,
-                mlPrice,
-                amazonHref: amzUrl,
-                amazonPrice: amzPrice,
-              });
-
-              return isAvailable;
-            })
-            .map((p) => (
-              <div className="railItem productItem" key={p.id}>
-                <ProductCard
-                  product={p}
-                  onOpen={(prod) => onOpenProduct?.(prod)}
-                  topBadge={{
-                    label: "NOVO",
-                    className: "newBadge",
-                  }}
-                />
-              </div>
-            ))}
+          {items.map((p) => (
+            <div className="railItem productItem" key={p.id}>
+              <ProductCard
+                product={p}
+                onOpen={(prod) => onOpenProduct?.(prod)}
+                topBadge={{
+                  label: "💰 Até R$30",
+                  className: "cheapBadge",
+                }}
+              />
+            </div>
+          ))}
         </div>
       </div>
     </section>
