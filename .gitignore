@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 ml-session.json
+ml-session-base64.txt
 playwright/.auth
 
 # Editor directories and files
