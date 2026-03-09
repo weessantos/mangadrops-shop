@@ -1,6 +1,8 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
 import fs from "fs";
+import http from "http";
+import https from "https";
 import path from "path";
 import { fileURLToPath } from "url";
 import { chromium } from "playwright";
@@ -17,11 +19,15 @@ const CONCURRENCY = 8;
 const REQUEST_TIMEOUT = 20000;
 const BETWEEN_PRODUCTS_DELAY_MS = 30;
 const ML_NAVIGATION_TIMEOUT = 25000;
+const SAVE_EVERY_N_PRODUCTS = 20;
+const ML_WAIT_AFTER_AFFILIATE_MS = 800;
+const ML_WAIT_AFTER_PRODUCT_MS = 1000;
 
 // Para depurar:
-// Linux/macOS: ML_DEBUG=true npm run update-prices
-// PowerShell: $env:ML_DEBUG="true"; npm run update-prices
-const ML_DEBUG = process.env.ML_DEBUG === "true";
+  //const ML_DEBUG = true;
+
+  const ML_DEBUG = process.env.ML_DEBUG === "true";
+
 
 const USE_ML_SESSION = fs.existsSync(ML_SESSION_PATH);
 
@@ -71,6 +77,17 @@ function getRequestHeaders() {
     "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
   };
 }
+
+const httpAgent = new http.Agent({ keepAlive: true, maxSockets: CONCURRENCY * 2 });
+const httpsAgent = new https.Agent({ keepAlive: true, maxSockets: CONCURRENCY * 2 });
+
+const amazonHttp = axios.create({
+  maxRedirects: 5,
+  timeout: REQUEST_TIMEOUT,
+  headers: getRequestHeaders(),
+  httpAgent,
+  httpsAgent,
+});
 
 async function getBrowser() {
   if (!browserPromise) {
@@ -161,7 +178,7 @@ async function resolveMercadoLivreProductUrl(page, url) {
       timeout: ML_NAVIGATION_TIMEOUT,
     });
 
-    await page.waitForTimeout(800);
+    await page.waitForTimeout(ML_WAIT_AFTER_AFFILIATE_MS);
     currentUrl = page.url();
   }
 
@@ -279,6 +296,10 @@ async function resolveMercadoLivreProductUrl(page, url) {
 // PREÇO DO MERCADO LIVRE NA PÁGINA FINAL DO PRODUTO
 // =======================================================
 
+// =======================================================
+// PREÇO DO MERCADO LIVRE NA PÁGINA FINAL DO PRODUTO
+// =======================================================
+
 async function extractMercadoLivreProductPagePrice(page, productId) {
   const result = await page.evaluate(() => {
     const clean = (text) =>
@@ -287,15 +308,7 @@ async function extractMercadoLivreProductPagePrice(page, productId) {
         .replace(/\s+/g, " ")
         .trim();
 
-    const parsePrice = (fractionText, centsText = "00") => {
-      const fraction = String(fractionText || "").replace(/[^\d]/g, "");
-      const cents = String(centsText || "00").replace(/[^\d]/g, "").slice(0, 2) || "00";
-
-      if (!fraction) return null;
-
-      const value = Number(`${fraction}.${cents}`);
-      return Number.isFinite(value) ? value : null;
-    };
+    const textOf = (el) => clean(el?.innerText || el?.textContent || "");
 
     const isVisible = (el) => {
       if (!el) return false;
@@ -305,58 +318,81 @@ async function extractMercadoLivreProductPagePrice(page, productId) {
       return rect.width > 0 && rect.height > 0;
     };
 
-    const hasInstallmentContext = (text) => /sem juros|parcelado|parcela/i.test(text);
+    const parsePrice = (fractionText, centsText = "00") => {
+      const fraction = String(fractionText || "").replace(/[^\d]/g, "");
+      const cents =
+        String(centsText || "00")
+          .replace(/[^\d]/g, "")
+          .slice(0, 2) || "00";
 
-    // 1) Containers principais da PDP
-    const priceContainers = Array.from(
-      document.querySelectorAll(
-        [
-          ".ui-pdp-price__main-container",
-          ".ui-pdp-price__second-line",
-          ".ui-pdp-price",
-          ".andes-money-amount",
-        ].join(", ")
-      )
-    ).filter(isVisible);
+      if (!fraction) return null;
 
-    for (const container of priceContainers) {
-      const text = clean(container.innerText || container.textContent || "");
-      if (!text) continue;
-      if (hasInstallmentContext(text)) continue;
+      const value = Number(`${fraction}.${cents}`);
+      return Number.isFinite(value) ? value : null;
+    };
 
-      const fractionEl =
-        container.querySelector(".andes-money-amount__fraction") ||
-        container.querySelector("[class*='money-amount__fraction']");
+    const isOldPriceBlock = (el) => {
+      if (!el) return false;
 
-      const centsEl =
-        container.querySelector(".andes-money-amount__cents") ||
-        container.querySelector("[class*='money-amount__cents']");
+      const classText = `${el.className || ""} ${el.parentElement?.className || ""}`;
+      const text = textOf(el);
 
-      const value = parsePrice(
-        fractionEl?.textContent || "",
-        centsEl?.textContent || "00"
+      return (
+        /original/i.test(classText) ||
+        /ui-pdp-price__original/i.test(classText) ||
+        /andes-money-amount--previous/i.test(classText) ||
+        el.tagName === "S" ||
+        (/R\$\s*\d+[.,]\d{2}/i.test(text) &&
+          /de\s+R\$|preço anterior|original/i.test(text))
+      );
+    };
+
+    const isBadPromoContext = (text) =>
+      /cashback|cartão de crédito|pedir/i.test(text);
+
+    const isOtherOffersContext = (text) =>
+      /outras opções de compra|ver mais opções|mais opções a partir de|quem viu este produto também comprou|você também pode estar interessado/i.test(
+        text
       );
 
-      if (value != null && value > 10 && value < 1000) {
-        return {
-          price: value,
-          source: "structured_container",
-          sample: text,
-        };
+    const isInRightColumn = (el) => {
+      if (!el) return false;
+
+      if (
+        el.closest("aside") ||
+        el.closest(".ui-pdp-buybox") ||
+        el.closest(".ui-pdp-right-column") ||
+        el.closest(".ui-pdp-container__aside")
+      ) {
+        return true;
       }
-    }
 
-    // 2) Todos os blocos monetários visíveis, ignorando contexto parcelado
-    const moneyBlocks = Array.from(document.querySelectorAll(".andes-money-amount")).filter(isVisible);
+      const rect = el.getBoundingClientRect();
+      const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
 
-    for (const block of moneyBlocks) {
-      const text = clean(block.innerText || block.textContent || "");
-      const parentText = clean(block.parentElement?.innerText || "");
-      const grandParentText = clean(block.parentElement?.parentElement?.innerText || "");
+      if (viewportWidth && rect.left > viewportWidth * 0.62) {
+        return true;
+      }
 
-      if (hasInstallmentContext(text)) continue;
-      if (hasInstallmentContext(parentText)) continue;
-      if (hasInstallmentContext(grandParentText)) continue;
+      return false;
+    };
+
+    const extractPriceFromMoneyBlock = (block) => {
+      if (!block || !isVisible(block)) return null;
+      if (isInRightColumn(block)) return null;
+      if (isOldPriceBlock(block)) return null;
+
+      const blockText = textOf(block);
+      const parentText = textOf(block.parentElement);
+      const grandParentText = textOf(block.parentElement?.parentElement);
+
+      if (isBadPromoContext(blockText)) return null;
+      if (isBadPromoContext(parentText)) return null;
+      if (isBadPromoContext(grandParentText)) return null;
+
+      if (isOtherOffersContext(blockText)) return null;
+      if (isOtherOffersContext(parentText)) return null;
+      if (isOtherOffersContext(grandParentText)) return null;
 
       const fractionEl =
         block.querySelector(".andes-money-amount__fraction") ||
@@ -371,51 +407,132 @@ async function extractMercadoLivreProductPagePrice(page, productId) {
         centsEl?.textContent || "00"
       );
 
-      if (value != null && value > 10 && value < 1000) {
-        return {
-          price: value,
-          source: "money_block",
-          sample: text || parentText,
-        };
-      }
+      if (value == null) return null;
+      if (value <= 3 || value >= 5000) return null;
+
+      const fractionStyle = fractionEl ? window.getComputedStyle(fractionEl) : null;
+      const fractionRect = fractionEl?.getBoundingClientRect?.() || block.getBoundingClientRect();
+      const blockRect = block.getBoundingClientRect();
+
+      const fontSize = fractionStyle ? parseFloat(fractionStyle.fontSize || "0") : 0;
+      const height = Math.max(fractionRect?.height || 0, blockRect?.height || 0);
+      const width = Math.max(fractionRect?.width || 0, blockRect?.width || 0);
+
+      return {
+        value,
+        fontSize,
+        height,
+        width,
+        text: blockText,
+      };
+    };
+
+    const pickPriceFromScope = (scope, source) => {
+    if (!scope || !isVisible(scope)) return null;
+    if (isInRightColumn(scope)) return null;
+
+    const scopeText = textOf(scope);
+    if (!scopeText) return null;
+    if (isOtherOffersContext(scopeText)) return null;
+
+    const moneyBlocks = Array.from(
+      scope.querySelectorAll(".andes-money-amount")
+    )
+      .filter(isVisible)
+      .filter((el) => !isInRightColumn(el));
+
+    const candidates = moneyBlocks
+      .map(extractPriceFromMoneyBlock)
+      .filter((v) => v != null);
+
+    if (!candidates.length) return null;
+
+    candidates.sort((a, b) => {
+      if (b.fontSize !== a.fontSize) return b.fontSize - a.fontSize;
+      if (b.height !== a.height) return b.height - a.height;
+      if (b.width !== a.width) return b.width - a.width;
+      return a.value - b.value;
+    });
+
+    const best = candidates[0];
+
+    return {
+      price: best.value,
+      source,
+      sample: scopeText.slice(0, 500),
+    };
+  };
+
+    const centralPriceSelectors = [
+      ".ui-pdp-price",
+      ".ui-pdp-price__main-container",
+      ".ui-pdp-container__row .ui-pdp-price",
+    ];
+
+    const centralScopes = centralPriceSelectors
+      .flatMap((selector) => Array.from(document.querySelectorAll(selector)))
+      .filter(isVisible)
+      .filter((el, index, arr) => arr.indexOf(el) === index)
+      .filter((el) => !isInRightColumn(el))
+      .filter((el) => {
+        const txt = textOf(el);
+        if (!txt) return false;
+        if (isBadPromoContext(txt)) return false;
+        if (isOtherOffersContext(txt)) return false;
+        return true;
+      })
+      .sort((a, b) => {
+        const ra = a.getBoundingClientRect();
+        const rb = b.getBoundingClientRect();
+
+        if (ra.left !== rb.left) return ra.left - rb.left;
+        return ra.top - rb.top;
+      });
+
+    for (const scope of centralScopes) {
+      const picked = pickPriceFromScope(scope, "main_center_price");
+      if (picked) return picked;
     }
 
-    // 3) Fallback textual mais controlado
-    const bodyText = clean(document.body?.innerText || "");
-    const lines = bodyText
-      .split("\n")
-      .map((line) => clean(line))
-      .filter(Boolean);
+    const centralMoneyBlocks = Array.from(
+      document.querySelectorAll(
+        ".ui-pdp-price .andes-money-amount, .ui-pdp-price__main-container .andes-money-amount"
+      )
+    )
+      .filter(isVisible)
+      .filter((el) => !isInRightColumn(el));
 
-    for (const line of lines) {
-      if (!line.includes("R$")) continue;
-      if (hasInstallmentContext(line)) continue;
+    for (const block of centralMoneyBlocks) {
+      let node = block;
 
-      const match = line.match(/R\$\s*([\d.]+,\d{2})/i);
-      if (!match) continue;
+      for (let i = 0; i < 5 && node; i++) {
+        const txt = textOf(node);
 
-      const raw = match[1].replace(/\./g, "").replace(",", ".");
-      const value = Number(raw);
+        if (
+          txt &&
+          !isInRightColumn(node) &&
+          !isBadPromoContext(txt) &&
+          !isOtherOffersContext(txt)
+        ) {
+          const picked = pickPriceFromScope(node, "main_center_price_ancestor");
+          if (picked) return picked;
+        }
 
-      if (Number.isFinite(value) && value > 10 && value < 1000) {
-        return {
-          price: value,
-          source: "line_fallback",
-          sample: line,
-        };
+        node = node.parentElement;
       }
     }
 
     return {
       price: null,
       source: "none",
-      sample: bodyText.slice(0, 1200),
+      sample: textOf(document.body).slice(0, 500),
     };
   });
 
   if (ML_DEBUG) {
-    console.log(`[ML DEBUG] ${productId} -> source produto: ${result.source}`);
-    console.log(`[ML DEBUG] ${productId} -> sample produto: ${result.sample}`);
+    console.log(
+      `[ML DEBUG] ${productId} -> source=${result.source} price=${result.price ?? "null"}`
+    );
   }
 
   return result.price ?? null;
@@ -425,16 +542,12 @@ async function extractMercadoLivreProductPagePrice(page, productId) {
 // FLUXO PRINCIPAL DO MERCADO LIVRE
 // =======================================================
 
-async function getMercadoLivrePrice(url, productId) {
-  const browser = await getBrowser();
-  const context = await createMercadoLivreContext(browser);
-  const page = await context.newPage();
+async function getMercadoLivrePrice(url, productId, sharedPage = null) {
+  const ownBrowser = sharedPage ? null : await getBrowser();
+  const ownContext = sharedPage ? null : await createMercadoLivreContext(ownBrowser);
+  const page = sharedPage || (await ownContext.newPage());
 
   try {
-    if (ML_DEBUG) {
-      console.log(`[ML DEBUG] ${productId} -> abrindo afiliado: ${url}`);
-    }
-
     await page.goto(url, {
       waitUntil: "domcontentloaded",
       timeout: ML_NAVIGATION_TIMEOUT,
@@ -460,7 +573,7 @@ async function getMercadoLivrePrice(url, productId) {
     }
 
     await page.waitForLoadState("domcontentloaded").catch(() => {});
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(ML_WAIT_AFTER_PRODUCT_MS);
 
     const price = await extractMercadoLivreProductPagePrice(page, productId);
 
@@ -475,22 +588,19 @@ async function getMercadoLivrePrice(url, productId) {
     }
     return null;
   } finally {
-    await page.close().catch(() => {});
-    await context.close().catch(() => {});
+    if (!sharedPage) {
+      await page.close().catch(() => {});
+      await ownContext.close().catch(() => {});
+    }
   }
 }
-
 // =======================================================
 // AMAZON
 // =======================================================
 
 async function getAmazonPrice(url) {
   try {
-    const response = await axios.get(url, {
-      maxRedirects: 5,
-      timeout: REQUEST_TIMEOUT,
-      headers: getRequestHeaders(),
-    });
+    const response = await amazonHttp.get(url);
 
     const $ = cheerio.load(response.data);
 
@@ -570,22 +680,19 @@ async function getAmazonPrice(url) {
   }
 }
 
-async function processProduct(product, existingPrices, prices, counters) {
+async function processProduct(product, existingPrices, prices, counters, workerState) {
   const productId = product.id;
   const mlLink = product.affiliate?.mercadoLivre || "";
   const amazonLink = product.affiliate?.amazon || "";
 
   const previous = existingPrices[productId] || {};
 
-  // ML sempre reflete o resultado atual
   let mlPrice = null;
-
-  // Amazon pode reaproveitar valor anterior se falhar temporariamente
   let amazonPrice = previous.amazon ?? null;
 
   try {
     const [fetchedMlPrice, fetchedAmazonPrice] = await Promise.all([
-      mlLink ? getMercadoLivrePrice(mlLink, productId) : Promise.resolve(null),
+      mlLink ? getMercadoLivrePrice(mlLink, productId, workerState?.mlPage || null) : Promise.resolve(null),
       amazonLink ? getAmazonPrice(amazonLink) : Promise.resolve(null),
     ]);
 
@@ -605,32 +712,72 @@ async function processProduct(product, existingPrices, prices, counters) {
   };
 
   counters.done += 1;
-  writePrices(prices);
+
+  if (counters.done % SAVE_EVERY_N_PRODUCTS === 0 || counters.done === counters.total) {
+    writePrices(prices);
+  }
 
   console.log(
     `[${counters.done}/${counters.total}] ${productId} -> ML: ${mlPrice} | Amazon: ${amazonPrice}`
   );
 
-  await sleep(BETWEEN_PRODUCTS_DELAY_MS);
+  if (BETWEEN_PRODUCTS_DELAY_MS > 0) {
+    await sleep(BETWEEN_PRODUCTS_DELAY_MS);
+  }
 }
 
-async function runPool(items, worker, concurrency) {
+async function createWorkerState(workerId) {
+  const browser = await getBrowser();
+  const mlContext = await createMercadoLivreContext(browser);
+  const mlPage = await mlContext.newPage();
+
+  if (ML_DEBUG) {
+    console.log(`[ML DEBUG] worker ${workerId} -> contexto reutilizável criado`);
+  }
+
+  return {
+    workerId,
+    mlContext,
+    mlPage,
+  };
+}
+
+async function destroyWorkerState(workerState) {
+  if (!workerState) return;
+
+  await workerState.mlPage?.close().catch(() => {});
+  await workerState.mlContext?.close().catch(() => {});
+}
+
+async function runPool(items, worker, concurrency, setupWorker = null, teardownWorker = null) {
   let index = 0;
 
-  async function runner() {
-    while (true) {
-      const currentIndex = index;
-      index += 1;
+  async function runner(workerId) {
+    const workerState = setupWorker ? await setupWorker(workerId) : undefined;
 
-      if (currentIndex >= items.length) {
-        return;
+    try {
+      while (true) {
+        const currentIndex = index;
+        index += 1;
+
+        if (currentIndex >= items.length) {
+          return;
+        }
+
+        await worker(items[currentIndex], currentIndex, workerState);
       }
-
-      await worker(items[currentIndex], currentIndex);
+    } finally {
+      if (teardownWorker) {
+        await teardownWorker(workerState, workerId);
+      }
     }
   }
 
-  const runners = Array.from({ length: Math.min(concurrency, items.length) }, () => runner());
+  const runners = Array.from(
+    { length: Math.min(concurrency, items.length) },
+    (_, i) => runner(i + 1)
+  );
+
   await Promise.all(runners);
 }
 
@@ -670,10 +817,12 @@ async function updatePrices() {
   try {
     await runPool(
       activeProducts,
-      async (product) => {
-        await processProduct(product, existingPrices, prices, counters);
+      async (product, _index, workerState) => {
+        await processProduct(product, existingPrices, prices, counters, workerState);
       },
-      CONCURRENCY
+      CONCURRENCY,
+      createWorkerState,
+      destroyWorkerState
     );
 
     writePrices(prices);

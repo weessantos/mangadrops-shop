@@ -37,9 +37,9 @@ export const opAffiliate = {
   5: { mercadoLivre: "", amazon: "https://amzn.to/40eH9Wt" },
   6: { mercadoLivre: "", amazon: "https://amzn.to/4qFbnwI" },
   7: { mercadoLivre: "https://mercadolivre.com/sec/1Fo9qbA", amazon: "https://amzn.to/4kIn0S3" },
-  8: { mercadoLivre: "https://meli.la/1nKoDQv", amazon: "https://amzn.to/4tH57Hu" },
-  9: { mercadoLivre: "https://mercadolivre.com/sec/1qoUWtn", amazon: "https://amzn.to/3OuRJ97" },
-  10: { mercadoLivre: "https://mercadolivre.com/sec/256YxoV", amazon: "" },
+  8: { mercadoLivre: "https://meli.la/2H7QWWq", amazon: "https://amzn.to/4tH57Hu" },
+  9: { mercadoLivre: "https://meli.la/1GnyXRr", amazon: "https://amzn.to/3OuRJ97" },
+  10: { mercadoLivre: "https://meli.la/32JqdEE", amazon: "" },
   11: { mercadoLivre: "https://mercadolivre.com/sec/2jeoM2w", amazon: "" },
   12: { mercadoLivre: "", amazon: "https://amzn.to/4kIn0S3" },
   13: { mercadoLivre: "https://mercadolivre.com/sec/2nzz3PY", amazon: "" },
@@ -103,7 +103,7 @@ export const jjkAffiliate = {
   27: { mercadoLivre: "https://mercadolivre.com/sec/1x1FdQe", amazon: "" },
   28: { mercadoLivre: "https://mercadolivre.com/sec/26MjcKi", amazon: "" },
   29: { mercadoLivre: "", amazon: "https://amzn.to/4cukhcU" },
-  30: { mercadoLivre: "https://mercadolivre.com/sec/2tSFJfa", amazon: "" }
+  30: { mercadoLivre: "", amazon: "" }
 };
 
 // =======================
