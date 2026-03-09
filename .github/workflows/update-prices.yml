@@ -2,7 +2,7 @@ name: Update Prices and Deploy
 
 on:
   schedule:
-    - cron: "0 */8 * * *"
+    - cron: "0 */8 * * *" # roda a cada 8 horas
   workflow_dispatch:
   push:
     branches:
@@ -31,17 +31,23 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      # restaura login do Mercado Livre
       - name: Restore ML session
         run: |
-          echo "${{ secrets.ML_SESSION }}" | base64 -d > ml-session.json
+          cat > ml-session.json <<'EOF'
+          ${{ secrets.ML_SESSION }}
+          EOF
 
-      - name: Run price update
+      # roda o scraper
+      - name: Update prices
         run: npm run update-prices
 
+      # build do site
       - name: Build site
         run: npm run build
 
-      - name: Deploy to GitHub Pages
+      # publica no gh-pages
+      - name: Deploy site
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
