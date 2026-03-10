@@ -384,7 +384,7 @@
 }
 
 .cardPriceValue{
-  font-size:1.35rem;
+  font-size:1.3rem;
   font-weight:900;
   letter-spacing:-0.02em;
 }
@@ -392,15 +392,16 @@
 .cardDiscountBadge{
   background:#22c55e;
   color:white;
-  font-size:0.75rem;
+  font-size:0.70rem;
   font-weight:800;
-  padding:3px 7px;
+  padding:3px 5px;
+  margin-left: 2px;
   border-radius:6px;
 }
 
 .cardPriceStore{
   margin-top:4px;
-  font-size:0.72rem;
+  font-size:0.75rem;
   color:rgba(255,255,255,0.55);
   font-weight:600;
 }

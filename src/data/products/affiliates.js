@@ -6,7 +6,7 @@ export const empty = { mercadoLivre: "", amazon: "" };
 // =======================
 
 export const aotAffiliate = {
-  1: { mercadoLivre: "", amazon: "" },
+  1: { mercadoLivre: "https://meli.la/1Ja63rf", amazon: "" },
   2: { mercadoLivre: "https://mercadolivre.com/sec/2oM4bzu", amazon: "https://amzn.to/3OqeE5x" },
   3: { mercadoLivre: "https://mercadolivre.com/sec/1FehwJK", amazon: "https://amzn.to/4c3rUXz" },
   4: { mercadoLivre: "https://mercadolivre.com/sec/2MW6XMN", amazon: "https://amzn.to/4aGY9tc" },

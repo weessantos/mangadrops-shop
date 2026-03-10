@@ -1,5 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Routes, Route, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Routes,
+  Route,
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import "./styles/global.css";
 
 import Header from "./components/Header";
@@ -27,9 +34,6 @@ import { useScrollTop } from "./hooks/useScrollTop";
 import { parseQuery, pickSeriesFromQuery, productSearchText, slugify } from "./utils/search";
 import Footer from "./components/Footer";
 
-/* =======================================================
-   helpers (robustos)
-======================================================= */
 const norm = (v) => String(v || "").trim();
 const normLc = (v) => norm(v).toLowerCase();
 
@@ -39,7 +43,6 @@ function asList(v) {
   return [norm(v)].filter(Boolean);
 }
 
-// estoque = existe link amazon OU ML
 function hasAnyAffiliateLink(p) {
   const amazon =
     p?.amazon ||
@@ -85,43 +88,6 @@ function discountPercentNumber(p) {
   return Number(discountData.discountPercent) || 0;
 }
 
-function getDiscountPercent(p) {
-  const direct =
-    p?.discountData?.discountPercent ??
-    p?.discountPercent ??
-    p?.discount?.percent ??
-    null;
-
-  const directNum = Number(direct);
-  if (Number.isFinite(directNum)) return directNum;
-
-  const listRaw =
-    p?.discountData?.listPrice ??
-    p?.listPrice ??
-    p?.oldPrice ??
-    p?.originalPrice ??
-    null;
-
-  const listNum =
-    typeof listRaw === "number"
-      ? listRaw
-      : Number(String(listRaw ?? "").replace(/\./g, "").replace(",", ".").match(/[\d.]+/)?.[0]);
-
-  const current = priceNumber(p);
-
-  if (
-    Number.isFinite(listNum) &&
-    Number.isFinite(current) &&
-    listNum > 0 &&
-    listNum > current
-  ) {
-    return Math.round(((listNum - current) / listNum) * 100);
-  }
-
-  return 0;
-}
-
-// review = existe tiktokByVolume pra série+volume (ou link direto no produto)
 function hasReview(p) {
   return Boolean(
     p?.tiktok ||
@@ -137,31 +103,24 @@ function hasReview(p) {
   );
 }
 
-/* =======================================================
-   APP SHELL (home + séries + modal)
-======================================================= */
 function AppShell() {
   const PAGE_SIZE = 12;
   const navigate = useNavigate();
+  const location = useLocation();
   const { seriesSlug, volumeId } = useParams();
   const [sp, setSp] = useSearchParams();
 
   const [page, setPage] = useState(1);
   const lastAppliedQueryRef = useRef("");
-
-  // input controlado no Header
   const [inputValue, setInputValue] = useState("");
-
   const [selected, setSelected] = useState(null);
   const [activeSeries, setActiveSeries] = useState(null);
+  const [isHeaderCompact, setIsHeaderCompact] = useState(false);
+  const [activeSection, setActiveSection] = useState("colecoes");
 
   const { showScrollTop, scrollToTop } = useScrollTop(400);
-
   const { seriesList, seriesBySlug, seriesNames } = useSeriesList(products, seriesCatalog);
 
-  // =======================================================
-  // meta fallback por série (usa seriesCatalog)
-  // =======================================================
   const metaBySeries = useMemo(() => {
     const map = new Map();
     for (const s of seriesCatalog || []) {
@@ -188,21 +147,15 @@ function AppShell() {
     };
   };
 
-  // =======================================================
-  // URL params (fonte de verdade dos filtros)
-  // =======================================================
   const qParam = sp.get("q") || "";
-
   const brandParam = sp.getAll("brand");
   const authorParam = sp.getAll("author");
   const genreParam = sp.getAll("genre");
   const formatParam = sp.getAll("format");
-
   const priceParam = sp.get("price") || "";
   const discountParam = sp.get("discount") || "";
-
-  const stParam = sp.get("st") || ""; // "in" | "out" | ""
-  const rvParam = sp.get("rv") || ""; // "1" | ""
+  const stParam = sp.get("st") || "";
+  const rvParam = sp.get("rv") || "";
   const sortParam = sp.get("sort") || "relevance";
 
   const hasAnyFilter =
@@ -217,12 +170,10 @@ function AppShell() {
     rvParam === "1" ||
     (sortParam && sortParam !== "relevance");
 
-  // mantém o input do Header sincronizado com a URL
   useEffect(() => {
     setInputValue(qParam);
   }, [qParam]);
 
-  // Sync: rota -> activeSeries
   useEffect(() => {
     if (!seriesSlug) {
       setActiveSeries(null);
@@ -233,9 +184,6 @@ function AppShell() {
     setActiveSeries(name);
   }, [seriesSlug, seriesBySlug]);
 
-  // =======================================================
-  // Busca que “pula” pra série (mantém seu comportamento)
-  // =======================================================
   useEffect(() => {
     const q = (qParam || "").trim();
     if (!q) {
@@ -259,12 +207,8 @@ function AppShell() {
         block: "start",
       });
     }, 0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [qParam, seriesNames, navigate]);
+  }, [qParam, seriesNames, navigate, sp]);
 
-  // =======================================================
-  // Base: série + busca
-  // =======================================================
   const baseFiltered = useMemo(() => {
     const { words, numbers } = parseQuery(qParam);
 
@@ -285,22 +229,17 @@ function AppShell() {
           const okAll = words.every((w) => text.includes(w));
           if (okAll) return true;
 
-          const okPartial = words.every((w) => {
+          return words.every((w) => {
             if (w.length <= 2) return true;
             const parts = text.split(" ");
             return text.includes(w) || parts.some((tok) => tok.startsWith(w));
           });
-
-          return okPartial;
         }
 
         return true;
       });
   }, [qParam, activeSeries]);
 
-  // =======================================================
-  // Aplicar filtros URL: brand/author/genre/format + price/discount + st/rv + ordenar
-  // =======================================================
   const filtered = useMemo(() => {
     let arr = [...baseFiltered];
 
@@ -312,21 +251,10 @@ function AppShell() {
     const maxPrice = priceParam ? Number(priceParam) : null;
     const minDiscount = discountParam ? Number(discountParam) : null;
 
-    if (brandSet) {
-      arr = arr.filter((p) => getMeta(p).brand.some((b) => brandSet.has(normLc(b))));
-    }
-
-    if (authorSet) {
-      arr = arr.filter((p) => getMeta(p).author.some((a) => authorSet.has(normLc(a))));
-    }
-
-    if (genreSet) {
-      arr = arr.filter((p) => getMeta(p).genre.some((g) => genreSet.has(normLc(g))));
-    }
-
-    if (formatSet) {
-      arr = arr.filter((p) => getMeta(p).format.some((f) => formatSet.has(normLc(f))));
-    }
+    if (brandSet) arr = arr.filter((p) => getMeta(p).brand.some((b) => brandSet.has(normLc(b))));
+    if (authorSet) arr = arr.filter((p) => getMeta(p).author.some((a) => authorSet.has(normLc(a))));
+    if (genreSet) arr = arr.filter((p) => getMeta(p).genre.some((g) => genreSet.has(normLc(g))));
+    if (formatSet) arr = arr.filter((p) => getMeta(p).format.some((f) => formatSet.has(normLc(f))));
 
     if (Number.isFinite(maxPrice)) {
       arr = arr.filter((p) => {
@@ -341,11 +269,9 @@ function AppShell() {
 
     if (stParam === "in") arr = arr.filter((p) => hasAnyAffiliateLink(p));
     if (stParam === "out") arr = arr.filter((p) => !hasAnyAffiliateLink(p));
-
     if (rvParam === "1") arr = arr.filter((p) => hasReview(p));
 
     const sort = sortParam || "relevance";
-
     if (sort === "price_asc") {
       arr.sort((a, b) => (priceNumber(a) ?? 1e15) - (priceNumber(b) ?? 1e15));
     } else if (sort === "price_desc") {
@@ -363,10 +289,10 @@ function AppShell() {
     return arr;
   }, [
     baseFiltered,
-    brandParam.join("|"),
-    authorParam.join("|"),
-    genreParam.join("|"),
-    formatParam.join("|"),
+    brandParam,
+    authorParam,
+    genreParam,
+    formatParam,
     priceParam,
     discountParam,
     stParam,
@@ -376,12 +302,8 @@ function AppShell() {
 
   const pagedProducts = useMemo(() => filtered.slice(0, page * PAGE_SIZE), [filtered, page]);
   const hasMore = pagedProducts.length < filtered.length;
-
   const showGlobalResults = !activeSeries && hasAnyFilter;
 
-  // =======================================================
-  // URL helpers
-  // =======================================================
   const updateSearchParams = (patch) => {
     const next = new URLSearchParams(sp);
 
@@ -393,9 +315,6 @@ function AppShell() {
     setSp(next, { replace: true });
   };
 
-  // =======================================================
-  // Modal via rota
-  // =======================================================
   useEffect(() => {
     if (!volumeId) {
       setSelected(null);
@@ -468,6 +387,86 @@ function AppShell() {
     navigate(`/${qs ? `?${qs}` : ""}`, { replace: true });
   };
 
+  const scrollToIdWithOffset = useCallback((id, behavior = "smooth") => {
+    const el = document.getElementById(id);
+    if (!el) return false;
+
+    const extraOffset = window.innerWidth <= 768 ? 84 : isHeaderCompact ? 96 : 132;
+    const top = el.getBoundingClientRect().top + window.scrollY - extraOffset;
+
+    window.scrollTo({ top: Math.max(0, top), behavior });
+    return true;
+  }, [isHeaderCompact]);
+
+  const resolveScrollIds = useCallback((target, fallbackIds = []) => {
+    const map = {
+      colecoes: ["railTitle", "obras", "collectionsSection"],
+      lancamentos: ["lancamentos", "releasesSection", "obras"],
+      promocoes: ["promotions", "promocoes", "deals"],
+      saldao: ["deals", "saldao", "baratinhos"],
+      home: ["home"],
+      top: ["top"],
+    };
+
+    return [...(map[target] || []), ...fallbackIds].filter(Boolean);
+  }, []);
+
+  const scrollToNav = useCallback(
+    ({ target, ids = [] } = {}) => {
+      const targetIds = resolveScrollIds(target, ids);
+      const routeHasSeriesContext = Boolean(seriesSlug || volumeId || activeSeries);
+
+      const performScroll = () => {
+        for (const id of targetIds) {
+          if (scrollToIdWithOffset(id)) return;
+        }
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      };
+
+      if (routeHasSeriesContext && location.pathname !== "/") {
+        navigate(`/${location.search || ""}`);
+        window.requestAnimationFrame(() => {
+          window.setTimeout(performScroll, 80);
+        });
+        return;
+      }
+
+      performScroll();
+    },
+    [activeSeries, location.pathname, location.search, navigate, resolveScrollIds, scrollToIdWithOffset, seriesSlug, volumeId]
+  );
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY || 0;
+      setIsHeaderCompact(y > 150);
+
+      const sections = [
+        { key: "lancamentos", ids: ["lancamentos"] },
+        { key: "promocoes", ids: ["promotions"] },
+        { key: "saldao", ids: ["deals"] },
+        { key: "colecoes", ids: ["railTitle", "obras"] },
+      ];
+
+      let current = "colecoes";
+      for (const section of sections) {
+        const el = section.ids.map((id) => document.getElementById(id)).find(Boolean);
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top;
+        if (top <= 180) current = section.key;
+      }
+      setActiveSection(current);
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
   return (
     <div className="container">
       <Header
@@ -478,6 +477,9 @@ function AppShell() {
           setPage(1);
           updateSearchParams({ q });
         }}
+        scrollToNav={scrollToNav}
+        activeSection={activeSection}
+        isHeaderCompact={isHeaderCompact}
       />
 
       <HomeHero />
@@ -521,9 +523,7 @@ function AppShell() {
               <button className="btn showMoreBtn" onClick={() => setPage((prev) => prev + 1)}>
                 Mostrar mais {PAGE_SIZE}
               </button>
-              <div className="showMoreHint">
-                Exibindo {pagedProducts.length}/{filtered.length}
-              </div>
+              <div className="showMoreHint">Exibindo {pagedProducts.length}/{filtered.length}</div>
             </div>
           )}
         </section>
@@ -531,35 +531,43 @@ function AppShell() {
 
       {!activeSeries && (
         <section className="railBlock" id="obras">
-          <LaunchRail
-            title="Lançamentos 🔥"
-            products={products}
-            limit={30}
-            onOpenProduct={openProduct}
-          />
+          <div id="lancamentos">
+            <LaunchRail
+              title="Lançamentos 🔥"
+              products={products}
+              limit={30}
+              onOpenProduct={openProduct}
+            />
+          </div>
 
           <div className="sectionBreak" aria-hidden="true">
             <span className="sectionBreakLine" />
           </div>
 
-          <PromoRail
-            title="Promoções 💸"
-            products={products}
-            limit={30}
-            onOpenProduct={openProduct}
-          />
+          <div id="promotions">
+            <PromoRail
+              id="promotions"
+              title="Promoções 💸"
+              products={products}
+              limit={30}
+              onOpenProduct={openProduct}
+            />
+          </div>
 
           <div className="sectionBreak" aria-hidden="true">
             <span className="sectionBreakLine" />
           </div>
 
-          <CheapRail
-            title="Baratinhos da galera 🪙"
-            subtitle="Mangás por até R$30."
-            products={products}
-            limit={30}
-            onOpenProduct={openProduct}
-          />
+          <div id="deals">
+            <CheapRail
+              id="deals"
+              title="Baratinhos da galera 🪙"
+              subtitle="Mangás por até R$30."
+              products={products}
+              limit={30}
+              onOpenProduct={openProduct}
+            />
+          </div>
 
           <div className="sectionBreak" aria-hidden="true">
             <span className="sectionBreakLine" />
@@ -602,9 +610,7 @@ function AppShell() {
           <div className="infoTag">
             <span>Exibindo</span>
             <strong>{activeSeries}</strong>
-            <span>
-              • {pagedProducts.length}/{filtered.length} volume(s)
-            </span>
+            <span>• {pagedProducts.length}/{filtered.length} volume(s)</span>
           </div>
         </div>
       )}
@@ -622,9 +628,7 @@ function AppShell() {
               <button className="btn showMoreBtn" onClick={() => setPage((prev) => prev + 1)}>
                 Mostrar mais {PAGE_SIZE}
               </button>
-              <div className="showMoreHint">
-                Exibindo {pagedProducts.length}/{filtered.length}
-              </div>
+              <div className="showMoreHint">Exibindo {pagedProducts.length}/{filtered.length}</div>
             </div>
           )}
         </section>
@@ -642,15 +646,12 @@ function AppShell() {
           ↑
         </button>
       )}
-      <Footer />
+
+      <Footer scrollToNav={scrollToNav} />
     </div>
-    
   );
 }
 
-/* =======================================================
-   ROTAS
-======================================================= */
 export default function App() {
   return (
     <Routes>
@@ -661,4 +662,3 @@ export default function App() {
     </Routes>
   );
 }
-

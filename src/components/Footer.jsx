@@ -1,11 +1,13 @@
 import "../styles/footer.css";
 
-export default function Footer() {
+export default function Footer({ scrollToNav }) {
+  const handleJump = (target) => {
+    scrollToNav?.({ target });
+  };
+
   return (
     <footer className="footer">
-
       <div className="footerContainer">
-
         <div className="footerCol brand">
           <h2 className="footerLogo">Mangá Drops</h2>
           <p>
@@ -16,11 +18,27 @@ export default function Footer() {
 
         <div className="footerCol">
           <h3>Navegação</h3>
-          <ul>
-            <li>Início</li>
-            <li>Coleções</li>
-            <li>Lançamentos</li>
-            <li>Melhores descontos</li>
+          <ul className="footerNavList">
+            <li>
+              <button type="button" className="footerLinkBtn" onClick={() => handleJump("home")}>
+                Início
+              </button>
+            </li>
+            <li>
+              <button type="button" className="footerLinkBtn" onClick={() => handleJump("colecoes")}>
+                Coleções
+              </button>
+            </li>
+            <li>
+              <button type="button" className="footerLinkBtn" onClick={() => handleJump("lancamentos")}>
+                Lançamentos
+              </button>
+            </li>
+            <li>
+              <button type="button" className="footerLinkBtn" onClick={() => handleJump("promocoes")}>
+                Melhores descontos
+              </button>
+            </li>
           </ul>
         </div>
 
@@ -38,13 +56,11 @@ export default function Footer() {
           <p>Projeto independente feito para fãs de mangá.</p>
           <p className="footerAuthor">Criado por Wesley Santos</p>
         </div>
-
       </div>
 
       <div className="footerBottom">
         © {new Date().getFullYear()} Mangá Drops — Todos os direitos reservados
       </div>
-
     </footer>
   );
 }

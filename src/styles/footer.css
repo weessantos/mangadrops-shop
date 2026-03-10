@@ -1,67 +1,75 @@
 .footer {
   margin-top: 100px;
   background: #070b15;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .footerContainer {
   max-width: 1300px;
   margin: 0 auto;
   padding: 70px 30px;
-
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 60px;
 }
-
-/* logo */
 
 .footerLogo {
   font-size: 22px;
   font-weight: 700;
-  margin-bottom: 16px;
-  color: white;
+  margin: 0 0 16px;
+  color: #fff;
 }
-
-/* títulos */
 
 .footerCol h3 {
   font-size: 16px;
   font-weight: 600;
-  margin-bottom: 16px;
-  color: white;
+  margin: 0 0 16px;
+  color: #fff;
 }
 
-/* textos */
-
 .footerCol p {
+  margin: 0;
   font-size: 14px;
   line-height: 1.7;
   color: #a7acb8;
 }
 
-/* lista */
+.footerCol p + p {
+  margin-top: 10px;
+}
 
-.footerCol ul {
+.footerNavList {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.footerCol li {
-  font-size: 14px;
-  margin-bottom: 10px;
-  color: #a7acb8;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.footerNavList li + li {
+  margin-top: 10px;
 }
 
-.footerCol li:hover {
-  color: white;
+.footerLinkBtn {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: 14px;
+  color: #a7acb8;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.footerLinkBtn:hover {
+  color: #fff;
   transform: translateX(3px);
 }
 
-/* autor */
+.footerLinkBtn:focus-visible {
+  outline: 2px solid rgba(255, 122, 24, 0.85);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
 
 .footerAuthor {
   margin-top: 8px;
@@ -69,31 +77,29 @@
   color: #d0d5df;
 }
 
-/* linha inferior */
-
 .footerBottom {
-  border-top: 1px solid rgba(255,255,255,0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
   text-align: center;
   padding: 20px;
   font-size: 13px;
   color: #7f8796;
 }
 
-/* RESPONSIVO */
-
 @media (max-width: 900px) {
-
   .footerContainer {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 40px;
   }
-
 }
 
 @media (max-width: 600px) {
-
-  .footerContainer {
-    grid-template-columns: 1fr;
+  .footer {
+    margin-top: 72px;
   }
 
+  .footerContainer {
+    padding: 52px 22px;
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
 }

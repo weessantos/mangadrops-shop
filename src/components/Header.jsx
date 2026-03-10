@@ -7,15 +7,20 @@ import "../styles/header.css";
 const base = import.meta.env.BASE_URL;
 const img = (path) => `${base}assets/${path}`;
 
-
-// remove emojis/símbolos pra busca ficar consistente
 const toQueryText = (s) =>
   String(s || "")
     .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu, "")
     .replace(/\s+/g, " ")
     .trim();
 
-export default function Header({ inputValue, setInputValue, onSearch }) {
+export default function Header({
+  inputValue,
+  setInputValue,
+  onSearch,
+  scrollToNav,
+  activeSection = "colecoes",
+  isHeaderCompact = false,
+}) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -23,9 +28,6 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
     navigate(`/filtros${location.search}`);
   };
 
-  // =========================
-  // Mobile detection
-  // =========================
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 768px)");
@@ -41,9 +43,6 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
     };
   }, []);
 
-  // =========================
-  // Menu lateral (mobile)
-  // =========================
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
   const toggleMenu = () => {
@@ -57,7 +56,6 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
     });
   };
 
-  // ESC fecha menu
   useEffect(() => {
     if (!menuOpen) return;
     const onKey = (e) => e.key === "Escape" && closeMenu();
@@ -65,60 +63,32 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [menuOpen]);
 
-  // trava scroll quando menu abre (sensação de overlay real)
   useEffect(() => {
     if (!menuOpen) return;
-    const prev = document.body.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
     document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = prev || "auto";
+      document.body.style.overflow = prevBodyOverflow || "";
+      document.documentElement.style.overflow = prevHtmlOverflow || "";
     };
   }, [menuOpen]);
 
-  // evita ficar aberto ao voltar pro desktop
   useEffect(() => {
     if (!isMobile) setMenuOpen(false);
   }, [isMobile]);
 
-  // =========================
-  // Actions
-  // =========================
   const fireSearch = (placement) => {
     const q = String(inputValue || "").trim();
-    track("search", {
-      search_term: q,
-      placement,
-    });
+    track("search", { search_term: q, placement });
     onSearch?.(q);
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter")
+    if (e.key === "Enter") {
       fireSearch(isMobile ? "header_mobile_enter" : "header_desktop_enter");
-  };
-
-  const scrollToObras = () => {
-    track("click_nav", {
-      target: "colecoes",
-      placement: isMobile ? "header_mobile" : "header_desktop",
-    });
-    (
-      document.getElementById("railTitle") ||
-      document.getElementById("obras") ||
-      document.getElementById("colecoes")
-    )?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  const scrollToNews = () => {
-    track("click_nav", {
-      target: "lancamentos",
-      placement: isMobile ? "header_mobile" : "header_desktop",
-    });
-    (
-      document.getElementById("obras") ||
-      document.getElementById("lancamentos") ||
-      document.getElementById("news")
-    )?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
   const openRequestForm = () => {
@@ -136,6 +106,34 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
     });
     setInputValue(q);
     onSearch?.(q);
+  };
+
+  const navIsActive = (section) => activeSection === section;
+
+  const navButtonStyle = (section) =>
+    navIsActive(section)
+      ? {
+          background: "linear-gradient(135deg, #ff7a18, #ff4d4d)",
+          color: "#fff",
+          boxShadow: "0 10px 24px rgba(0, 0, 0, 0.16)",
+          transform: "translateY(-1px)",
+          borderColor: "rgba(255, 255, 255, 0.22)",
+        }
+      : undefined;
+
+  const navTargets = {
+    colecoes: ["railTitle", "obras"],
+    lancamentos: ["lancamentos"],
+    promocoes: ["promotions"],
+    saldao: ["deals"],
+  };
+
+  const jumpToSection = (target) => {
+    scrollToNav?.({
+      target,
+      placement: isMobile ? "header_mobile" : "header_desktop",
+      ids: navTargets[target] || [target],
+    });
   };
 
   const obras = useMemo(
@@ -158,9 +156,6 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
     []
   );
 
-  // =========================
-  // Chips scroller + arrows (desktop)
-  // =========================
   const chipsRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -181,21 +176,14 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
   const scrollChips = (direction) => {
     const el = chipsRef.current;
     if (!el) return;
-    track("scroll_chips", {
-      direction,
-      placement: "header_chips",
-    });
-    const amount = 280;
+    track("scroll_chips", { direction, placement: "header_chips" });
     el.scrollBy({
-      left: direction === "left" ? -amount : amount,
+      left: direction === "left" ? -280 : 280,
       behavior: "smooth",
     });
     setTimeout(updateScrollState, 350);
   };
 
-  // =========================
-  // Side menu (PORTAL) — sempre acima do site
-  // =========================
   const sideMenuPortal =
     isMobile && menuOpen
       ? createPortal(
@@ -223,24 +211,52 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
               <div className="sideMenuSection">
                 <div className="sideMenuSectionTitle">Atalhos</div>
                 <button
-                  className="sideMenuBtn"
+                  className={`sideMenuBtn ${navIsActive("lancamentos") ? "isActive" : ""}`}
+                  style={navButtonStyle("lancamentos")}
+                  aria-current={navIsActive("lancamentos") ? "page" : undefined}
                   onClick={() => {
                     closeMenu();
-                    scrollToObras();
-                  }}
-                  type="button"
-                >
-                  Coleções
-                </button>
-                <button
-                  className="sideMenuBtn"
-                  onClick={() => {
-                    closeMenu();
-                    scrollToNews();
+                    jumpToSection("lancamentos");
                   }}
                   type="button"
                 >
                   Lançamentos
+                </button>
+                <button
+                  className={`sideMenuBtn ${navIsActive("promocoes") ? "isActive" : ""}`}
+                  style={navButtonStyle("promocoes")}
+                  aria-current={navIsActive("promocoes") ? "page" : undefined}
+                  onClick={() => {
+                    closeMenu();
+                    jumpToSection("promocoes");
+                  }}
+                  type="button"
+                >
+                  Promoções
+                </button>
+                <button
+                  className={`sideMenuBtn ${navIsActive("saldao") ? "isActive" : ""}`}
+                  style={navButtonStyle("saldao")}
+                  aria-current={navIsActive("saldao") ? "page" : undefined}
+                  onClick={() => {
+                    closeMenu();
+                    jumpToSection("saldao");
+                  }}
+                  type="button"
+                >
+                  Saldão
+                </button>
+                <button
+                  className={`sideMenuBtn ${navIsActive("colecoes") ? "isActive" : ""}`}
+                  style={navButtonStyle("colecoes")}
+                  aria-current={navIsActive("colecoes") ? "page" : undefined}
+                  onClick={() => {
+                    closeMenu();
+                    jumpToSection("colecoes");
+                  }}
+                  type="button"
+                >
+                  Coleções
                 </button>
                 <button
                   className="sideMenuBtn"
@@ -263,7 +279,6 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                 >
                   Filtros
                 </button>
-                
               </div>
 
               <div className="sideMenuDivider" />
@@ -298,9 +313,7 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                     target="_blank"
                     rel="noreferrer"
                     aria-label="TikTok"
-                    onClick={() =>
-                      track("click_social", { network: "tiktok", placement: "side_menu" })
-                    }
+                    onClick={() => track("click_social", { network: "tiktok", placement: "side_menu" })}
                   >
                     <img className="socialIcon" src={img("tiktok.svg")} alt="" aria-hidden="true" />
                     TikTok
@@ -311,16 +324,9 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                     target="_blank"
                     rel="noreferrer"
                     aria-label="Instagram"
-                    onClick={() =>
-                      track("click_social", { network: "instagram", placement: "side_menu" })
-                    }
+                    onClick={() => track("click_social", { network: "instagram", placement: "side_menu" })}
                   >
-                    <img
-                      className="socialIcon"
-                      src={img("instagram.svg")}
-                      alt=""
-                      aria-hidden="true"
-                    />
+                    <img className="socialIcon" src={img("instagram.svg")} alt="" aria-hidden="true" />
                     Instagram
                   </a>
                   <a
@@ -329,9 +335,7 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                     target="_blank"
                     rel="noreferrer"
                     aria-label="YouTube"
-                    onClick={() =>
-                      track("click_social", { network: "youtube", placement: "side_menu" })
-                    }
+                    onClick={() => track("click_social", { network: "youtube", placement: "side_menu" })}
                   >
                     <img className="socialIcon" src={img("youtube.svg")} alt="" aria-hidden="true" />
                     YouTube
@@ -344,13 +348,9 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
         )
       : null;
 
-  // =========================
-  // Render
-  // =========================
   return (
     <>
-      <header className="heroHeader">
-        {/* Background */}
+      <header className={`heroHeader ${isHeaderCompact && !isMobile ? "isCompact" : ""}`}>
         <div
           className="heroBg"
           style={{ backgroundImage: `url(${img("header-bg.jpeg")})` }}
@@ -358,10 +358,8 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
         />
         <div className="heroShade" aria-hidden="true" />
 
-        {/* Foreground */}
-        <div className="heroContent">
+        <div className={`heroContent ${isHeaderCompact && !isMobile ? "isCompact" : ""}`}>
           {isMobile ? (
-            /* ✅ Mobile: arrumado (logo integrada + ícone menor + botão compacto) */
             <div className="mobileTopBar">
               <button
                 className="mobileMenuBtn"
@@ -407,10 +405,68 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                 </button>
               </div>
             </div>
+          ) : isHeaderCompact ? (
+            <div className="compactHeaderBar">
+              <button
+                className="compactLogoBtn"
+                onClick={() => {
+                  track("click_logo", { placement: "header_desktop_compact" });
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                type="button"
+                aria-label="Voltar ao topo"
+              >
+                <img className="compactLogo" src={img("logo.png")} alt="MangásDrops" />
+              </button>
+
+              <nav className="compactNav" aria-label="Seções principais">
+                <button
+                  className={`compactNavBtn ${navIsActive("lancamentos") ? "isActive" : ""}`}
+                  style={navButtonStyle("lancamentos")}
+                  aria-current={navIsActive("lancamentos") ? "page" : undefined}
+                  onClick={() => jumpToSection("lancamentos")}
+                  type="button"
+                >
+                  Lançamentos
+                </button>
+                <button
+                  className={`compactNavBtn ${navIsActive("promocoes") ? "isActive" : ""}`}
+                  style={navButtonStyle("promocoes")}
+                  aria-current={navIsActive("promocoes") ? "page" : undefined}
+                  onClick={() => jumpToSection("promocoes")}
+                  type="button"
+                >
+                  Promoções
+                </button>
+                <button
+                  className={`compactNavBtn ${navIsActive("saldao") ? "isActive" : ""}`}
+                  style={navButtonStyle("saldao")}
+                  aria-current={navIsActive("saldao") ? "page" : undefined}
+                  onClick={() => jumpToSection("saldao")}
+                  type="button"
+                >
+                  Saldão
+                </button>
+                <button
+                  className={`compactNavBtn ${navIsActive("colecoes") ? "isActive" : ""}`}
+                  style={navButtonStyle("colecoes")}
+                  aria-current={navIsActive("colecoes") ? "page" : undefined}
+                  onClick={() => jumpToSection("colecoes")}
+                  type="button"
+                >
+                  Coleções
+                </button>
+              </nav>
+
+              <div className="compactHeaderActions">
+                <button className="compactActionBtn" type="button" onClick={openFilters}>
+                  Filtros
+                </button>
+              </div>
+            </div>
           ) : (
             <>
               <div className="heroTop">
-                {/* Logo */}
                 <button
                   className="heroLogoBtn"
                   onClick={() => {
@@ -423,11 +479,8 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                   <img className="heroLogo" src={img("logo.png")} alt="MangásDrops" />
                 </button>
 
-                {/* Search */}
                 <div className="heroSearch">
-                  <span className="heroSearchIcon" aria-hidden="true">
-                    🔎
-                  </span>
+                  <span className="heroSearchIcon" aria-hidden="true">🔎</span>
                   <input
                     className="heroSearchInput"
                     value={inputValue}
@@ -444,7 +497,6 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                   </button>
                 </div>
 
-                {/* Social */}
                 <div className="heroSocial">
                   <a
                     className="socialBtn"
@@ -453,9 +505,7 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                     rel="noreferrer"
                     aria-label="TikTok"
                     title="TikTok"
-                    onClick={() =>
-                      track("click_social", { network: "tiktok", placement: "header_desktop" })
-                    }
+                    onClick={() => track("click_social", { network: "tiktok", placement: "header_desktop" })}
                   >
                     <img className="socialIcon" src={img("tiktok.svg")} alt="" aria-hidden="true" />
                   </a>
@@ -466,16 +516,9 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                     rel="noreferrer"
                     aria-label="Instagram"
                     title="Instagram"
-                    onClick={() =>
-                      track("click_social", { network: "instagram", placement: "header_desktop" })
-                    }
+                    onClick={() => track("click_social", { network: "instagram", placement: "header_desktop" })}
                   >
-                    <img
-                      className="socialIcon"
-                      src={img("instagram.svg")}
-                      alt=""
-                      aria-hidden="true"
-                    />
+                    <img className="socialIcon" src={img("instagram.svg")} alt="" aria-hidden="true" />
                   </a>
                   <a
                     className="socialBtn"
@@ -484,23 +527,50 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                     rel="noreferrer"
                     aria-label="YouTube"
                     title="YouTube"
-                    onClick={() =>
-                      track("click_social", { network: "youtube", placement: "header_desktop" })
-                    }
+                    onClick={() => track("click_social", { network: "youtube", placement: "header_desktop" })}
                   >
                     <img className="socialIcon" src={img("youtube.svg")} alt="" aria-hidden="true" />
                   </a>
                 </div>
               </div>
 
-              {/* Pills row */}
               <div className="heroPills">
                 <div className="pillRowMain">
-                  <button className="pill pillPrimary" onClick={scrollToObras} type="button">
-                    Coleções
-                  </button>
-                  <button className="pill pillPrimary" onClick={scrollToNews} type="button">
+                  <button
+                    className={`pill pillPrimary ${navIsActive("lancamentos") ? "isActive" : ""}`}
+                    style={navButtonStyle("lancamentos")}
+                    aria-current={navIsActive("lancamentos") ? "page" : undefined}
+                    onClick={() => jumpToSection("lancamentos")}
+                    type="button"
+                  >
                     Lançamentos
+                  </button>
+                  <button
+                    className={`pill pillPrimary ${navIsActive("promocoes") ? "isActive" : ""}`}
+                    style={navButtonStyle("promocoes")}
+                    aria-current={navIsActive("promocoes") ? "page" : undefined}
+                    onClick={() => jumpToSection("promocoes")}
+                    type="button"
+                  >
+                    Promoções
+                  </button>
+                  <button
+                    className={`pill pillPrimary ${navIsActive("saldao") ? "isActive" : ""}`}
+                    style={navButtonStyle("saldao")}
+                    aria-current={navIsActive("saldao") ? "page" : undefined}
+                    onClick={() => jumpToSection("saldao")}
+                    type="button"
+                  >
+                    Saldão
+                  </button>
+                  <button
+                    className={`pill pillPrimary ${navIsActive("colecoes") ? "isActive" : ""}`}
+                    style={navButtonStyle("colecoes")}
+                    aria-current={navIsActive("colecoes") ? "page" : undefined}
+                    onClick={() => jumpToSection("colecoes")}
+                    type="button"
+                  >
+                    Coleções
                   </button>
 
                   <button className="pill pillCTA" onClick={openRequestForm} type="button">
@@ -510,7 +580,6 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
                   <button className="pill pillCTA" type="button" onClick={openFilters}>
                     Filtros
                   </button>
-                                    
                 </div>
 
                 <div className="pillRowSecondaryContainer">
@@ -557,7 +626,6 @@ export default function Header({ inputValue, setInputValue, onSearch }) {
         </div>
       </header>
 
-      {/* Portal fora do hero/header: sempre por cima de tudo */}
       {sideMenuPortal}
     </>
   );
