@@ -78,6 +78,23 @@ function getRequestHeaders() {
   };
 }
 
+function sanitizeDebugText(text = "") {
+  return String(text).replace(/\s+/g, " ").trim();
+}
+
+function truncateDebugText(text = "", max = 300) {
+  const clean = sanitizeDebugText(text);
+  return clean.length > max ? `${clean.slice(0, max)}...` : clean;
+}
+
+function debugAmazon(logKey, message, extra = null) {
+  if (extra !== null) {
+    console.log(`[AMZ DEBUG] ${logKey} -> ${message}`, extra);
+  } else {
+    console.log(`[AMZ DEBUG] ${logKey} -> ${message}`);
+  }
+}
+
 const httpAgent = new http.Agent({ keepAlive: true, maxSockets: CONCURRENCY * 2 });
 const httpsAgent = new https.Agent({ keepAlive: true, maxSockets: CONCURRENCY * 2 });
 
@@ -601,24 +618,39 @@ async function getMercadoLivrePrice(url, productId, sharedPage = null) {
 async function getAmazonPrice(url) {
   try {
     const response = await amazonHttp.get(url);
-
     const $ = cheerio.load(response.data);
 
-    const priceContainers = [
-      ".priceToPay",
-      ".apexPriceToPay",
-      ".reinventPricePriceToPayMargin",
-      "#corePriceDisplay_desktop_feature_div .priceToPay",
-      "#corePriceDisplay_desktop_feature_div .apexPriceToPay",
-      "#corePrice_feature_div .priceToPay",
+    const rootSelectors = [
+      "#corePriceDisplay_desktop_feature_div",
+      "#corePrice_feature_div",
+      "#apex_desktop",
+      "#corePrice_desktop",
     ];
 
-    for (const containerSelector of priceContainers) {
-      const container = $(containerSelector).first();
-      if (!container.length) continue;
+    const directPriceSelectors = [
+      ".priceToPay .a-offscreen",
+      ".apexPriceToPay .a-offscreen",
+      ".reinventPricePriceToPayMargin .a-offscreen",
+      "#priceblock_dealprice",
+      "#priceblock_saleprice",
+      "#priceblock_ourprice",
+      "#price_inside_buybox",
+    ];
 
-      const whole = container.find(".a-price-whole").first().text().trim();
-      const fraction = container.find(".a-price-fraction").first().text().trim();
+    for (const rootSelector of rootSelectors) {
+      const root = $(rootSelector).first();
+      if (!root.length) continue;
+
+      for (const selector of directPriceSelectors) {
+        const text = root.find(selector).first().text().trim();
+        const value = parsePriceFromText(text);
+        if (value !== null && value > 0) {
+          return value;
+        }
+      }
+
+      const whole = root.find(".a-price-whole").first().text().trim();
+      const fraction = root.find(".a-price-fraction").first().text().trim();
 
       if (whole) {
         const normalizedWhole = whole.replace(/\./g, "").replace(/[^\d]/g, "");
@@ -630,47 +662,21 @@ async function getAmazonPrice(url) {
           return value;
         }
       }
-
-      const offscreen = container.find(".a-offscreen").first().text().trim();
-      const offscreenValue = parsePriceFromText(offscreen);
-      if (offscreenValue !== null && offscreenValue > 0) {
-        return offscreenValue;
-      }
     }
 
-    const selectors = [
-      "#price_inside_buybox",
+    const legacySelectors = [
       "#priceblock_dealprice",
       "#priceblock_saleprice",
       "#priceblock_ourprice",
-      ".priceToPay .a-offscreen",
-      ".apexPriceToPay .a-offscreen",
-      ".reinventPricePriceToPayMargin .a-offscreen",
-      "#corePriceDisplay_desktop_feature_div .priceToPay .a-offscreen",
-      "#corePrice_feature_div .priceToPay .a-offscreen",
+      "#price_inside_buybox",
     ];
 
-    for (const selector of selectors) {
+    for (const selector of legacySelectors) {
       const text = $(selector).first().text().trim();
       const value = parsePriceFromText(text);
       if (value !== null && value > 0) {
         return value;
       }
-    }
-
-    const candidates = [];
-    $(
-      "#corePriceDisplay_desktop_feature_div .a-price, #corePrice_feature_div .a-price, .priceToPay, .apexPriceToPay"
-    ).each((_, el) => {
-      const text = $(el).text().trim();
-      const value = parsePriceFromText(text);
-      if (value !== null && value > 0) {
-        candidates.push(value);
-      }
-    });
-
-    if (candidates.length) {
-      return Math.min(...candidates);
     }
 
     return null;
