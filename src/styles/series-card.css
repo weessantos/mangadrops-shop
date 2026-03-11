@@ -1,345 +1,590 @@
 /* =========================================================
-   SERIES GALLERY (Netflix-style)
+   SERIES SECTION / RAIL
    ========================================================= */
-.seriesGrid{
-  display:grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
-}
 
-@media (max-width: 1200px){
-  .seriesGrid{ grid-template-columns: repeat(3, 1fr); }
-}
-
-@media (max-width: 900px){
-  .seriesGrid{ grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 520px){
-  .seriesGrid{ grid-template-columns: 1fr; }
-}
-
-.seriesCard{
-  position: relative;
-  aspect-ratio: 3 / 4;
-  border-radius: 18px;
-  overflow: hidden;
-  cursor: pointer;
-  border: 1px solid var(--border);
-  background: rgba(0,0,0,0.25);
-  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
-  animation: seriesFade .28s ease both;
-}
-
-@keyframes seriesFade{
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.seriesCard:hover{
-  transform: translateY(-5px) scale(1.01);
-  border-color: rgba(255,255,255,0.22);
-  box-shadow:
-    0 18px 60px rgba(0,0,0,0.55),
-    0 0 0 1px rgba(124,58,237,0.12),
-    0 0 40px rgba(124,58,237,0.25);
-}
-
-.seriesThumb{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display:block;
-  transform: scale(1.02);
-  transition: transform .35s ease, filter .35s ease;
-  filter: saturate(1.05) contrast(1.05);
-}
-
-.seriesCard:hover .seriesThumb{
-  transform: scale(1.10);
-  filter: saturate(1.12) contrast(1.08);
-}
-
-.seriesOverlay{
-  position:absolute;
-  inset:0;
-  background: linear-gradient(to top, rgba(0,0,0,0.82), rgba(0,0,0,0.15) 55%, rgba(0,0,0,0.05));
-  display:flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 14px;
-  gap: 8px;
-}
-
-.seriesTopBadges{
-  position:absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
-  z-index: 60;
-  display:flex;
-  justify-content: space-between;
-  gap: 8px;
-  pointer-events: auto;
-}
-
-.badgePill{
-  font-size: 10px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.16);
-  background: rgba(0,0,0,0.35);
-  color: rgba(255,255,255,0.88);
-  backdrop-filter: blur(8px);
-  white-space: nowrap;
-}
-
-.badgePill.good{
-  background: rgba(34,197,94,0.20);
-  border-color: rgba(34,197,94,0.30);
-}
-
-.badgePill.warn{
-  background: rgba(245,158,11,0.22);
-  border-color: rgba(245,158,11,0.32);
-}
-
-.badgePill.danger{
-  background: rgba(239,68,68,0.18);
-  border-color: rgba(239,68,68,0.30);
-}
-
-button.badgePill{
-  cursor: pointer;
-  border: 1px solid rgba(255,255,255,0.16);
-}
-
-.seriesName{
-  margin:0;
-  font-size: 14px;
-  font-weight: 750;
-  line-height: 1.15;
-  text-shadow: 0 10px 30px rgba(0,0,0,0.55);
-}
-
-.seriesMeta{
-  display:flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.seriesChip{
-  font-size: 10px;
-  padding: 5px 9px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(0,0,0,0.35);
-  color: rgba(255,255,255,0.86);
-  backdrop-filter: blur(8px);
-}
-
-.seriesChip.good{
-  background: rgba(124,58,237,0.22);
-  border-color: rgba(124,58,237,0.30);
-}
-
-/* Active + Chevron */
-.seriesTitleRow{
-  display:flex;
-  align-items:center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.seriesChevron{
-  width: 28px;
-  height: 28px;
-  display:grid;
-  place-items:center;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(0,0,0,0.30);
-  color: rgba(255,255,255,0.9);
-  transform: rotate(0deg);
-  transition: transform .18s ease, background .18s ease, border-color .18s ease;
-  backdrop-filter: blur(8px);
-}
-.seriesChevron.open{ transform: rotate(180deg); }
-
-.seriesCard.isActive{
-  border-color: rgba(124,58,237,0.45);
-  box-shadow:
-    0 18px 60px rgba(0,0,0,0.55),
-    0 0 0 1px rgba(124,58,237,0.18),
-    0 0 46px rgba(124,58,237,0.28);
-}
-
-.seriesCard.isActive .seriesThumb{ transform: scale(1.08); }
-
-.seriesChip.selected{
-  background: rgba(124,58,237,0.22);
-  border-color: rgba(124,58,237,0.30);
-}
-
-/* =========================================================
-   VOLUMES WRAP (expand/collapse)
-   ========================================================= */
-.volumesWrap{
-  overflow: hidden;
-  max-height: 0;
-  opacity: 0;
-  transform: translateY(-6px);
-  transition: max-height .25s ease, opacity .2s ease, transform .2s ease;
-}
-
-.volumesWrap.open{
-  max-height: 99999px;
-  opacity: 1;
-  transform: translateY(0px);
-}
-
-.volumesSection{
-  padding-top: 86px;
-  margin-top: -70px;
-}
-
-/* =========================================================
-   POPOVER (Sem estoque)
-   ========================================================= */
-.missingPopover{
-  position: absolute;
-  top: 52px;
-  right: 12px;
-  width: min(360px, calc(100% - 24px));
-  z-index: 80;
-
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(10,12,18,0.55);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 20px 80px rgba(0,0,0,0.70);
-  overflow: hidden;
-}
-
-.missingPopover::before{
-  content:"";
-  position:absolute;
-  top: -6px;
-  right: 18px;
-  width: 12px;
-  height: 12px;
-  transform: rotate(45deg);
-  background: rgba(10,12,18,0.55);
-  border-left: 1px solid rgba(255,255,255,0.14);
-  border-top: 1px solid rgba(255,255,255,0.14);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
-
-.missingHeader{
-  display:flex;
-  align-items:center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.10);
-  color: rgba(255,255,255,0.92);
-  font-size: 12px;
-}
-
-.missingClose{
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(0,0,0,0.30);
-  color: rgba(255,255,255,0.88);
-  border-radius: 10px;
-  padding: 4px 8px;
-  cursor: pointer;
-}
-
-.missingBody{ padding: 12px 12px 14px; }
-
-.missingCount{
-  font-size: 12px;
-  color: rgba(255,255,255,0.80);
-  margin-bottom: 8px;
-}
-
-.missingList{
-  font-size: 12px;
-  line-height: 1.55;
-  color: rgba(255,255,255,0.88);
-  max-height: 130px;
-  overflow: auto;
-  padding-right: 6px;
-}
-
-.missingList::-webkit-scrollbar{ width: 8px; }
-.missingList::-webkit-scrollbar-thumb{
-  background: rgba(255,255,255,0.14);
-  border-radius: 999px;
-}
-/* ===== Carrossel de séries ===== */
-.railBlock{
+.railBlock {
   padding: 10px 14px 18px;
 }
 
-.railHeader{
+.railHeader {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
-.railTitle{
+.railTitle {
   margin: 0;
   font-size: 22px;
   font-weight: 900;
   letter-spacing: -0.4px;
 }
 
-.railSeeAll{
+.railSeeAll {
   border: 0;
   background: transparent;
-  color: rgba(255,255,255,0.75);
+  color: rgba(255, 255, 255, 0.75);
   font-weight: 800;
   cursor: pointer;
 }
 
-/* Mobile-first: vira trilho horizontal */
-.seriesRail{
+.seriesSection .sectionSubtitle,
+.railBlock .sectionSubtitle {
+  display: block;
+  max-width: 760px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 8px 0 0;
+  white-space: normal;
+  text-wrap: pretty;
+}
+
+/* Mobile-first: carrossel horizontal */
+.seriesRail {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 78%;
+  grid-auto-columns: 82%;
   gap: 12px;
   overflow-x: auto;
-  padding-bottom: 6px;
+  padding: 6px 0 6px;
 
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-
-  /* deixa mais “limpo” */
   scrollbar-width: none;
 }
-.seriesRail::-webkit-scrollbar{ display: none; }
 
-.railItem{
+.seriesRail::-webkit-scrollbar {
+  display: none;
+}
+
+.railItem {
   scroll-snap-align: start;
 }
 
-/* Importante: no carrossel, o card precisa ocupar 100% do item */
-.railItem .seriesCard{
+.railItem .seriesCard {
   width: 100%;
 }
 
-/* Telas maiores: pode virar grid (opcional) */
-@media (min-width: 900px){
-  .seriesRail{
+/* Mobile maior */
+@media (min-width: 430px) and (max-width: 899px) {
+  .seriesRail {
+    grid-auto-columns: 64%;
+  }
+}
+
+/* Desktop: grid de 6 por “página” visual (3x2) */
+@media (min-width: 900px) {
+  .seriesRail {
+    display: grid;
     grid-auto-flow: unset;
     grid-auto-columns: unset;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
     overflow: visible;
     scroll-snap-type: none;
+  }
+}
+
+/* =========================================================
+   SERIES CARD
+   ========================================================= */
+
+.seriesCard {
+  position: relative;
+  aspect-ratio: 4 / 5.25;
+  border-radius: 22px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.25);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  animation: seriesFade 0.28s ease both;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes seriesFade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .seriesCard:hover {
+    transform: translateY(-5px) scale(1.01);
+    border-color: rgba(255, 255, 255, 0.22);
+    box-shadow:
+      0 18px 60px rgba(0, 0, 0, 0.55),
+      0 0 0 1px rgba(124, 58, 237, 0.12),
+      0 0 40px rgba(124, 58, 237, 0.25);
+  }
+}
+
+.seriesThumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scale(1.02);
+  transition: transform 0.35s ease, filter 0.35s ease;
+  filter: saturate(1.05) contrast(1.05);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .seriesCard:hover .seriesThumb {
+    transform: scale(1.08);
+    filter: saturate(1.12) contrast(1.08);
+  }
+}
+
+.seriesOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.88),
+    rgba(0, 0, 0, 0.20) 56%,
+    rgba(0, 0, 0, 0.05)
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 16px;
+  gap: 9px;
+}
+
+.seriesTopBadges {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 60;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.badgePill {
+  font-size: 11px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(0, 0, 0, 0.35);
+  color: rgba(255, 255, 255, 0.88);
+  white-space: nowrap;
+}
+
+.badgePill.good {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.badgePill.warn {
+  background: rgba(245, 158, 11, 0.22);
+  border-color: rgba(245, 158, 11, 0.32);
+}
+
+.badgePill.danger {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+button.badgePill {
+  cursor: pointer;
+}
+
+.seriesTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.seriesName {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.15;
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+}
+
+.seriesMeta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.seriesChip {
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.35);
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.seriesChip.good {
+  background: rgba(124, 58, 237, 0.22);
+  border-color: rgba(124, 58, 237, 0.3);
+}
+
+.seriesChip.selected {
+  background: rgba(124, 58, 237, 0.22);
+  border-color: rgba(124, 58, 237, 0.3);
+}
+
+.seriesChevron {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.9);
+  transform: rotate(0deg);
+  transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.seriesChevron.open {
+  transform: rotate(180deg);
+}
+
+.seriesCard.isActive {
+  border-color: rgba(124, 58, 237, 0.45);
+  box-shadow:
+    0 18px 60px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(124, 58, 237, 0.18),
+    0 0 46px rgba(124, 58, 237, 0.28);
+}
+
+.seriesCard.isActive .seriesThumb {
+  transform: scale(1.05);
+}
+
+/* =========================================================
+   VOLUMES WRAP
+   ========================================================= */
+
+.volumesWrap {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: max-height 0.25s ease, opacity 0.2s ease, transform 0.2s ease;
+}
+
+.volumesWrap.open {
+  max-height: 99999px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.volumesSection {
+  padding-top: 86px;
+  margin-top: -70px;
+}
+
+/* =========================================================
+   POPOVER
+   ========================================================= */
+
+.missingPopover {
+  position: absolute;
+  top: 54px;
+  right: 12px;
+  width: min(360px, calc(100% - 24px));
+  z-index: 80;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(10, 12, 18, 0.96);
+  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+}
+
+.missingPopover::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: 18px;
+  width: 12px;
+  height: 12px;
+  transform: rotate(45deg);
+  background: rgba(10, 12, 18, 0.96);
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.missingHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 12px;
+}
+
+.missingClose {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.88);
+  border-radius: 10px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.missingBody {
+  padding: 12px 12px 14px;
+}
+
+.missingCount {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 8px;
+}
+
+.missingList {
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.88);
+  max-height: 130px;
+  overflow: auto;
+  padding-right: 6px;
+}
+
+.missingList::-webkit-scrollbar {
+  width: 8px;
+}
+
+.missingList::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .railBlock {
+    padding: 8px 10px 16px;
+  }
+
+  .seriesSection .sectionSubtitle,
+  .railBlock .sectionSubtitle {
+    max-width: 100%;
+    width: 100%;
+    line-height: 1.55;
+    font-size: 14px;
+  }
+
+  .seriesCard {
+    aspect-ratio: 4 / 5.3;
+    border-radius: 20px;
+  }
+
+  .seriesOverlay {
+    padding: 14px;
+  }
+
+  .seriesName {
+    font-size: 15px;
+  }
+
+  .seriesChip {
+    font-size: 10px;
+    padding: 6px 9px;
+  }
+
+  .badgePill {
+    font-size: 10px;
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 430px) {
+  .seriesRail {
+    grid-auto-columns: 84%;
+  }
+}
+
+/* =========================================================
+   COLLECTIONS DESKTOP PAGINATION / NETFLIX FEEL
+   ========================================================= */
+
+.collectionsSectionDesktop {
+  position: relative;
+}
+
+.collectionsTopbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 8px 0 18px;
+  padding: 0 4px;
+}
+
+.collectionsTopbarLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.collectionsEyebrow {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.collectionsMeta {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.collectionsMeta strong {
+  color: rgba(255, 255, 255, 0.98);
+}
+
+.collectionsPager {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.collectionsNavBtn {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font-size: 24px;
+  font-weight: 900;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.collectionsNavBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.collectionsNavBtn:disabled {
+  opacity: 0.34;
+  cursor: not-allowed;
+}
+
+.collectionsDesktopGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 20px !important;
+}
+
+.collectionsDesktopGrid .seriesCard {
+  aspect-ratio: 4 / 5.1;
+  min-height: 0;
+}
+
+.collectionsBottomBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 20px;
+  padding: 0 4px;
+}
+
+.collectionsDots {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.collectionsDot {
+  width: 10px;
+  height: 10px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.collectionsDot:hover {
+  transform: scale(1.08);
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.collectionsDot.isActive {
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
+  transform: scale(1.14);
+}
+
+.collectionsCounter {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.collectionsCounter strong {
+  color: rgba(255, 255, 255, 0.96);
+}
+
+@media (max-width: 1023px) {
+  .collectionsTopbar,
+  .collectionsBottomBar {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .collectionsSection .sectionHeader,
+  .railBlock > .sectionHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .collectionsSection .sectionHeaderLeft,
+  .collectionsSection .sectionHeaderRight,
+  .railBlock .sectionHeaderLeft,
+  .railBlock .sectionHeaderRight {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .collectionsSection .sectionSubtitle,
+  .railBlock .sectionSubtitle {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 1.55;
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: normal;
+    text-wrap: pretty;
   }
 }

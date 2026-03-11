@@ -10,6 +10,26 @@ import {
 const base = import.meta.env.BASE_URL;
 const img = (path) => `${base}assets/${path}`;
 
+const handleOverlayWheel = (e) => {
+  const scrollContainer = e.target.closest(".modalContent");
+
+  if (!scrollContainer) {
+    e.preventDefault();
+    return;
+  }
+
+  const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
+  const goingDown = e.deltaY > 0;
+  const goingUp = e.deltaY < 0;
+
+  const atTop = scrollTop <= 0;
+  const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
+
+  if ((goingUp && atTop) || (goingDown && atBottom)) {
+    e.preventDefault();
+  }
+};
+
 function getTikTokEmbedUrl(tiktokUrl) {
   if (!tiktokUrl) return null;
   const match = tiktokUrl.match(/video\/(\d+)/) || tiktokUrl.match(/\/v\/(\d+)/);
@@ -57,12 +77,7 @@ export default function ProductModal({ product, onClose }) {
     };
 
     document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "auto";
-    };
+    return () => document.removeEventListener("keydown", onKey);
   }, [onClose]);
 
   useEffect(() => {
@@ -177,11 +192,11 @@ export default function ProductModal({ product, onClose }) {
   };
 
   return (
-    <div className="modalOverlay" onClick={onClose}>
+    <div className="modalOverlay" onClick={onClose} onWheel={handleOverlayWheel}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modalTop">
           <h1 className="modalHeading">Detalhes do mangá</h1>
-          <button className="closeBtn" onClick={onClose} aria-label="Fechar">
+          <button className="closeBtn" onClick={onClose} aria-label="Fechar" type="button">
             ✕
           </button>
         </div>
@@ -190,7 +205,7 @@ export default function ProductModal({ product, onClose }) {
           <div className="modalBody desktopOnly">
             <div className="modalLeft">
               <div className="modalCover desktopCover">
-                <img src={product.image} alt={product.title} />
+                <img src={product.image} alt={product.title} loading="eager" decoding="async" />
               </div>
 
               <p className="modalDesc modalDescLeft desktopCaption">
@@ -281,6 +296,7 @@ export default function ProductModal({ product, onClose }) {
                             className="tiktokIframe"
                             allow="encrypted-media;"
                             allowFullScreen
+                            loading="lazy"
                           />
                         </div>
 
@@ -322,7 +338,7 @@ export default function ProductModal({ product, onClose }) {
             <section className="railPage railProduct">
               <div className="productHero">
                 <div className="modalCover">
-                  <img src={product.image} alt={product.title} />
+                  <img src={product.image} alt={product.title} loading="eager" decoding="async" />
                 </div>
 
                 <div className="productInfoUnder">
@@ -370,6 +386,7 @@ export default function ProductModal({ product, onClose }) {
                         className="tiktokIframe"
                         allow="encrypted-media;"
                         allowFullScreen
+                        loading="lazy"
                       />
                     </div>
 

@@ -1,11 +1,7 @@
-/* =========================================================
-   PRODUCT MODAL (clean + dedup + mobile app mode)
-   ========================================================= */
-
 :root{
-  --modal-pad: 16px;      /* padding único para alinhar tudo */
-  --topbar-h: 68px;       /* usado no mobile fullscreen */
-  --footer-h: 166px;      /* espaço para CTA/footer fixo */
+  --modal-pad: 16px;
+  --topbar-h: 68px;
+  --footer-h: 166px;
 }
 
 /* =========================================================
@@ -14,8 +10,7 @@
 .modalOverlay{
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(6px);
+  background: rgba(0,0,0,0.68);
   display: grid;
   place-items: center;
   padding: 18px;
@@ -24,9 +19,10 @@
 
 .modal{
   width: min(900px, 100%);
+  max-height: 92vh;
   border-radius: 22px;
-  border: 1px solid var(--border);
-  background: rgba(20, 24, 36, 0.75);
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(20, 24, 36, 0.98);
   box-shadow: 0 24px 90px rgba(0,0,0,0.55);
   overflow: hidden;
   position: relative;
@@ -39,17 +35,13 @@
   position: sticky;
   top: 0;
   z-index: 20;
-
   display:flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-
   padding: var(--modal-pad);
   padding-bottom: 12px;
-
-  background: rgba(20, 24, 36, 0.72);
-  backdrop-filter: blur(10px);
+  background: rgba(20, 24, 36, 0.98);
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
@@ -57,12 +49,10 @@
   position: relative;
   margin: 0;
   margin-left: var(--modal-pad);
-
   font-size: 26px;
   font-weight: 800;
   letter-spacing: -0.4px;
   color: #fff;
-
   display: flex;
   align-items: center;
   gap: 14px;
@@ -73,17 +63,13 @@
   width: 6px;
   height: 26px;
   border-radius: 4px;
-
   background: linear-gradient(180deg, #7c3aed, #3b82f6);
-  box-shadow:
-    0 0 12px rgba(124,58,237,0.6),
-    0 0 20px rgba(59,130,246,0.5);
 }
 
 .closeBtn{
-  border: 1px solid var(--border);
-  background: rgba(0,0,0,0.25);
-  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: #fff;
   width: 42px;
   height: 42px;
   border-radius: 14px;
@@ -101,27 +87,26 @@
   padding-bottom: 10px;
 }
 
-/* helpers */
 .desktopOnly{ display: block; }
 .mobileOnly{ display: none; }
-
-/* espaço pro footer fixo não cobrir conteúdo (desktop / fallback) */
 .modalFooterSpacer{ height: 110px; }
 
 /* =========================================================
-   SHARED: COVER
+   SHARED
    ========================================================= */
 .modalCover{
   width: 100%;
   border-radius: 18px;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255,255,255,0.08);
   overflow: hidden;
   background: rgba(0,0,0,0.25);
 }
 
-/* =========================================================
-   SHARED: TIKTOK (tall only when video exists)
-   ========================================================= */
+.modalCover img{
+  display: block;
+  width: 100%;
+}
+
 .tiktokEmbedWrap{
   aspect-ratio: 9 / 16;
   width: 100%;
@@ -138,7 +123,6 @@
   display: block;
 }
 
-/* placeholder base (não reserva altura gigante) */
 .tiktokPlaceholder{
   width: 100%;
   border-radius: 16px;
@@ -147,15 +131,12 @@
 
 .tiktokTall{ aspect-ratio: 9 / 16; }
 
-/* ✅ Quando NÃO tem vídeo: compacto, sem “retângulo vazio” */
 .tiktokCompact{
   min-height: auto;
   padding: 14px 16px;
-
   border-radius: 16px;
   border: 1px dashed rgba(255,255,255,0.14);
   background: rgba(255,255,255,0.02);
-
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -182,73 +163,32 @@
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,0.12);
   background: rgba(255,255,255,0.06);
-  color: var(--text);
+  color: #fff;
   text-decoration: none;
   font-weight: 700;
   width: fit-content;
   margin-top: 10px;
 }
 
-/* =========================================================
-   MEDIA CARD (base + hasVideo)
-   ========================================================= */
 .mediaCard{
   border-radius: 18px;
   border: 1px solid rgba(255,255,255,0.10);
   background: rgba(0,0,0,0.18);
-  box-shadow:
-    0 18px 60px rgba(0,0,0,0.25),
-    inset 0 1px 0 rgba(255,255,255,0.06);
+  box-shadow: 0 18px 60px rgba(0,0,0,0.25);
   padding: 14px;
   width: fit-content;
   max-width: 100%;
-  transition: all 240ms ease;
 }
 
 .mediaCard.hasVideo{
   padding: 18px;
   border: 1px solid rgba(255,255,255,0.14);
-  box-shadow:
-    0 30px 80px rgba(0,0,0,0.45),
-    0 0 40px rgba(124,58,237,0.12),
-    inset 0 1px 0 rgba(255,255,255,0.08);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.45);
 }
 
 /* =========================================================
-   PRICE SUMMARY + STORE CARDS
+   STORE CARDS
    ========================================================= */
-.priceSummary{
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
-  padding: 12px 14px;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.04);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
-}
-
-.priceSummaryLabel{
-  font-size: 0.92rem;
-  color: rgba(255,255,255,0.72);
-  font-weight: 700;
-}
-
-.priceSummaryValue{
-  font-size: 1.08rem;
-  font-weight: 900;
-  color: #fff;
-  letter-spacing: -0.02em;
-}
-
-.priceUpdatedAt{
-  margin: -4px 0 12px;
-  font-size: 0.82rem;
-  color: rgba(255,255,255,0.58);
-}
-
 .buyRowCards{
   display: grid;
   gap: 12px;
@@ -272,15 +212,10 @@
   border-radius: 18px;
   text-decoration: none;
   border: 1px solid rgba(255,255,255,0.08);
-  transition:
-    transform 0.16s ease,
-    border-color 0.16s ease,
-    box-shadow 0.16s ease,
-    filter 0.16s ease;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
 }
 
 .storeBuyCard:hover{
-  transform: translateY(-1px);
   border-color: rgba(255,255,255,0.16);
   box-shadow: 0 10px 24px rgba(0,0,0,0.24);
   filter: brightness(1.02);
@@ -338,7 +273,7 @@
 }
 
 /* =========================================================
-   DESKTOP (layout premium + toggle)
+   DESKTOP
    ========================================================= */
 @media (min-width: 721px){
   .modalBody{
@@ -350,8 +285,6 @@
   }
 
   .modalLeft, .modalRight{ min-width: 0; }
-
-  .desktopCover{ position: relative; }
 
   .desktopCover img{
     width: 100%;
@@ -388,7 +321,6 @@
     margin: 0 0 12px;
   }
 
-  /* Toggle segmentado */
   .tabPills{
     margin-top: 12px;
     width: fit-content;
@@ -398,7 +330,6 @@
     border-radius: 999px;
     border: 1px solid rgba(255,255,255,0.12);
     background: rgba(0,0,0,0.18);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
   }
 
   .tabPill{
@@ -409,29 +340,27 @@
     font-weight: 800;
     color: rgba(255,255,255,0.75);
     background: transparent;
-    transition: transform 120ms ease, background 120ms ease, color 120ms ease, filter 120ms ease;
+    transition: background 120ms ease, color 120ms ease, filter 120ms ease;
   }
 
   .tabPill:hover{
     filter: brightness(1.08);
-    transform: translateY(-1px);
   }
 
   .tabPill.active{
-    color: var(--text);
+    color: #fff;
     background: rgba(255,255,255,0.10);
     border: 1px solid rgba(255,255,255,0.14);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
   }
 
   .tabPanel{ margin-top: 8px; }
 
-  /* Card de detalhes */
   .detailsCard{
     border-radius: 18px;
     border: 1px solid rgba(255,255,255,0.10);
     background: rgba(0,0,0,0.16);
-    box-shadow: 0 18px 60px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.06);
+    box-shadow: 0 18px 60px rgba(0,0,0,0.20);
     padding: 16px;
     max-width: 72ch;
   }
@@ -444,7 +373,7 @@
 
   .detailsText{
     margin: 0;
-    color: var(--muted);
+    color: rgba(255,255,255,0.75);
     line-height: 1.65;
     font-size: 14px;
   }
@@ -455,7 +384,6 @@
     color: rgba(255,255,255,0.60);
   }
 
-  /* TikTok no desktop (limita largura) */
   .tiktokEmbedWrap.tiktokTall{
     width: 380px;
     max-width: 100%;
@@ -467,22 +395,18 @@
     max-width: 100%;
   }
 
-  /* mediaCard com vídeo ganha largura */
   .mediaCard.hasVideo{ width: 420px; }
 
-  /* descrição fora da imagem (clean) */
   .modalDescLeft{
     position: static !important;
     margin-top: 14px;
     padding: 0;
-
     background: none;
     border: none;
     box-shadow: none;
-
     font-size: 14px;
     line-height: 1.6;
-    color: var(--muted);
+    color: rgba(255,255,255,0.72);
     max-width: 32ch;
   }
 
@@ -491,15 +415,14 @@
 }
 
 /* =========================================================
-   MOBILE (APP MODE + RAIL)
+   MOBILE
    ========================================================= */
 @media (max-width: 720px){
   .modalOverlay{
     padding: 0;
     place-items: stretch;
     align-items: stretch;
-    background: rgba(0,0,0,0.62);
-    backdrop-filter: blur(10px);
+    background: rgba(0,0,0,0.76);
   }
 
   .modal{
@@ -523,10 +446,8 @@
     left: 0;
     right: 0;
     z-index: 50;
-
     padding: calc(env(safe-area-inset-top) + 12px) 14px 12px;
-    background: rgba(15,20,32,0.92);
-    backdrop-filter: blur(14px);
+    background: rgba(15,20,32,0.98);
     border-bottom: 1px solid rgba(255,255,255,0.06);
   }
 
@@ -541,14 +462,13 @@
     width: 4px;
     height: 20px;
     border-radius: 3px;
-    box-shadow: none;
   }
 
   .closeBtn{
     width: 44px;
     height: 44px;
     border-radius: 14px;
-    background: rgba(0,0,0,0.30);
+    background: rgba(255,255,255,0.06);
   }
 
   .modalContent{
@@ -567,10 +487,8 @@
     right: 0;
     bottom: 0;
     z-index: 60;
-
     padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
-    background: rgba(15,20,32,0.92);
-    backdrop-filter: blur(14px);
+    background: rgba(15,20,32,0.98);
     border-top: 1px solid rgba(255,255,255,0.06);
   }
 
@@ -594,12 +512,9 @@
     min-width: 100%;
     scroll-snap-align: start;
     scroll-snap-stop: always;
-
     border-radius: 18px;
     border: 1px solid rgba(255,255,255,0.05);
     background: rgba(255,255,255,0.02);
-    box-shadow: none;
-
     padding: 16px;
     display: flex;
     flex-direction: column;
@@ -673,24 +588,6 @@
 
   .modalFooterSpacer{ height: 0; }
 
-  .priceSummary{
-    padding: 10px 12px;
-    margin-bottom: 10px;
-  }
-
-  .priceSummaryLabel{
-    font-size: 0.84rem;
-  }
-
-  .priceSummaryValue{
-    font-size: 0.98rem;
-  }
-
-  .priceUpdatedAt{
-    font-size: 0.76rem;
-    margin-bottom: 10px;
-  }
-
   .buyRowCards{
     gap: 10px;
   }
@@ -719,7 +616,6 @@
   }
 }
 
-/* telas pequenas: tipografia reduz um pouco pra não cortar */
 @media (max-width: 480px){
   .productInfoUnder .modalTitle{
     font-size: clamp(15px, 4.2vw, 17px);
@@ -744,7 +640,6 @@
   }
 }
 
-/* telas MUITO pequenas (ex: 320–360px) */
 @media (max-width: 380px){
   :root{ --topbar-h: 64px; --footer-h: 172px; }
 
@@ -769,32 +664,6 @@
     font-size: 0.58rem;
     padding: 3px 6px;
   }
-}
-
-/* =========================================================
-   RAIL DOTS
-   ========================================================= */
-.railDots{
-  display:flex;
-  justify-content:center;
-  gap: 8px;
-  margin: 10px 0 0;
-}
-
-.railDot{
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  border: 0;
-  background: rgba(255,255,255,0.25);
-  transition: all 220ms ease;
-  cursor: pointer;
-}
-
-.railDot.active{
-  width: 20px;
-  background: linear-gradient(90deg,#7c3aed,#3b82f6);
-  box-shadow: 0 0 12px rgba(124,58,237,0.6);
 }
 
 .desktopBuySection{
@@ -837,4 +706,12 @@
     font-size: 0.54rem;
     padding: 3px 6px;
   }
+}
+
+.modalOverlay{
+  overscroll-behavior: contain;
+}
+
+.modalContent{
+  overscroll-behavior: contain;
 }

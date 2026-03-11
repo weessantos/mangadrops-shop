@@ -31,7 +31,12 @@ import { seriesCatalog } from "./data/products/series.catalog.js";
 import { useSeriesList } from "./hooks/useSeriesList";
 import { useScrollTop } from "./hooks/useScrollTop";
 
-import { parseQuery, pickSeriesFromQuery, productSearchText, slugify } from "./utils/search";
+import {
+  parseQuery,
+  pickSeriesFromQuery,
+  productSearchText,
+  slugify,
+} from "./utils/search";
 import Footer from "./components/Footer";
 
 const norm = (v) => String(v || "").trim();
@@ -105,13 +110,22 @@ function hasReview(p) {
 
 function AppShell() {
   const PAGE_SIZE = 12;
+  const SERIES_PAGE_SIZE = 6;
+
   const navigate = useNavigate();
   const location = useLocation();
   const { seriesSlug, volumeId } = useParams();
   const [sp, setSp] = useSearchParams();
 
   const [page, setPage] = useState(1);
+  const [seriesPage, setSeriesPage] = useState(1);
+  const [isDesktopCollections, setIsDesktopCollections] = useState(
+    typeof window !== "undefined" ? window.innerWidth >= 1024 : false
+  );
+
   const lastAppliedQueryRef = useRef("");
+  const collectionsSectionRef = useRef(null);
+
   const [inputValue, setInputValue] = useState("");
   const [selected, setSelected] = useState(null);
   const [activeSeries, setActiveSeries] = useState(null);
@@ -119,7 +133,10 @@ function AppShell() {
   const [activeSection, setActiveSection] = useState("colecoes");
 
   const { showScrollTop, scrollToTop } = useScrollTop(400);
-  const { seriesList, seriesBySlug, seriesNames } = useSeriesList(products, seriesCatalog);
+  const { seriesList, seriesBySlug, seriesNames } = useSeriesList(
+    products,
+    seriesCatalog
+  );
 
   const metaBySeries = useMemo(() => {
     const map = new Map();
@@ -171,18 +188,30 @@ function AppShell() {
     (sortParam && sortParam !== "relevance");
 
   useEffect(() => {
+    const onResize = () => {
+      setIsDesktopCollections(window.innerWidth >= 1024);
+    };
+
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
     setInputValue(qParam);
   }, [qParam]);
 
   useEffect(() => {
     if (!seriesSlug) {
       setActiveSeries(null);
-      setSelected(null);
       return;
     }
+
+    if (volumeId) return;
+
     const name = seriesBySlug.get(seriesSlug) || null;
     setActiveSeries(name);
-  }, [seriesSlug, seriesBySlug]);
+  }, [seriesSlug, volumeId, seriesBySlug]);
 
   useEffect(() => {
     const q = (qParam || "").trim();
@@ -213,7 +242,9 @@ function AppShell() {
     const { words, numbers } = parseQuery(qParam);
 
     return products
-      .filter((p) => (activeSeries ? (p.series || "Outros") === activeSeries : true))
+      .filter((p) =>
+        activeSeries ? (p.series || "Outros") === activeSeries : true
+      )
       .filter((p) => {
         if (!words.length && !numbers.length) return true;
 
@@ -244,17 +275,33 @@ function AppShell() {
     let arr = [...baseFiltered];
 
     const brandSet = brandParam.length ? new Set(brandParam.map(normLc)) : null;
-    const authorSet = authorParam.length ? new Set(authorParam.map(normLc)) : null;
+    const authorSet = authorParam.length
+      ? new Set(authorParam.map(normLc))
+      : null;
     const genreSet = genreParam.length ? new Set(genreParam.map(normLc)) : null;
-    const formatSet = formatParam.length ? new Set(formatParam.map(normLc)) : null;
+    const formatSet = formatParam.length
+      ? new Set(formatParam.map(normLc))
+      : null;
 
     const maxPrice = priceParam ? Number(priceParam) : null;
     const minDiscount = discountParam ? Number(discountParam) : null;
 
-    if (brandSet) arr = arr.filter((p) => getMeta(p).brand.some((b) => brandSet.has(normLc(b))));
-    if (authorSet) arr = arr.filter((p) => getMeta(p).author.some((a) => authorSet.has(normLc(a))));
-    if (genreSet) arr = arr.filter((p) => getMeta(p).genre.some((g) => genreSet.has(normLc(g))));
-    if (formatSet) arr = arr.filter((p) => getMeta(p).format.some((f) => formatSet.has(normLc(f))));
+    if (brandSet)
+      arr = arr.filter((p) =>
+        getMeta(p).brand.some((b) => brandSet.has(normLc(b)))
+      );
+    if (authorSet)
+      arr = arr.filter((p) =>
+        getMeta(p).author.some((a) => authorSet.has(normLc(a)))
+      );
+    if (genreSet)
+      arr = arr.filter((p) =>
+        getMeta(p).genre.some((g) => genreSet.has(normLc(g)))
+      );
+    if (formatSet)
+      arr = arr.filter((p) =>
+        getMeta(p).format.some((f) => formatSet.has(normLc(f)))
+      );
 
     if (Number.isFinite(maxPrice)) {
       arr = arr.filter((p) => {
@@ -278,8 +325,12 @@ function AppShell() {
       arr.sort((a, b) => (priceNumber(b) ?? -1) - (priceNumber(a) ?? -1));
     } else if (sort === "new") {
       arr.sort((a, b) => {
-        const da = new Date(a?.date || a?.releasedAt || a?.createdAt || 0).getTime();
-        const db = new Date(b?.date || b?.releasedAt || b?.createdAt || 0).getTime();
+        const da = new Date(
+          a?.date || a?.releasedAt || a?.createdAt || 0
+        ).getTime();
+        const db = new Date(
+          b?.date || b?.releasedAt || b?.createdAt || 0
+        ).getTime();
         return db - da;
       });
     } else {
@@ -300,9 +351,27 @@ function AppShell() {
     sortParam,
   ]);
 
-  const pagedProducts = useMemo(() => filtered.slice(0, page * PAGE_SIZE), [filtered, page]);
+  const pagedProducts = useMemo(
+    () => filtered.slice(0, page * PAGE_SIZE),
+    [filtered, page]
+  );
   const hasMore = pagedProducts.length < filtered.length;
   const showGlobalResults = !activeSeries && hasAnyFilter;
+
+  const totalSeriesPages = useMemo(
+    () => Math.max(1, Math.ceil(seriesList.length / SERIES_PAGE_SIZE)),
+    [seriesList.length]
+  );
+
+  const visibleSeriesList = useMemo(() => {
+    if (!isDesktopCollections) return seriesList;
+    const start = (seriesPage - 1) * SERIES_PAGE_SIZE;
+    return seriesList.slice(start, start + SERIES_PAGE_SIZE);
+  }, [isDesktopCollections, seriesList, seriesPage]);
+
+  const seriesPageDots = useMemo(() => {
+    return Array.from({ length: totalSeriesPages }, (_, i) => i + 1);
+  }, [totalSeriesPages]);
 
   const updateSearchParams = (patch) => {
     const next = new URLSearchParams(sp);
@@ -320,9 +389,10 @@ function AppShell() {
       setSelected(null);
       return;
     }
-    const prod = filtered.find((p) => p.id === volumeId) || null;
+
+    const prod = products.find((p) => p.id === volumeId) || null;
     setSelected(prod);
-  }, [volumeId, filtered]);
+  }, [volumeId]);
 
   const openSeries = (name) => {
     setPage(1);
@@ -359,44 +429,64 @@ function AppShell() {
     setSelected(product);
 
     const seriesName = product?.series || activeSeries;
-    const parentSlug = seriesSlug || (seriesName ? slugify(seriesName) : null);
+    const parentSlug = seriesName ? slugify(seriesName) : seriesSlug || null;
     const qs = sp.toString();
 
+    const backgroundPath = `${location.pathname}${location.search || ""}`;
+
     if (parentSlug) {
-      navigate(`/${parentSlug}/${product.id}${qs ? `?${qs}` : ""}`);
+      navigate(`/${parentSlug}/${product.id}${qs ? `?${qs}` : ""}`, {
+        state: { backgroundPath },
+      });
       return;
     }
 
-    navigate(`/${product.id}${qs ? `?${qs}` : ""}`);
+    navigate(`/${product.id}${qs ? `?${qs}` : ""}`, {
+      state: { backgroundPath },
+    });
   };
 
   const closeModal = () => {
     setSelected(null);
+
+    const backgroundPath = location.state?.backgroundPath;
+
+    if (backgroundPath) {
+      navigate(backgroundPath, { replace: true });
+      return;
+    }
+
     const qs = sp.toString();
 
-    if (seriesSlug) {
+    if (seriesSlug && !volumeId) {
       navigate(`/${seriesSlug}${qs ? `?${qs}` : ""}`, { replace: true });
       return;
     }
 
     if (activeSeries) {
-      navigate(`/${slugify(activeSeries)}${qs ? `?${qs}` : ""}`, { replace: true });
+      navigate(`/${slugify(activeSeries)}${qs ? `?${qs}` : ""}`, {
+        replace: true,
+      });
       return;
     }
 
     navigate(`/${qs ? `?${qs}` : ""}`, { replace: true });
   };
 
-  const scrollToIdWithOffset = useCallback((id, behavior = "smooth") => {
-    const el = document.getElementById(id);
-    if (!el) return false;
+  const scrollToIdWithOffset = useCallback(
+    (id, behavior = "smooth") => {
+      const el = document.getElementById(id);
+      if (!el) return false;
 
-    const extraOffset = window.innerWidth <= 768 ? 84 : isHeaderCompact ? 96 : 132;
-    const top = el.getBoundingClientRect().top + window.scrollY - extraOffset;
+      const extraOffset =
+        window.innerWidth <= 768 ? 84 : isHeaderCompact ? 96 : 132;
+      const top = el.getBoundingClientRect().top + window.scrollY - extraOffset;
 
-    window.scrollTo({ top: Math.max(0, top), behavior });
-    return true;
-  }, [isHeaderCompact]);
+      window.scrollTo({ top: Math.max(0, top), behavior });
+      return true;
+    },
+    [isHeaderCompact]
+  );
 
   const resolveScrollIds = useCallback((target, fallbackIds = []) => {
     const map = {
@@ -433,8 +523,51 @@ function AppShell() {
 
       performScroll();
     },
-    [activeSeries, location.pathname, location.search, navigate, resolveScrollIds, scrollToIdWithOffset, seriesSlug, volumeId]
+    [
+      activeSeries,
+      location.pathname,
+      location.search,
+      navigate,
+      resolveScrollIds,
+      scrollToIdWithOffset,
+      seriesSlug,
+      volumeId,
+    ]
   );
+
+  const changeSeriesPage = useCallback(
+    (nextPage) => {
+      const safePage = Math.max(1, Math.min(totalSeriesPages, nextPage));
+      setSeriesPage(safePage);
+
+      if (collectionsSectionRef.current && isDesktopCollections) {
+        const extraOffset =
+          window.innerWidth <= 768 ? 84 : isHeaderCompact ? 96 : 132;
+
+        const top =
+          collectionsSectionRef.current.getBoundingClientRect().top +
+          window.scrollY -
+          extraOffset;
+
+        window.scrollTo({
+          top: Math.max(0, top),
+          behavior: "smooth",
+        });
+      }
+    },
+    [isDesktopCollections, isHeaderCompact, totalSeriesPages]
+  );
+
+  useEffect(() => {
+    setSeriesPage(1);
+  }, [isDesktopCollections]);
+
+  useEffect(() => {
+    const maxPage = Math.max(1, Math.ceil(seriesList.length / SERIES_PAGE_SIZE));
+    if (seriesPage > maxPage) {
+      setSeriesPage(maxPage);
+    }
+  }, [seriesList.length, seriesPage]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -520,10 +653,15 @@ function AppShell() {
 
           {hasMore && (
             <div className="showMoreRow">
-              <button className="btn showMoreBtn" onClick={() => setPage((prev) => prev + 1)}>
+              <button
+                className="btn showMoreBtn"
+                onClick={() => setPage((prev) => prev + 1)}
+              >
                 Mostrar mais {PAGE_SIZE}
               </button>
-              <div className="showMoreHint">Exibindo {pagedProducts.length}/{filtered.length}</div>
+              <div className="showMoreHint">
+                Exibindo {pagedProducts.length}/{filtered.length}
+              </div>
             </div>
           )}
         </section>
@@ -535,7 +673,8 @@ function AppShell() {
             <LaunchRail
               title="Lançamentos 🔥"
               products={products}
-              limit={30}
+              limit={40}
+              initialVisible={20}
               onOpenProduct={openProduct}
             />
           </div>
@@ -549,7 +688,7 @@ function AppShell() {
               id="promotions"
               title="Promoções 💸"
               products={products}
-              limit={30}
+              limit={40}
               onOpenProduct={openProduct}
             />
           </div>
@@ -564,7 +703,7 @@ function AppShell() {
               title="Baratinhos da galera 🪙"
               subtitle="Mangás por até R$30."
               products={products}
-              limit={30}
+              limit={40}
               onOpenProduct={openProduct}
             />
           </div>
@@ -573,30 +712,124 @@ function AppShell() {
             <span className="sectionBreakLine" />
           </div>
 
-          <section className="collectionsSection" id="railTitle">
+          <section
+            className={`collectionsSection ${
+              isDesktopCollections ? "collectionsSectionDesktop" : ""
+            }`}
+            id="railTitle"
+            ref={collectionsSectionRef}
+          >
             <SectionHeader
               title="Coleções 📚"
               subtitle="Explore por obra e veja os volumes disponíveis."
             />
 
-            <div className="seriesRail">
-              {seriesList.map((s) => (
-                <div className="railItem" key={s.name}>
-                  <SeriesCard
-                    name={s.name}
-                    thumb={s.thumb}
-                    subtitle={s.subtitle}
-                    rangeLabel={s.rangeLabel}
-                    haveLabel={s.haveLabel}
-                    statusLabel={s.statusLabel}
-                    missing={s.missing}
-                    missingCount={s.missingCount}
-                    active={activeSeries === s.name}
-                    onOpen={openSeries}
-                  />
+            {isDesktopCollections ? (
+              <>
+                <div className="collectionsTopbar">
+                  <div className="collectionsTopbarLeft">
+                    <span className="collectionsEyebrow">Catálogo</span>
+                    <div className="collectionsMeta">
+                      Página <strong>{seriesPage}</strong> de{" "}
+                      <strong>{totalSeriesPages}</strong>
+                    </div>
+                  </div>
+
+                  <div className="collectionsPager">
+                    <button
+                      type="button"
+                      className="collectionsNavBtn"
+                      onClick={() => changeSeriesPage(seriesPage - 1)}
+                      disabled={seriesPage === 1}
+                      aria-label="Página anterior"
+                      title="Página anterior"
+                    >
+                      ‹
+                    </button>
+
+                    <button
+                      type="button"
+                      className="collectionsNavBtn"
+                      onClick={() => changeSeriesPage(seriesPage + 1)}
+                      disabled={seriesPage === totalSeriesPages}
+                      aria-label="Próxima página"
+                      title="Próxima página"
+                    >
+                      ›
+                    </button>
+                  </div>
                 </div>
-              ))}
-            </div>
+
+                <div className="seriesRail collectionsDesktopGrid">
+                  {visibleSeriesList.map((s) => (
+                    <div className="railItem" key={s.name}>
+                      <SeriesCard
+                        name={s.name}
+                        thumb={s.thumb}
+                        subtitle={s.subtitle}
+                        rangeLabel={s.rangeLabel}
+                        haveLabel={s.haveLabel}
+                        statusLabel={s.statusLabel}
+                        missing={s.missing}
+                        missingCount={s.missingCount}
+                        active={activeSeries === s.name}
+                        onOpen={openSeries}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {totalSeriesPages > 1 ? (
+                  <div className="collectionsBottomBar">
+                    <div className="collectionsDots" aria-label="Paginação das coleções">
+                      {seriesPageDots.map((dotPage) => (
+                        <button
+                          key={dotPage}
+                          type="button"
+                          className={`collectionsDot ${
+                            dotPage === seriesPage ? "isActive" : ""
+                          }`}
+                          onClick={() => changeSeriesPage(dotPage)}
+                          aria-label={`Ir para página ${dotPage}`}
+                          title={`Página ${dotPage}`}
+                        />
+                      ))}
+                    </div>
+
+                    <div className="collectionsCounter">
+                      Exibindo{" "}
+                      <strong>
+                        {(seriesPage - 1) * SERIES_PAGE_SIZE + 1}
+                      </strong>
+                      –
+                      <strong>
+                        {Math.min(seriesPage * SERIES_PAGE_SIZE, seriesList.length)}
+                      </strong>{" "}
+                      de <strong>{seriesList.length}</strong> obras
+                    </div>
+                  </div>
+                ) : null}
+              </>
+            ) : (
+              <div className="seriesRail">
+                {seriesList.map((s) => (
+                  <div className="railItem" key={s.name}>
+                    <SeriesCard
+                      name={s.name}
+                      thumb={s.thumb}
+                      subtitle={s.subtitle}
+                      rangeLabel={s.rangeLabel}
+                      haveLabel={s.haveLabel}
+                      statusLabel={s.statusLabel}
+                      missing={s.missing}
+                      missingCount={s.missingCount}
+                      active={activeSeries === s.name}
+                      onOpen={openSeries}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
         </section>
       )}
@@ -610,7 +843,9 @@ function AppShell() {
           <div className="infoTag">
             <span>Exibindo</span>
             <strong>{activeSeries}</strong>
-            <span>• {pagedProducts.length}/{filtered.length} volume(s)</span>
+            <span>
+              • {pagedProducts.length}/{filtered.length} volume(s)
+            </span>
           </div>
         </div>
       )}
@@ -625,10 +860,15 @@ function AppShell() {
 
           {hasMore && (
             <div className="showMoreRow">
-              <button className="btn showMoreBtn" onClick={() => setPage((prev) => prev + 1)}>
+              <button
+                className="btn showMoreBtn"
+                onClick={() => setPage((prev) => prev + 1)}
+              >
                 Mostrar mais {PAGE_SIZE}
               </button>
-              <div className="showMoreHint">Exibindo {pagedProducts.length}/{filtered.length}</div>
+              <div className="showMoreHint">
+                Exibindo {pagedProducts.length}/{filtered.length}
+              </div>
             </div>
           )}
         </section>

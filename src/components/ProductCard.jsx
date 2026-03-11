@@ -1,20 +1,21 @@
+import { memo, useCallback, useMemo } from "react";
 import "../styles/product-card.css";
 import { track } from "../utils/analytics.js";
 import { getBestPrice, formatPrice, getPrice } from "../utils/priceLoader";
 import { getOfferData, getDiscountData } from "../utils/priceUtils";
 
 const base = import.meta.env.BASE_URL;
-const img = (path) => `${base}assets/${path}`;
+const ML_ICON = `${base}assets/mercadolivre.svg`;
+const AMAZON_ICON = `${base}assets/amazon.svg`;
 
-export default function ProductCard(props) {
-  const {
-    product,
-    onOpen,
-    showNewBadge = false,
-    placement = "grid",
-    topBadge = null,
-  } = props;
-
+function ProductCardBase({
+  product,
+  onOpen,
+  showNewBadge = false,
+  placement = "grid",
+  topBadge = null,
+  priority = false,
+}) {
   const mlUrl =
     typeof product?.affiliate?.mercadoLivre === "string"
       ? product.affiliate.mercadoLivre.trim()
@@ -25,17 +26,30 @@ export default function ProductCard(props) {
       ? product.affiliate.amazon.trim()
       : "";
 
-  const mlPrice = getPrice(product?.id, "mercadoLivre");
-  const amzPrice = getPrice(product?.id, "amazon");
+  const mlPrice = useMemo(
+    () => getPrice(product?.id, "mercadoLivre"),
+    [product?.id]
+  );
 
-  const { hasML, hasAmazon, hasBoth, isAvailable } = getOfferData({
-    mlHref: mlUrl,
-    mlPrice,
-    amazonHref: amzUrl,
-    amazonPrice: amzPrice,
-  });
+  const amzPrice = useMemo(
+    () => getPrice(product?.id, "amazon"),
+    [product?.id]
+  );
 
-  const bestPrice = getBestPrice(product?.id);
+  const offerData = useMemo(
+    () =>
+      getOfferData({
+        mlHref: mlUrl,
+        mlPrice,
+        amazonHref: amzUrl,
+        amazonPrice: amzPrice,
+      }),
+    [mlUrl, mlPrice, amzUrl, amzPrice]
+  );
+
+  const { hasML, hasAmazon, hasBoth, isAvailable } = offerData;
+
+  const bestPrice = useMemo(() => getBestPrice(product?.id), [product?.id]);
 
   const bestStoreLabel =
     bestPrice?.store === "amazon"
@@ -44,20 +58,20 @@ export default function ProductCard(props) {
       ? "Mercado Livre"
       : null;
 
-  const discountData = getDiscountData(product, bestPrice?.value ?? null);
+  const discountData = useMemo(
+    () => getDiscountData(product, bestPrice?.value ?? null),
+    [product, bestPrice?.value]
+  );
 
-  const isNew = (() => {
-    if (!showNewBadge) return false;
-    if (!product?.addedAt) return false;
-
+  const isNew = useMemo(() => {
+    if (!showNewBadge || !product?.addedAt) return false;
     const d = new Date(product.addedAt);
     if (Number.isNaN(d.getTime())) return false;
-
-    const diffDays = (new Date() - d) / (1000 * 60 * 60 * 24);
+    const diffDays = (Date.now() - d.getTime()) / (1000 * 60 * 60 * 24);
     return diffDays >= 0 && diffDays <= 30;
-  })();
+  }, [showNewBadge, product?.addedAt]);
 
-  const resolvedTopBadge = (() => {
+  const resolvedTopBadge = useMemo(() => {
     if (topBadge?.label) {
       return {
         label: topBadge.label,
@@ -80,63 +94,76 @@ export default function ProductCard(props) {
     }
 
     return null;
-  })();
+  }, [topBadge, discountData, isNew]);
 
-  const fireOpen = (via = "card") => {
-    track("open_product", {
-      product_id: product?.id,
-      product_name: product?.title,
-      series: product?.series || "",
-      volume: product?.volume ?? "",
-      available: !!isAvailable,
-      placement,
-      via,
-    });
+  const fireOpen = useCallback(
+    (via = "card") => {
+      track("open_product", {
+        product_id: product?.id,
+        product_name: product?.title,
+        series: product?.series || "",
+        volume: product?.volume ?? "",
+        available: !!isAvailable,
+        placement,
+        via,
+      });
 
-    onOpen?.(product);
-  };
+      onOpen?.(product);
+    },
+    [product, isAvailable, placement, onOpen]
+  );
 
-  const fireBuy = (store) => {
-    track("click_buy", {
-      product_id: product?.id,
-      product_name: product?.title,
-      series: product?.series || "",
-      volume: product?.volume ?? "",
-      store,
-      placement: `${placement}_card`,
-      available: !!isAvailable,
-    });
-  };
+  const fireBuy = useCallback(
+    (store) => {
+      track("click_buy", {
+        product_id: product?.id,
+        product_name: product?.title,
+        series: product?.series || "",
+        volume: product?.volume ?? "",
+        store,
+        placement: `${placement}_card`,
+        available: !!isAvailable,
+      });
+    },
+    [product, placement, isAvailable]
+  );
+
+  const handleCardKeyDown = useCallback(
+    (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        fireOpen("keyboard");
+      }
+    },
+    [fireOpen]
+  );
 
   return (
     <div
-      className="card cardHover"
+      className="card"
       onClick={() => fireOpen("card")}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => e.key === "Enter" && fireOpen("keyboard")}
+      onKeyDown={handleCardKeyDown}
     >
       <div className="thumbWrap">
-        <img className="thumb" src={product.image} alt={product.title} />
+        <img
+          className="thumb"
+          src={product.image}
+          alt={product.title}
+          loading={priority ? "eager" : "lazy"}
+          decoding="async"
+          fetchPriority={priority ? "high" : "auto"}
+          width="320"
+          height="427"
+          draggable="false"
+        />
 
         {resolvedTopBadge ? (
           <div className={resolvedTopBadge.className}>
             {resolvedTopBadge.label}
           </div>
         ) : null}
-
-        <div className="hoverOverlay" aria-hidden="true">
-          <button
-            className="overlayBtn"
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              fireOpen("overlay");
-            }}
-          >
-            Ver detalhes
-          </button>
-        </div>
       </div>
 
       <div className="content">
@@ -162,25 +189,27 @@ export default function ProductCard(props) {
         <div className="cardPriceBox">
           {isAvailable && bestPrice ? (
             <>
-              {discountData?.hasDiscount && (
+              {discountData?.hasDiscount ? (
                 <div className="cardPriceOld">
                   De {formatPrice(discountData.listPrice)}
                 </div>
-              )}
+              ) : null}
 
               <div className="cardPriceMainRow">
                 <div className="cardPriceValue">
                   {formatPrice(bestPrice.value)}
                 </div>
 
-                {discountData?.hasDiscount && (
+                {discountData?.hasDiscount ? (
                   <span className="cardDiscountBadge">
                     -{discountData.discountPercent}%
                   </span>
-                )}
+                ) : null}
               </div>
 
-              {bestStoreLabel && <div className="cardPriceStore">{bestStoreLabel}</div>}
+              {bestStoreLabel ? (
+                <div className="cardPriceStore">{bestStoreLabel}</div>
+              ) : null}
             </>
           ) : (
             <div className="cardPriceEmpty" aria-hidden="true" />
@@ -190,51 +219,55 @@ export default function ProductCard(props) {
         <div className="buttonsCol" onClick={(e) => e.stopPropagation()}>
           {isAvailable ? (
             <div className={hasBoth ? "buyRow" : ""}>
-              {hasML && (
+              {hasML ? (
                 <a
                   href={mlUrl}
                   target="_blank"
                   rel="noreferrer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    fireBuy("mercadolivre");
-                  }}
+                  onClick={() => fireBuy("mercadolivre")}
                   className={hasBoth ? "buyLink grow" : "buyLink single"}
                   aria-label="Comprar no Mercado Livre"
                   title="Comprar no Mercado Livre"
                 >
-                  <button className="btn brandBtn mercado" type="button">
+                  <span className="btn brandBtn mercado">
                     <img
-                      src={img("mercadolivre.svg")}
+                      src={ML_ICON}
                       alt="Mercado Livre"
                       className="brandIcon"
+                      loading="lazy"
+                      decoding="async"
+                      width="92"
+                      height="24"
+                      draggable="false"
                     />
-                  </button>
+                  </span>
                 </a>
-              )}
+              ) : null}
 
-              {hasAmazon && (
+              {hasAmazon ? (
                 <a
                   href={amzUrl}
                   target="_blank"
                   rel="noreferrer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    fireBuy("amazon");
-                  }}
+                  onClick={() => fireBuy("amazon")}
                   className={hasBoth ? "buyLink grow" : "buyLink single"}
                   aria-label="Comprar na Amazon"
                   title="Comprar na Amazon"
                 >
-                  <button className="btn brandBtn amazon" type="button">
+                  <span className="btn brandBtn amazon">
                     <img
-                      src={img("amazon.svg")}
+                      src={AMAZON_ICON}
                       alt="Amazon"
                       className="brandIcon"
+                      loading="lazy"
+                      decoding="async"
+                      width="92"
+                      height="24"
+                      draggable="false"
                     />
-                  </button>
+                  </span>
                 </a>
-              )}
+              ) : null}
             </div>
           ) : (
             <button className="btn danger" type="button" disabled>
@@ -246,3 +279,15 @@ export default function ProductCard(props) {
     </div>
   );
 }
+
+export default memo(
+  ProductCardBase,
+  (prev, next) =>
+    prev.product === next.product &&
+    prev.onOpen === next.onOpen &&
+    prev.showNewBadge === next.showNewBadge &&
+    prev.placement === next.placement &&
+    prev.priority === next.priority &&
+    prev.topBadge?.label === next.topBadge?.label &&
+    prev.topBadge?.className === next.topBadge?.className
+);

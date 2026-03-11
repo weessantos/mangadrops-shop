@@ -49,7 +49,7 @@ export function useSeriesList(products, seriesCatalog) {
         return {
           name,
           slug: slugify(name),
-          thumb: cat.thumb || "/assets/aot-series.jpeg",
+          thumb: cat.thumb || "/assets/aot-series.webp",
           subtitle: cat.subtitle || "Clique para ver os volumes disponíveis.",
           rangeLabel,
           haveLabel,

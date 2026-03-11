@@ -29,7 +29,7 @@ body::before{
   content:"";
   position: fixed;
   inset:0;
-  background: url("/assets/background.jpeg") center/cover no-repeat;
+  background: url("/assets/background.webp") center/cover no-repeat;
   filter: blur(10px) brightness(0.35);
   z-index:-1;
 }

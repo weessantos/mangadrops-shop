@@ -57,7 +57,7 @@
   inset:-2px;
   border-radius: calc(20px + 2px);
 
-  background: url("/assets/header-bg.jpeg") center/cover no-repeat;
+  background: url("/assets/header-bg.webp") center/cover no-repeat;
 
   filter: saturate(1.05) contrast(1.05);
 

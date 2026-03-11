@@ -353,7 +353,7 @@ export default function Header({
       <header className={`heroHeader ${isHeaderCompact && !isMobile ? "isCompact" : ""}`}>
         <div
           className="heroBg"
-          style={{ backgroundImage: `url(${img("header-bg.jpeg")})` }}
+          style={{ backgroundImage: `url(${img("header-bg.webp")})` }}
           aria-hidden="true"
         />
         <div className="heroShade" aria-hidden="true" />

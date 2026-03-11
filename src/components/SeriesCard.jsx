@@ -20,14 +20,14 @@ export default function SeriesCard({
   const popRef = useRef(null);
 
   const lower = String(statusLabel || "").toLowerCase();
-  const statusClass =
-    lower.includes("completo") ? "badgePill good" :
-    lower.includes("sem estoque") ? "badgePill warn" :
-    "badgePill";
+  const statusClass = lower.includes("completo")
+    ? "badgePill good"
+    : lower.includes("sem estoque")
+    ? "badgePill warn"
+    : "badgePill";
 
   const hasMissing = missingCount > 0;
 
-  // Fecha popover ao clicar fora
   useEffect(() => {
     if (!showMissing) return;
 
@@ -41,31 +41,44 @@ export default function SeriesCard({
     return () => document.removeEventListener("mousedown", onDown);
   }, [showMissing]);
 
-  // Se fechar o card (ou trocar de card), fecha o popover
   useEffect(() => {
     if (!active) setShowMissing(false);
   }, [active]);
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onOpen(name);
+    }
+  };
 
   return (
     <article
       className={`seriesCard ${active ? "isActive" : ""}`}
       onClick={() => onOpen(name)}
+      onKeyDown={handleKeyDown}
       role="button"
       tabIndex={0}
       aria-label={`${active ? "Fechar" : "Abrir"} ${name}`}
     >
-      <img className="seriesThumb" src={thumb} alt={name} loading="lazy" />
+      <img
+        className="seriesThumb"
+        src={thumb}
+        alt={name}
+        loading="lazy"
+        decoding="async"
+        draggable="false"
+      />
 
       <div className="seriesTopBadges">
         <span className="badgePill">Coleção</span>
 
-        {/* ✅ botão curto no card */}
         <button
           type="button"
           className={statusClass}
           onClick={(e) => {
             e.stopPropagation();
-            if (!hasMissing) return; // se "Completo ✅", não abre popover
+            if (!hasMissing) return;
             setShowMissing((v) => !v);
           }}
           title={hasMissing ? "Ver volumes sem estoque" : "Completo"}
@@ -74,7 +87,6 @@ export default function SeriesCard({
         </button>
       </div>
 
-      {/* ✅ Popover flutuante */}
       {showMissing && hasMissing ? (
         <div
           ref={popRef}
@@ -105,7 +117,10 @@ export default function SeriesCard({
       <div className="seriesOverlay">
         <div className="seriesTitleRow">
           <h3 className="seriesName">{name}</h3>
-          <span className={`seriesChevron ${active ? "open" : ""}`} aria-hidden="true">
+          <span
+            className={`seriesChevron ${active ? "open" : ""}`}
+            aria-hidden="true"
+          >
             ▾
           </span>
         </div>
@@ -117,6 +132,5 @@ export default function SeriesCard({
         </div>
       </div>
     </article>
-    
   );
 }

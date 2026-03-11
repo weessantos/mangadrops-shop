@@ -50,7 +50,7 @@ export function createSeriesVolumes({
   start,
   end,
   brand = "",
-  imageExt = "jpeg",
+  imageExt = "webp",
   affiliateByVolume = {},
   tiktokByVolume = {},
   descriptionByVolume = {},

@@ -12,6 +12,7 @@ export default function LaunchRail({
   title = "Lançamentos",
   products = [],
   limit = 30,
+  initialVisible = 20,
   subtitle = "Atualizado com lançamentos e reposições recentes.",
   meta = "",
   onOpenProduct,
@@ -19,10 +20,11 @@ export default function LaunchRail({
   const railRef = useRef(null);
   const [canLeft, setCanLeft] = useState(false);
   const [canRight, setCanRight] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
-  // últimos 30 dias
   const items = useMemo(() => {
     const now = new Date();
+
     return [...products]
       .filter((p) => isValidDate(p.addedAt))
       .filter((p) => {
@@ -30,13 +32,48 @@ export default function LaunchRail({
         const diffDays = (now - d) / (1000 * 60 * 60 * 24);
         return diffDays >= 0 && diffDays <= 30;
       })
+      .filter((p) => {
+        const mlUrl =
+          typeof p?.affiliate?.mercadoLivre === "string"
+            ? p.affiliate.mercadoLivre.trim()
+            : "";
+
+        const amzUrl =
+          typeof p?.affiliate?.amazon === "string"
+            ? p.affiliate.amazon.trim()
+            : "";
+
+        const mlPrice = getPrice(p?.id, "mercadoLivre");
+        const amzPrice = getPrice(p?.id, "amazon");
+
+        const { isAvailable } = getOfferData({
+          mlHref: mlUrl,
+          mlPrice,
+          amazonHref: amzUrl,
+          amazonPrice: amzPrice,
+        });
+
+        return isAvailable;
+      })
       .sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt))
       .slice(0, limit);
   }, [products, limit]);
 
+  const visibleItems = useMemo(() => {
+    return expanded ? items : items.slice(0, initialVisible);
+  }, [items, expanded, initialVisible]);
+
+  const hasMore = items.length > initialVisible;
+
   const updateArrows = () => {
     const el = railRef.current;
-    if (!el) return;
+
+    if (!el || expanded) {
+      setCanLeft(false);
+      setCanRight(false);
+      return;
+    }
+
     const maxScroll = el.scrollWidth - el.clientWidth;
     setCanLeft(el.scrollLeft > 2);
     setCanRight(el.scrollLeft < maxScroll - 2);
@@ -44,33 +81,49 @@ export default function LaunchRail({
 
   useEffect(() => {
     updateArrows();
+
     const el = railRef.current;
-    if (!el) return;
+    if (!el || expanded) return;
 
     const onScroll = () => updateArrows();
-    el.addEventListener("scroll", onScroll, { passive: true });
-
-    // resize muda overflow
     const onResize = () => updateArrows();
+
+    el.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
 
     return () => {
       el.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
     };
-  }, [items.length]);
+  }, [visibleItems.length, expanded]);
 
   const scrollByAmount = (dir) => {
     const el = railRef.current;
-    if (!el) return;
-    const amount = Math.round(el.clientWidth * 0.85) * dir; // “quase uma tela”
+    if (!el || expanded) return;
+
+    const amount = Math.round(el.clientWidth * 0.85) * dir;
     el.scrollBy({ left: amount, behavior: "smooth" });
+  };
+
+  const handleToggleExpanded = () => {
+    setExpanded((prev) => {
+      const next = !prev;
+
+      if (railRef.current) {
+        railRef.current.scrollTo({
+          left: 0,
+          behavior: "auto",
+        });
+      }
+
+      return next;
+    });
   };
 
   if (!items.length) return null;
 
   return (
-    <section className="railSection">
+    <section className={`railSection ${expanded ? "isExpanded" : ""}`}>
       <div className="railBlock">
         <div className="sectionHeader">
           <div className="sectionHeaderLeft">
@@ -82,70 +135,67 @@ export default function LaunchRail({
           </div>
 
           <div className="sectionHeaderRight">
-            {meta ? <span className="sectionMeta">{meta}</span> : null}
+            <span className="sectionMeta">
+              {meta || `${visibleItems.length} de ${items.length} exibidos`}
+            </span>
 
-            <div className="railArrows" aria-hidden="true">
+            {hasMore ? (
               <button
                 type="button"
-                className={`railArrow ${canLeft ? "" : "disabled"}`}
-                onClick={() => scrollByAmount(-1)}
-                disabled={!canLeft}
-                aria-label="Anterior"
-                title="Anterior"
+                className="railToggleBtn"
+                onClick={handleToggleExpanded}
+                aria-expanded={expanded}
               >
-                ‹
+                {expanded ? "Recolher" : "Ver todos"}
               </button>
-              <button
-                type="button"
-                className={`railArrow ${canRight ? "" : "disabled"}`}
-                onClick={() => scrollByAmount(1)}
-                disabled={!canRight}
-                aria-label="Próximo"
-                title="Próximo"
-              >
-                ›
-              </button>
-            </div>
+            ) : null}
+
+            {!expanded ? (
+              <div className="railArrows" aria-hidden="true">
+                <button
+                  type="button"
+                  className={`railArrow ${canLeft ? "" : "disabled"}`}
+                  onClick={() => scrollByAmount(-1)}
+                  disabled={!canLeft}
+                  aria-label="Anterior"
+                  title="Anterior"
+                >
+                  ‹
+                </button>
+
+                <button
+                  type="button"
+                  className={`railArrow ${canRight ? "" : "disabled"}`}
+                  onClick={() => scrollByAmount(1)}
+                  disabled={!canRight}
+                  aria-label="Próximo"
+                  title="Próximo"
+                >
+                  ›
+                </button>
+              </div>
+            ) : null}
           </div>
         </div>
 
-        <div className="productRail" ref={railRef} aria-label={title}>
-          {items
-            .filter((p) => {
-              const mlUrl =
-                typeof p?.affiliate?.mercadoLivre === "string"
-                  ? p.affiliate.mercadoLivre.trim()
-                  : "";
-
-              const amzUrl =
-                typeof p?.affiliate?.amazon === "string"
-                  ? p.affiliate.amazon.trim()
-                  : "";
-
-              const mlPrice = getPrice(p?.id, "mercadoLivre");
-              const amzPrice = getPrice(p?.id, "amazon");
-
-              const { isAvailable } = getOfferData({
-                mlHref: mlUrl,
-                mlPrice,
-                amazonHref: amzUrl,
-                amazonPrice: amzPrice,
-              });
-
-              return isAvailable;
-            })
-            .map((p) => (
-              <div className="railItem productItem" key={p.id}>
-                <ProductCard
-                  product={p}
-                  onOpen={(prod) => onOpenProduct?.(prod)}
-                  topBadge={{
-                    label: "NOVO",
-                    className: "newBadge",
-                  }}
-                />
-              </div>
-            ))}
+        <div
+          className={`productRail ${expanded ? "productRailExpanded" : ""}`}
+          ref={railRef}
+          aria-label={title}
+        >
+          {visibleItems.map((p, index) => (
+            <div className="railItem productItem" key={p.id}>
+              <ProductCard
+                product={p}
+                onOpen={onOpenProduct}
+                priority={index < 4}
+                topBadge={{
+                  label: "NOVO",
+                  className: "newBadge",
+                }}
+              />
+            </div>
+          ))}
         </div>
       </div>
     </section>
