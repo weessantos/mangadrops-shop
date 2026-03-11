@@ -21,6 +21,7 @@ import {
   vinlandAffiliate,
   skmtAffiliate,
   fmaAffiliate,
+  gbAffiliate,
 } from "./affiliates.js";
 
 // ✅ descriptions
@@ -32,6 +33,7 @@ import { kgbDescriptions } from "./descriptions/kgb.js";
 import { vinlandDescriptions } from "./descriptions/vinland.js";
 import { skmtDescriptions } from "./descriptions/skmt.js";
 import { fmaDescriptions } from "./descriptions/fma.js";
+import { gbDescriptions } from "./descriptions/gb.js";
 
 // ✅ tiktok
 import { aotTiktok } from "./tiktok/aot.js";
@@ -42,6 +44,7 @@ import { kgbTiktok } from "./tiktok/kgb.js";
 import { vinlandTiktok } from "./tiktok/vinland.js";
 import { skmtTiktok } from "./tiktok/skmt.js";
 import { fmaTiktok } from "./tiktok/fma.js";
+import { gbTiktok } from "./tiktok/gb.js";
 
 
 /**
@@ -264,6 +267,27 @@ export const SERIES = {
     descriptionByVolume: fmaDescriptions,
 
     addedAtByVolume: makeAddedAtByVolume(20, 27),
+  },
+
+  gb: {
+    series: "Gash Bell",
+    prefix: "gb",
+    start: 1,
+    end: 9,
+    brand: "MPEG",
+    imageExt: "webp",
+    editionLabel: "2 em 1",
+    author: "Makoto Raiku",
+    genre: "Shounen",
+    subtitle: "Cem demônios lutam na Terra pelo trono do Mundo Mamodo.",
+    thumb: img("gb-series.webp"),
+    format: "2 em 1",
+
+    affiliateByVolume: gbAffiliate,
+    tiktokByVolume: gbTiktok,
+    descriptionByVolume: gbDescriptions,
+
+    addedAtByVolume: makeAddedAtByVolume(1, 9),
   },
 };
 

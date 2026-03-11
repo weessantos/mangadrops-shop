@@ -8,6 +8,7 @@ import {
   vinlandAffiliate,
   skmtAffiliate,
   fmaAffiliate,
+  gbAffiliate,
 } from "./affiliates.js";
 
 import { makeAddedAtByVolume } from "../../utils/volumeDates.js";
@@ -23,6 +24,7 @@ import { kgbDescriptions } from "./descriptions/kgb.js";
 import { vinlandDescriptions } from "./descriptions/vinland.js";
 import { skmtDescriptions } from "./descriptions/skmt.js";
 import { fmaDescriptions } from "./descriptions/fma.js";
+import { gbDescriptions } from "./descriptions/gb.js";
 
 // tiktok
 import { aotTiktok } from "./tiktok/aot.js";
@@ -33,6 +35,7 @@ import { kgbTiktok } from "./tiktok/kgb.js";
 import { vinlandTiktok } from "./tiktok/vinland.js";
 import { skmtTiktok } from "./tiktok/skmt.js";
 import { fmaTiktok } from "./tiktok/fma.js";
+import { gbTiktok } from "./tiktok/gb.js";
 
 const aot = createSeriesVolumes({
   ...SERIES.aot,
@@ -99,4 +102,13 @@ const fma = createSeriesVolumes({
   defaultCoverPrice: 43.90,
 });
 
-export const products = [...aot, ...jjk, ...op, ...haikyu, ...kgb, ...vinland, ...skmt, ...fma];
+const gb = createSeriesVolumes({
+  ...SERIES.gb,
+  affiliateByVolume: gbAffiliate,
+  tiktokByVolume: gbTiktok,
+  descriptionByVolume: gbDescriptions,
+  defaultCoverPrice: 69.90,
+});
+
+export const products = [...aot, ...jjk, ...op, ...haikyu, ...kgb, ...vinland, ...skmt, ...fma,
+                         ...gb];
