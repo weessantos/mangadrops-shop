@@ -38,8 +38,18 @@ function getTikTokEmbedUrl(tiktokUrl) {
   return `https://www.tiktok.com/embed/v2/${videoId}`;
 }
 
-function StoreButton({ href, store, logo, alt, price, isBest, onClick }) {
+function StoreButton({
+  href,
+  store,
+  logo,
+  alt,
+  price,
+  isBest,
+  showPrice,
+  onClick,
+}) {
   const storeClass = store === "Mercado Livre" ? "mercado" : "amazon";
+  const hasVisiblePrice = showPrice && price != null;
 
   return (
     <a
@@ -48,20 +58,26 @@ function StoreButton({ href, store, logo, alt, price, isBest, onClick }) {
       rel="noreferrer"
       onClick={onClick}
       className={`storeBuyCard ${storeClass}`}
-      aria-label={`Comprar na ${store}`}
-      title={`Comprar na ${store}`}
+      aria-label={
+        hasVisiblePrice ? `Comprar na ${store}` : `Consultar valor na ${store}`
+      }
+      title={
+        hasVisiblePrice ? `Comprar na ${store}` : `Consultar valor na ${store}`
+      }
     >
       <div className="storeBuyTop">
         <img src={logo} alt={alt} className="brandIcon" />
-        {isBest ? <span className="storeBestBadge">melhor oferta</span> : null}
+        {hasVisiblePrice && isBest ? (
+          <span className="storeBestBadge">melhor oferta</span>
+        ) : null}
       </div>
 
       <div className="storeBuyPrice">
-        {price != null ? formatPrice(price) : "Ver oferta"}
+        {hasVisiblePrice ? formatPrice(price) : "Consultar valor"}
       </div>
 
       <div className="storeBuyMeta">
-        {price != null ? "Ver oferta na loja" : "Consultar oferta"}
+        {hasVisiblePrice ? "Ver oferta na loja" : "Toque para consultar"}
       </div>
     </a>
   );
@@ -118,7 +134,7 @@ export default function ProductModal({ product, onClose }) {
 
   const hasML = !!mlUrl;
   const hasAmazon = !!amzUrl;
-  const isAvailable = hasML || hasAmazon;
+  const hasAffiliateLink = hasML || hasAmazon;
   const hasBoth = hasML && hasAmazon;
 
   if (!product) return null;
@@ -127,8 +143,54 @@ export default function ProductModal({ product, onClose }) {
   const amazonPrice = getPrice(product.id, "amazon");
   const bestPrice = getBestPrice(product.id);
 
-  const isMlBest = bestPrice?.store === "mercadoLivre";
-  const isAmazonBest = bestPrice?.store === "amazon";
+  const coverPrice = useMemo(() => {
+    const raw = product?.coverPrice;
+    if (raw == null || raw === "") return null;
+
+    const parsed =
+      typeof raw === "number"
+        ? raw
+        : Number(String(raw).replace(",", ".").trim());
+
+    return Number.isFinite(parsed) ? parsed : null;
+  }, [product?.coverPrice]);
+
+  const maxVisiblePrice = useMemo(() => {
+    if (!Number.isFinite(coverPrice)) return null;
+    return coverPrice * 1.15;
+  }, [coverPrice]);
+
+  const shouldHideMlPrice = useMemo(() => {
+    if (!Number.isFinite(mlPrice)) return true;
+    if (!Number.isFinite(maxVisiblePrice)) return false;
+    return mlPrice > maxVisiblePrice;
+  }, [mlPrice, maxVisiblePrice]);
+
+  const shouldHideAmazonPrice = useMemo(() => {
+    if (!Number.isFinite(amazonPrice)) return true;
+    if (!Number.isFinite(maxVisiblePrice)) return false;
+    return amazonPrice > maxVisiblePrice;
+  }, [amazonPrice, maxVisiblePrice]);
+
+  const visibleMlPrice = !shouldHideMlPrice ? mlPrice : null;
+  const visibleAmazonPrice = !shouldHideAmazonPrice ? amazonPrice : null;
+
+  const hasVisibleMlPrice = visibleMlPrice != null;
+  const hasVisibleAmazonPrice = visibleAmazonPrice != null;
+
+  const visibleBestStore =
+    hasVisibleMlPrice && hasVisibleAmazonPrice
+      ? visibleMlPrice <= visibleAmazonPrice
+        ? "mercadoLivre"
+        : "amazon"
+      : hasVisibleMlPrice
+      ? "mercadoLivre"
+      : hasVisibleAmazonPrice
+      ? "amazon"
+      : null;
+
+  const isMlBest = visibleBestStore === "mercadoLivre";
+  const isAmazonBest = visibleBestStore === "amazon";
 
   const fireBuy = (store, placement) => {
     track("click_buy", {
@@ -138,13 +200,13 @@ export default function ProductModal({ product, onClose }) {
       volume: product?.volume ?? "",
       store,
       placement,
-      available: !!isAvailable,
+      available: !!hasAffiliateLink,
       has_both: !!hasBoth,
     });
   };
 
   const renderBuyButtons = (placement = "modal_inline") => {
-    if (!isAvailable) {
+    if (!hasAffiliateLink) {
       return (
         <div className="buyBlock">
           <button className="btn danger" type="button" disabled>
@@ -163,7 +225,8 @@ export default function ProductModal({ product, onClose }) {
               store="Mercado Livre"
               logo={img("mercadolivre.svg")}
               alt="Mercado Livre"
-              price={mlPrice}
+              price={visibleMlPrice}
+              showPrice={hasVisibleMlPrice}
               isBest={isMlBest}
               onClick={(e) => {
                 e.stopPropagation();
@@ -178,7 +241,8 @@ export default function ProductModal({ product, onClose }) {
               store="Amazon"
               logo={img("amazon.svg")}
               alt="Amazon"
-              price={amazonPrice}
+              price={visibleAmazonPrice}
+              showPrice={hasVisibleAmazonPrice}
               isBest={isAmazonBest}
               onClick={(e) => {
                 e.stopPropagation();
@@ -428,7 +492,7 @@ export default function ProductModal({ product, onClose }) {
 
         <div className="modalFooter mobileOnly">
           <div className="buttonsCol" onClick={(e) => e.stopPropagation()}>
-            {isAvailable ? (
+            {hasAffiliateLink ? (
               <>
                 {renderBuyButtons("modal_mobile_footer")}
 

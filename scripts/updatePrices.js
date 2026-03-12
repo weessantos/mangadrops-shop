@@ -686,7 +686,7 @@ async function getAmazonPrice(url) {
   }
 }
 
-async function processProduct(product, existingPrices, prices, counters, workerState) {
+async function processProduct(product, existingPrices, prices, counters, stats, workerState) {
   const productId = product.id;
   const mlLink = product.affiliate?.mercadoLivre || "";
   const amazonLink = product.affiliate?.amazon || "";
@@ -723,8 +723,35 @@ async function processProduct(product, existingPrices, prices, counters, workerS
     writePrices(prices);
   }
 
+  const mlHasLink = !!mlLink;
+  const amazonHasLink = !!amazonLink;
+
+  let mlStatus;
+  if (mlPrice !== null) {
+    mlStatus = `✔ ${mlPrice}`;
+    stats.ml.price += 1;
+  } else if (mlHasLink) {
+    mlStatus = `⚠ null (link)`;
+    stats.ml.linkNoPrice += 1;
+  } else {
+    mlStatus = `✖ null`;
+    stats.ml.noLink += 1;
+  }
+
+  let amazonStatus;
+  if (amazonPrice !== null) {
+    amazonStatus = `✔ ${amazonPrice}`;
+    stats.amazon.price += 1;
+  } else if (amazonHasLink) {
+    amazonStatus = `⚠ null (link)`;
+    stats.amazon.linkNoPrice += 1;
+  } else {
+    amazonStatus = `✖ null`;
+    stats.amazon.noLink += 1;
+  }
+
   console.log(
-    `[${counters.done}/${counters.total}] ${productId} -> ML: ${mlPrice} | Amazon: ${amazonPrice}`
+    `[${counters.done}/${counters.total}] ${productId} -> ML: ${mlStatus} | Amazon: ${amazonStatus}`
   );
 
   if (BETWEEN_PRODUCTS_DELAY_MS > 0) {
@@ -816,6 +843,11 @@ async function updatePrices() {
     total: activeProducts.length,
   };
 
+  const stats = {
+    ml: { price: 0, linkNoPrice: 0, noLink: 0 },
+    amazon: { price: 0, linkNoPrice: 0, noLink: 0 },
+  };
+
   console.log(`Iniciando atualização de ${activeProducts.length} produtos...`);
   console.log(`Concorrência: ${CONCURRENCY}`);
   console.log(`Sessão ML: ${USE_ML_SESSION ? "ml-session.json carregado" : "não encontrada"}`);
@@ -824,15 +856,31 @@ async function updatePrices() {
     await runPool(
       activeProducts,
       async (product, _index, workerState) => {
-        await processProduct(product, existingPrices, prices, counters, workerState);
+        await processProduct(product, existingPrices, prices, counters, stats, workerState);
       },
       CONCURRENCY,
       createWorkerState,
       destroyWorkerState
     );
 
-    writePrices(prices);
-    console.log("prices.json atualizado com sucesso.");
+  writePrices(prices);
+
+  console.log("──────────── RESULTADO ────────────");
+
+  console.log("Mercado Livre");
+  console.log(`✔ preços encontrados: ${stats.ml.price}`);
+  console.log(`⚠ links sem preço: ${stats.ml.linkNoPrice}`);
+  console.log(`✖ sem link: ${stats.ml.noLink}`);
+
+  console.log("");
+
+  console.log("Amazon");
+  console.log(`✔ preços encontrados: ${stats.amazon.price}`);
+  console.log(`⚠ links sem preço: ${stats.amazon.linkNoPrice}`);
+  console.log(`✖ sem link: ${stats.amazon.noLink}`);
+
+  console.log("───────────────────────────────────");
+  console.log("prices.json atualizado com sucesso.");
   } finally {
     await closeBrowser();
   }

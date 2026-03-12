@@ -47,20 +47,57 @@ function ProductCardBase({
     [mlUrl, mlPrice, amzUrl, amzPrice]
   );
 
-  const { hasML, hasAmazon, hasBoth, isAvailable } = offerData;
+  const { hasML, hasAmazon, hasBoth } = offerData;
+  const hasAffiliateLink = Boolean(mlUrl || amzUrl);
 
   const bestPrice = useMemo(() => getBestPrice(product?.id), [product?.id]);
 
+  const coverPrice = useMemo(() => {
+    const raw = product?.coverPrice;
+    if (raw == null || raw === "") return null;
+
+    const parsed =
+      typeof raw === "number"
+        ? raw
+        : Number(String(raw).replace(",", ".").trim());
+
+    return Number.isFinite(parsed) ? parsed : null;
+  }, [product?.coverPrice]);
+
+  const maxVisiblePrice = useMemo(() => {
+    if (!Number.isFinite(coverPrice)) return null;
+    return coverPrice * 1.15;
+  }, [coverPrice]);
+
+  const isPriceTooHigh = useMemo(() => {
+    const value = bestPrice?.value;
+    if (!Number.isFinite(value)) return false;
+    if (!Number.isFinite(maxVisiblePrice)) return false;
+    return value > maxVisiblePrice;
+  }, [bestPrice?.value, maxVisiblePrice]);
+
+  const shouldShowPrice = Boolean(
+    hasAffiliateLink &&
+      bestPrice &&
+      Number.isFinite(bestPrice?.value) &&
+      !isPriceTooHigh
+  );
+
+  const shouldShowConsultOnly = Boolean(hasAffiliateLink && !shouldShowPrice);
+
   const bestStoreLabel =
-    bestPrice?.store === "amazon"
+    shouldShowPrice && bestPrice?.store === "amazon"
       ? "Amazon"
-      : bestPrice?.store === "mercadoLivre"
+      : shouldShowPrice && bestPrice?.store === "mercadoLivre"
       ? "Mercado Livre"
       : null;
 
   const discountData = useMemo(
-    () => getDiscountData(product, bestPrice?.value ?? null),
-    [product, bestPrice?.value]
+    () =>
+      shouldShowPrice
+        ? getDiscountData(product, bestPrice?.value ?? null)
+        : null,
+    [product, bestPrice?.value, shouldShowPrice]
   );
 
   const isNew = useMemo(() => {
@@ -79,7 +116,11 @@ function ProductCardBase({
       };
     }
 
-    if (discountData?.hasDiscount && discountData.discountPercent >= 30) {
+    if (
+      shouldShowPrice &&
+      discountData?.hasDiscount &&
+      discountData.discountPercent >= 30
+    ) {
       return {
         label: `🔥 -${discountData.discountPercent}%`,
         className: "discountBadge",
@@ -94,7 +135,9 @@ function ProductCardBase({
     }
 
     return null;
-  }, [topBadge, discountData, isNew]);
+  }, [topBadge, shouldShowPrice, discountData, isNew]);
+
+  const availabilityText = hasAffiliateLink ? "Disponível" : "Em falta";
 
   const fireOpen = useCallback(
     (via = "card") => {
@@ -103,14 +146,14 @@ function ProductCardBase({
         product_name: product?.title,
         series: product?.series || "",
         volume: product?.volume ?? "",
-        available: !!isAvailable,
+        available: !!hasAffiliateLink,
         placement,
         via,
       });
 
       onOpen?.(product);
     },
-    [product, isAvailable, placement, onOpen]
+    [product, hasAffiliateLink, placement, onOpen]
   );
 
   const fireBuy = useCallback(
@@ -122,10 +165,10 @@ function ProductCardBase({
         volume: product?.volume ?? "",
         store,
         placement: `${placement}_card`,
-        available: !!isAvailable,
+        available: !!hasAffiliateLink,
       });
     },
-    [product, placement, isAvailable]
+    [product, placement, hasAffiliateLink]
   );
 
   const handleCardKeyDown = useCallback(
@@ -181,13 +224,13 @@ function ProductCardBase({
             </>
           ) : null}
 
-          <span className={`metaStock ${isAvailable ? "good" : "danger"}`}>
-            {isAvailable ? "Disponível" : "Em falta"}
+          <span className={`metaStock ${hasAffiliateLink ? "good" : "danger"}`}>
+            {availabilityText}
           </span>
         </div>
 
         <div className="cardPriceBox">
-          {isAvailable && bestPrice ? (
+          {shouldShowPrice ? (
             <>
               {discountData?.hasDiscount ? (
                 <div className="cardPriceOld">
@@ -211,13 +254,20 @@ function ProductCardBase({
                 <div className="cardPriceStore">{bestStoreLabel}</div>
               ) : null}
             </>
+          ) : shouldShowConsultOnly ? (
+            <>
+              <div className="cardPriceConsult">Consultar valor</div>
+              <div className="cardPriceStore">
+                {hasML ? "Mercado Livre" : hasAmazon ? "Amazon" : ""}
+              </div>
+            </>
           ) : (
             <div className="cardPriceEmpty" aria-hidden="true" />
           )}
         </div>
 
         <div className="buttonsCol" onClick={(e) => e.stopPropagation()}>
-          {isAvailable ? (
+          {hasAffiliateLink ? (
             <div className={hasBoth ? "buyRow" : ""}>
               {hasML ? (
                 <a

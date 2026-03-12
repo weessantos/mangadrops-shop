@@ -37,6 +37,8 @@ import { vinlandDescriptions } from "./descriptions/vinland.js";
 import { skmtDescriptions } from "./descriptions/skmt.js";
 import { fmaDescriptions } from "./descriptions/fma.js";
 import { gbDescriptions } from "./descriptions/gb.js";
+import { shkDescriptions } from "./descriptions/shk.js";
+import { dddDescriptions } from "./descriptions/ddd.js";
 
 // ✅ tiktok
 import { aotTiktok } from "./tiktok/aot.js";
@@ -48,9 +50,7 @@ import { vinlandTiktok } from "./tiktok/vinland.js";
 import { skmtTiktok } from "./tiktok/skmt.js";
 import { fmaTiktok } from "./tiktok/fma.js";
 import { gbTiktok } from "./tiktok/gb.js";
-import { shkDescriptions } from "./descriptions/shk.js";
 import { shkTiktok } from "./tiktok/shk.js";
-import { dddDescriptions } from "./descriptions/ddd.js";
 import { dddTiktok } from "./tiktok/ddd.js";
 
 
@@ -343,7 +343,7 @@ export const SERIES = {
     editionLabel: "Padrão",
     author: "Yokinobu Tatsu",
     genre: "Shounen",
-    subtitle: "\"Fantasmas, alienígenas e batalhas absurdas em um dos shonens mais caóticos da nova geração.\"",
+    subtitle: "Fantasmas, alienígenas e batalhas absurdas em um dos shonens mais caóticos da nova geração.",
     thumb: img("ddd-series.webp"),
     format: "Padrão",
 
