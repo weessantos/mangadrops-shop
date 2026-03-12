@@ -9,6 +9,8 @@ import {
   skmtAffiliate,
   fmaAffiliate,
   gbAffiliate,
+  shkAffiliate,
+  dddAffiliate,
 } from "./affiliates.js";
 
 import { makeAddedAtByVolume } from "../../utils/volumeDates.js";
@@ -36,6 +38,10 @@ import { vinlandTiktok } from "./tiktok/vinland.js";
 import { skmtTiktok } from "./tiktok/skmt.js";
 import { fmaTiktok } from "./tiktok/fma.js";
 import { gbTiktok } from "./tiktok/gb.js";
+import { shkDescriptions } from "./descriptions/shk.js";
+import { shkTiktok } from "./tiktok/shk.js";
+import { dddDescriptions } from "./descriptions/ddd.js";
+import { dddTiktok } from "./tiktok/ddd.js";
 
 const aot = createSeriesVolumes({
   ...SERIES.aot,
@@ -110,5 +116,20 @@ const gb = createSeriesVolumes({
   defaultCoverPrice: 69.90,
 });
 
-export const products = [...aot, ...jjk, ...op, ...haikyu, ...kgb, ...vinland, ...skmt, ...fma,
-                         ...gb];
+const shk = createSeriesVolumes({
+  ...SERIES.shk,
+  affiliateByVolume: shkAffiliate,
+  tiktokByVolume: shkTiktok,
+  descriptionByVolume: shkDescriptions,
+  defaultCoverPrice: 87.90,
+});
+
+const ddd = createSeriesVolumes({
+  ...SERIES.ddd,
+  affiliateByVolume: dddAffiliate,
+  tiktokByVolume: dddTiktok,
+  descriptionByVolume: dddDescriptions,
+  defaultCoverPrice: 47.90,
+});
+
+export const products = [...aot, ...jjk, ...op, ...haikyu, ...kgb, ...vinland, ...skmt, ...fma, ...gb, ...shk, ...ddd];

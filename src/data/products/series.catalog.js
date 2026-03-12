@@ -9,7 +9,8 @@ const base =
 export const img = (path) => `${base}assets/${path}`;
 
 // ✅ util (se você usa)
-import { makeAddedAtByVolume } from "../../utils/volumeDates.js";
+import {
+  makeAddedAtByVolume } from "../../utils/volumeDates.js";
 
 // ✅ affiliates (fica no src/data/affiliates.js)
 import {
@@ -22,6 +23,8 @@ import {
   skmtAffiliate,
   fmaAffiliate,
   gbAffiliate,
+  shkAffiliate,
+  dddAffiliate,
 } from "./affiliates.js";
 
 // ✅ descriptions
@@ -45,6 +48,10 @@ import { vinlandTiktok } from "./tiktok/vinland.js";
 import { skmtTiktok } from "./tiktok/skmt.js";
 import { fmaTiktok } from "./tiktok/fma.js";
 import { gbTiktok } from "./tiktok/gb.js";
+import { shkDescriptions } from "./descriptions/shk.js";
+import { shkTiktok } from "./tiktok/shk.js";
+import { dddDescriptions } from "./descriptions/ddd.js";
+import { dddTiktok } from "./tiktok/ddd.js";
 
 
 /**
@@ -289,7 +296,63 @@ export const SERIES = {
 
     addedAtByVolume: makeAddedAtByVolume(1, 9),
   },
-};
+
+  shk: {
+    series: "Shaman King",
+    prefix: "shk",
+    start: 1,
+    end: 14,
+    brand: "JBC",
+    imageExt: "webp",
+    editionLabel: "2 em 1",
+    author: "Hiroyuki Takei",
+    genre: "Shounen",
+    subtitle: "Xamãs lutam em um torneio milenar para decidir o rei dos espíritos.",
+    thumb: img("shk-series.webp"),
+    format: "2 em 1",
+
+    affiliateByVolume: shkAffiliate,
+    tiktokByVolume: shkTiktok,
+    descriptionByVolume: shkDescriptions,
+
+    addedAtByVolume: {
+      1: "2026-03-11",
+      2: "2026-03-11",
+      3: "2026-03-11",
+      4: "2026-03-11",
+      5: "2026-03-11",
+      6: "2026-03-11",
+      7: "2026-03-11",
+      8: "2026-03-11",
+      9: "2026-03-11",
+      10: "2026-03-11",
+      11: "2026-03-11",
+      12: "2026-03-11",
+      13: "2026-03-11",
+      14: "2026-03-11",
+    },
+  },
+
+  ddd: {
+    series: "Dandadan",
+    prefix: "ddd",
+    start: 1,
+    end: 20,
+    brand: "Panini",
+    imageExt: "webp",
+    editionLabel: "Padrão",
+    author: "Yokinobu Tatsu",
+    genre: "Shounen",
+    subtitle: "\"Fantasmas, alienígenas e batalhas absurdas em um dos shonens mais caóticos da nova geração.\"",
+    thumb: img("ddd-series.webp"),
+    format: "Padrão",
+
+    affiliateByVolume: dddAffiliate,
+    tiktokByVolume: dddTiktok,
+    descriptionByVolume: dddDescriptions,
+
+    addedAtByVolume: {},
+  },};
 
 /**
  * ✅ CATÁLOGO PARA UI (substitui o series.js antigo)
