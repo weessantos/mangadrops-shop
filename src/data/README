@@ -1,0 +1,284 @@
+# Products
+
+A pasta `products` define toda a estrutura de produtos exibidos no Mangá Drops.
+
+Ela organiza as informações necessárias para construir os volumes de mangá exibidos no site, incluindo:
+
+- catálogo de séries
+- geração automática de volumes
+- descrições
+- links afiliados
+- conteúdo editorial
+
+O objetivo dessa estrutura é **evitar duplicação de dados e facilitar a manutenção de séries grandes**.
+
+---
+
+# Estrutura
+
+```
+products
+│
+├── descriptions/
+├── tiktok/
+├── affiliates.js
+├── index.js
+├── series.catalog.js
+└── series.factory.js
+```
+
+Cada arquivo possui uma responsabilidade específica dentro do fluxo de geração dos produtos.
+
+---
+
+# Fluxo de geração de produtos
+
+Os produtos exibidos no site são criados seguindo o fluxo abaixo:
+
+```
+series.catalog
+      ↓
+series.factory
+      ↓
+index.js
+      ↓
+frontend React
+```
+
+### Explicação
+
+**series.catalog.js**
+
+Define as séries disponíveis no site.
+
+**series.factory.js**
+
+Transforma as séries em produtos individuais (volumes).
+
+**index.js**
+
+Centraliza e exporta todos os produtos gerados para o frontend.
+
+---
+
+# ⚠️ Como adicionar novas séries
+
+As séries **não devem ser adicionadas manualmente nos arquivos**.
+
+O projeto utiliza um gerador administrativo para criar os arquivos automaticamente.
+
+Ferramenta utilizada:
+
+```
+gerador-obras-admin-writer-v3.html
+```
+
+Esse gerador cria automaticamente:
+
+- entradas em `series.catalog.js`
+- descrições em `descriptions/`
+- conteúdo em `tiktok/`
+- links afiliados em `affiliates.js`
+
+Isso garante:
+
+- padronização dos dados
+- redução de erros humanos
+- manutenção mais fácil do projeto
+
+---
+
+# series.catalog.js
+
+Este arquivo define **todas as séries disponíveis no site**.
+
+Cada série contém informações básicas necessárias para gerar seus volumes.
+
+Exemplos de dados:
+
+- nome da série
+- capa da coleção
+- editora
+- autor
+- gênero
+- formato
+- número de volumes
+
+Exemplo de séries presentes no projeto:
+
+```
+Attack on Titan
+Jujutsu Kaisen
+One Piece
+```
+
+Esse arquivo funciona como **fonte principal das coleções do site**.
+
+---
+
+# series.factory.js
+
+Responsável por gerar os **produtos individuais (volumes)** a partir das séries definidas no catálogo.
+
+Isso evita precisar cadastrar manualmente cada volume.
+
+Exemplo de transformação:
+
+```
+Attack on Titan
+      ↓
+Volume 01
+Volume 02
+Volume 03
+Volume 04
+```
+
+Responsabilidades do factory:
+
+- gerar IDs únicos de produto
+- associar volumes às séries
+- padronizar estrutura dos produtos
+- reduzir duplicação de código
+
+---
+
+# index.js
+
+Arquivo responsável por centralizar e exportar todos os produtos.
+
+Ele combina os dados gerados pelo factory e disponibiliza a lista final usada pelo frontend.
+
+Fluxo simplificado:
+
+```
+series.catalog
+      ↓
+series.factory
+      ↓
+index.js
+      ↓
+App.jsx
+```
+
+O frontend utiliza essa lista para renderizar:
+
+- cards de produto
+- rails
+- páginas de coleção
+- modais de produto
+
+---
+
+# affiliates.js
+
+Define os links afiliados de cada produto.
+
+Esses links são utilizados pelos botões de compra exibidos no site.
+
+Exemplo de estrutura:
+
+```
+{
+  "jjk-01": {
+    amazon: "...",
+    mercadoLivre: "..."
+  }
+}
+```
+
+Esses links também são utilizados pelo script de scraping responsável por buscar preços.
+
+Fluxo de uso:
+
+```
+affiliates.js
+      ↓
+scripts/updatePrices.js
+      ↓
+prices.json
+      ↓
+frontend React
+```
+
+---
+
+# descriptions/
+
+Contém as descrições dos volumes.
+
+Essas descrições são utilizadas principalmente em:
+
+- modal de produto
+- páginas de série
+- conteúdos editoriais
+
+Cada arquivo normalmente exporta um objeto com descrições por volume.
+
+Exemplo:
+
+```
+aotDescriptions
+jjkDescriptions
+dandadanDescriptions
+```
+
+Esses arquivos são gerados automaticamente pelo gerador administrativo.
+
+---
+
+# tiktok/
+
+Contém conteúdos utilizados para produção de vídeos e posts.
+
+Pode incluir:
+
+- resumos de volumes
+- textos de descrição
+- ideias de títulos
+- conteúdos editoriais
+
+Esses dados ajudam na criação de conteúdo para redes sociais.
+
+Assim como as descrições, esses arquivos também são gerados pelo gerador administrativo.
+
+---
+
+# Fluxo completo de dados
+
+Geração dos produtos:
+
+```
+gerador-obras-admin-writer-v3.html
+      ↓
+series.catalog
+      ↓
+series.factory
+      ↓
+index.js
+      ↓
+frontend React
+```
+
+Atualização de preços:
+
+```
+affiliates.js
+      ↓
+scripts/updatePrices.js
+      ↓
+prices.json
+      ↓
+frontend React
+```
+
+---
+
+# Boas práticas
+
+Para manter o sistema organizado:
+
+- utilizar sempre o gerador administrativo para adicionar novas séries
+- evitar edição manual de séries sempre que possível
+- manter IDs de produto consistentes
+- garantir que todos os volumes possuam links afiliados
+- rodar o script de atualização de preços após adicionar novos produtos
