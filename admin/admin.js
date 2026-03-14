@@ -449,6 +449,8 @@ function updateTikTokCaption(id,val){
 
 }
 
+//Função para salvar no tiktok
+
 async function saveTiktokToProject(){
 
 const prefix = state.series.prefix
@@ -468,9 +470,6 @@ code += `  ${v.number}: "",\n`
 
 code += `};\n`
 
-console.log("TIKTOK GERADO:")
-console.log(code)
-
 await fetch("http://localhost:3001/save-tiktok",{
 
 method:"POST",
@@ -489,6 +488,7 @@ code
 alert("Arquivo TikTok criado no projeto!")
 
 }
+
 
 
 // ===============================

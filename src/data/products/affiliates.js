@@ -1,5 +1,5 @@
 // =====================================================================
-// AFFILIATES (Apenas um gerenciador, os links em si ficam nas pastas)
+// AFFILIATES (Apenas um gerenciador (os links em si ficam nas pastas)
 // =====================================================================
 
 import { aotAffiliate } from "./affiliates/aot.js"
@@ -14,6 +14,8 @@ import { shkAffiliate } from "./affiliates/shk.js"
 import { skmtAffiliate } from "./affiliates/skmt.js"
 import { vinlandAffiliate } from "./affiliates/vinland.js"
 import { vsAffiliate } from "./affiliates/vs.js"
+import { daemAffiliate } from "./affiliates/daem.js"
+import { csmAffiliate } from "./affiliates/csm.js"
 
 
 export {
@@ -29,4 +31,6 @@ export {
   skmtAffiliate,
   vinlandAffiliate,
   vsAffiliate,
+  daemAffiliate,
+  csmAffiliate,
 }

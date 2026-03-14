@@ -18,6 +18,19 @@ import { makeAddedAtByVolume } from "../../utils/volumeDates.js";
 
 export const SERIES = {
 
+  
+  csm: createSeries("csm", {
+    series: "Chainsaw Man",
+    end: 22,
+    brand: "Panini",
+    author: "Tatsuki Fujimoto",
+    genre: "Shounen/Seinen",
+    subtitle: "Um caçador de demônios luta para sobreviver em um mundo dominado pelo medo.",
+    format: "Padrão",
+
+    addedAtByVolume: makeAddedAtByVolume(1, 22, "2026-03-14"),
+  }),
+
   daem: createSeries("daem", {
     series: "Daemons do Reino das Sombras",
     end: 3,

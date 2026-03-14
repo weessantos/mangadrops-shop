@@ -213,31 +213,22 @@ app.post("/save-descriptions",(req,res)=>{
 
 app.post("/save-affiliates",(req,res)=>{
 
-  const { code } = req.body
+const {prefix,code} = req.body
 
-  const match = code.match(/export const (\w+)Affiliate/)
+const file = path.join(
+base,
+"src/data/products/affiliates",
+`${prefix}.js`
+)
 
-  if(!match){
+fs.writeFileSync(file,code)
 
-    return res.status(400).send({
-      error:"Prefixo não encontrado"
-    })
+updateAffiliateManager(prefix)
+updateIndex(prefix)
 
-  }
-
-  const prefix = match[1]
-
-  const file = path.join(
-    affiliatesDir,
-    `${prefix}.js`
-  )
-
-  fs.writeFileSync(file,code)
-
-  res.send({ok:true})
+res.json({ok:true})
 
 })
-
 
 // ============================
 // salvar catálogo
@@ -419,6 +410,102 @@ error:"erro ao adicionar volume"
 }
 
 })
+
+//endpoint tiktok
+
+  app.post("/save-tiktok",(req,res)=>{
+
+  const {prefix,code} = req.body
+
+  try{
+
+  const file = path.join(
+  base,
+  "src/data/products/tiktok",
+  `${prefix}.js`
+  )
+
+  fs.writeFileSync(file,code)
+
+  res.json({ok:true})
+
+  }catch(err){
+
+  console.error(err)
+  res.status(500).json({error:"erro ao salvar tiktok"})
+
+  }
+
+  })
+
+//atualizar affiliates.js (gerenciador)
+
+  function updateAffiliateManager(prefix){
+
+  const file = path.join(
+  base,
+  "src/data/products/affiliates.js"
+  )
+
+  let content = fs.readFileSync(file,"utf8")
+
+  const importLine = `import { ${prefix}Affiliate } from "./affiliates/${prefix}.js"`
+  const exportLine = `  ${prefix}Affiliate,`
+
+  if(!content.includes(importLine)){
+
+  content = content.replace(
+  "// AFFILIATES (Apenas um gerenciador",
+  `// AFFILIATES (Apenas um gerenciador\n${importLine}`
+  )
+
+  }
+
+  if(!content.includes(exportLine)){
+
+  content = content.replace(
+  "export {",
+  `export {\n${exportLine}`
+  )
+
+  }
+
+  fs.writeFileSync(file,content)
+
+  }
+
+  //atualizar index
+
+  function updateIndex(prefix){
+
+  const file = path.join(
+  base,
+  "src/data/products/index.js"
+  )
+
+  let content = fs.readFileSync(file,"utf8")
+
+  if(content.includes(`${prefix}: {`)) return
+
+  const block = `
+    ${prefix}: {
+      affiliate: ${prefix}Affiliate,
+      descriptions: ${prefix}Descriptions,
+      tiktok: ${prefix}Tiktok,
+      price: 47.9
+    },
+  `
+
+  content = content.replace(
+  "const SERIES_DATA = {",
+  `const SERIES_DATA = {\n${block}`
+  )
+
+  fs.writeFileSync(file,content)
+
+  }
+
+
 
 // ================================================================================================================
 // ============================
