@@ -6,7 +6,7 @@ export const opAffiliate = {
   5: { mercadoLivre: "", amazon: "https://amzn.to/40eH9Wt" },
   6: { mercadoLivre: "", amazon: "https://amzn.to/4qFbnwI" },
   7: { mercadoLivre: "https://mercadolivre.com/sec/1Fo9qbA", amazon: "https://amzn.to/4kIn0S3" },
-  8: { mercadoLivre: "https://meli.la/2H7QWWq", amazon: "https://amzn.to/4tH57Hu" },
+  8: { mercadoLivre: "", amazon: "https://amzn.to/4tH57Hu" },
   9: { mercadoLivre: "https://meli.la/1GnyXRr", amazon: "https://amzn.to/3OuRJ97" },
   10: { mercadoLivre: "https://meli.la/32JqdEE", amazon: "" },
   11: { mercadoLivre: "https://mercadolivre.com/sec/2jeoM2w", amazon: "" },

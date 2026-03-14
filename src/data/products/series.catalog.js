@@ -18,6 +18,32 @@ import { makeAddedAtByVolume } from "../../utils/volumeDates.js";
 
 export const SERIES = {
 
+  daem: createSeries("daem", {
+    series: "Daemons do Reino das Sombras",
+    end: 3,
+    brand: "JBC",
+    author: "Hiromu Arakawa",
+    genre: "Shounen",
+    subtitle: "Da criadora de Fullmetal Alchemist. Irmãos separados pelo destino descobrem um mundo secreto de espíritos e poderes ocultos.",
+    format: "Padrão",
+
+    addedAtByVolume: makeAddedAtByVolume(1, 3, "2026-03-14"),
+  }),
+
+
+  vs: createSeries("vs", {
+    series: "Versus",
+    end: 4,
+    brand: "JBC",
+    author: "One",
+    genre: "Shounen",
+    subtitle: "Quando vários apocalipses colidem, a humanidade tenta sobreviver ao caos.",
+    format: "Padrão",
+
+    addedAtByVolume: makeAddedAtByVolume(1, 4, "2026-03-14"),
+  }),
+
+
   aot: createSeries("aot", {
     series: "Attack on Titan",
     start: 1,

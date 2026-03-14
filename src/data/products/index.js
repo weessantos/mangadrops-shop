@@ -1,135 +1,82 @@
 // src/data/products/index.js
-import {
-  aotAffiliate,
-  opAffiliate,
-  jjkAffiliate,
-  haikyuAffiliate,
-  kgbAffiliate,
-  vinlandAffiliate,
-  skmtAffiliate,
-  fmaAffiliate,
-  gbAffiliate,
-  shkAffiliate,
-  dddAffiliate,
-} from "./affiliates.js";
 
-import { makeAddedAtByVolume } from "../../utils/volumeDates.js";
-import { createSeriesVolumes } from "./series.factory.js";
 import { SERIES } from "./series.catalog.js";
+import { createSeriesVolumes } from "./series.factory.js";
 
-// descriptions
-import { aotDescriptions } from "./descriptions/aot.js";
-import { jjkDescriptions } from "./descriptions/jjk.js";
-import { opDescriptions } from "./descriptions/op.js";
-import { haikyuDescriptions } from "./descriptions/haikyu.js";
-import { kgbDescriptions } from "./descriptions/kgb.js";
-import { vinlandDescriptions } from "./descriptions/vinland.js";
-import { skmtDescriptions } from "./descriptions/skmt.js";
-import { fmaDescriptions } from "./descriptions/fma.js";
-import { gbDescriptions } from "./descriptions/gb.js";
 
-// tiktok
-import { aotTiktok } from "./tiktok/aot.js";
-import { jjkTiktok } from "./tiktok/jjk.js";
-import { opTiktok } from "./tiktok/op.js";
-import { haikyuTiktok } from "./tiktok/haikyu.js";
-import { kgbTiktok } from "./tiktok/kgb.js";
-import { vinlandTiktok } from "./tiktok/vinland.js";
-import { skmtTiktok } from "./tiktok/skmt.js";
-import { fmaTiktok } from "./tiktok/fma.js";
-import { gbTiktok } from "./tiktok/gb.js";
-import { shkDescriptions } from "./descriptions/shk.js";
-import { shkTiktok } from "./tiktok/shk.js";
-import { dddDescriptions } from "./descriptions/ddd.js";
-import { dddTiktok } from "./tiktok/ddd.js";
+// ===============================
+// Import automático dos arquivos
+// ===============================
 
-const aot = createSeriesVolumes({
-  ...SERIES.aot,
-  affiliateByVolume: aotAffiliate,
-  tiktokByVolume: aotTiktok,
-  descriptionByVolume: aotDescriptions,
-  defaultCoverPrice: 78.90,
+const affiliateModules = import.meta.glob("./affiliates/*.js", { eager: true });
+const descriptionModules = import.meta.glob("./descriptions/*.js", { eager: true });
+const tiktokModules = import.meta.glob("./tiktok/*.js", { eager: true });
+
+
+// ===============================
+// Converter modules em mapas
+// ===============================
+
+const affiliateMap = {};
+const descriptionMap = {};
+const tiktokMap = {};
+
+for (const path in affiliateModules) {
+  const mod = affiliateModules[path];
+  const key = Object.keys(mod)[0];
+  const prefix = key.replace("Affiliate", "");
+  affiliateMap[prefix] = mod[key];
+}
+
+for (const path in descriptionModules) {
+  const mod = descriptionModules[path];
+  const key = Object.keys(mod)[0];
+  const prefix = key.replace("Descriptions", "");
+  descriptionMap[prefix] = mod[key];
+}
+
+for (const path in tiktokModules) {
+  const mod = tiktokModules[path];
+  const key = Object.keys(mod)[0];
+  const prefix = key.replace("Tiktok", "");
+  tiktokMap[prefix] = mod[key];
+}
+
+
+// ===============================
+// Preços padrão
+// ===============================
+
+const defaultPrices = {
+  aot: 78.9,
+  jjk: 47.9,
+  op: 99.9,
+  haikyu: 63.9,
+  kgb: 47.9,
+  vinland: 54.9,
+  skmt: 47.9,
+  fma: 43.9,
+  gb: 69.9,
+  shk: 87.9,
+  ddd: 47.9,
+  vs: 44.9,
+};
+
+
+// ===============================
+// Gerar produtos automaticamente
+// ===============================
+
+export const products = Object.entries(SERIES).flatMap(([prefix, config]) => {
+
+  return createSeriesVolumes({
+    ...config,
+
+    affiliateByVolume: affiliateMap[prefix] || {},
+    descriptionByVolume: descriptionMap[prefix] || {},
+    tiktokByVolume: tiktokMap[prefix] || {},
+
+    defaultCoverPrice: defaultPrices[prefix] || null,
+  });
+
 });
-
-const jjk = createSeriesVolumes({
-  ...SERIES.jjk,
-  affiliateByVolume: jjkAffiliate,
-  tiktokByVolume: jjkTiktok,
-  descriptionByVolume: jjkDescriptions,
-  defaultCoverPrice: 47.90,
-});
-
-const op = createSeriesVolumes({
-  ...SERIES.op,
-  affiliateByVolume: opAffiliate,
-  tiktokByVolume: opTiktok,
-  descriptionByVolume: opDescriptions,
-  defaultCoverPrice: 99.90,
-});
-
-const haikyu = createSeriesVolumes({
-  ...SERIES.haikyu,
-  affiliateByVolume: haikyuAffiliate,
-  tiktokByVolume: haikyuTiktok,
-  descriptionByVolume: haikyuDescriptions,
-  defaultCoverPrice: 63.90,
-});
-
-const kgb = createSeriesVolumes({
-  ...SERIES.kgb,
-  affiliateByVolume: kgbAffiliate,
-  tiktokByVolume: kgbTiktok,
-  descriptionByVolume: kgbDescriptions,
-  defaultCoverPrice: 47.90,
-});
-
-const vinland = createSeriesVolumes({
-  ...SERIES.vinland,
-  affiliateByVolume: vinlandAffiliate,
-  tiktokByVolume: vinlandTiktok,
-  descriptionByVolume: vinlandDescriptions,
-  defaultCoverPrice: 54.90,
-
-});
-
-const skmt = createSeriesVolumes({
-  ...SERIES.skmt,
-  affiliateByVolume: skmtAffiliate,
-  tiktokByVolume: skmtTiktok,
-  descriptionByVolume: skmtDescriptions,
-  defaultCoverPrice: 47.90,
-});
-
-const fma = createSeriesVolumes({
-  ...SERIES.fma,
-  affiliateByVolume: fmaAffiliate,
-  tiktokByVolume: fmaTiktok,
-  descriptionByVolume: fmaDescriptions,
-  defaultCoverPrice: 43.90,
-});
-
-const gb = createSeriesVolumes({
-  ...SERIES.gb,
-  affiliateByVolume: gbAffiliate,
-  tiktokByVolume: gbTiktok,
-  descriptionByVolume: gbDescriptions,
-  defaultCoverPrice: 69.90,
-});
-
-const shk = createSeriesVolumes({
-  ...SERIES.shk,
-  affiliateByVolume: shkAffiliate,
-  tiktokByVolume: shkTiktok,
-  descriptionByVolume: shkDescriptions,
-  defaultCoverPrice: 87.90,
-});
-
-const ddd = createSeriesVolumes({
-  ...SERIES.ddd,
-  affiliateByVolume: dddAffiliate,
-  tiktokByVolume: dddTiktok,
-  descriptionByVolume: dddDescriptions,
-  defaultCoverPrice: 47.90,
-});
-
-export const products = [...aot, ...jjk, ...op, ...haikyu, ...kgb, ...vinland, ...skmt, ...fma, ...gb, ...shk, ...ddd];

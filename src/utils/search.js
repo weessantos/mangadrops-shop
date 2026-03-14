@@ -9,6 +9,8 @@ export const ALIASES = {
   vinland: "vinland saga",
   haikyu: "haikyu",
   skmt: "sakamoto",
+  ddd: "dandadan",
+  vs: "versus",
 };
 
 export function normalizeText(s) {

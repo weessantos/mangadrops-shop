@@ -13,6 +13,7 @@ import { opAffiliate } from "./affiliates/op.js"
 import { shkAffiliate } from "./affiliates/shk.js"
 import { skmtAffiliate } from "./affiliates/skmt.js"
 import { vinlandAffiliate } from "./affiliates/vinland.js"
+import { vsAffiliate } from "./affiliates/vs.js"
 
 
 export {
@@ -26,5 +27,6 @@ export {
   opAffiliate,
   shkAffiliate,
   skmtAffiliate,
-  vinlandAffiliate
+  vinlandAffiliate,
+  vsAffiliate,
 }

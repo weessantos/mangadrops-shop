@@ -420,6 +420,12 @@ function renderTiktok(){
 
   })
 
+  html += `
+  <button class="action" onclick="saveTiktokToProject()">
+  Salvar TikTok no projeto
+  </button>
+  `
+
   container.innerHTML = html
 
 }
@@ -440,6 +446,47 @@ function updateTikTokSummary(id,val){
 function updateTikTokCaption(id,val){
 
   state.tiktok[id].caption = val
+
+}
+
+async function saveTiktokToProject(){
+
+const prefix = state.series.prefix
+
+if(!prefix){
+alert("Defina o prefixo da série")
+return
+}
+
+let code = `export const ${prefix}Tiktok = {\n`
+
+state.volumes.forEach(v => {
+
+code += `  ${v.number}: "",\n`
+
+})
+
+code += `};\n`
+
+console.log("TIKTOK GERADO:")
+console.log(code)
+
+await fetch("http://localhost:3001/save-tiktok",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+prefix,
+code
+})
+
+})
+
+alert("Arquivo TikTok criado no projeto!")
 
 }
 
