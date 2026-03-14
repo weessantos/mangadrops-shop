@@ -11,8 +11,17 @@ export function todayBR() {
 }
 
 // Gera: { 1: "2026-02-25", 2: "2026-02-25", ... }
-export function makeAddedAtByVolume(start, end, date = todayBR()) {
-  const obj = {};
-  for (let v = start; v <= end; v++) obj[v] = date;
-  return obj;
+export function makeAddedAtByVolume(start, end, date) {
+
+  const result = {}
+
+  const value =
+    date ||
+    new Date().toISOString().slice(0, 10)
+
+  for (let i = start; i <= end; i++) {
+    result[i] = value
+  }
+
+  return result
 }

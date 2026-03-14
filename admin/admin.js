@@ -276,24 +276,15 @@ const thumb = document.getElementById("series-thumb").value
 const imageExt = document.getElementById("series-imageExt").value
 
 let seriesCode = `
-${prefix}: {
+${prefix}: createSeries("${prefix}", {
   series: "${title}",
-  prefix: "${prefix}",
-  start: 1,
   end: ${total},
   brand: "${brand}",
-  imageExt: "webp",
-  editionLabel: "${format}",
   author: "${author}",
   genre: "${genre}",
   subtitle: "${subtitle}",
-  thumb: img("${prefix}-series.webp"),
   format: "${format}",
-
-  affiliateByVolume: ${prefix}Affiliate,
-  tiktokByVolume: ${prefix}Tiktok,
-  descriptionByVolume: ${prefix}Descriptions,
-},
+}),
 `
 
 await fetch("http://localhost:3001/save-series",{

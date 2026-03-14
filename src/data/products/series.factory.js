@@ -1,4 +1,3 @@
-// src/data/products/series.factory.js
 const base =
   typeof import.meta !== "undefined" &&
   import.meta.env &&
@@ -14,7 +13,7 @@ function pad2(n) {
 
 function splitMulti(value) {
   return String(value || "")
-    .split(/[\/|,]/g) // separa "Shounen/Seinen"
+    .split(/[\/|,]/g)
     .map((v) => v.trim())
     .filter(Boolean);
 }
@@ -27,9 +26,11 @@ export function normalizeAffiliate(value) {
       amazon: typeof value.amazon === "string" ? value.amazon : "",
     };
   }
+
   if (typeof value === "string") {
     return { mercadoLivre: value, amazon: "" };
   }
+
   return { mercadoLivre: "", amazon: "" };
 }
 
@@ -44,6 +45,23 @@ function normalizePrice(value) {
   return Number.isFinite(num) ? num : null;
 }
 
+/**
+ * FACTORY DE SÉRIE
+ * reduz drasticamente o tamanho do series.catalog
+ */
+export function createSeries(prefix, config) {
+  return {
+    prefix,
+    start: 1,
+    imageExt: "webp",
+    ...config,
+    thumb: config.thumb || img(`${prefix}-series.webp`),
+  };
+}
+
+/**
+ * GERA OS VOLUMES DA SÉRIE
+ */
 export function createSeriesVolumes({
   series,
   prefix,
@@ -99,7 +117,6 @@ export function createSeriesVolumes({
       description: descriptionByVolume[volume] || "",
       addedAt: addedAtByVolume[volume] || null,
 
-      // preço de capa / tabela da obra
       coverPrice,
     };
   });
