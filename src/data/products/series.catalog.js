@@ -60,6 +60,7 @@ import { dddTiktok } from "./tiktok/ddd.js";
  * - Agora também tem thumb/subtitle, pra UI não precisar de outro arquivo
  */
 export const SERIES = {
+
   aot: {
     series: "Attack on Titan",
     prefix: "aot",
