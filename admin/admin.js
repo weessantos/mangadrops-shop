@@ -275,6 +275,8 @@ const format = document.getElementById("series-format").value
 const thumb = document.getElementById("series-thumb").value
 const imageExt = document.getElementById("series-imageExt").value
 
+const today = new Date().toISOString().slice(0,10)
+
 let seriesCode = `
 ${prefix}: createSeries("${prefix}", {
   series: "${title}",
@@ -284,6 +286,8 @@ ${prefix}: createSeries("${prefix}", {
   genre: "${genre}",
   subtitle: "${subtitle}",
   format: "${format}",
+
+  addedAtByVolume: makeAddedAtByVolume(1, ${total}, "${today}"),
 }),
 `
 
@@ -663,6 +667,38 @@ code
 alert("Descrições salvas no projeto!")
 
 }
+
+// add volume
+async function addVolume(){
+
+const prefix = state.series.prefix
+
+if(!prefix){
+alert("Abra uma série primeiro")
+return
+}
+
+const res = await fetch("http://localhost:3001/add-volume",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({prefix})
+
+})
+
+const data = await res.json()
+
+alert("Novo lançamento criado: Vol " + data.volume)
+
+openSeries(prefix)
+
+}
+
+
 
 // ===============================
 // Salvar afiliados NO PROJETO

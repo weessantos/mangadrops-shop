@@ -8,6 +8,12 @@ function isValidDate(v) {
   return typeof v === "string" && !Number.isNaN(new Date(v).getTime());
 }
 
+function getDiffDays(date) {
+  const now = new Date();
+  const d = new Date(date);
+  return (now - d) / (1000 * 60 * 60 * 24);
+}
+
 export default function LaunchRail({
   title = "Lançamentos",
   products = [],
@@ -18,6 +24,7 @@ export default function LaunchRail({
   onOpenProduct,
 }) {
   const railRef = useRef(null);
+
   const [canLeft, setCanLeft] = useState(false);
   const [canRight, setCanRight] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -25,7 +32,7 @@ export default function LaunchRail({
   const items = useMemo(() => {
     const now = new Date();
 
-    return [...products]
+    let list = [...products]
       .filter((p) => isValidDate(p.addedAt))
       .filter((p) => {
         const d = new Date(p.addedAt);
@@ -55,8 +62,28 @@ export default function LaunchRail({
 
         return isAvailable;
       })
-      .sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt))
-      .slice(0, limit);
+      .sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt));
+
+    // fallback se não houver lançamentos
+    if (list.length === 0) {
+      list = [...products]
+        .filter((p) => {
+          const mlPrice = getPrice(p?.id, "mercadoLivre");
+          const amzPrice = getPrice(p?.id, "amazon");
+
+          const { isAvailable } = getOfferData({
+            mlHref: p?.affiliate?.mercadoLivre,
+            mlPrice,
+            amazonHref: p?.affiliate?.amazon,
+            amazonPrice: amzPrice,
+          });
+
+          return isAvailable;
+        })
+        .slice(0, 12);
+    }
+
+    return list.slice(0, limit);
   }, [products, limit]);
 
   const visibleItems = useMemo(() => {
@@ -75,6 +102,7 @@ export default function LaunchRail({
     }
 
     const maxScroll = el.scrollWidth - el.clientWidth;
+
     setCanLeft(el.scrollLeft > 2);
     setCanRight(el.scrollLeft < maxScroll - 2);
   };
@@ -83,6 +111,7 @@ export default function LaunchRail({
     updateArrows();
 
     const el = railRef.current;
+
     if (!el || expanded) return;
 
     const onScroll = () => updateArrows();
@@ -99,10 +128,15 @@ export default function LaunchRail({
 
   const scrollByAmount = (dir) => {
     const el = railRef.current;
+
     if (!el || expanded) return;
 
     const amount = Math.round(el.clientWidth * 0.85) * dir;
-    el.scrollBy({ left: amount, behavior: "smooth" });
+
+    el.scrollBy({
+      left: amount,
+      behavior: "smooth",
+    });
   };
 
   const handleToggleExpanded = () => {
@@ -131,7 +165,10 @@ export default function LaunchRail({
               <span className="sectionAccent" aria-hidden="true" />
               {title}
             </h2>
-            {subtitle ? <p className="sectionSubtitle">{subtitle}</p> : null}
+
+            {subtitle ? (
+              <p className="sectionSubtitle">{subtitle}</p>
+            ) : null}
           </div>
 
           <div className="sectionHeaderRight">
@@ -157,8 +194,6 @@ export default function LaunchRail({
                   className={`railArrow ${canLeft ? "" : "disabled"}`}
                   onClick={() => scrollByAmount(-1)}
                   disabled={!canLeft}
-                  aria-label="Anterior"
-                  title="Anterior"
                 >
                   ‹
                 </button>
@@ -168,8 +203,6 @@ export default function LaunchRail({
                   className={`railArrow ${canRight ? "" : "disabled"}`}
                   onClick={() => scrollByAmount(1)}
                   disabled={!canRight}
-                  aria-label="Próximo"
-                  title="Próximo"
                 >
                   ›
                 </button>
@@ -183,19 +216,25 @@ export default function LaunchRail({
           ref={railRef}
           aria-label={title}
         >
-          {visibleItems.map((p, index) => (
-            <div className="railItem productItem" key={p.id}>
-              <ProductCard
-                product={p}
-                onOpen={onOpenProduct}
-                priority={index < 4}
-                topBadge={{
-                  label: "NOVO",
-                  className: "newBadge",
-                }}
-              />
-            </div>
-          ))}
+          {visibleItems.map((p, index) => {
+            const diffDays = getDiffDays(p.addedAt);
+
+            const badge =
+              diffDays <= 7
+                ? { label: "NOVO", className: "newBadge" }
+                : { label: "RECENTE", className: "recentBadge" };
+
+            return (
+              <div className="railItem productItem" key={p.id}>
+                <ProductCard
+                  product={p}
+                  onOpen={onOpenProduct}
+                  priority={index === 0}
+                  topBadge={badge}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

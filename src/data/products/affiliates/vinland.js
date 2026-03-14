@@ -11,5 +11,5 @@ export const vinlandAffiliate = {
   10: { mercadoLivre: "", amazon: "" },
   11: { mercadoLivre: "", amazon: "" },
   12: { mercadoLivre: "", amazon: "" },
-  13: { mercadoLivre: "https://mercadolivre.com/sec/1agiJVA", amazon: "" }
+  13: { mercadoLivre: "https://mercadolivre.com/sec/1agiJVA", amazon: "" },
 };

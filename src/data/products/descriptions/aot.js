@@ -15,5 +15,5 @@ export const aotDescriptions = {
   14: "2 em 1 Vol. 14 (Vols. 27–28): Ideologias entram em choque e antigos companheiros se dividem. A linha entre herói e vilão se torna cada vez mais tênue.", 
   15: "2 em 1 Vol. 15 (Vols. 29–30): Um plano ousado começa a se concretizar. O mundo entra em colapso diante de uma ameaça que pode mudar a história para sempre.",  
   16: "2 em 1 Vol. 16 (Vols. 31–32): Antigos aliados se unem em uma missão final desesperada. O confronto inevitável se aproxima, colocando o destino da humanidade em risco.",  
-  17: "2 em 1 Vol. 17 (Vols. 33–34): A batalha derradeira define o futuro do mundo. Verdades finais trazem consequências irreversíveis e encerram a jornada iniciada dentro das muralhas."
+  17: "2 em 1 Vol. 17 (Vols. 33–34): A batalha derradeira define o futuro do mundo. Verdades finais trazem consequências irreversíveis e encerram a jornada iniciada dentro das muralhas.",
 };

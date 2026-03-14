@@ -13,15 +13,15 @@ export const img = (path) => `${base}assets/${path}`;
  * - Agora também tem thumb/subtitle, pra UI não precisar de outro arquivo
  */
 
-import { createSeries } from "./series.factory";
-import { makeAddedAtByVolume } from "../../utils/volumeDates";
+import { createSeries } from "./series.factory.js";
+import { makeAddedAtByVolume } from "../../utils/volumeDates.js";
 
 export const SERIES = {
 
   aot: createSeries("aot", {
     series: "Attack on Titan",
     start: 1,
-    end: 17,
+    end: 18,
     brand: "Panini",
     editionLabel: "2 em 1",
     author: "Hajime Isayama",
@@ -64,19 +64,16 @@ export const SERIES = {
     addedAtByVolume: {
       37: "2026-02-25",
     },
-  }),
+  }),  
 
   haikyu: createSeries("haikyu", {
     series: "Haikyu",
     end: 20,
     brand: "JBC",
-    editionLabel: "2 em 1",
     author: "Haruichi Furudate",
     genre: "Shounen",
     subtitle: "Vôlei, rivalidade intensa e a corrida para o Nacional.",
     format: "2 em 1",
-
-    addedAtByVolume: makeAddedAtByVolume(1, 20, "2026-02-16"),
   }),
 
   kgb: createSeries("kgb", {

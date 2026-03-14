@@ -18,5 +18,5 @@ export const skmtAffiliate = {
   17: { mercadoLivre: "https://meli.la/1o4c8nB", amazon: "" },
   18: { mercadoLivre: "https://meli.la/24t9nv3", amazon: "" },
   19: { mercadoLivre: "https://meli.la/2zELgj6", amazon: "" },
-  20: { mercadoLivre: "", amazon: "" }
+  20: { mercadoLivre: "", amazon: "" },
 };

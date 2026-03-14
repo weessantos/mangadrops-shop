@@ -15,5 +15,5 @@ export const aotTiktok = {
   14: "https://www.tiktok.com/@_mangadrops/video/7610233460870991125?is_from_webapp=1&sender_device=pc&web_id=7548248564712572421",
   15: "https://www.tiktok.com/@_mangadrops/video/7610605717505969429?is_from_webapp=1&sender_device=pc&web_id=7548248564712572421",
   16: "https://www.tiktok.com/@_mangadrops/video/7610984327513591060?is_from_webapp=1&sender_device=pc&web_id=7548248564712572421",
-  17: "https://www.tiktok.com/@_mangadrops/video/7611343354776800533?is_from_webapp=1&sender_device=pc&web_id=7548248564712572421"
+  17: "https://www.tiktok.com/@_mangadrops/video/7611343354776800533?is_from_webapp=1&sender_device=pc&web_id=7548248564712572421",
 };

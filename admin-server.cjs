@@ -1,118 +1,188 @@
 const express = require("express")
+const cors = require("cors")
 const fs = require("fs")
 const path = require("path")
 
 const app = express()
 
+app.use(cors())
 app.use(express.json())
 
-// liberar CORS
-app.use((req,res,next)=>{
-res.setHeader("Access-Control-Allow-Origin","*")
-res.setHeader("Access-Control-Allow-Headers","*")
-res.setHeader("Access-Control-Allow-Methods","*")
-next()
-})
+const base = process.cwd()
 
-const base = __dirname
+// caminhos principais
 
 const catalogFile = path.join(
-base,
-"src/data/products/series.catalog.js"
+  base,
+  "src/data/products/series.catalog.js"
+)
+
+const descriptionsDir = path.join(
+  base,
+  "src/data/products/descriptions"
+)
+
+const affiliatesDir = path.join(
+  base,
+  "src/data/products/affiliates"
+)
+
+const tiktokDir = path.join(
+  base,
+  "src/data/products/tiktok"
 )
 
 
 // ============================
-// salvar series
+// carregar catálogo
 // ============================
 
-app.post("/save-series",(req,res)=>{
+async function loadCatalog(){
 
-const { prefix, seriesCode } = req.body
+  const mod = await import("file://" + catalogFile)
 
-let content = fs.readFileSync(catalogFile,"utf8")
+  return mod.SERIES
+
+}
+
 
 // ============================
-// evitar duplicação
+// carregar descrições
 // ============================
 
-if(content.includes(`${prefix}: {`)){
+async function loadDescriptions(prefix){
 
-return res.status(400).send({
-error:"Essa série já existe no catálogo"
+  try{
+
+    const mod = await import(
+      "file://" +
+      path.join(descriptionsDir,`${prefix}.js`)
+    )
+
+    return mod[`${prefix}Descriptions`] || {}
+
+  }catch{
+
+    return {}
+
+  }
+
+}
+
+
+// ============================
+// carregar afiliados
+// ============================
+
+async function loadAffiliates(prefix){
+
+  try{
+
+    const mod = await import(
+      "file://" +
+      path.join(affiliatesDir,`${prefix}.js`)
+    )
+
+    return mod[`${prefix}Affiliate`] || {}
+
+  }catch{
+
+    return {}
+
+  }
+
+}
+
+
+// ============================
+// carregar tiktok
+// ============================
+
+async function loadTiktok(prefix){
+
+  try{
+
+    const mod = await import(
+      "file://" +
+      path.join(tiktokDir,`${prefix}.js`)
+    )
+
+    return mod[`${prefix}Tiktok`] || {}
+
+  }catch{
+
+    return {}
+
+  }
+
+}
+
+
+// ============================
+// listar séries
+// ============================
+
+app.get("/series", async (req,res)=>{
+
+  try{
+
+    const SERIES = await loadCatalog()
+
+    res.json(Object.keys(SERIES))
+
+  }catch(e){
+
+    console.error(e)
+
+    res.json([])
+
+  }
+
 })
 
-}
 
 // ============================
-// adicionar import affiliate
+// série completa
 // ============================
 
-content = content.replace(
-/import\s*{([\s\S]*?)}\s*from\s*"\.\/affiliates\.js";/,
-(match, list)=>{
+app.get("/series-full/:prefix", async (req,res)=>{
 
-if(list.includes(`${prefix}Affiliate`)){
-return match
-}
+  const prefix = req.params.prefix
 
-const newList = list.trim().replace(/,\s*$/,"")
+  try{
 
-return `import {
-  ${newList},
-  ${prefix}Affiliate,
-} from "./affiliates.js";`
+    const SERIES = await loadCatalog()
 
-}
-)
+    const series = SERIES[prefix]
 
+    if(!series){
+      return res.status(404).send({
+        error:"Série não encontrada"
+      })
+    }
 
-// ============================
-// adicionar import description
-// ============================
+    const descriptions = await loadDescriptions(prefix)
 
-const descImport = `import { ${prefix}Descriptions } from "./descriptions/${prefix}.js";`
+    const affiliates = await loadAffiliates(prefix)
 
-if(!content.includes(descImport)){
+    const tiktok = await loadTiktok(prefix)
 
-content = content.replace(
-/(import\s+{[^}]+}\s+from\s+"\.\/*descriptions\/[^"]+\.js";)(?![\s\S]*import\s+{[^}]+}\s+from\s+"\.\/*descriptions\/)/,
-`$1\n${descImport}`
-)
+    res.json({
+      series,
+      descriptions,
+      affiliates,
+      tiktok
+    })
 
-}
+  }catch(e){
 
+    console.error(e)
 
-// ============================
-// adicionar import tiktok
-// ============================
+    res.status(500).send({
+      error:"Erro ao carregar série"
+    })
 
-const tiktokImport = `import { ${prefix}Tiktok } from "./tiktok/${prefix}.js";`
-
-if(!content.includes(tiktokImport)){
-
-content = content.replace(
-/(import\s+{[^}]+}\s+from\s+"\.\/*tiktok\/[^"]+\.js";)(?![\s\S]*import\s+{[^}]+}\s+from\s+"\.\/*tiktok\/)/,
-`$1\n${tiktokImport}`
-)
-
-}
-
-
-// ============================
-// inserir série
-// ============================
-
-content = content.replace(
-"export const SERIES = {",
-`export const SERIES = {\n${seriesCode}`
-)
-
-fs.writeFileSync(catalogFile,content)
-
-console.log("Series catalog atualizado:", prefix)
-
-res.send({ok:true})
+  }
 
 })
 
@@ -123,19 +193,16 @@ res.send({ok:true})
 
 app.post("/save-descriptions",(req,res)=>{
 
-const { prefix, code } = req.body
+  const { prefix, code } = req.body
 
-const filePath = path.join(
-base,
-"src/data/products/descriptions",
-`${prefix}.js`
-)
+  const file = path.join(
+    descriptionsDir,
+    `${prefix}.js`
+  )
 
-fs.writeFileSync(filePath, code)
+  fs.writeFileSync(file,code)
 
-console.log("Descrições salvas:", prefix)
-
-res.send({ ok:true })
+  res.send({ok:true})
 
 })
 
@@ -146,298 +213,233 @@ res.send({ ok:true })
 
 app.post("/save-affiliates",(req,res)=>{
 
-const { code } = req.body
+  const { code } = req.body
 
-const filePath = path.join(
+  const match = code.match(/export const (\w+)Affiliate/)
+
+  if(!match){
+
+    return res.status(400).send({
+      error:"Prefixo não encontrado"
+    })
+
+  }
+
+  const prefix = match[1]
+
+  const file = path.join(
+    affiliatesDir,
+    `${prefix}.js`
+  )
+
+  fs.writeFileSync(file,code)
+
+  res.send({ok:true})
+
+})
+
+
+// ============================
+// salvar catálogo
+// ============================
+
+app.post("/save-series",(req,res)=>{
+
+  const { prefix, seriesCode } = req.body
+
+  let content = fs.readFileSync(catalogFile,"utf8")
+
+  const regex = new RegExp(
+    `${prefix}:\\s*createSeries\\([\\s\\S]*?\\),`
+  )
+
+  if(regex.test(content)){
+
+    content = content.replace(regex,seriesCode)
+
+  }else{
+
+    content = content.replace(
+      "export const SERIES = {",
+      `export const SERIES = {\n${seriesCode}`
+    )
+
+  }
+
+  fs.writeFileSync(catalogFile,content)
+
+  res.send({ok:true})
+
+})
+
+// ===============================
+// Adicionar novo volume
+// ===============================
+
+app.post("/add-volume", (req,res)=>{
+
+const { prefix } = req.body
+
+if(!prefix){
+return res.status(400).json({error:"prefix obrigatório"})
+}
+
+try{
+
+const catalogPath = path.join(
 base,
-"src/data/products/affiliates.js"
+"src/data/products/series.catalog.js"
 )
 
-let content = fs.readFileSync(filePath,"utf8")
+let catalog = fs.readFileSync(catalogPath,"utf8")
 
-content += "\n" + code
-
-fs.writeFileSync(filePath, content)
-
-console.log("Affiliate adicionado")
-
-res.send({ ok:true })
-
-})
-
-
-// ============================
-// listar séries existentes
-// ============================
-
-app.get("/series",(req,res)=>{
-
-const file = fs.readFileSync(catalogFile,"utf8")
-
-const match = file.match(/\{([\s\S]*)\}/)
+// encontrar end atual
+const endRegex = new RegExp(`${prefix}: createSeries\\("[^"]+", \\{([\\s\\S]*?)end:\\s*(\\d+)`)
+const match = catalog.match(endRegex)
 
 if(!match){
-return res.json([])
+return res.status(404).json({error:"serie não encontrada"})
 }
 
-const content = match[1]
+const currentEnd = parseInt(match[2])
+const newEnd = currentEnd + 1
 
-const regex = /(\w+):\s*\{/g
+catalog = catalog.replace(
+`end: ${currentEnd}`,
+`end: ${newEnd}`
+)
 
-let result
-const series = []
+// data de hoje
+const today = new Date().toISOString().slice(0,10)
 
-while((result = regex.exec(content)) !== null){
+// procurar addedAtByVolume
+if(catalog.includes("makeAddedAtByVolume")){
 
-series.push(result[1])
+// converter função para objeto
+const obj = []
+
+for(let i=1;i<=currentEnd;i++){
+obj.push(`  ${i}: "${today}"`)
+}
+
+obj.push(`  ${newEnd}: "${today}"`)
+
+const block = `addedAtByVolume: {\n${obj.join(",\n")}\n}`
+
+catalog = catalog.replace(
+/addedAtByVolume:\s*makeAddedAtByVolume\([\s\S]*?\)/,
+block
+)
+
+}
+else{
+
+catalog = catalog.replace(
+/addedAtByVolume:\s*\{([\s\S]*?)\}/,
+(match,content)=>{
+return `addedAtByVolume: {\n${content.trim()},\n  ${newEnd}: "${today}"\n}`
+}
+)
 
 }
 
-res.json(series)
+fs.writeFileSync(catalogPath,catalog)
+
+
+// -----------------------------
+// descriptions
+// -----------------------------
+
+const descPath = path.join(
+base,
+`src/data/products/descriptions/${prefix}.js`
+)
+
+let desc = fs.readFileSync(descPath,"utf8")
+
+desc = desc.replace(
+/};\s*$/,
+`  ${newEnd}: "",\n};`
+)
+
+fs.writeFileSync(descPath,desc)
+
+
+// -----------------------------
+// affiliates
+// -----------------------------
+
+const affPath = path.join(
+base,
+`src/data/products/affiliates/${prefix}.js`
+)
+
+let aff = fs.readFileSync(affPath,"utf8")
+
+aff = aff.replace(
+/};\s*$/,
+`  ${newEnd}: { mercadoLivre:"", amazon:"" },\n};`
+)
+
+fs.writeFileSync(affPath,aff)
+
+
+// -----------------------------
+// tiktok
+// -----------------------------
+
+const tkPath = path.join(
+base,
+`src/data/products/tiktok/${prefix}.js`
+)
+
+let tk = fs.readFileSync(tkPath,"utf8")
+
+tk = tk.replace(
+/};\s*$/,
+`  ${newEnd}: "",\n};`
+)
+
+fs.writeFileSync(tkPath,tk)
+
+
+res.json({
+success:true,
+volume:newEnd
+})
+
+}catch(err){
+
+console.error(err)
+
+res.status(500).json({
+error:"erro ao adicionar volume"
+})
+
+}
 
 })
 
-
-// ============================
-// abrir série específica
-// ============================
-
-app.get("/series/:prefix",(req,res)=>{
-
-const prefix = req.params.prefix
-
-const file = fs.readFileSync(catalogFile,"utf8")
-
-const regex = new RegExp(`${prefix}:\\s*\\{([\\s\\S]*?)\\}`, "m")
-
-const match = file.match(regex)
-
-if(!match){
-return res.status(404).send({error:"Série não encontrada"})
-}
-
-const block = match[1]
-
-const get = field => {
-
-const r = new RegExp(`${field}:\\s*"([^"]+)"`)
-const m = block.match(r)
-return m ? m[1] : ""
-
-}
-
-const getNum = field => {
-
-const r = new RegExp(`${field}:\\s*(\\d+)`)
-const m = block.match(r)
-return m ? parseInt(m[1]) : 0
-
-}
-
-res.send({
-
-prefix,
-series: get("series"),
-author: get("author"),
-genre: get("genre"),
-brand: get("brand"),
-format: get("format"),
-subtitle: get("subtitle"),
-start: getNum("start"),
-end: getNum("end")
-
-})
-
-})
-
-
+// ================================================================================================================
 // ============================
 // teste servidor
 // ============================
 
 app.get("/",(req,res)=>{
-res.send("Admin server funcionando")
+
+  res.send("Admin server funcionando")
+
 })
+
+
+// ============================
+// iniciar servidor
+// ============================
 
 app.listen(3001,()=>{
 
-console.log("Admin server rodando em http://localhost:3001")
-
-})
-
-
-// ============================
-// SÉRIE COMPLETA
-// ============================
-app.get("/series-full/:prefix",(req,res)=>{
-
-const prefix = req.params.prefix
-
-const file = fs.readFileSync(catalogFile,"utf8")
-
-const regex = new RegExp(`${prefix}:\\s*\\{([\\s\\S]*?)\\}`, "m")
-const match = file.match(regex)
-
-if(!match){
-return res.status(404).send({error:"Série não encontrada"})
-}
-
-const block = match[1]
-
-// helpers
-
-const get = field => {
-
-const r = new RegExp(`${field}:\\s*"([^"]+)"`)
-const m = block.match(r)
-
-return m ? m[1] : ""
-
-}
-
-const getNum = field => {
-
-const r = new RegExp(`${field}:\\s*(\\d+)`)
-const m = block.match(r)
-
-return m ? parseInt(m[1]) : 0
-
-}
-
-const series = {
-
-series: get("series"),
-prefix: prefix,
-author: get("author"),
-genre: get("genre"),
-brand: get("brand"),
-format: get("format"),
-subtitle: get("subtitle"),
-start: getNum("start"),
-end: getNum("end")
-
-}
-
-let descriptions = {}
-let affiliates = {}
-let tiktok = {}
-
-
-// ==========================
-// DESCRIPTIONS
-// ==========================
-
-try{
-
-const descFile = path.join(
-base,
-"src/data/products/descriptions",
-`${prefix}.js`
-)
-
-if(fs.existsSync(descFile)){
-
-const content = fs.readFileSync(descFile,"utf8")
-
-const regex = /(\d+):\s*"([\s\S]*?)"/g
-
-let result
-
-while((result = regex.exec(content)) !== null){
-
-descriptions[result[1]] = result[2]
-
-}
-
-}
-
-}catch(e){}
-
-
-// ==========================
-// TIKTOK
-// ==========================
-
-try{
-
-const tkFile = path.join(
-base,
-"src/data/products/tiktok",
-`${prefix}.js`
-)
-
-if(fs.existsSync(tkFile)){
-
-const content = fs.readFileSync(tkFile,"utf8")
-
-const regex = /(\d+):\s*"([^"]+)"/g
-
-let result
-
-while((result = regex.exec(content)) !== null){
-
-tiktok[result[1]] = result[2]
-
-}
-
-}
-
-}catch(e){}
-
-
-// ==========================
-// AFFILIATES
-// ==========================
-
-try{
-
-const affFile = path.join(
-base,
-"src/data/products/affiliates.js"
-)
-
-const content = fs.readFileSync(affFile,"utf8")
-
-const regex = new RegExp(
-`export\\s+const\\s+${prefix}Affiliate\\s*=\\s*\\{([\\s\\S]*?)\\}`,
-"m"
-)
-
-const match = content.match(regex)
-
-if(match){
-
-const block = match[1]
-
-const reg = /(\d+):\s*\{([^}]*)\}/g
-
-let r
-
-while((r = reg.exec(block)) !== null){
-
-const num = r[1]
-
-const inner = r[2]
-
-const amazon = (inner.match(/amazon:\\s*"([^"]*)"/)||[])[1] || ""
-const ml = (inner.match(/mercadoLivre:\\s*"([^"]*)"/)||[])[1] || ""
-
-affiliates[num] = {
-amazon,
-mercadoLivre: ml
-}
-
-}
-
-}
-
-}catch(e){}
-
-res.send({
-series,
-descriptions,
-affiliates,
-tiktok
-})
+  console.log(
+    "Admin server rodando em http://localhost:3001"
+  )
 
 })
