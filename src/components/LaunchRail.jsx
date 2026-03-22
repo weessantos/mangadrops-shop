@@ -50,8 +50,8 @@ export default function LaunchRail({
             ? p.affiliate.amazon.trim()
             : "";
 
-        const mlPrice = getPrice(p?.id, "mercadoLivre");
-        const amzPrice = getPrice(p?.id, "amazon");
+        const mlPrice = getPrice(p, "mercadoLivre");
+        const amzPrice = getPrice(p, "amazon");
 
         const { isAvailable } = getOfferData({
           mlHref: mlUrl,
@@ -68,8 +68,8 @@ export default function LaunchRail({
     if (list.length === 0) {
       list = [...products]
         .filter((p) => {
-          const mlPrice = getPrice(p?.id, "mercadoLivre");
-          const amzPrice = getPrice(p?.id, "amazon");
+          const mlPrice = getPrice(p, "mercadoLivre");
+          const amzPrice = getPrice(p, "amazon");
 
           const { isAvailable } = getOfferData({
             mlHref: p?.affiliate?.mercadoLivre,

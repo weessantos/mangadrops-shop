@@ -1,815 +1,458 @@
-// ===============================
-// Estado central do CMS
-// ===============================
+const API = "http://localhost:3000/api"
 
-const state = {
-  series: {
-    title: "",
-    slug: "",
-    prefix: "",
-    totalVolumes: 0
-  },
+const seriesList = document.getElementById("series-list")
+const volumesDiv = document.getElementById("volumes")
+let currentSeriesTitle = ""
 
-  volumes: [],
+// =======================
+// ➕ BOTÃO NOVA SÉRIE
+// =======================
+const createSeriesBtn = document.createElement("button")
+createSeriesBtn.innerText = "+ Nova Série"
+createSeriesBtn.style.marginBottom = "10px"
 
-  affiliates: {},
+createSeriesBtn.onclick = openCreateSeries
 
-  tiktok: {}
-}
+seriesList.parentNode.insertBefore(createSeriesBtn, seriesList)
 
-// ===============================
-// Navegação entre abas
-// ===============================
+// =======================
+// 🎨 TOAST BONITO
+// =======================
+function showToast(msg, type = "success") {
+  const toast = document.createElement("div")
 
-const tabs = document.querySelectorAll("[data-tab]")
-const sections = document.querySelectorAll(".tab")
+  toast.className = `toast ${type}`
+  toast.innerText = msg
+  toast.style.position = "fixed"
+  toast.style.bottom = "20px"
+  toast.style.right = "20px"
+  toast.style.padding = "12px 16px"
+  toast.style.borderRadius = "8px"
+  toast.style.color = "white"
+  toast.style.fontWeight = "bold"
+  toast.style.zIndex = "9999"
+  toast.style.boxShadow = "0 0 10px rgba(0,0,0,0.3)"
 
-tabs.forEach(btn => {
-
-  btn.addEventListener("click", () => {
-
-    const tab = btn.dataset.tab
-
-    sections.forEach(sec => sec.style.display = "none")
-
-    document.getElementById("tab-" + tab).style.display = "block"
-
-  })
-
-})
-
-
-// ===============================
-// Gerar volumes automaticamente
-// ===============================
-
-function generateVolumes(){
-
-  const title = document.getElementById("series-title").value
-  const slug = document.getElementById("series-slug").value
-  const prefix = document.getElementById("series-prefix").value
-  const total = parseInt(document.getElementById("series-total").value)
-
-  state.series.title = title
-  state.series.slug = slug
-  state.series.prefix = prefix
-  state.series.totalVolumes = total
-
-  state.volumes = []
-  state.affiliates = {}
-  state.tiktok = {}
-
-  for(let i=1;i<=total;i++){
-
-    const num = String(i).padStart(2,"0")
-    const id = `${prefix}-${num}`
-
-    state.volumes.push({
-      id: id,
-      number: i,
-      title: `${title} Vol. ${num}`,
-      description: ""
-    })
-
-    state.affiliates[id] = {
-      amazon:"",
-      mercadoLivre:""
-    }
-
-    state.tiktok[id] = {
-      title:"",
-      summary:"",
-      caption:""
-    }
-
+  if (type === "error") {
+    toast.style.background = "#ef4444"
+  } else {
+    toast.style.background = "#22c55e"
   }
 
-  renderVolumes()
-  renderAffiliates()
-  renderTiktok()
+  document.body.appendChild(toast)
 
+  setTimeout(() => {
+    toast.style.opacity = "0"
+    setTimeout(() => toast.remove(), 300)
+  }, 2000)
 }
 
+// =======================
+// ⏳ LOADING
+// =======================
+function showLoading() {
+  volumesDiv.innerHTML = ""
 
-// ===============================
-// Renderizar tabela de volumes
-// ===============================
+  for (let i = 0; i < 5; i++) {
+    const sk = document.createElement("div")
+    sk.className = "skeleton"
+    volumesDiv.appendChild(sk)
+  }
+}
 
-function renderVolumes(){
+// =======================
+// 🐞 DEBUG VISUAL
+// =======================
+function showDebug(msg) {
+  let debug = document.getElementById("debug-box")
 
-  const container = document.getElementById("tab-volumes")
+  if (!debug) {
+    debug = document.createElement("div")
+    debug.id = "debug-box"
+    setTimeout(() => {
+      debug.remove()
+    }, 3000)
 
-  let html = `
-  <h2>Volumes</h2>
-  <table>
-  <tr>
-  <th>ID</th>
-  <th>Título</th>
-  <th>Descrição</th>
-  </tr>
+    Object.assign(debug.style, {
+      position: "fixed",
+      top: "20px",
+      right: "20px",
+      width: "300px",
+      maxHeight: "300px",
+      overflowY: "auto",
+      background: "#020617",
+      border: "1px solid #1e293b",
+      padding: "10px",
+      fontSize: "12px",
+      zIndex: "9999"
+    })
+
+    document.body.appendChild(debug)
+  }
+
+  // 🔥 LIMITE DE LINHAS
+  if (debug.childElementCount > 8) {
+    debug.innerHTML = "" // limpa tudo
+  }
+
+  const line = document.createElement("div")
+  line.innerText = msg
+  line.style.marginBottom = "5px"
+  line.style.color = "#38bdf8"
+
+  debug.appendChild(line)
+}
+
+// =======================
+// 🔥 CARREGAR SÉRIES
+// =======================
+async function loadSeries() {
+  const res = await fetch(`${API}/series`)
+  const data = await res.json()
+
+  seriesList.innerHTML = ""
+
+  data.forEach(s => {
+    const div = document.createElement("div")
+    div.className = "series-item"
+    div.textContent = s.title
+
+    div.onclick = () => loadVolumes(s.prefix)
+
+    seriesList.appendChild(div)
+  })
+}
+
+// =======================
+// 🆕 CRIAR NOVA SÉRIE (FORM SIMPLES)
+// =======================
+async function openCreateSeries() {
+  const title = prompt("Nome da série")
+  const prefix = prompt("Prefix (ex: OP, JJK)")
+  const subtitle = prompt("Subtitle (opcional)") || ""
+  const author = prompt("Autor")
+  const genre = prompt("Gênero")
+  const brand = prompt("Editora")
+  const format = prompt("Formato")
+  const edition_label = prompt("Edition Label (opcional)") || ""
+  const cover_price = prompt("Preço de capa")
+  const total_volumes = prompt("Total de volumes")
+
+  if (!title || !prefix || !author) {
+    showToast("Preencha os campos obrigatórios", "error")
+    return
+  }
+
+  await createSeriesRequest({
+    title,
+    prefix,
+    subtitle,
+    author,
+    genre,
+    brand,
+    format,
+    edition_label,
+    cover_price: Number(cover_price),
+    total_volumes: Number(total_volumes)
+  })
+}
+
+// =======================
+// 🔥 CARREGAR VOLUMES
+// =======================
+async function loadVolumes(prefix) {
+  showLoading()
+  showDebug(`Carregando série: ${prefix}`)
+
+  const res = await fetch(`${API}/series/${prefix}`)
+  const data = await res.json()
+  currentSeriesTitle = data.title
+
+  volumesDiv.innerHTML = `
+    <h1>${data.title}</h1>
+
+    <button onclick="openCreateVolume('${prefix}')">
+      + Novo Volume
+    </button>
+
+    <button onclick="deleteSeries('${prefix}')"
+      style="margin-left:10px;background:#ef4444;">
+      🗑 Deletar Série
+    </button>
   `
 
-  state.volumes.forEach((v,index)=>{
+  data.volumes.forEach(v => {
+    const div = document.createElement("div")
+    div.className = "card"
 
-    html += `
-    <tr>
-      <td>${v.id}</td>
+    div.innerHTML = `
+      <h3>${v.title}</h3>
 
-      <td>
-        <input value="${v.title}"
-        onchange="updateVolumeTitle(${index},this.value)">
-      </td>
+      <label>Descrição</label>
+      <textarea id="desc-${v.id}">${v.description || ""}</textarea>
 
-      <td>
-        <textarea
-        onchange="updateVolumeDesc(${index},this.value)">${v.description}</textarea>
-      </td>
+      <label>Amazon</label>
+      <input id="amazon-${v.id}" value="${v.amazon || ""}">
 
-    </tr>
+      <label>Mercado Livre</label>
+      <input id="ml-${v.id}" value="${v.mercado_livre || ""}">
+
+      <label>TikTok</label>
+      <input id="tiktok-${v.id}" value="${v.tiktok || ""}">
+
+      <label>Data</label>
+      <input type="date" id="date-${v.id}" value="${v.added_at || ""}">
+
+      <button id="btn-${v.id}" onclick="saveVolume(${v.id})">
+        💾 Salvar
+      </button>
+
+      <button onclick="deleteVolume(${v.id}, '${prefix}')"
+        style="margin-left:10px;background:#ef4444;">
+        🗑 Excluir
+      </button>
     `
 
+    volumesDiv.appendChild(div)
   })
-
-  html += "</table>"
-
-  container.innerHTML = html
-
 }
 
+// =======================
+// 💾 ABRIR PARA CRIAÇÃO DE VOLUME
+// =======================
+async function openCreateVolume(prefix) {
+  try {
+    showDebug("Calculando próximo volume...")
 
-// ===============================
-// Atualizar volume
-// ===============================
+    const res = await fetch(`${API}/series/${prefix}`)
+    const data = await res.json()
 
-function updateVolumeTitle(i,value){
+    const volumes = data.volumes || []
 
-  state.volumes[i].title = value
+    // 🔢 pega último número
+    let next = 1
 
+    if (volumes.length > 0) {
+      const last = volumes[volumes.length - 1]
+
+      // tenta pegar do campo number (melhor)
+      if (last.number) {
+        next = last.number + 1
+      } else {
+        // fallback (caso não tenha number)
+        next = volumes.length + 1
+      }
+    }
+
+    const num = String(next).padStart(2, "0")
+
+    const title = `${data.title} Vol. ${num}`
+
+    showDebug(`Criando ${title}`)
+
+    await createVolume(prefix, title)
+
+  } catch (err) {
+    console.error(err)
+    showToast("Erro ao gerar volume", "error")
+  }
 }
 
-function updateVolumeDesc(i,value){
+// =======================
+// 💾 CRIAR VOLUME
+// =======================
+async function createVolume(prefix, title) {
+  try {
+    showDebug(`Criando volume ${title}`)
 
-  state.volumes[i].description = value
+    const res = await fetch(`${API}/volumes`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        series_prefix: prefix,
+        title,
+        description: "",
+        amazon: "",
+        mercado_livre: "",
+        tiktok: "",
+        added_at: new Date().toISOString().split("T")[0]
+      })
+    })
 
+    if (!res.ok) throw new Error("Erro ao criar volume")
+
+    showToast("Volume criado com sucesso!")
+
+    loadVolumes(prefix)
+
+  } catch (err) {
+    console.error(err)
+    showToast(err.message, "error")
+  }
 }
 
-// ===============================
-// Carregar séries existentes
-// ===============================
+// =======================
+// 💾 CRIAR SÉRIE
+// =======================
+async function createSeriesRequest(data) {
+  try {
+    showDebug(`Criando série: ${data.title}`)
 
-async function loadProjectSeries(){
+    const res = await fetch(`${API}/series`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    })
 
-const res = await fetch("http://localhost:3001/series")
-const list = await res.json()
+    if (!res.ok) throw new Error("Erro ao criar série")
 
-const sidebar = document.querySelector(".sidebar")
+    showToast("Série criada com sucesso! 🚀")
 
-const title = document.createElement("h3")
-title.innerText = "Séries existentes"
+    loadSeries() // 🔄 recarrega lista
 
-sidebar.appendChild(title)
-
-list.forEach(prefix => {
-
-const btn = document.createElement("button")
-
-btn.innerText = prefix
-
-btn.onclick = () => openSeries(prefix)
-
-sidebar.appendChild(btn)
-
-})
-
+  } catch (err) {
+    console.error(err)
+    showToast(err.message, "error")
+    showDebug(`❌ Erro ao criar série`)
+  }
 }
 
-// ===============================
-// Abrir série existente
-// ===============================
+// =======================
+// 💾 SALVAR VOLUME
+// =======================
+async function saveVolume(id) {
 
-async function openSeries(prefix){
+  const btn = document.getElementById(`btn-${id}`)
 
-const res = await fetch(`http://localhost:3001/series-full/${prefix}`)
+  const description = document.getElementById(`desc-${id}`).value
+  const amazon = document.getElementById(`amazon-${id}`).value
+  const mercado_livre = document.getElementById(`ml-${id}`).value
+  const tiktok = document.getElementById(`tiktok-${id}`).value
+  const added_at = document.getElementById(`date-${id}`).value
 
-const data = await res.json()
+  try {
+    // 🔄 estado carregando
+    btn.innerText = "⏳ Salvando..."
+    btn.disabled = true
 
-const s = data.series
+    showDebug(`Enviando volume ${id}`)
 
-document.getElementById("series-title").value = s.series
-document.getElementById("series-prefix").value = s.prefix
-document.getElementById("series-total").value = s.end
+    const res = await fetch(`${API}/volumes/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        description,
+        amazon,
+        mercado_livre,
+        tiktok,
+        added_at
+      })
+    })
 
-document.getElementById("series-author").value = s.author
-document.getElementById("series-genre").value = s.genre
-document.getElementById("series-brand").value = s.brand
-document.getElementById("series-format").value = s.format
-document.getElementById("series-subtitle").value = s.subtitle
+    const data = await res.json()
 
-state.series.title = s.series
-state.series.prefix = s.prefix
-state.series.totalVolumes = s.end
+    if (!res.ok) {
+      throw new Error(data.error || "Erro desconhecido")
+    }
 
-generateVolumes()
+    showDebug(`✅ Volume ${id} atualizado`)
 
-Object.entries(data.tiktok || {}).forEach(([num,url])=>{
+    // ✅ sucesso
+    btn.innerText = "✅ Salvo"
+    showToast("Salvo com sucesso!")
 
-const id = `${prefix}-${String(num).padStart(2,"0")}`
+    setTimeout(() => {
+      btn.innerText = "💾 Salvar"
+      btn.disabled = false
+    }, 1500)
 
-if(state.tiktok[id]){
+  } catch (err) {
 
-state.tiktok[id].title = url
+    console.error(err)
 
+    // ❌ erro
+    btn.innerText = "❌ Erro"
+    btn.disabled = false
+
+    showToast(err.message, "error")
+    showDebug(`❌ Erro: ${err.message}`)
+  }
 }
 
-})
+// =======================
+// 💾 DELETAR VOLUME
+// =======================
+async function deleteVolume(id, prefix) {
+  const confirmDelete = confirm("Tem certeza que deseja excluir?")
 
-renderTiktok()
+  if (!confirmDelete) return
 
-// carregar descrições existentes
+  try {
+    const res = await fetch(`${API}/volumes/${id}`, {
+      method: "DELETE"
+    })
 
-Object.entries(data.descriptions || {}).forEach(([num,desc])=>{
+    if (!res.ok) throw new Error("Erro ao deletar")
 
-const volume = state.volumes.find(v => v.number == num)
+    showToast("Volume deletado!")
 
-if(volume){
-volume.description = desc
-}
+    loadVolumes(prefix)
 
-})
+  } catch (err) {
+    console.error(err)
+    showToast(err.message, "error")
+  }
 
-// carregar afiliados existentes
-
-Object.entries(data.affiliates || {}).forEach(([num,links])=>{
-
-const id = `${prefix}-${String(num).padStart(2,"0")}`
-
-if(state.affiliates[id]){
-
-state.affiliates[id].amazon = links.amazon || ""
-state.affiliates[id].mercadoLivre = links.mercadoLivre || ""
-
-}
-
-})
-
-renderVolumes()
-renderAffiliates()
-
-}
-
-// ===============================
-// Gerar o séries
-// ===============================
-
-async function saveSeriesCatalogToProject(){
-
-const prefix = state.series.prefix
-const title = state.series.title
-const total = state.series.totalVolumes
-
-const brand = document.getElementById("series-brand").value
-const author = document.getElementById("series-author").value
-const genre = document.getElementById("series-genre").value
-const subtitle = document.getElementById("series-subtitle").value
-const format = document.getElementById("series-format").value
-const thumb = document.getElementById("series-thumb").value
-const imageExt = document.getElementById("series-imageExt").value
-
-const today = new Date().toISOString().slice(0,10)
-
-let seriesCode = `
-${prefix}: createSeries("${prefix}", {
-  series: "${title}",
-  end: ${total},
-  brand: "${brand}",
-  author: "${author}",
-  genre: "${genre}",
-  subtitle: "${subtitle}",
-  format: "${format}",
-
-  addedAtByVolume: makeAddedAtByVolume(1, ${total}, "${today}"),
-}),
-`
-
-await fetch("http://localhost:3001/save-series",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-prefix,
-seriesCode
-})
-
-})
-
-alert("Series catalog atualizado!")
-
-}
-
-
-// ===============================
-// Render afiliados
-// ===============================
-
-function renderAffiliates(){
-
-  const container = document.getElementById("tab-affiliates")
-
-  let html = `
-  <h2>Afiliados</h2>
-
-  <table>
-  <tr>
-  <th>ID</th>
-  <th>Amazon</th>
-  <th>Mercado Livre</th>
-  </tr>
-  `
-
-  state.volumes.forEach(v=>{
-
-    html += `
-    <tr>
-
-    <td>${v.id}</td>
-
-    <td>
-      <input
-      value="${state.affiliates[v.id].amazon}"
-      onchange="updateAmazon('${v.id}',this.value)">
-    </td>
-
-    <td>
-      <input
-      value="${state.affiliates[v.id].mercadoLivre}"
-      onchange="updateML('${v.id}',this.value)">
-    </td>
-
-    </tr>
+  // 🔥 atualizar total_volumes automaticamente
+  const result = await pool.query(
     `
-
-  })
-
-  html += "</table>"
-
-  html += `
-  <button class="action" onclick="saveAffiliatesToProject()">
-  Salvar afiliados no projeto
-  </button>
-  `
-
-  container.innerHTML = html
-
-}
-
-function updateAmazon(id,val){
-
-  state.affiliates[id].amazon = val
-
-}
-
-function updateML(id,val){
-
-  state.affiliates[id].mercadoLivre = val
-
-}
-
-
-// ===============================
-// Render TikTok
-// ===============================
-
-function renderTiktok(){
-
-  const container = document.getElementById("tab-tiktok")
-
-  let html = "<h2>TikTok</h2>"
-
-  state.volumes.forEach(v=>{
-
-    html += `
-
-    <div class="tiktok-card">
-
-    <h3>${v.id}</h3>
-
-    <label>Título</label>
-    <input
-    value="${state.tiktok[v.id].title}"
-    onchange="updateTikTokTitle('${v.id}',this.value)">
-
-    <label>Resumo</label>
-    <textarea
-    onchange="updateTikTokSummary('${v.id}',this.value)">
-    ${state.tiktok[v.id].summary}
-    </textarea>
-
-    <label>Legenda</label>
-    <textarea
-    onchange="updateTikTokCaption('${v.id}',this.value)">
-    ${state.tiktok[v.id].caption}
-    </textarea>
-
-    </div>
-
-    `
-
-  })
-
-  html += `
-  <button class="action" onclick="saveTiktokToProject()">
-  Salvar TikTok no projeto
-  </button>
-  `
-
-  container.innerHTML = html
-
-}
-
-
-function updateTikTokTitle(id,val){
-
-  state.tiktok[id].title = val
-
-}
-
-function updateTikTokSummary(id,val){
-
-  state.tiktok[id].summary = val
-
-}
-
-function updateTikTokCaption(id,val){
-
-  state.tiktok[id].caption = val
-
-}
-
-//Função para salvar no tiktok
-
-async function saveTiktokToProject(){
-
-const prefix = state.series.prefix
-
-if(!prefix){
-alert("Defina o prefixo da série")
-return
-}
-
-let code = `export const ${prefix}Tiktok = {\n`
-
-state.volumes.forEach(v => {
-
-code += `  ${v.number}: "",\n`
-
-})
-
-code += `};\n`
-
-await fetch("http://localhost:3001/save-tiktok",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-prefix,
-code
-})
-
-})
-
-alert("Arquivo TikTok criado no projeto!")
-
-}
-
-
-
-// ===============================
-// Exportar catálogo
-// ===============================
-
-function exportSeriesCatalog(){
-
-  const s = state.series
-
-  const code = `
-{
-slug: "${s.slug}",
-title: "${s.title}",
-prefix: "${s.prefix}",
-volumes: ${s.totalVolumes}
-}
-`
-
-  document.getElementById("export-series").textContent = code
-
-}
-
-
-// ===============================
-// Export afiliados
-// ===============================
-
-function exportAffiliates(){
-
-  let code = "{\n"
-
-  Object.keys(state.affiliates).forEach(id=>{
-
-    const a = state.affiliates[id]
-
-    code += `
-"${id}": {
-  amazon: "${a.amazon}",
-  mercadoLivre: "${a.mercadoLivre}"
-},
-`
-
-  })
-
-  code += "}"
-
-  document.getElementById("export-affiliates").textContent = code
-
-}
-
-
-// ===============================
-// Import descrições
-// ===============================
-function importDescriptions(){
-
-const raw = document.getElementById("descriptions-import").value
-
-if(!raw){
-alert("Cole o bloco de descrições")
-return
-}
-
-// pega tudo dentro das chaves
-const match = raw.match(/\{([\s\S]*)\}/)
-
-if(!match){
-alert("Formato inválido")
-return
-}
-
-const content = match[1]
-
-// regex que captura número + texto entre aspas
-const regex = /(\d+)\s*:\s*"([\s\S]*?)"/g
-
-let result
-let count = 0
-
-while((result = regex.exec(content)) !== null){
-
-const number = parseInt(result[1])
-const text = result[2]
-
-const volume = state.volumes.find(v => v.number === number)
-
-if(volume){
-volume.description = text
-count++
-}
-
-}
-
-renderVolumes()
-
-alert(count + " descrições importadas")
-
-}
-
-
-// ===============================
-// Export descrições
-// ===============================
-
-function exportDescriptions(){
-
-  const prefix = state.series.prefix
-
-  const varName = prefix + "Descriptions"
-
-  let code = `export const ${varName} = {\n`
-
-  state.volumes.forEach(v => {
-
-    const desc = v.description.replaceAll('"','\\"')
-
-    code += `  ${v.number}: "${desc}",\n`
-
-  })
-
-  code += "};"
-
-  document.getElementById("export-descriptions").textContent = code
-
-}
-
-
-// ===============================
-// Salvar rascunho
-// ===============================
-
-function saveDraft(){
-
-  localStorage.setItem(
-    "mangadrops-admin",
-    JSON.stringify(state)
+    SELECT prefix, COUNT(*) as total
+    FROM volumes
+    WHERE prefix = $1
+    GROUP BY prefix
+    `,
+    [prefix]
   )
 
-  alert("Rascunho salvo")
+  const newTotal = result.rows[0]?.total || 0
 
+  await pool.query(
+    `
+    UPDATE series
+    SET total_volumes = $1
+    WHERE prefix = $2
+    `,
+    [newTotal, prefix]
+  )
 }
 
+// =======================
+// 🗑 DELETAR SÉRIE
+// =======================
+async function deleteSeries(prefix) {
+  const confirmDelete = confirm("Tem certeza que deseja deletar a série inteira?")
 
-// ===============================
-// Carregar rascunho
-// ===============================
+  if (!confirmDelete) return
 
-function loadDraft(){
+  try {
+    const res = await fetch(`${API}/series/${prefix}`, {
+      method: "DELETE"
+    })
 
-  const data = localStorage.getItem("mangadrops-admin")
+    if (!res.ok) throw new Error("Erro ao deletar série")
 
-  if(!data) return
+    showToast("Série deletada!")
 
-  const saved = JSON.parse(data)
+    volumesDiv.innerHTML = ""
+    loadSeries()
 
-  Object.assign(state,saved)
-
-  renderVolumes()
-  renderAffiliates()
-  renderTiktok()
-
+  } catch (err) {
+    console.error(err)
+    showToast(err.message, "error")
+  }
 }
 
-
-// ===============================
-// Limpar rascunho
-// ===============================
-
-function clearDraft(){
-
-  localStorage.removeItem("mangadrops-admin")
-
-}
-
-// ===============================
-// Salvar descrições NO PROJETO
-// ===============================
-
-
-async function saveDescriptionsToProject(){
-
-const prefix = state.series.prefix
-
-if(!prefix){
-alert("Defina o prefixo da série")
-return
-}
-
-// montar código do arquivo
-let code = `export const ${prefix}Descriptions = {\n`
-
-state.volumes.forEach(v => {
-
-const desc = (v.description || "").replaceAll('"','\\"')
-
-code += `  ${v.number}: "${desc}",\n`
-
-})
-
-code += "};"
-
-// DEBUG (importante)
-console.log("CODIGO GERADO:")
-console.log(code)
-
-// enviar para servidor
-await fetch("http://localhost:3001/save-descriptions",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-prefix,
-code
-})
-
-})
-
-alert("Descrições salvas no projeto!")
-
-}
-
-// add volume
-async function addVolume(){
-
-const prefix = state.series.prefix
-
-if(!prefix){
-alert("Abra uma série primeiro")
-return
-}
-
-const res = await fetch("http://localhost:3001/add-volume",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({prefix})
-
-})
-
-const data = await res.json()
-
-alert("Novo lançamento criado: Vol " + data.volume)
-
-openSeries(prefix)
-
-}
-
-
-
-// ===============================
-// Salvar afiliados NO PROJETO
-// ===============================
-
-async function saveAffiliatesToProject(){
-
-const prefix = state.series.prefix
-const title = state.series.title
-
-if(!prefix){
-alert("Defina o prefixo da série")
-return
-}
-
-if(!title){
-alert("Defina o nome da obra")
-return
-}
-
-// montar bloco de afiliados
-let code = `\n// =======================\n`
-code += `// ${title.toUpperCase()}\n`
-code += `// =======================\n`
-code += `export const ${prefix}Affiliate = {\n`
-
-state.volumes.forEach(v => {
-
-const a = state.affiliates[v.id] || {}
-
-code += `  ${v.number}: { mercadoLivre: "${a.mercadoLivre || ""}", amazon: "${a.amazon || ""}" },\n`
-
-})
-
-code += `};\n`
-
-console.log("AFFILIATES GERADO:")
-console.log(code)
-
-// enviar para servidor
-await fetch("http://localhost:3001/save-affiliates",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-code
-})
-
-})
-
-alert("Afiliados salvos no projeto!")
-
-}
-
-// ===============================
-// Inicializar CMS
-// ===============================
-
-window.addEventListener("DOMContentLoaded", () => {
-
-loadProjectSeries()
-
-})
+// iniciar
+loadSeries()

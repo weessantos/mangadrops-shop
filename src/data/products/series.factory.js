@@ -79,8 +79,10 @@ export function createSeriesVolumes({
   genre = "",
   addedAtByVolume = {},
   format = "",
+  coverPrice = null,
 }) {
-  const normalizedDefaultCoverPrice = normalizePrice(defaultCoverPrice);
+  const normalizedDefaultCoverPrice =
+  normalizePrice(defaultCoverPrice ?? coverPrice);
 
   return Array.from({ length: end - start + 1 }, (_, i) => {
     const volume = start + i;
@@ -118,6 +120,7 @@ export function createSeriesVolumes({
       addedAt: addedAtByVolume[volume] || null,
 
       coverPrice,
+
     };
   });
 }

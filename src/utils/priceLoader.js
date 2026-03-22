@@ -1,34 +1,55 @@
 import prices from "../data/prices.json";
 
-export function getPriceEntry(productId) {
-  return prices?.[productId] ?? null;
+// 🔒 garante número válido
+function toNumber(value) {
+  if (value === null || value === undefined) return null;
+
+  if (typeof value === "string" && value.trim() === "") {
+    return null;
+  }
+
+  const n = Number(value);
+  return Number.isFinite(n) && n > 0 ? n : null;
 }
 
-export function getPrice(productId, store) {
-  return prices?.[productId]?.[store] ?? null;
+// 📦 pega entrada completa
+export function getPriceEntry(product) {
+  if (!product?.id) return null;
+  return prices?.[product.id] ?? null;
 }
 
-export function getUpdatedAt(productId) {
-  return prices?.[productId]?.updatedAt ?? null;
+// 💰 pega preço por loja
+export function getPrice(product, store) {
+  if (!product?.id) return null;
+  return toNumber(prices?.[product.id]?.[store]);
 }
 
+// 🕒 última atualização
+export function getUpdatedAt(product) {
+  if (!product?.id) return null;
+  return prices?.[product.id]?.updatedAt ?? null;
+}
+
+// 💵 formatador
 export function formatPrice(value) {
-  if (value == null || !Number.isFinite(value)) return null;
+  const n = toNumber(value);
+  if (n == null) return null;
 
-  return value.toLocaleString("pt-BR", {
+  return n.toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   });
 }
 
-export function getBestPrice(productId) {
-  const entry = getPriceEntry(productId);
+// 🏆 melhor preço
+export function getBestPrice(product) {
+  const entry = getPriceEntry(product);
   if (!entry) return null;
 
   const options = [
-    { store: "mercadoLivre", value: entry.mercadoLivre },
-    { store: "amazon", value: entry.amazon },
-  ].filter((item) => item.value != null && Number.isFinite(item.value));
+    { store: "mercadoLivre", value: toNumber(entry.mercadoLivre) },
+    { store: "amazon", value: toNumber(entry.amazon) },
+  ].filter((item) => item.value != null);
 
   if (!options.length) return null;
 
@@ -37,22 +58,23 @@ export function getBestPrice(productId) {
   );
 }
 
-export function getAvailablePrices(productId) {
-  const entry = getPriceEntry(productId);
+// 📊 lista de preços
+export function getAvailablePrices(product) {
+  const entry = getPriceEntry(product);
   if (!entry) return [];
 
   return [
     {
       store: "mercadoLivre",
       label: "Mercado Livre",
-      value: entry.mercadoLivre ?? null,
-      formatted: formatPrice(entry.mercadoLivre ?? null),
+      value: toNumber(entry.mercadoLivre),
+      formatted: formatPrice(entry.mercadoLivre),
     },
     {
       store: "amazon",
       label: "Amazon",
-      value: entry.amazon ?? null,
-      formatted: formatPrice(entry.amazon ?? null),
+      value: toNumber(entry.amazon),
+      formatted: formatPrice(entry.amazon),
     },
-  ].filter((item) => item.value != null && Number.isFinite(item.value));
+  ].filter((item) => item.value != null);
 }

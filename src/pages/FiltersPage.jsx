@@ -2,133 +2,137 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "../styles/series-filters.css";
 
-// ✅ seu catálogo (ajuste o path se seu arquivo estiver em outro lugar)
-import { SERIES } from "../data/products/series.catalog";
-
 /* =========================
-   Helpers (robustos)
+   Helpers
 ========================= */
-const toList = (v) => {
-  if (!v) return [];
-  if (Array.isArray(v)) return v.filter(Boolean);
-  return [v].filter(Boolean);
-};
-
 const norm = (x) => String(x || "").trim();
 
-const uniqSorted = (arr) =>
-  Array.from(new Set(arr.map(norm).filter(Boolean))).sort((a, b) =>
+const uniq = (arr) =>
+  Array.from(new Set(arr.filter(Boolean))).sort((a, b) =>
     a.localeCompare(b, "pt-BR")
   );
 
-function buildOptionsFromSERIES(SERIES_OBJ) {
+function buildOptions(seriesArray) {
   const brands = [];
   const authors = [];
   const genres = [];
   const formats = [];
 
-  for (const key of Object.keys(SERIES_OBJ || {})) {
-    const s = SERIES_OBJ[key];
+  for (const s of seriesArray) {
     if (!s) continue;
 
-    toList(s.brand).forEach((x) => brands.push(x));
-    toList(s.author).forEach((x) => authors.push(x));
-    toList(s.genre).forEach((x) => genres.push(x));
-    toList(s.format).forEach((x) => formats.push(x));
+    if (s.brand) brands.push(s.brand);
+    if (s.author) authors.push(s.author);
+    if (s.format) formats.push(s.format);
+
+    if (s.genre) {
+      s.genre.split("/").forEach((g) => genres.push(g.trim()));
+    }
   }
 
   return {
-    brands: uniqSorted(brands),
-    authors: uniqSorted(authors),
-    genres: uniqSorted(genres),
-    formats: uniqSorted(formats),
+    brands: uniq(brands),
+    authors: uniq(authors),
+    genres: uniq(genres),
+    formats: uniq(formats),
   };
 }
 
 /* =========================
    Consts UI
 ========================= */
-const STATUS = [
-  { key: "in", label: "Em estoque" },
-  { key: "out", label: "Sem estoque" },
-];
-
-const SORTS = [
-  { key: "relevance", label: "Relevância" },
-  { key: "new", label: "Novidades" },
-];
-
-const PRICE_OPTIONS = [
-  { key: "20", label: "Até R$20" },
-  { key: "30", label: "Até R$30" },
-  { key: "40", label: "Até R$40" },
-  { key: "50", label: "Até R$50" },
-];
-
-const DISCOUNT_OPTIONS = [
-  { key: "20", label: "20% OFF+" },
-  { key: "30", label: "30% OFF+" },
-  { key: "40", label: "40% OFF+" },
-  { key: "50", label: "50% OFF+" },
-];
+const PRICE_OPTIONS = ["20", "30", "40", "50"];
+const DISCOUNT_OPTIONS = ["20", "30", "40", "50"];
 
 export default function FiltersPage() {
   const navigate = useNavigate();
   const [sp] = useSearchParams();
 
-  // ✅ Opções dinâmicas vindas do seriesCatalog
-  const opts = useMemo(() => buildOptionsFromSERIES(SERIES), []);
+  const [seriesData, setSeriesData] = useState([]);
+  const [opts, setOpts] = useState({
+    brands: [],
+    authors: [],
+    genres: [],
+    formats: [],
+  });
 
-  // Carrega o estado inicial do que já estava filtrado na URL
-  const initial = useMemo(() => {
-    return {
-      q: sp.get("q") || "",
+  const [loading, setLoading] = useState(true);
 
-      brand: sp.getAll("brand"),
-      author: sp.getAll("author"),
-      genre: sp.getAll("genre"),
-      format: sp.getAll("format"),
-
-      price: sp.get("price") || "",      // "20" | "30" | "40" | "50" | ""
-      discount: sp.get("discount") || "", // "20" | "30" | "40" | "50" | ""
-
-      st: sp.get("st") || "", // "in" | "out" | ""
-      rv: sp.get("rv") || "", // "1" | ""
-      sort: sp.get("sort") || "relevance",
-    };
-  }, [sp]);
-
-  const [q, setQ] = useState(initial.q);
-
-  const [brand, setBrand] = useState(initial.brand);
-  const [author, setAuthor] = useState(initial.author);
-  const [genre, setGenre] = useState(initial.genre);
-  const [format, setFormat] = useState(initial.format);
-
-  const [price, setPrice] = useState(initial.price);
-  const [discount, setDiscount] = useState(initial.discount);
-
-  const [st, setSt] = useState(initial.st);
-  const [rv, setRv] = useState(initial.rv);
-  const [sort, setSort] = useState(initial.sort);
-
-  // Trava o scroll do body enquanto a tela de filtros está aberta
+  // ========================
+  // FETCH API
+  // ========================
   useEffect(() => {
-    const prevOverflow = document.body.style.overflow;
-    const prevOverscroll = document.body.style.overscrollBehavior;
+    async function load() {
+      const res = await fetch("http://localhost:3000/api/series/full");
+      const data = await res.json();
 
-    document.body.style.overflow = "hidden";
-    document.body.style.overscrollBehavior = "none";
+      setSeriesData(data);
+      setOpts(buildOptions(data));
+      setLoading(false);
+    }
 
-    return () => {
-      document.body.style.overflow = prevOverflow;
-      document.body.style.overscrollBehavior = prevOverscroll;
-    };
+    load();
   }, []);
 
-  const toggleMulti = (setter) => (value) => {
-    const v = norm(value);
-    setter((curr) => (curr.includes(v) ? curr.filter((x) => x !== v) : [...curr, v]));
+  // ========================
+  // STATES
+  // ========================
+  const [q, setQ] = useState("");
+  const [brand, setBrand] = useState([]);
+  const [author, setAuthor] = useState([]);
+  const [genre, setGenre] = useState([]);
+  const [format, setFormat] = useState([]);
+  const [price, setPrice] = useState("");
+  const [discount, setDiscount] = useState("");
+
+  // ========================
+  // FLATTEN
+  // ========================
+  const volumes = useMemo(() => {
+    return seriesData.flatMap((s) =>
+      (s.volumes || []).map((v) => ({
+        ...s,
+        ...v,
+      }))
+    );
+  }, [seriesData]);
+
+  // ========================
+  // FILTER
+  // ========================
+  const filtered = useMemo(() => {
+    return volumes.filter((v) => {
+      if (q && !v.title.toLowerCase().includes(q.toLowerCase())) return false;
+
+      if (brand.length && !brand.includes(v.brand)) return false;
+
+      if (author.length && !author.includes(v.author)) return false;
+
+      if (
+        genre.length &&
+        !genre.some((g) => v.genre?.includes(g))
+      )
+        return false;
+
+      if (format.length && !format.includes(v.format)) return false;
+
+      if (price && (!v.best_price || v.best_price > Number(price))) return false;
+
+      if (discount && (!v.discount || v.discount < Number(discount))) return false;
+
+      return true;
+    });
+  }, [volumes, q, brand, author, genre, format, price, discount]);
+
+  // ========================
+  // ACTIONS
+  // ========================
+  const toggle = (setter, value) => {
+    setter((curr) =>
+      curr.includes(value)
+        ? curr.filter((x) => x !== value)
+        : [...curr, value]
+    );
   };
 
   const clearAll = () => {
@@ -139,232 +143,121 @@ export default function FiltersPage() {
     setFormat([]);
     setPrice("");
     setDiscount("");
-    setSt("");
-    setRv("");
-    setSort("relevance");
   };
 
   const apply = () => {
     const params = new URLSearchParams();
 
-    if (q.trim()) params.set("q", q.trim());
+    if (q) params.set("q", q);
 
-    brand.forEach((x) => params.append("brand", x));
-    author.forEach((x) => params.append("author", x));
-    genre.forEach((x) => params.append("genre", x));
-    format.forEach((x) => params.append("format", x));
+    brand.forEach((b) => params.append("brand", b));
+    author.forEach((a) => params.append("author", a));
+    genre.forEach((g) => params.append("genre", g));
+    format.forEach((f) => params.append("format", f));
 
     if (price) params.set("price", price);
     if (discount) params.set("discount", discount);
-    if (st) params.set("st", st);
-    if (rv) params.set("rv", "1");
-    if (sort && sort !== "relevance") params.set("sort", sort);
 
-    navigate({ pathname: "/", search: params.toString() }, { replace: true });
+    navigate(`/?${params.toString()}`);
   };
 
   const close = () => navigate(-1);
 
-  const activeCount =
-    (q.trim() ? 1 : 0) +
-    (brand.length ? 1 : 0) +
-    (author.length ? 1 : 0) +
-    (genre.length ? 1 : 0) +
-    (format.length ? 1 : 0) +
-    (price ? 1 : 0) +
-    (discount ? 1 : 0) +
-    (st ? 1 : 0) +
-    (rv === "1" ? 1 : 0) +
-    (sort !== "relevance" ? 1 : 0);
+  // ========================
+  // LOADING
+  // ========================
+  if (loading) {
+    return <div style={{ padding: 24 }}>Carregando...</div>;
+  }
 
+  // ========================
+  // UI
+  // ========================
   return (
-    <div className="filtersPage" role="dialog" aria-modal="true" aria-label="Filtros">
+    <div className="filtersPage">
       <header className="filtersTop">
-        <button className="filtersIconBtn" onClick={close} aria-label="Voltar">
-          ←
-        </button>
-
-        <div className="filtersTopTitle">
-          <h1>Filtros</h1>
-          <p>{activeCount ? `${activeCount} ativo(s)` : "Refine sua busca"}</p>
-        </div>
-
-        <button className="filtersGhost" onClick={clearAll}>
-          Limpar
-        </button>
+        <button onClick={close}>←</button>
+        <h1>Filtros</h1>
+        <button onClick={clearAll}>Limpar</button>
       </header>
 
       <main className="filtersBody">
         {/* Busca */}
-        <section className="filtersCard">
-          <h2>Buscar</h2>
-          <div className="filtersSearchRow">
-            <input
-              className="filtersInput"
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Ex: Attack on Titan, Jujutsu..."
-              inputMode="search"
-            />
-          </div>
-        </section>
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Buscar..."
+        />
 
-        {/* Editora (brand) */}
-        <section className="filtersCard">
-          <h2>Editora</h2>
-          <div className="filtersChips">
-            {opts.brands.map((b) => (
-              <button
-                key={b}
-                type="button"
-                className={`chip ${brand.includes(b) ? "active" : ""}`}
-                onClick={() => toggleMulti(setBrand)(b)}
-              >
-                {b}
-              </button>
-            ))}
-          </div>
-        </section>
+        {/* Brand */}
+        {opts.brands.map((b) => (
+          <button
+            key={b}
+            className={brand.includes(b) ? "active" : ""}
+            onClick={() => toggle(setBrand, b)}
+          >
+            {b}
+          </button>
+        ))}
 
-        {/* Autor (author) */}
-        <section className="filtersCard">
-          <h2>Autor</h2>
-          <div className="filtersChips">
-            {opts.authors.map((a) => (
-              <button
-                key={a}
-                type="button"
-                className={`chip ${author.includes(a) ? "active" : ""}`}
-                onClick={() => toggleMulti(setAuthor)(a)}
-              >
-                {a}
-              </button>
-            ))}
-          </div>
-        </section>
+        {/* Author */}
+        {opts.authors.map((a) => (
+          <button
+            key={a}
+            className={author.includes(a) ? "active" : ""}
+            onClick={() => toggle(setAuthor, a)}
+          >
+            {a}
+          </button>
+        ))}
 
-        {/* Gênero (genre) */}
-        <section className="filtersCard">
-          <h2>Gênero</h2>
-          <div className="filtersChips">
-            {opts.genres.map((g) => (
-              <button
-                key={g}
-                type="button"
-                className={`chip ${genre.includes(g) ? "active" : ""}`}
-                onClick={() => toggleMulti(setGenre)(g)}
-              >
-                {g}
-              </button>
-            ))}
-          </div>
-        </section>
+        {/* Genre */}
+        {opts.genres.map((g) => (
+          <button
+            key={g}
+            className={genre.includes(g) ? "active" : ""}
+            onClick={() => toggle(setGenre, g)}
+          >
+            {g}
+          </button>
+        ))}
 
-        {/* Tipo (format) */}
-        <section className="filtersCard">
-          <h2>Tipo</h2>
-          <div className="filtersChips">
-            {opts.formats.map((f) => (
-              <button
-                key={f}
-                type="button"
-                className={`chip ${format.includes(f) ? "active" : ""}`}
-                onClick={() => toggleMulti(setFormat)(f)}
-              >
-                {f}
-              </button>
-            ))}
-          </div>
-        </section>
+        {/* Format */}
+        {opts.formats.map((f) => (
+          <button
+            key={f}
+            className={format.includes(f) ? "active" : ""}
+            onClick={() => toggle(setFormat, f)}
+          >
+            {f}
+          </button>
+        ))}
 
-        {/* Preço */}
-        <section className="filtersCard">
-          <h2>Preço</h2>
-          <div className="filtersGrid2">
-            {PRICE_OPTIONS.map((p) => (
-              <button
-                key={p.key}
-                type="button"
-                className={`chip ${price === p.key ? "active" : ""}`}
-                onClick={() => setPrice((curr) => (curr === p.key ? "" : p.key))}
-              >
-                {p.label}
-              </button>
-            ))}
-          </div>
-        </section>
+        {/* Price */}
+        {PRICE_OPTIONS.map((p) => (
+          <button
+            key={p}
+            className={price === p ? "active" : ""}
+            onClick={() => setPrice(p)}
+          >
+            Até R${p}
+          </button>
+        ))}
 
-        {/* Desconto */}
-        <section className="filtersCard">
-          <h2>Desconto</h2>
-          <div className="filtersGrid2">
-            {DISCOUNT_OPTIONS.map((d) => (
-              <button
-                key={d.key}
-                type="button"
-                className={`chip ${discount === d.key ? "active" : ""}`}
-                onClick={() => setDiscount((curr) => (curr === d.key ? "" : d.key))}
-              >
-                {d.label}
-              </button>
-            ))}
-          </div>
-        </section>
-
-        {/* Disponibilidade */}
-        <section className="filtersCard">
-          <h2>Disponibilidade</h2>
-          <div className="filtersGrid2">
-            {STATUS.map((s) => (
-              <button
-                key={s.key}
-                type="button"
-                className={`chip ${st === s.key ? "active" : ""}`}
-                onClick={() => setSt((curr) => (curr === s.key ? "" : s.key))}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
-        </section>
-
-        {/* Review */}
-        <section className="filtersCard">
-          <h2>Conteúdo</h2>
-          <div className="filtersGrid2">
-            <button
-              type="button"
-              className={`chip ${rv === "1" ? "active" : ""}`}
-              onClick={() => setRv((curr) => (curr === "1" ? "" : "1"))}
-            >
-              Com review
-            </button>
-          </div>
-        </section>
-
-        {/* Ordenar */}
-        <section className="filtersCard">
-          <h2>Ordenar</h2>
-          <div className="filtersList">
-            {SORTS.map((o) => (
-              <button
-                key={o.key}
-                type="button"
-                className={`filtersRow ${sort === o.key ? "active" : ""}`}
-                onClick={() => setSort(o.key)}
-              >
-                <span>{o.label}</span>
-                <span className="filtersRadio" aria-hidden="true" />
-              </button>
-            ))}
-          </div>
-        </section>
+        {/* Discount */}
+        {DISCOUNT_OPTIONS.map((d) => (
+          <button
+            key={d}
+            className={discount === d ? "active" : ""}
+            onClick={() => setDiscount(d)}
+          >
+            {d}% OFF
+          </button>
+        ))}
       </main>
 
-      <footer className="filtersBottom">
-        <button className="btnPrimary" onClick={apply}>
-          Aplicar filtros
-        </button>
+      <footer>
+        <button onClick={apply}>Aplicar filtros</button>
       </footer>
     </div>
   );

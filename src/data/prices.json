@@ -2,87 +2,87 @@
   "aot-01": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.227Z"
+    "updatedAt": "2026-03-22T22:25:55.755Z"
   },
   "aot-02": {
     "mercadoLivre": 57.5,
-    "amazon": 35.65,
-    "updatedAt": "2026-03-14T20:32:54.368Z"
+    "amazon": 32.68,
+    "updatedAt": "2026-03-22T22:26:00.862Z"
   },
   "aot-03": {
-    "mercadoLivre": 59.42,
+    "mercadoLivre": 63.41,
     "amazon": 41.94,
-    "updatedAt": "2026-03-14T20:32:54.795Z"
+    "updatedAt": "2026-03-22T22:26:00.780Z"
   },
   "aot-04": {
     "mercadoLivre": 63.92,
     "amazon": 48.93,
-    "updatedAt": "2026-03-14T20:32:54.049Z"
+    "updatedAt": "2026-03-22T22:26:02.008Z"
   },
   "aot-05": {
     "mercadoLivre": 58.92,
-    "amazon": 41.94,
-    "updatedAt": "2026-03-14T20:32:55.868Z"
+    "amazon": 47.44,
+    "updatedAt": "2026-03-22T22:26:02.805Z"
   },
   "aot-06": {
     "mercadoLivre": 59.42,
     "amazon": 52.4,
-    "updatedAt": "2026-03-14T20:32:54.269Z"
+    "updatedAt": "2026-03-22T22:26:02.628Z"
   },
   "aot-07": {
     "mercadoLivre": 66.33,
-    "amazon": 41.94,
-    "updatedAt": "2026-03-14T20:32:59.878Z"
+    "amazon": 34.95,
+    "updatedAt": "2026-03-22T22:26:01.513Z"
   },
   "aot-08": {
-    "mercadoLivre": 55.1,
-    "amazon": 52.4,
-    "updatedAt": "2026-03-14T20:33:00.127Z"
+    "mercadoLivre": 51.25,
+    "amazon": 34.95,
+    "updatedAt": "2026-03-22T22:26:01.922Z"
   },
   "aot-09": {
     "mercadoLivre": 48.96,
-    "amazon": 41.94,
-    "updatedAt": "2026-03-14T20:33:00.238Z"
+    "amazon": 49.78,
+    "updatedAt": "2026-03-22T22:26:01.089Z"
   },
   "aot-10": {
-    "mercadoLivre": null,
-    "amazon": 41.94,
-    "updatedAt": "2026-03-14T20:33:00.285Z"
+    "mercadoLivre": 63.92,
+    "amazon": 49.78,
+    "updatedAt": "2026-03-22T22:26:07.010Z"
   },
   "aot-11": {
-    "mercadoLivre": 40.41,
-    "amazon": 50.83,
-    "updatedAt": "2026-03-14T20:33:01.458Z"
+    "mercadoLivre": 40.66,
+    "amazon": 50.3,
+    "updatedAt": "2026-03-22T22:26:07.379Z"
   },
   "aot-12": {
-    "mercadoLivre": 62.02,
-    "amazon": 45.44,
-    "updatedAt": "2026-03-14T20:33:01.016Z"
+    "mercadoLivre": 66.33,
+    "amazon": 49.78,
+    "updatedAt": "2026-03-22T22:26:06.893Z"
   },
   "aot-13": {
-    "mercadoLivre": 62.02,
-    "amazon": 49.78,
-    "updatedAt": "2026-03-14T20:33:01.014Z"
+    "mercadoLivre": 66.33,
+    "amazon": 45.44,
+    "updatedAt": "2026-03-22T22:26:07.763Z"
   },
   "aot-14": {
     "mercadoLivre": 63.42,
-    "amazon": 53.39,
-    "updatedAt": "2026-03-14T20:33:01.748Z"
+    "amazon": 52.43,
+    "updatedAt": "2026-03-22T22:26:07.967Z"
   },
   "aot-15": {
     "mercadoLivre": 64.9,
-    "amazon": 56.2,
-    "updatedAt": "2026-03-14T20:33:05.711Z"
+    "amazon": 52.43,
+    "updatedAt": "2026-03-22T22:26:07.864Z"
   },
   "aot-16": {
     "mercadoLivre": 63.92,
-    "amazon": 49.68,
-    "updatedAt": "2026-03-14T20:33:05.876Z"
+    "amazon": 49.46,
+    "updatedAt": "2026-03-22T22:26:08.676Z"
   },
   "aot-17": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:00.270Z"
+    "updatedAt": "2026-03-22T22:26:02.913Z"
   },
   "jjk-00": {
     "mercadoLivre": null,
@@ -91,1132 +91,1162 @@
   },
   "jjk-01": {
     "mercadoLivre": null,
-    "amazon": 32.93,
-    "updatedAt": "2026-03-14T20:33:02.631Z"
+    "amazon": 35.05,
+    "updatedAt": "2026-03-22T22:26:40.996Z"
   },
   "jjk-02": {
-    "mercadoLivre": 43.56,
+    "mercadoLivre": 43.9,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:06.464Z"
+    "updatedAt": "2026-03-22T22:26:43.647Z"
   },
   "jjk-03": {
     "mercadoLivre": 43.56,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:06.423Z"
+    "updatedAt": "2026-03-22T22:26:44.267Z"
   },
   "jjk-04": {
     "mercadoLivre": null,
     "amazon": 36,
-    "updatedAt": "2026-03-14T20:33:02.905Z"
+    "updatedAt": "2026-03-22T22:26:41.348Z"
   },
   "jjk-05": {
     "mercadoLivre": null,
-    "amazon": 22.14,
-    "updatedAt": "2026-03-14T20:33:03.278Z"
+    "amazon": 29.52,
+    "updatedAt": "2026-03-22T22:26:41.288Z"
   },
   "jjk-06": {
-    "mercadoLivre": 43.9,
-    "amazon": 28.54,
-    "updatedAt": "2026-03-14T20:33:07.365Z"
+    "mercadoLivre": 32.9,
+    "amazon": 32.9,
+    "updatedAt": "2026-03-22T22:26:44.815Z"
   },
   "jjk-07": {
     "mercadoLivre": null,
-    "amazon": 33.5,
-    "updatedAt": "2026-03-14T20:33:04.423Z"
+    "amazon": 31.82,
+    "updatedAt": "2026-03-22T22:26:42.149Z"
   },
   "jjk-08": {
-    "mercadoLivre": 48.9,
+    "mercadoLivre": 48.68,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:08.239Z"
+    "updatedAt": "2026-03-22T22:26:46.095Z"
   },
   "jjk-09": {
-    "mercadoLivre": 41.7,
+    "mercadoLivre": 43.56,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:08.623Z"
+    "updatedAt": "2026-03-22T22:26:45.979Z"
   },
   "jjk-10": {
     "mercadoLivre": null,
-    "amazon": 28.54,
-    "updatedAt": "2026-03-14T20:33:06.622Z"
+    "amazon": 31.25,
+    "updatedAt": "2026-03-22T22:26:43.345Z"
   },
   "jjk-11": {
-    "mercadoLivre": 46.46,
+    "mercadoLivre": 43.56,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:10.990Z"
+    "updatedAt": "2026-03-22T22:26:46.631Z"
   },
   "jjk-12": {
-    "mercadoLivre": 43.7,
+    "mercadoLivre": 30.87,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:11.215Z"
+    "updatedAt": "2026-03-22T22:26:47.552Z"
   },
   "jjk-13": {
-    "mercadoLivre": 40.9,
+    "mercadoLivre": 42.77,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:11.482Z"
+    "updatedAt": "2026-03-22T22:26:49.045Z"
   },
   "jjk-14": {
-    "mercadoLivre": 47.9,
+    "mercadoLivre": 48.68,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:11.554Z"
+    "updatedAt": "2026-03-22T22:26:48.917Z"
   },
   "jjk-15": {
     "mercadoLivre": 42.9,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:12.378Z"
+    "updatedAt": "2026-03-22T22:26:50.200Z"
   },
   "jjk-16": {
     "mercadoLivre": 43.56,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:12.999Z"
+    "updatedAt": "2026-03-22T22:26:50.423Z"
   },
   "jjk-17": {
-    "mercadoLivre": 44.9,
-    "amazon": 31.25,
-    "updatedAt": "2026-03-14T20:33:13.508Z"
+    "mercadoLivre": 43.56,
+    "amazon": 43.9,
+    "updatedAt": "2026-03-22T22:26:51.558Z"
   },
   "jjk-18": {
     "mercadoLivre": 43.9,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:14.207Z"
+    "updatedAt": "2026-03-22T22:26:51.129Z"
   },
   "jjk-19": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:11.056Z"
+    "updatedAt": "2026-03-22T22:26:46.674Z"
   },
   "jjk-20": {
-    "mercadoLivre": 44.77,
+    "mercadoLivre": 43.9,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:16.385Z"
+    "updatedAt": "2026-03-22T22:26:51.984Z"
   },
   "jjk-21": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:11.245Z"
+    "updatedAt": "2026-03-22T22:26:47.616Z"
   },
   "jjk-22": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:11.275Z"
+    "updatedAt": "2026-03-22T22:26:47.673Z"
   },
   "jjk-23": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:11.312Z"
+    "updatedAt": "2026-03-22T22:26:47.712Z"
   },
   "jjk-24": {
-    "mercadoLivre": 39.9,
+    "mercadoLivre": 43.24,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:16.497Z"
+    "updatedAt": "2026-03-22T22:26:53.163Z"
   },
   "jjk-25": {
-    "mercadoLivre": 40.08,
+    "mercadoLivre": 44.9,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:16.904Z"
+    "updatedAt": "2026-03-22T22:26:54.119Z"
   },
   "jjk-26": {
-    "mercadoLivre": 45.53,
+    "mercadoLivre": 40.66,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:17.003Z"
+    "updatedAt": "2026-03-22T22:26:54.784Z"
   },
   "jjk-27": {
-    "mercadoLivre": 47.1,
+    "mercadoLivre": 146.9,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:17.677Z"
+    "updatedAt": "2026-03-22T22:26:55.247Z"
   },
   "jjk-28": {
-    "mercadoLivre": 51.9,
+    "mercadoLivre": 146.9,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:18.332Z"
+    "updatedAt": "2026-03-22T22:26:55.621Z"
   },
   "jjk-29": {
     "mercadoLivre": null,
     "amazon": 37.25,
-    "updatedAt": "2026-03-14T20:33:15.369Z"
+    "updatedAt": "2026-03-22T22:26:52.855Z"
   },
   "jjk-30": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:14.237Z"
+    "updatedAt": "2026-03-22T22:26:51.605Z"
   },
   "op-01": {
     "mercadoLivre": 64.79,
     "amazon": 46.95,
-    "updatedAt": "2026-03-14T20:33:19.564Z"
+    "updatedAt": "2026-03-22T22:27:00.729Z"
   },
   "op-02": {
     "mercadoLivre": 71.25,
     "amazon": 66.88,
-    "updatedAt": "2026-03-14T20:33:20.961Z"
+    "updatedAt": "2026-03-22T22:27:00.719Z"
   },
   "op-03": {
-    "mercadoLivre": 76,
-    "amazon": 70.4,
-    "updatedAt": "2026-03-14T20:33:21.655Z"
+    "mercadoLivre": 40.66,
+    "amazon": 66.88,
+    "updatedAt": "2026-03-22T22:27:01.562Z"
   },
   "op-04": {
-    "mercadoLivre": 40.41,
-    "amazon": 83.03,
-    "updatedAt": "2026-03-14T20:33:22.300Z"
+    "mercadoLivre": 40.66,
+    "amazon": 68.47,
+    "updatedAt": "2026-03-22T22:27:02.330Z"
   },
   "op-05": {
     "mercadoLivre": null,
-    "amazon": 59.87,
-    "updatedAt": "2026-03-14T20:33:18.759Z"
+    "amazon": 55.87,
+    "updatedAt": "2026-03-22T22:26:58.805Z"
   },
   "op-06": {
     "mercadoLivre": null,
-    "amazon": 43.3,
-    "updatedAt": "2026-03-14T20:33:18.843Z"
+    "amazon": 75.12,
+    "updatedAt": "2026-03-22T22:26:59.259Z"
   },
   "op-07": {
     "mercadoLivre": 74.98,
     "amazon": 66.02,
-    "updatedAt": "2026-03-14T20:33:22.965Z"
+    "updatedAt": "2026-03-22T22:27:02.991Z"
   },
   "op-08": {
     "mercadoLivre": null,
-    "amazon": 55.56,
-    "updatedAt": "2026-03-14T20:33:20.318Z"
+    "amazon": 55.8,
+    "updatedAt": "2026-03-22T22:27:00.345Z"
   },
   "op-09": {
     "mercadoLivre": 71.98,
-    "amazon": 53.06,
-    "updatedAt": "2026-03-14T20:33:24.439Z"
+    "amazon": 53.25,
+    "updatedAt": "2026-03-22T22:27:03.790Z"
   },
   "op-10": {
     "mercadoLivre": 78.87,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:24.100Z"
+    "updatedAt": "2026-03-22T22:27:04.326Z"
   },
   "op-11": {
-    "mercadoLivre": 69.22,
+    "mercadoLivre": 65.4,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:24.777Z"
+    "updatedAt": "2026-03-22T22:27:05.893Z"
   },
   "op-12": {
     "mercadoLivre": null,
     "amazon": 66.02,
-    "updatedAt": "2026-03-14T20:33:22.449Z"
+    "updatedAt": "2026-03-22T22:27:02.759Z"
   },
   "op-13": {
     "mercadoLivre": 74.92,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:26.426Z"
+    "updatedAt": "2026-03-22T22:27:05.683Z"
   },
   "op-14": {
-    "mercadoLivre": 66.88,
+    "mercadoLivre": 68.59,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:26.706Z"
+    "updatedAt": "2026-03-22T22:27:06.685Z"
   },
   "op-15": {
     "mercadoLivre": 73.98,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:27.633Z"
+    "updatedAt": "2026-03-22T22:27:07.504Z"
   },
   "op-16": {
-    "mercadoLivre": 89.32,
+    "mercadoLivre": 85.4,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:27.969Z"
+    "updatedAt": "2026-03-22T22:27:07.906Z"
   },
   "op-17": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:22.995Z"
+    "updatedAt": "2026-03-22T22:27:03.025Z"
   },
   "op-18": {
-    "mercadoLivre": 66.5,
+    "mercadoLivre": 76.89,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:28.467Z"
+    "updatedAt": "2026-03-22T22:27:08.180Z"
   },
   "op-19": {
     "mercadoLivre": 78.2,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:29.319Z"
+    "updatedAt": "2026-03-22T22:27:08.943Z"
   },
   "op-20": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:24.469Z"
+    "updatedAt": "2026-03-22T22:27:04.407Z"
   },
   "op-21": {
-    "mercadoLivre": 78.9,
-    "amazon": null,
-    "updatedAt": "2026-03-14T20:33:29.486Z"
-  },
-  "op-22": {
-    "mercadoLivre": 78.9,
-    "amazon": null,
-    "updatedAt": "2026-03-14T20:33:30.084Z"
-  },
-  "op-23": {
     "mercadoLivre": 78.99,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:31.618Z"
+    "updatedAt": "2026-03-22T22:27:09.542Z"
+  },
+  "op-22": {
+    "mercadoLivre": 67.9,
+    "amazon": null,
+    "updatedAt": "2026-03-22T22:27:11.136Z"
+  },
+  "op-23": {
+    "mercadoLivre": 67.9,
+    "amazon": null,
+    "updatedAt": "2026-03-22T22:27:11.397Z"
   },
   "op-24": {
     "mercadoLivre": 84.9,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:31.778Z"
+    "updatedAt": "2026-03-22T22:27:11.716Z"
   },
   "op-25": {
-    "mercadoLivre": 78.99,
+    "mercadoLivre": 95.06,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:32.803Z"
+    "updatedAt": "2026-03-22T22:27:12.571Z"
   },
   "op-26": {
-    "mercadoLivre": 84.99,
+    "mercadoLivre": 99.3,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:33.041Z"
+    "updatedAt": "2026-03-22T22:27:13.186Z"
   },
   "op-27": {
-    "mercadoLivre": 78.99,
+    "mercadoLivre": 84.9,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:33.580Z"
+    "updatedAt": "2026-03-22T22:27:13.524Z"
   },
   "op-28": {
-    "mercadoLivre": 84.9,
+    "mercadoLivre": 95.07,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:34.348Z"
+    "updatedAt": "2026-03-22T22:27:14.083Z"
   },
   "op-29": {
-    "mercadoLivre": 84.9,
+    "mercadoLivre": 99.3,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:34.651Z"
+    "updatedAt": "2026-03-22T22:27:15.025Z"
   },
   "op-30": {
     "mercadoLivre": 78.99,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:35.197Z"
+    "updatedAt": "2026-03-22T22:27:16.264Z"
   },
   "op-31": {
-    "mercadoLivre": 70.4,
+    "mercadoLivre": 66.88,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:36.793Z"
+    "updatedAt": "2026-03-22T22:27:16.654Z"
   },
   "op-32": {
-    "mercadoLivre": 77.75,
+    "mercadoLivre": 77,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:37.094Z"
+    "updatedAt": "2026-03-22T22:27:17.201Z"
   },
   "op-33": {
     "mercadoLivre": 75.98,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:37.985Z"
+    "updatedAt": "2026-03-22T22:27:17.982Z"
   },
   "op-34": {
-    "mercadoLivre": 40.41,
+    "mercadoLivre": 40.66,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:39.072Z"
+    "updatedAt": "2026-03-22T22:27:18.828Z"
   },
   "op-35": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:33.610Z"
+    "updatedAt": "2026-03-22T22:27:13.567Z"
   },
   "op-36": {
     "mercadoLivre": 93.9,
-    "amazon": 83.03,
-    "updatedAt": "2026-03-14T20:33:38.650Z"
+    "amazon": 68.47,
+    "updatedAt": "2026-03-22T22:27:18.554Z"
   },
   "op-37": {
-    "mercadoLivre": 78,
-    "amazon": 77.98,
-    "updatedAt": "2026-03-14T20:33:39.692Z"
+    "mercadoLivre": 78.9,
+    "amazon": 75.12,
+    "updatedAt": "2026-03-22T22:27:19.339Z"
   },
   "haikyu-01": {
     "mercadoLivre": null,
-    "amazon": 30.68,
-    "updatedAt": "2026-03-14T20:33:36.692Z"
+    "amazon": 33.83,
+    "updatedAt": "2026-03-22T22:26:35.702Z"
   },
   "haikyu-02": {
     "mercadoLivre": null,
-    "amazon": 35,
-    "updatedAt": "2026-03-14T20:33:37.382Z"
+    "amazon": 42.46,
+    "updatedAt": "2026-03-22T22:26:36.768Z"
   },
   "haikyu-03": {
     "mercadoLivre": null,
     "amazon": 33.79,
-    "updatedAt": "2026-03-14T20:33:38.556Z"
+    "updatedAt": "2026-03-22T22:26:36.660Z"
   },
   "haikyu-04": {
     "mercadoLivre": null,
-    "amazon": 42.46,
-    "updatedAt": "2026-03-14T20:33:38.636Z"
+    "amazon": 47.93,
+    "updatedAt": "2026-03-22T22:26:36.856Z"
   },
   "haikyu-05": {
     "mercadoLivre": null,
     "amazon": 37.66,
-    "updatedAt": "2026-03-14T20:33:38.952Z"
+    "updatedAt": "2026-03-22T22:26:37.478Z"
   },
   "haikyu-06": {
     "mercadoLivre": null,
-    "amazon": 46.01,
-    "updatedAt": "2026-03-14T20:33:39.190Z"
+    "amazon": 54.9,
+    "updatedAt": "2026-03-22T22:26:37.413Z"
   },
   "haikyu-07": {
     "mercadoLivre": null,
-    "amazon": 42.46,
-    "updatedAt": "2026-03-14T20:33:40.066Z"
+    "amazon": 38.21,
+    "updatedAt": "2026-03-22T22:26:37.555Z"
   },
   "haikyu-08": {
     "mercadoLivre": null,
-    "amazon": 42.46,
-    "updatedAt": "2026-03-14T20:33:40.662Z"
+    "amazon": 44.4,
+    "updatedAt": "2026-03-22T22:26:38.446Z"
   },
   "haikyu-09": {
     "mercadoLivre": null,
-    "amazon": 37.59,
-    "updatedAt": "2026-03-14T20:33:40.549Z"
+    "amazon": 33.83,
+    "updatedAt": "2026-03-22T22:26:38.612Z"
   },
   "haikyu-10": {
     "mercadoLivre": null,
-    "amazon": 32.35,
-    "updatedAt": "2026-03-14T20:33:40.606Z"
+    "amazon": 29.11,
+    "updatedAt": "2026-03-22T22:26:38.658Z"
   },
   "haikyu-11": {
     "mercadoLivre": null,
-    "amazon": 42.11,
-    "updatedAt": "2026-03-14T20:33:40.780Z"
+    "amazon": 36.11,
+    "updatedAt": "2026-03-22T22:26:38.812Z"
   },
   "haikyu-12": {
     "mercadoLivre": null,
-    "amazon": 39.19,
-    "updatedAt": "2026-03-14T20:33:41.143Z"
+    "amazon": 35.27,
+    "updatedAt": "2026-03-22T22:26:39.467Z"
   },
   "haikyu-13": {
     "mercadoLivre": null,
-    "amazon": 33.34,
-    "updatedAt": "2026-03-14T20:33:40.995Z"
+    "amazon": 30.01,
+    "updatedAt": "2026-03-22T22:26:39.321Z"
   },
   "haikyu-14": {
     "mercadoLivre": null,
     "amazon": 33.12,
-    "updatedAt": "2026-03-14T20:33:41.745Z"
+    "updatedAt": "2026-03-22T22:26:39.420Z"
   },
   "haikyu-15": {
     "mercadoLivre": null,
     "amazon": 47.17,
-    "updatedAt": "2026-03-14T20:33:41.884Z"
+    "updatedAt": "2026-03-22T22:26:39.782Z"
   },
   "haikyu-16": {
     "mercadoLivre": null,
     "amazon": 38.52,
-    "updatedAt": "2026-03-14T20:33:42.458Z"
+    "updatedAt": "2026-03-22T22:26:40.335Z"
   },
   "haikyu-17": {
     "mercadoLivre": null,
-    "amazon": 38,
-    "updatedAt": "2026-03-14T20:33:42.692Z"
+    "amazon": 42.46,
+    "updatedAt": "2026-03-22T22:26:40.614Z"
   },
   "haikyu-18": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:40.695Z"
+    "updatedAt": "2026-03-22T22:26:38.695Z"
   },
   "haikyu-19": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:40.725Z"
+    "updatedAt": "2026-03-22T22:26:38.727Z"
   },
   "haikyu-20": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:40.780Z"
+    "updatedAt": "2026-03-22T22:26:38.813Z"
   },
   "kgb-01": {
-    "mercadoLivre": 42.42,
-    "amazon": 39.53,
-    "updatedAt": "2026-03-14T20:33:45.650Z"
+    "mercadoLivre": 41.62,
+    "amazon": 33.7,
+    "updatedAt": "2026-03-22T22:26:56.910Z"
   },
   "kgb-02": {
-    "mercadoLivre": 44.6,
+    "mercadoLivre": 44.4,
     "amazon": 43.92,
-    "updatedAt": "2026-03-14T20:33:45.774Z"
+    "updatedAt": "2026-03-22T22:26:57.272Z"
   },
   "kgb-03": {
     "mercadoLivre": 44.4,
     "amazon": 32.01,
-    "updatedAt": "2026-03-14T20:33:45.930Z"
+    "updatedAt": "2026-03-22T22:26:58.080Z"
   },
   "kgb-04": {
     "mercadoLivre": 44.4,
-    "amazon": 40.4,
-    "updatedAt": "2026-03-14T20:33:46.580Z"
+    "amazon": 32.01,
+    "updatedAt": "2026-03-22T22:26:58.344Z"
   },
   "kgb-05": {
     "mercadoLivre": null,
     "amazon": 47.9,
-    "updatedAt": "2026-03-14T20:33:43.681Z"
+    "updatedAt": "2026-03-22T22:26:56.030Z"
   },
   "kgb-06": {
     "mercadoLivre": null,
     "amazon": 47.9,
-    "updatedAt": "2026-03-14T20:33:43.589Z"
+    "updatedAt": "2026-03-22T22:26:56.716Z"
   },
   "vinland-01": {
-    "mercadoLivre": 54.9,
-    "amazon": 35.69,
-    "updatedAt": "2026-03-14T20:33:47.887Z"
+    "mercadoLivre": 54.89,
+    "amazon": 43.92,
+    "updatedAt": "2026-03-22T22:27:41.507Z"
   },
   "vinland-02": {
-    "mercadoLivre": 53.83,
-    "amazon": 39.14,
-    "updatedAt": "2026-03-14T20:33:48.262Z"
+    "mercadoLivre": 51.4,
+    "amazon": 41.2,
+    "updatedAt": "2026-03-22T22:27:42.883Z"
   },
   "vinland-03": {
     "mercadoLivre": null,
     "amazon": 35.69,
-    "updatedAt": "2026-03-14T20:33:45.708Z"
+    "updatedAt": "2026-03-22T22:27:39.611Z"
   },
   "vinland-04": {
     "mercadoLivre": 49.9,
     "amazon": 35.69,
-    "updatedAt": "2026-03-14T20:33:49.178Z"
+    "updatedAt": "2026-03-22T22:27:43.558Z"
   },
   "vinland-05": {
     "mercadoLivre": 48.56,
     "amazon": 39.14,
-    "updatedAt": "2026-03-14T20:33:50.839Z"
+    "updatedAt": "2026-03-22T22:27:43.846Z"
   },
   "vinland-06": {
-    "mercadoLivre": 49.64,
+    "mercadoLivre": 53.83,
     "amazon": 54.9,
-    "updatedAt": "2026-03-14T20:33:50.840Z"
+    "updatedAt": "2026-03-22T22:27:44.628Z"
   },
   "vinland-07": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:45.804Z"
+    "updatedAt": "2026-03-22T22:27:39.675Z"
   },
   "vinland-08": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:45.834Z"
+    "updatedAt": "2026-03-22T22:27:39.729Z"
   },
   "vinland-09": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:45.864Z"
+    "updatedAt": "2026-03-22T22:27:39.801Z"
   },
   "vinland-10": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:45.900Z"
+    "updatedAt": "2026-03-22T22:27:39.859Z"
   },
   "vinland-11": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:45.929Z"
+    "updatedAt": "2026-03-22T22:27:39.912Z"
   },
   "vinland-12": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:45.960Z"
+    "updatedAt": "2026-03-22T22:27:39.955Z"
   },
   "vinland-13": {
     "mercadoLivre": 49.9,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:51.281Z"
+    "updatedAt": "2026-03-22T22:27:45.136Z"
   },
   "skmt-01": {
-    "mercadoLivre": 28.43,
+    "mercadoLivre": 40.94,
     "amazon": 22.39,
-    "updatedAt": "2026-03-14T20:33:51.790Z"
+    "updatedAt": "2026-03-22T22:27:20.280Z"
   },
   "skmt-02": {
-    "mercadoLivre": 39.94,
-    "amazon": 29.28,
-    "updatedAt": "2026-03-14T20:33:52.180Z"
+    "mercadoLivre": 39.91,
+    "amazon": 29.61,
+    "updatedAt": "2026-03-22T22:27:21.489Z"
   },
   "skmt-03": {
-    "mercadoLivre": 39.94,
-    "amazon": 29.94,
-    "updatedAt": "2026-03-14T20:33:53.450Z"
+    "mercadoLivre": 34,
+    "amazon": 29.61,
+    "updatedAt": "2026-03-22T22:27:21.836Z"
   },
   "skmt-04": {
-    "mercadoLivre": 39.94,
+    "mercadoLivre": 34.93,
     "amazon": 31.25,
-    "updatedAt": "2026-03-14T20:33:53.937Z"
+    "updatedAt": "2026-03-22T22:27:22.428Z"
   },
   "skmt-05": {
     "mercadoLivre": 31.4,
-    "amazon": 28.54,
-    "updatedAt": "2026-03-14T20:33:55.065Z"
+    "amazon": 28.62,
+    "updatedAt": "2026-03-22T22:27:23.395Z"
   },
   "skmt-06": {
-    "mercadoLivre": 39.94,
-    "amazon": 31.12,
-    "updatedAt": "2026-03-14T20:33:56.479Z"
+    "mercadoLivre": 43.56,
+    "amazon": 29.94,
+    "updatedAt": "2026-03-22T22:27:23.991Z"
   },
   "skmt-07": {
     "mercadoLivre": null,
-    "amazon": 27.96,
-    "updatedAt": "2026-03-14T20:33:53.230Z"
+    "amazon": 27.97,
+    "updatedAt": "2026-03-22T22:27:21.069Z"
   },
   "skmt-08": {
-    "mercadoLivre": 34.49,
-    "amazon": 22.82,
-    "updatedAt": "2026-03-14T20:33:56.904Z"
+    "mercadoLivre": 28.1,
+    "amazon": 24.26,
+    "updatedAt": "2026-03-22T22:27:24.649Z"
   },
   "skmt-09": {
-    "mercadoLivre": 39.94,
-    "amazon": 28.54,
-    "updatedAt": "2026-03-14T20:33:57.404Z"
+    "mercadoLivre": 30.63,
+    "amazon": 30.87,
+    "updatedAt": "2026-03-22T22:27:26.288Z"
   },
   "skmt-10": {
-    "mercadoLivre": 39.94,
-    "amazon": 29.66,
-    "updatedAt": "2026-03-14T20:33:57.682Z"
+    "mercadoLivre": 39.32,
+    "amazon": 29.71,
+    "updatedAt": "2026-03-22T22:27:27.000Z"
   },
   "skmt-11": {
     "mercadoLivre": 39.25,
-    "amazon": null,
-    "updatedAt": "2026-03-14T20:33:58.564Z"
+    "amazon": 43.9,
+    "updatedAt": "2026-03-22T22:27:27.196Z"
   },
   "skmt-12": {
     "mercadoLivre": 35.42,
-    "amazon": 32.9,
-    "updatedAt": "2026-03-14T20:33:59.014Z"
+    "amazon": 38.42,
+    "updatedAt": "2026-03-22T22:27:27.360Z"
   },
   "skmt-13": {
     "mercadoLivre": 36.75,
-    "amazon": 28.3,
-    "updatedAt": "2026-03-14T20:33:59.941Z"
+    "amazon": 28.55,
+    "updatedAt": "2026-03-22T22:27:28.683Z"
   },
   "skmt-14": {
     "mercadoLivre": null,
     "amazon": 31.25,
-    "updatedAt": "2026-03-14T20:33:57.376Z"
+    "updatedAt": "2026-03-22T22:27:26.867Z"
   },
   "skmt-15": {
-    "mercadoLivre": 39.94,
+    "mercadoLivre": 31.25,
     "amazon": 32.9,
-    "updatedAt": "2026-03-14T20:34:01.381Z"
+    "updatedAt": "2026-03-22T22:27:29.711Z"
   },
   "skmt-16": {
-    "mercadoLivre": 43.7,
+    "mercadoLivre": 45.2,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:34:02.057Z"
+    "updatedAt": "2026-03-22T22:27:30.538Z"
   },
   "skmt-17": {
     "mercadoLivre": 43.7,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:34:02.514Z"
+    "updatedAt": "2026-03-22T22:27:31.776Z"
   },
   "skmt-18": {
     "mercadoLivre": 40.08,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:34:02.514Z"
+    "updatedAt": "2026-03-22T22:27:32.255Z"
   },
   "skmt-19": {
-    "mercadoLivre": 28.43,
+    "mercadoLivre": 40.66,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:34:03.008Z"
+    "updatedAt": "2026-03-22T22:27:32.533Z"
   },
   "skmt-20": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:33:58.603Z"
+    "updatedAt": "2026-03-22T22:27:27.239Z"
   },
   "fma-01": {
     "mercadoLivre": null,
     "amazon": 38.43,
-    "updatedAt": "2026-03-14T20:34:00.778Z"
+    "updatedAt": "2026-03-22T22:26:14.391Z"
   },
   "fma-02": {
-    "mercadoLivre": 38.91,
-    "amazon": 25.74,
-    "updatedAt": "2026-03-14T20:34:04.318Z"
+    "mercadoLivre": 39.9,
+    "amazon": 29.16,
+    "updatedAt": "2026-03-22T22:26:17.805Z"
   },
   "fma-03": {
     "mercadoLivre": 23.24,
     "amazon": 23.24,
-    "updatedAt": "2026-03-14T20:34:05.154Z"
+    "updatedAt": "2026-03-22T22:26:17.826Z"
   },
   "fma-04": {
     "mercadoLivre": 23.24,
-    "amazon": 23.44,
-    "updatedAt": "2026-03-14T20:34:06.613Z"
+    "amazon": 21.1,
+    "updatedAt": "2026-03-22T22:26:18.398Z"
   },
   "fma-05": {
-    "mercadoLivre": 31.61,
+    "mercadoLivre": 35.54,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:34:06.701Z"
+    "updatedAt": "2026-03-22T22:26:18.569Z"
   },
   "fma-06": {
-    "mercadoLivre": 22.21,
-    "amazon": 21.95,
-    "updatedAt": "2026-03-14T20:34:07.426Z"
+    "mercadoLivre": 22.34,
+    "amazon": 22.21,
+    "updatedAt": "2026-03-22T22:26:19.115Z"
   },
   "fma-07": {
-    "mercadoLivre": 25.82,
-    "amazon": 21.95,
-    "updatedAt": "2026-03-14T20:34:07.816Z"
+    "mercadoLivre": 30.42,
+    "amazon": 16.9,
+    "updatedAt": "2026-03-22T22:26:19.057Z"
   },
   "fma-08": {
-    "mercadoLivre": 27.7,
+    "mercadoLivre": 18.18,
     "amazon": 15,
-    "updatedAt": "2026-03-14T20:34:08.567Z"
+    "updatedAt": "2026-03-22T22:26:19.641Z"
   },
   "fma-09": {
-    "mercadoLivre": 20.97,
+    "mercadoLivre": 19.38,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:34:08.567Z"
+    "updatedAt": "2026-03-22T22:26:20.220Z"
   },
   "fma-10": {
-    "mercadoLivre": 27.7,
-    "amazon": 22.98,
-    "updatedAt": "2026-03-14T20:34:09.719Z"
+    "mercadoLivre": 18.18,
+    "amazon": 25.72,
+    "updatedAt": "2026-03-22T22:26:23.797Z"
   },
   "fma-11": {
-    "mercadoLivre": 27.66,
+    "mercadoLivre": 28.07,
     "amazon": 15,
-    "updatedAt": "2026-03-14T20:34:10.636Z"
+    "updatedAt": "2026-03-22T22:26:23.788Z"
   },
   "fma-12": {
-    "mercadoLivre": 28.66,
+    "mercadoLivre": 28.91,
     "amazon": 15,
-    "updatedAt": "2026-03-14T20:34:12.461Z"
+    "updatedAt": "2026-03-22T22:26:23.815Z"
   },
   "fma-13": {
     "mercadoLivre": 20.03,
     "amazon": 22.26,
-    "updatedAt": "2026-03-14T20:34:12.598Z"
+    "updatedAt": "2026-03-22T22:26:24.120Z"
   },
   "fma-14": {
     "mercadoLivre": 20.16,
-    "amazon": 22.4,
-    "updatedAt": "2026-03-14T20:34:13.168Z"
+    "amazon": 25.48,
+    "updatedAt": "2026-03-22T22:26:24.253Z"
   },
   "fma-15": {
     "mercadoLivre": 18.18,
-    "amazon": 22.51,
-    "updatedAt": "2026-03-14T20:34:13.159Z"
+    "amazon": 15,
+    "updatedAt": "2026-03-22T22:26:24.734Z"
   },
   "fma-16": {
     "mercadoLivre": 27.84,
-    "amazon": 14.25,
-    "updatedAt": "2026-03-14T20:34:14.388Z"
+    "amazon": 15,
+    "updatedAt": "2026-03-22T22:26:25.652Z"
   },
   "fma-17": {
-    "mercadoLivre": 19.33,
-    "amazon": 21.53,
-    "updatedAt": "2026-03-14T20:34:14.292Z"
+    "mercadoLivre": 21.74,
+    "amazon": 21.48,
+    "updatedAt": "2026-03-22T22:26:26.064Z"
   },
   "fma-18": {
-    "mercadoLivre": 18.18,
+    "mercadoLivre": 23.15,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:34:15.067Z"
+    "updatedAt": "2026-03-22T22:26:29.221Z"
   },
   "fma-19": {
-    "mercadoLivre": 17.62,
-    "amazon": 17.95,
-    "updatedAt": "2026-03-14T20:34:15.715Z"
+    "mercadoLivre": 21.43,
+    "amazon": 19.04,
+    "updatedAt": "2026-03-22T22:26:29.840Z"
   },
   "fma-20": {
-    "mercadoLivre": 17.62,
+    "mercadoLivre": 21.43,
     "amazon": 19.58,
-    "updatedAt": "2026-03-14T20:34:18.011Z"
+    "updatedAt": "2026-03-22T22:26:29.349Z"
   },
   "fma-21": {
-    "mercadoLivre": 23.24,
-    "amazon": 22.43,
-    "updatedAt": "2026-03-14T20:34:18.202Z"
+    "mercadoLivre": 29.9,
+    "amazon": 23.24,
+    "updatedAt": "2026-03-22T22:26:29.820Z"
   },
   "fma-22": {
     "mercadoLivre": 22.5,
     "amazon": 22.5,
-    "updatedAt": "2026-03-14T20:34:18.603Z"
+    "updatedAt": "2026-03-22T22:26:29.821Z"
   },
   "fma-23": {
-    "mercadoLivre": 26.24,
-    "amazon": 30.29,
-    "updatedAt": "2026-03-14T20:34:18.980Z"
+    "mercadoLivre": 36.43,
+    "amazon": 27.26,
+    "updatedAt": "2026-03-22T22:26:30.696Z"
   },
   "fma-24": {
-    "mercadoLivre": 34.6,
+    "mercadoLivre": 36.43,
     "amazon": 30.7,
-    "updatedAt": "2026-03-14T20:34:20.016Z"
+    "updatedAt": "2026-03-22T22:26:31.542Z"
   },
   "fma-25": {
-    "mercadoLivre": 26.68,
-    "amazon": 29.64,
-    "updatedAt": "2026-03-14T20:34:20.406Z"
+    "mercadoLivre": 36.43,
+    "amazon": 26.68,
+    "updatedAt": "2026-03-22T22:26:31.929Z"
   },
   "fma-26": {
-    "mercadoLivre": 24.87,
+    "mercadoLivre": 34.16,
     "amazon": 27.63,
-    "updatedAt": "2026-03-14T20:34:20.404Z"
+    "updatedAt": "2026-03-22T22:26:34.623Z"
   },
   "fma-27": {
-    "mercadoLivre": 38.91,
-    "amazon": 30.7,
-    "updatedAt": "2026-03-14T20:34:21.463Z"
+    "mercadoLivre": 39.9,
+    "amazon": 29.16,
+    "updatedAt": "2026-03-22T22:26:34.882Z"
   },
   "gb-03": {
     "mercadoLivre": null,
-    "amazon": 11.07,
-    "updatedAt": "2026-03-14T20:34:20.613Z"
+    "amazon": 10.49,
+    "updatedAt": "2026-03-22T22:26:31.782Z"
   },
   "gb-04": {
     "mercadoLivre": null,
     "amazon": 50.83,
-    "updatedAt": "2026-03-14T20:34:21.164Z"
+    "updatedAt": "2026-03-22T22:26:32.798Z"
   },
   "gb-05": {
     "mercadoLivre": null,
-    "amazon": 48.67,
-    "updatedAt": "2026-03-14T20:34:21.969Z"
+    "amazon": 48.73,
+    "updatedAt": "2026-03-22T22:26:33.445Z"
   },
   "gb-06": {
     "mercadoLivre": null,
-    "amazon": 14.21,
-    "updatedAt": "2026-03-14T20:34:22.369Z"
+    "amazon": 14.39,
+    "updatedAt": "2026-03-22T22:26:33.751Z"
   },
   "gb-09": {
     "mercadoLivre": null,
     "amazon": 62.91,
-    "updatedAt": "2026-03-14T20:34:23.121Z"
+    "updatedAt": "2026-03-22T22:26:35.450Z"
   },
   "gb-02": {
-    "mercadoLivre": 59.41,
+    "mercadoLivre": 61.5,
     "amazon": 46.5,
-    "updatedAt": "2026-03-14T20:34:23.826Z"
+    "updatedAt": "2026-03-22T22:26:35.194Z"
   },
   "gb-01": {
-    "mercadoLivre": null,
-    "amazon": 47.5,
-    "updatedAt": "2026-03-14T20:34:23.376Z"
+    "mercadoLivre": 61.5,
+    "amazon": 37.15,
+    "updatedAt": "2026-03-22T22:26:35.056Z"
   },
   "shk-05": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:34:23.406Z"
+    "updatedAt": "2026-03-22T22:27:30.599Z"
   },
   "shk-06": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:34:23.436Z"
+    "updatedAt": "2026-03-22T22:27:30.649Z"
   },
   "shk-08": {
     "mercadoLivre": null,
-    "amazon": 53.71,
-    "updatedAt": "2026-03-14T20:34:25.671Z"
+    "amazon": 53.1,
+    "updatedAt": "2026-03-22T22:27:33.637Z"
   },
   "gb-07": {
-    "mercadoLivre": 60.51,
-    "amazon": 52.77,
-    "updatedAt": "2026-03-14T20:34:26.114Z"
+    "mercadoLivre": 58.75,
+    "amazon": 49.02,
+    "updatedAt": "2026-03-22T22:26:36.996Z"
   },
   "gb-08": {
-    "mercadoLivre": 62.83,
-    "amazon": 62.9,
-    "updatedAt": "2026-03-14T20:34:25.499Z"
+    "mercadoLivre": 61.99,
+    "amazon": 51.4,
+    "updatedAt": "2026-03-22T22:26:37.775Z"
   },
   "shk-02": {
-    "mercadoLivre": 37.04,
+    "mercadoLivre": 42.51,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:34:27.150Z"
+    "updatedAt": "2026-03-22T22:27:33.166Z"
   },
   "shk-01": {
-    "mercadoLivre": 30.52,
+    "mercadoLivre": 34.94,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:34:26.394Z"
+    "updatedAt": "2026-03-22T22:27:32.535Z"
   },
   "shk-03": {
-    "mercadoLivre": 32.3,
+    "mercadoLivre": 37.01,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:34:28.485Z"
+    "updatedAt": "2026-03-22T22:27:33.929Z"
   },
   "shk-10": {
     "mercadoLivre": null,
-    "amazon": 61.5,
-    "updatedAt": "2026-03-14T20:34:27.594Z"
+    "amazon": 58.42,
+    "updatedAt": "2026-03-22T22:27:34.428Z"
   },
   "shk-13": {
     "mercadoLivre": null,
     "amazon": 75.14,
-    "updatedAt": "2026-03-14T20:34:29.095Z"
+    "updatedAt": "2026-03-22T22:27:35.825Z"
   },
   "shk-07": {
     "mercadoLivre": 46.77,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:34:28.398Z"
+    "updatedAt": "2026-03-22T22:27:36.216Z"
   },
   "shk-04": {
     "mercadoLivre": 46.11,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:34:28.394Z"
+    "updatedAt": "2026-03-22T22:27:34.857Z"
   },
   "shk-14": {
     "mercadoLivre": null,
-    "amazon": 70.32,
-    "updatedAt": "2026-03-14T20:34:29.491Z"
+    "amazon": 75.14,
+    "updatedAt": "2026-03-22T22:27:36.007Z"
   },
   "shk-09": {
     "mercadoLivre": 44.91,
     "amazon": 49.9,
-    "updatedAt": "2026-03-14T20:34:30.501Z"
+    "updatedAt": "2026-03-22T22:27:38.180Z"
   },
   "shk-11": {
-    "mercadoLivre": 55.35,
-    "amazon": 61.5,
-    "updatedAt": "2026-03-14T20:34:31.179Z"
+    "mercadoLivre": 69.93,
+    "amazon": 58.42,
+    "updatedAt": "2026-03-22T22:27:37.745Z"
   },
   "shk-12": {
-    "mercadoLivre": 46.54,
-    "amazon": 47.5,
-    "updatedAt": "2026-03-14T20:34:31.600Z"
+    "mercadoLivre": 45.18,
+    "amazon": 56.55,
+    "updatedAt": "2026-03-22T22:27:38.501Z"
   },
   "ddd-02": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:34:28.428Z"
+    "updatedAt": "2026-03-22T22:26:07.495Z"
   },
   "ddd-03": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:34:28.457Z"
+    "updatedAt": "2026-03-22T22:26:07.596Z"
   },
   "ddd-01": {
     "mercadoLivre": null,
-    "amazon": 32.01,
-    "updatedAt": "2026-03-14T20:34:30.574Z"
+    "amazon": 26.72,
+    "updatedAt": "2026-03-22T22:26:08.918Z"
   },
   "ddd-04": {
     "mercadoLivre": null,
-    "amazon": 32.01,
-    "updatedAt": "2026-03-14T20:34:30.440Z"
+    "amazon": 24.81,
+    "updatedAt": "2026-03-22T22:26:09.508Z"
   },
   "ddd-05": {
     "mercadoLivre": null,
-    "amazon": 22.9,
-    "updatedAt": "2026-03-14T20:34:30.343Z"
+    "amazon": 43.92,
+    "updatedAt": "2026-03-22T22:26:09.740Z"
   },
   "ddd-11": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:34:30.606Z"
+    "updatedAt": "2026-03-22T22:26:08.973Z"
   },
   "ddd-12": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:34:30.636Z"
+    "updatedAt": "2026-03-22T22:26:09.008Z"
   },
   "ddd-14": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:34:31.170Z"
+    "updatedAt": "2026-03-22T22:26:09.563Z"
   },
   "ddd-06": {
     "mercadoLivre": null,
-    "amazon": 31.43,
-    "updatedAt": "2026-03-14T20:34:31.140Z"
+    "amazon": 32.01,
+    "updatedAt": "2026-03-22T22:26:10.090Z"
   },
   "ddd-07": {
     "mercadoLivre": null,
     "amazon": 28.98,
-    "updatedAt": "2026-03-14T20:34:31.553Z"
+    "updatedAt": "2026-03-22T22:26:10.022Z"
   },
   "ddd-08": {
     "mercadoLivre": null,
     "amazon": 29.19,
-    "updatedAt": "2026-03-14T20:34:32.445Z"
+    "updatedAt": "2026-03-22T22:26:10.396Z"
   },
   "ddd-09": {
     "mercadoLivre": null,
-    "amazon": 29.19,
-    "updatedAt": "2026-03-14T20:34:32.380Z"
+    "amazon": 32.02,
+    "updatedAt": "2026-03-22T22:26:10.609Z"
   },
   "ddd-10": {
     "mercadoLivre": null,
     "amazon": 26.94,
-    "updatedAt": "2026-03-14T20:34:32.495Z"
+    "updatedAt": "2026-03-22T22:26:10.509Z"
   },
   "ddd-13": {
     "mercadoLivre": null,
     "amazon": 26.72,
-    "updatedAt": "2026-03-14T20:34:32.634Z"
+    "updatedAt": "2026-03-22T22:26:10.867Z"
   },
   "ddd-15": {
     "mercadoLivre": null,
     "amazon": 33.7,
-    "updatedAt": "2026-03-14T20:34:33.182Z"
+    "updatedAt": "2026-03-22T22:26:11.562Z"
   },
   "ddd-16": {
     "mercadoLivre": null,
-    "amazon": 30.33,
-    "updatedAt": "2026-03-14T20:34:33.142Z"
+    "amazon": 32.01,
+    "updatedAt": "2026-03-22T22:26:11.700Z"
   },
   "ddd-17": {
     "mercadoLivre": null,
     "amazon": 33.7,
-    "updatedAt": "2026-03-14T20:34:33.489Z"
+    "updatedAt": "2026-03-22T22:26:11.958Z"
   },
   "ddd-19": {
     "mercadoLivre": null,
     "amazon": 47.9,
-    "updatedAt": "2026-03-14T20:34:34.616Z"
+    "updatedAt": "2026-03-22T22:26:12.387Z"
   },
   "ddd-18": {
     "mercadoLivre": null,
     "amazon": 38.38,
-    "updatedAt": "2026-03-14T20:34:33.533Z"
+    "updatedAt": "2026-03-22T22:26:12.230Z"
   },
   "ddd-20": {
     "mercadoLivre": null,
     "amazon": 47.9,
-    "updatedAt": "2026-03-14T20:34:34.042Z"
+    "updatedAt": "2026-03-22T22:26:12.311Z"
   },
   "csm-01": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.081Z"
+    "updatedAt": "2026-03-22T22:26:02.975Z"
   },
   "csm-02": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.088Z"
+    "updatedAt": "2026-03-22T22:26:03.056Z"
   },
   "csm-03": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.104Z"
+    "updatedAt": "2026-03-22T22:26:03.112Z"
   },
   "csm-04": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.111Z"
+    "updatedAt": "2026-03-22T22:26:03.171Z"
   },
   "csm-05": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.115Z"
+    "updatedAt": "2026-03-22T22:26:03.348Z"
   },
   "csm-06": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.120Z"
+    "updatedAt": "2026-03-22T22:26:03.463Z"
   },
   "csm-07": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.126Z"
+    "updatedAt": "2026-03-22T22:26:03.528Z"
   },
   "csm-08": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.135Z"
+    "updatedAt": "2026-03-22T22:26:03.585Z"
   },
   "csm-09": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.141Z"
+    "updatedAt": "2026-03-22T22:26:03.625Z"
   },
   "csm-10": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.141Z"
+    "updatedAt": "2026-03-22T22:26:03.758Z"
   },
   "csm-11": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.149Z"
+    "updatedAt": "2026-03-22T22:26:03.895Z"
   },
   "csm-12": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.151Z"
+    "updatedAt": "2026-03-22T22:26:03.993Z"
   },
   "csm-13": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.152Z"
+    "updatedAt": "2026-03-22T22:26:04.043Z"
   },
   "csm-14": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.159Z"
+    "updatedAt": "2026-03-22T22:26:04.153Z"
   },
   "csm-15": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.161Z"
+    "updatedAt": "2026-03-22T22:26:04.188Z"
   },
   "csm-16": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.166Z"
+    "updatedAt": "2026-03-22T22:26:04.269Z"
   },
   "csm-17": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.181Z"
+    "updatedAt": "2026-03-22T22:26:04.308Z"
   },
   "csm-18": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.181Z"
+    "updatedAt": "2026-03-22T22:26:04.343Z"
   },
   "csm-19": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.181Z"
+    "updatedAt": "2026-03-22T22:26:04.376Z"
   },
   "csm-20": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.181Z"
+    "updatedAt": "2026-03-22T22:26:04.418Z"
   },
   "csm-21": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.182Z"
+    "updatedAt": "2026-03-22T22:26:04.473Z"
   },
   "csm-22": {
     "mercadoLivre": null,
     "amazon": null,
-    "updatedAt": "2026-03-14T20:32:46.197Z"
+    "updatedAt": "2026-03-22T22:26:04.512Z"
   },
   "daem-03": {
     "mercadoLivre": null,
     "amazon": 35.92,
-    "updatedAt": "2026-03-14T20:32:48.050Z"
+    "updatedAt": "2026-03-22T22:26:08.643Z"
   },
   "daem-01": {
     "mercadoLivre": null,
-    "amazon": 37.52,
-    "updatedAt": "2026-03-14T20:32:48.106Z"
+    "amazon": 29.16,
+    "updatedAt": "2026-03-22T22:26:06.492Z"
   },
   "vs-04": {
     "mercadoLivre": null,
     "amazon": 35.92,
-    "updatedAt": "2026-03-14T20:32:48.171Z"
+    "updatedAt": "2026-03-22T22:27:37.818Z"
   },
   "daem-02": {
     "mercadoLivre": null,
     "amazon": 37.52,
-    "updatedAt": "2026-03-14T20:32:48.306Z"
+    "updatedAt": "2026-03-22T22:26:08.534Z"
   },
   "vs-03": {
-    "mercadoLivre": 40.41,
+    "mercadoLivre": 40.66,
     "amazon": 38.38,
-    "updatedAt": "2026-03-14T20:32:53.946Z"
+    "updatedAt": "2026-03-22T22:27:41.261Z"
   },
   "vs-01": {
     "mercadoLivre": 24.56,
     "amazon": 27.29,
-    "updatedAt": "2026-03-14T20:32:55.298Z"
+    "updatedAt": "2026-03-22T22:27:39.492Z"
   },
   "vs-02": {
-    "mercadoLivre": 40.41,
+    "mercadoLivre": 40.66,
     "amazon": 38.38,
-    "updatedAt": "2026-03-14T20:32:55.305Z"
+    "updatedAt": "2026-03-22T22:27:40.070Z"
   },
   "aot-18": {
     "mercadoLivre": null,
     "amazon": null,
     "updatedAt": "2026-03-14T20:33:00.300Z"
+  },
+  "dtnt-01": {
+    "mercadoLivre": null,
+    "amazon": 34.88,
+    "updatedAt": "2026-03-22T22:26:12.578Z"
+  },
+  "dtnt-02": {
+    "mercadoLivre": null,
+    "amazon": 34.88,
+    "updatedAt": "2026-03-22T22:26:12.720Z"
+  },
+  "dtnt-03": {
+    "mercadoLivre": null,
+    "amazon": 43.79,
+    "updatedAt": "2026-03-22T22:26:13.371Z"
+  },
+  "dtnt-04": {
+    "mercadoLivre": null,
+    "amazon": 43.79,
+    "updatedAt": "2026-03-22T22:26:13.617Z"
+  },
+  "dtnt-05": {
+    "mercadoLivre": null,
+    "amazon": 32.95,
+    "updatedAt": "2026-03-22T22:26:13.795Z"
+  },
+  "dtnt-06": {
+    "mercadoLivre": null,
+    "amazon": 29.65,
+    "updatedAt": "2026-03-22T22:26:14.200Z"
   }
 }

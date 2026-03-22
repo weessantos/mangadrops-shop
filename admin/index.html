@@ -1,306 +1,131 @@
+<!-- =======================
+ADMIN.HTML
+======================= -->
 <!DOCTYPE html>
-<html lang="pt-BR">
-
+<html lang="pt-br">
 <head>
-
 <meta charset="UTF-8">
+<title>CMS Mangá</title>
 
-<title>Mangá Drops Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-
-body{
-  margin:0;
-  font-family:Arial, Helvetica, sans-serif;
-  background:#0f0f0f;
-  color:#fff;
+:root {
+  --bg: #0f172a;
+  --card: #111827;
+  --border: #1f2937;
+  --accent: #6366f1;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
 }
 
-header{
-  background:#181818;
-  padding:16px 24px;
-  border-bottom:1px solid #333;
+body {
+  margin: 0;
+  font-family: Inter;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  height: 100vh;
 }
 
-.layout{
-  display:flex;
-  height:calc(100vh - 60px);
+.sidebar {
+  width: 260px;
+  border-right: 1px solid var(--border);
+  padding: 20px;
 }
 
-.sidebar{
-  width:220px;
-  background:#141414;
-  border-right:1px solid #333;
-  padding:20px;
+.series-item {
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
-.sidebar button{
-  display:block;
-  width:100%;
-  margin-bottom:10px;
-  padding:10px;
-  background:#222;
-  border:none;
-  color:#fff;
-  cursor:pointer;
+.series-item:hover {
+  background: var(--card);
 }
 
-.sidebar button:hover{
-  background:#333;
+.main {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
 }
 
-main{
-  flex:1;
-  padding:30px;
-  overflow:auto;
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 15px;
 }
 
-.tab{
-  display:none;
+input, textarea {
+  width: 100%;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #020617;
+  color: white;
 }
 
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:20px;
+button {
+  background: var(--accent);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
-th,td{
-  border:1px solid #333;
-  padding:8px;
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
-input,textarea{
-  width:100%;
-  padding:6px;
-  background:#1a1a1a;
-  border:1px solid #444;
-  color:#fff;
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
 }
 
-textarea{
-  min-height:80px;
+.modal-content {
+  background: var(--card);
+  padding: 20px;
+  border-radius: 12px;
+  width: 300px;
 }
-
-button.action{
-  margin-top:15px;
-  padding:10px 16px;
-  background:#2a7cff;
-  border:none;
-  color:white;
-  cursor:pointer;
-}
-
-button.action:hover{
-  background:#3b8cff;
-}
-
-pre{
-  background:#111;
-  padding:20px;
-  overflow:auto;
-}
-
-.tiktok-card{
-  border:1px solid #333;
-  padding:15px;
-  margin-bottom:20px;
-}
-
 </style>
-
 </head>
-
 
 <body>
 
-<header>
-
-<h1>Mangá Drops Admin</h1>
-
-<button onclick="saveDraft()">Salvar rascunho</button>
-<button onclick="loadDraft()">Carregar rascunho</button>
-<button onclick="clearDraft()">Limpar rascunho</button>
-
-</header>
-
-
-<div class="layout">
-
-<aside class="sidebar">
-
-<button data-tab="series">Série</button>
-<button data-tab="volumes">Volumes</button>
-<button data-tab="affiliates">Afiliados</button>
-<button data-tab="tiktok">TikTok</button>
-<button data-tab="export">Exportar</button>
-
-</aside>
-
-
-<main>
-
-<!-- ============================= -->
-<!-- ABA SÉRIE -->
-<!-- ============================= -->
-
-<h2>Dados da Série</h2>
-
-<label>Nome da obra</label>
-<input id="series-title">
-
-<label>Slug</label>
-<input id="series-slug">
-
-<label>Prefixo curto</label>
-<input id="series-prefix">
-
-<label>Total de volumes</label>
-<input id="series-total" type="number">
-
-
-<hr style="margin:25px 0;border:1px solid #333">
-
-
-<h3>Informações da Obra</h3>
-
-<label>Autor</label>
-<input id="series-author" placeholder="Ex: Hajime Isayama">
-
-<label>Gênero</label>
-<input id="series-genre" placeholder="Ex: Shounen / Ação">
-
-<label>Editora</label>
-<input id="series-brand" placeholder="Ex: Panini">
-
-<label>Formato</label>
-<input id="series-format" placeholder="Ex: 2 em 1 ou Tankobon">
-
-<label>Subtítulo da série</label>
-<input id="series-subtitle" placeholder="Frase que aparece no card da série">
-
-<label>Imagem da série</label>
-<input id="series-thumb" placeholder="Ex: aot-series.webp">
-
-<label>Extensão das imagens</label>
-<input id="series-imageExt" value="webp">
-
-
-<br><br>
-
-<button class="action" onclick="generateVolumes()">
-Gerar volumes
-</button>
-
-<button class="action" onclick="saveSeriesCatalogToProject()">
-Salvar série no projeto
-</button>
-
-<button onclick="addVolume()">
-Adicionar próximo volume
-</button>
-
-<h3>Importar descrições completas</h3>
-
-<textarea
-id="descriptions-import"
-placeholder="Cole aqui o bloco export const ...Descriptions = {...}">
-</textarea>
-
-<button class="action" onclick="importDescriptions()">
-Importar descrições
-</button>
-
-<button class="action" onclick="saveDescriptionsToProject()">
-Salvar descrições no projeto
-</button>
-
-</section>
-
-
-
-<!-- ============================= -->
-<!-- ABA VOLUMES -->
-<!-- ============================= -->
-
-<section id="tab-volumes" class="tab">
-
-<h2>Volumes</h2>
-
-<p>Os volumes aparecerão aqui após gerar a série.</p>
-
-</section>
-
-
-
-<!-- ============================= -->
-<!-- ABA AFILIADOS -->
-<!-- ============================= -->
-
-<section id="tab-affiliates" class="tab">
-
-<h2>Afiliados</h2>
-
-<p>Preencha os links de Amazon e Mercado Livre.</p>
-
-<button class="action" onclick="saveAffiliatesToProject()">
-Salvar afiliados no projeto
-</button>
-
-</section>
-
-
-
-<!-- ============================= -->
-<!-- ABA TIKTOK -->
-<!-- ============================= -->
-
-<section id="tab-tiktok" class="tab">
-
-<h2>TikTok</h2>
-
-<p>Conteúdos editoriais para redes sociais.</p>
-
-</section>
-
-
-
-<!-- ============================= -->
-<!-- ABA EXPORT -->
-<!-- ============================= -->
-
-<section id="tab-export" class="tab">
-
-<h2>Exportar código</h2>
-
-<button class="action" onclick="exportSeriesCatalog()">
-Gerar series.catalog
-</button>
-
-<pre id="export-series"></pre>
-
-
-<button class="action" onclick="exportDescriptions()">
-Gerar descriptions
-</button>
-
-<pre id="export-descriptions"></pre>
-
-
-<button class="action" onclick="exportAffiliates()">
-Gerar affiliates
-</button>
-
-<pre id="export-affiliates"></pre>
-
-</section>
-
-
-</main>
-
+<div class="sidebar">
+  <h3>Séries</h3>
+  <button onclick="openSeriesModal()">+ Nova</button>
+  <div id="series-list"></div>
 </div>
 
+<div class="main">
+  <div class="topbar">
+    <h2 id="title">Selecione uma série</h2>
+    <button id="new-volume" style="display:none">+ Volume</button>
+  </div>
+  <div id="volumes"></div>
+</div>
 
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-content" id="modal-content"></div>
+</div>
+
+<!-- ✅ AGORA CORRETO -->
 <script src="admin.js"></script>
 
 </body>

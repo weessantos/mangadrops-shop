@@ -6,8 +6,9 @@ import https from "https";
 import path from "path";
 import { fileURLToPath } from "url";
 import { chromium } from "playwright";
+import pool from "../src/db/database.js";
 
-import { products } from "../src/data/products/index.js";
+import { getProducts } from "../src/data/products/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -688,8 +689,18 @@ async function getAmazonPrice(url) {
 
 async function processProduct(product, existingPrices, prices, counters, stats, workerState) {
   const productId = product.id;
-  const mlLink = product.affiliate?.mercadoLivre || "";
-  const amazonLink = product.affiliate?.amazon || "";
+
+  // 🧠 DEBUG 1: ver o affiliate completo
+  console.log("────────────");
+  console.log("PRODUCT:", productId);
+  console.log("AFFILIATE:", product.affiliate);
+
+  const mlLink = product.affiliate?.mercadoLivre?.trim() || "";
+  const amazonLink = product.affiliate?.amazon?.trim() || "";
+
+  // 🧠 DEBUG 2: ver os links extraídos
+  console.log("ML LINK:", mlLink);
+  console.log("AMAZON LINK:", amazonLink);
 
   const previous = existingPrices[productId] || {};
 
@@ -698,17 +709,26 @@ async function processProduct(product, existingPrices, prices, counters, stats, 
 
   try {
     const [fetchedMlPrice, fetchedAmazonPrice] = await Promise.all([
-      mlLink ? getMercadoLivrePrice(mlLink, productId, workerState?.mlPage || null) : Promise.resolve(null),
-      amazonLink ? getAmazonPrice(amazonLink) : Promise.resolve(null),
+      mlLink
+        ? (console.log("➡️ Buscando ML:", productId), getMercadoLivrePrice(mlLink, productId, workerState?.mlPage || null))
+        : (console.log("❌ SEM ML LINK:", productId), Promise.resolve(null)),
+
+      amazonLink
+        ? (console.log("➡️ Buscando Amazon:", productId), getAmazonPrice(amazonLink))
+        : (console.log("❌ SEM AMAZON LINK:", productId), Promise.resolve(null)),
     ]);
+
+    // 🧠 DEBUG 3: resultado bruto
+    console.log("ML RESULT:", fetchedMlPrice);
+    console.log("AMZ RESULT:", fetchedAmazonPrice);
 
     mlPrice = fetchedMlPrice;
 
     if (fetchedAmazonPrice !== null) {
       amazonPrice = fetchedAmazonPrice;
     }
-  } catch {
-    // mantém amazon anterior; ML fica null se falhar
+  } catch (err) {
+    console.log("🔥 ERRO AO BUSCAR:", productId, err.message);
   }
 
   prices[productId] = {
@@ -716,6 +736,14 @@ async function processProduct(product, existingPrices, prices, counters, stats, 
     amazon: amazonPrice,
     updatedAt: new Date().toISOString(),
   };
+
+  // 🔥 SALVA IMEDIATO NO BANCO
+  await savePricesToDatabase({
+    [productId]: {
+      mercadoLivre: mlPrice ?? previous.mercadoLivre ?? null,
+      amazon: amazonPrice ?? previous.amazon ?? null,
+    }
+  });
 
   counters.done += 1;
 
@@ -734,7 +762,7 @@ async function processProduct(product, existingPrices, prices, counters, stats, 
     mlStatus = `⚠ null (link)`;
     stats.ml.linkNoPrice += 1;
   } else {
-    mlStatus = `✖ null`;
+    mlStatus = `✖ sem link`;
     stats.ml.noLink += 1;
   }
 
@@ -746,7 +774,7 @@ async function processProduct(product, existingPrices, prices, counters, stats, 
     amazonStatus = `⚠ null (link)`;
     stats.amazon.linkNoPrice += 1;
   } else {
-    amazonStatus = `✖ null`;
+    amazonStatus = `✖ sem link`;
     stats.amazon.noLink += 1;
   }
 
@@ -813,6 +841,68 @@ async function runPool(items, worker, concurrency, setupWorker = null, teardownW
 
   await Promise.all(runners);
 }
+async function savePricesToDatabase(prices) {
+  const client = await pool.connect();
+
+  try {
+    for (const [productId, data] of Object.entries(prices)) {
+      const [prefix, numberStr] = productId.split("-");
+      const number = Number(numberStr);
+
+      await client.query(
+        `
+        UPDATE volumes
+        SET
+          amazon_price = COALESCE($1, amazon_price),
+          mercado_livre_price = COALESCE($2, mercado_livre_price),
+          price_updated_at = NOW()
+        WHERE number = $3
+        AND series_id = (
+          SELECT id FROM series WHERE prefix = $4
+        )
+        `,
+        [data.amazon, data.mercadoLivre, number, prefix]
+      );
+    }
+  } catch (err) {
+    console.error("Erro ao salvar preços no banco:", err);
+  } finally {
+    client.release();
+  }
+}
+
+async function getProductsFromAPI() {
+  const response = await axios.get("http://localhost:3000/api/series/full");
+
+  const series = response.data;
+
+  if (!Array.isArray(series)) {
+    console.error("❌ API retornou inválido:", series);
+    return [];
+  }
+
+  const products = [];
+
+  for (const s of series) {
+    if (!s.volumes) continue;
+
+    for (const v of s.volumes) {
+      products.push({
+        id: `${s.prefix}-${String(v.number).padStart(2, "0")}`,
+        affiliate: {
+          amazon: v.amazon,
+            mercadoLivre:
+              v.mercadolivre ??
+              v.mercado_livre ??
+              v.mercadoLivre ??
+              null
+        }
+      });
+    }
+  }
+
+  return products;
+}
 
 async function updatePrices() {
   const existingPrices = readExistingPrices();
@@ -822,7 +912,7 @@ async function updatePrices() {
   // descomente para rodar só uma série
   // const activeProducts = products.filter((product) => product.id.startsWith("aot-"));
 
-  const activeProducts = products;
+  const activeProducts = await getProductsFromAPI();
 
   // DEBUG OPCIONAL:
   // descomente para limpar preços antigos de uma série antes do teste

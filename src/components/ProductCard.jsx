@@ -16,6 +16,7 @@ function ProductCardBase({
   topBadge = null,
   priority = false,
 }) {
+  console.log("🧪 PRODUCT:", product);
   const mlUrl =
     typeof product?.affiliate?.mercadoLivre === "string"
       ? product.affiliate.mercadoLivre.trim()
@@ -27,13 +28,13 @@ function ProductCardBase({
       : "";
 
   const mlPrice = useMemo(
-    () => getPrice(product?.id, "mercadoLivre"),
-    [product?.id]
+    () => getPrice(product, "mercadoLivre"),
+    [product]
   );
 
   const amzPrice = useMemo(
-    () => getPrice(product?.id, "amazon"),
-    [product?.id]
+    () => getPrice(product, "amazon"),
+    [product]
   );
 
   const offerData = useMemo(
@@ -50,7 +51,7 @@ function ProductCardBase({
   const { hasML, hasAmazon, hasBoth } = offerData;
   const hasAffiliateLink = Boolean(mlUrl || amzUrl);
 
-  const bestPrice = useMemo(() => getBestPrice(product?.id), [product?.id]);
+  const bestPrice = useMemo(() => getBestPrice(product), [product]);
 
   const coverPrice = useMemo(() => {
     const raw = product?.coverPrice;
@@ -329,6 +330,8 @@ function ProductCardBase({
     </div>
   );
 }
+
+
 
 export default memo(
   ProductCardBase,

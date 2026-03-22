@@ -31,8 +31,8 @@ export default function CheapRail({
             ? p.affiliate.amazon.trim()
             : "";
 
-        const mlPrice = getPrice(p?.id, "mercadoLivre");
-        const amzPrice = getPrice(p?.id, "amazon");
+        const mlPrice = getPrice(p, "mercadoLivre");
+        const amzPrice = getPrice(p, "amazon");
 
         const offer = getOfferData({
           mlHref: mlUrl,

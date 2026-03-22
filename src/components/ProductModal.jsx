@@ -139,9 +139,9 @@ export default function ProductModal({ product, onClose }) {
 
   if (!product) return null;
 
-  const mlPrice = getPrice(product.id, "mercadoLivre");
-  const amazonPrice = getPrice(product.id, "amazon");
-  const bestPrice = getBestPrice(product.id);
+  const mlPrice = getPrice(product, "mercadoLivre");
+  const amazonPrice = getPrice(product, "amazon");
+  const bestPrice = getBestPrice(product);
 
   const coverPrice = useMemo(() => {
     const raw = product?.coverPrice;

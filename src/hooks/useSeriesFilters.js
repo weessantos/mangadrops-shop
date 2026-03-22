@@ -50,7 +50,7 @@ const hasReviewContent = (item) => {
   );
 };
 
-export function useSeriesFilters(seriesArray) {
+export function useSeriesFilters(seriesArray = []) {
   const [filters, setFilters] = useState({
     brand: new Set(),
     author: new Set(),
@@ -100,21 +100,29 @@ export function useSeriesFilters(seriesArray) {
 
   const options = useMemo(() => {
     return {
-      brand: uniqSorted(seriesArray.map((s) => s.brand)),
-      format: uniqSorted(seriesArray.map((s) => s.format)),
-      author: uniqSorted(seriesArray.flatMap((s) => s.authorList || [])),
-      genre: uniqSorted(seriesArray.flatMap((s) => s.genreList || [])),
+      brand: uniqSorted(seriesArray.map((s) => s?.brand)),
+      format: uniqSorted(seriesArray.map((s) => s?.format)),
+      author: uniqSorted(seriesArray.map((s) => s?.author)),
+      genre: uniqSorted(
+        seriesArray.flatMap((s) =>
+          (s.genre || "").split("/").map((g) => g.trim())
+        )
+      ),
       price: [20, 30, 40, 50],
       discount: [20, 30, 40, 50],
     };
   }, [seriesArray]);
 
   const filtered = useMemo(() => {
-    return seriesArray.filter((s) => {
+    return (Array.isArray(seriesArray) ? seriesArray : []).filter((s) => {
       const brandOk = passesGroup(filters.brand, s.brand);
-      const authorOk = passesGroup(filters.author, s.authorList || []);
+      const authorOk = passesGroup(filters.author, s.author);
+
+      const genreOk = passesGroup(
+        filters.genre,
+        (s.genre || "").split("/").map((g) => g.trim())
+      );
       const formatOk = passesGroup(filters.format, s.format);
-      const genreOk = passesGroup(filters.genre, s.genreList || []);
 
       const bestPriceValue = getBestPriceValue(s);
       const discountPercent = getDiscountPercent(s);

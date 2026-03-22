@@ -25,8 +25,8 @@ import { getDiscountData } from "./utils/priceUtils";
 
 import FiltersPage from "./pages/FiltersPage";
 
-import { products } from "./data/products/index.js";
-import { seriesCatalog } from "./data/products/series.catalog.js";
+import { getProducts } from "./data/products/index.js";
+import { getSeriesCatalog } from "./data/products/series.catalog.js";
 
 import { useSeriesList } from "./hooks/useSeriesList";
 import { useScrollTop } from "./hooks/useScrollTop";
@@ -133,9 +133,11 @@ function AppShell() {
   const [activeSection, setActiveSection] = useState("colecoes");
 
   const { showScrollTop, scrollToTop } = useScrollTop(400);
+  const [seriesCatalog, setSeriesCatalog] = useState([]);
+  const [products, setProducts] = useState([]);
   const { seriesList, seriesBySlug, seriesNames } = useSeriesList(
-    products,
-    seriesCatalog
+    products || [],
+    seriesCatalog || []
   );
 
   const metaBySeries = useMemo(() => {
@@ -151,7 +153,7 @@ function AppShell() {
       });
     }
     return map;
-  }, []);
+  }, [seriesCatalog]);
 
   const getMeta = (p) => {
     const seriesName = norm(p?.series);
@@ -196,6 +198,12 @@ function AppShell() {
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  useEffect(() => {
+    getSeriesCatalog().then(setSeriesCatalog);
+
+    getProducts(location.search).then(setProducts);
+  }, [location.search]);
 
   useEffect(() => {
     setInputValue(qParam);
@@ -599,6 +607,16 @@ function AppShell() {
       window.removeEventListener("resize", onScroll);
     };
   }, []);
+
+  if (!seriesCatalog.length || !products.length) {
+    return (
+      <div className="container">
+        <div style={{ padding: "40px", textAlign: "center" }}>
+          Carregando catálogo...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container">
