@@ -15,6 +15,7 @@ ml-session.json
 ml-session-base64.txt
 playwright/.auth
 src/data/prices.json
+.env
 
 # Editor directories and files
 .vscode/*
