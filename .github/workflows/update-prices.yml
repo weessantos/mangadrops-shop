@@ -41,6 +41,8 @@ jobs:
       # roda o scraper
       - name: Update prices
         run: npm run update-prices
+        env: 
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       # build do site
       - name: Build site
