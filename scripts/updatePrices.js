@@ -745,6 +745,8 @@ async function processProduct(product, existingPrices, prices, counters, stats, 
     }
   });
 
+  
+
   counters.done += 1;
 
   if (counters.done % SAVE_EVERY_N_PRODUCTS === 0 || counters.done === counters.total) {
@@ -871,16 +873,7 @@ async function savePricesToDatabase(prices) {
   }
 }
 
-async function getProductsFromAPI() {
-  const response = await axios.get("http://localhost:3000/api/series/full");
-
-  const series = response.data;
-
-  if (!Array.isArray(series)) {
-    console.error("❌ API retornou inválido:", series);
-    return [];
-  }
-
+function mapSeriesToProducts(series) {
   const products = [];
 
   for (const s of series) {
@@ -891,17 +884,74 @@ async function getProductsFromAPI() {
         id: `${s.prefix}-${String(v.number).padStart(2, "0")}`,
         affiliate: {
           amazon: v.amazon,
-            mercadoLivre:
-              v.mercadolivre ??
-              v.mercado_livre ??
-              v.mercadoLivre ??
-              null
+          mercadoLivre:
+            v.mercadolivre ??
+            v.mercado_livre ??
+            v.mercadoLivre ??
+            null
         }
       });
     }
   }
 
   return products;
+}
+
+async function getProductsFromDatabase() {
+  const client = await pool.connect();
+
+  try {
+    const result = await client.query(`
+      SELECT 
+        s.prefix,
+        v.number,
+        v.amazon,
+        v.mercadolivre,
+        v.mercado_livre,
+        v.mercadoLivre
+      FROM volumes v
+      JOIN series s ON v.series_id = s.id
+    `);
+
+    return result.rows.map((v) => ({
+      id: `${v.prefix}-${String(v.number).padStart(2, "0")}`,
+      affiliate: {
+        amazon: v.amazon,
+        mercadoLivre:
+          v.mercadolivre ??
+          v.mercado_livre ??
+          v.mercadoLivre ??
+          null
+      }
+    }));
+
+  } finally {
+    client.release();
+  }
+}
+
+
+async function getProductsFromAPI() {
+  try {
+    console.log("🌐 Tentando buscar da API...");
+
+    const response = await axios.get("http://localhost:3000/api/series/full", {
+      timeout: 5000
+    });
+
+    const series = response.data;
+
+    if (!Array.isArray(series)) {
+      throw new Error("Formato inválido");
+    }
+
+    return mapSeriesToProducts(series);
+
+  } catch (err) {
+    console.log("⚠️ API não disponível, usando banco direto...");
+
+    return await getProductsFromDatabase();
+  }
 }
 
 async function updatePrices() {
