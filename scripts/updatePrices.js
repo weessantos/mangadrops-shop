@@ -6,9 +6,8 @@ import https from "https";
 import path from "path";
 import { fileURLToPath } from "url";
 import { chromium } from "playwright";
+import 'dotenv/config';
 import pool from "../src/db/database.js";
-
-import { getProducts } from "../src/data/products/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -36,6 +35,30 @@ let browserPromise = null;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+//Helpers do mercado livre
+
+function toCamel(row) {
+  const newObj = {};
+
+  for (const key in row) {
+    const camelKey = key.replace(/_([a-z])/g, (_, letter) =>
+      letter.toUpperCase()
+    );
+    newObj[camelKey] = row[key];
+  }
+
+  return newObj;
+}
+
+function getMercadoLivre(v) {
+  return (
+    v.mercado_livre ??
+    v.mercadolivre ??
+    v.mercadoLivre ??
+    null
+  );
 }
 
 function parsePriceFromText(text) {
@@ -884,7 +907,7 @@ function mapSeriesToProducts(series) {
         id: `${s.prefix}-${String(v.number).padStart(2, "0")}`,
         affiliate: {
           amazon: v.amazon,
-          mercadoLivre: v.mercado_livre ?? null
+          mercadoLivre: getMercadoLivre(v)
         }
       });
     }
@@ -902,18 +925,22 @@ async function getProductsFromDatabase() {
         s.prefix,
         v.number,
         v.amazon,
-        v.mercado_livre,
+        v.mercado_livre
       FROM volumes v
       JOIN series s ON v.series_id = s.id
     `);
 
-    return result.rows.map((v) => ({
-      id: `${v.prefix}-${String(v.number).padStart(2, "0")}`,
-      affiliate: {
-        amazon: v.amazon,
-        mercadoLivre: v.mercado_livre ?? null
-      }
-    }));
+    return result.rows.map((row) => {
+      const v = toCamel(row);
+
+      return {
+        id: `${v.prefix}-${String(v.number).padStart(2, "0")}`,
+        affiliate: {
+          amazon: v.amazon,
+          mercadoLivre: v.mercadoLivre ?? null
+        }
+      };
+    });
 
   } finally {
     client.release();
@@ -924,6 +951,7 @@ async function getProductsFromDatabase() {
 async function getProductsFromAPI() {
   try {
     console.log("🌐 Tentando buscar da API...");
+    console.log("DB URL:", process.env.DATABASE_URL);
 
     const response = await axios.get("http://localhost:3000/api/series/full", {
       timeout: 5000

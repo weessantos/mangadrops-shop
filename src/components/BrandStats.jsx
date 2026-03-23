@@ -12,7 +12,7 @@ export default function BrandStats() {
         <div className="brandDivider" />
 
         <div className="brandStat">
-          <span className="statNumber">+150</span>
+          <span className="statNumber">+250</span>
           <span className="statLabel">volumes organizados</span>
         </div>
 
