@@ -884,11 +884,7 @@ function mapSeriesToProducts(series) {
         id: `${s.prefix}-${String(v.number).padStart(2, "0")}`,
         affiliate: {
           amazon: v.amazon,
-          mercadoLivre:
-            v.mercadolivre ??
-            v.mercado_livre ??
-            v.mercadoLivre ??
-            null
+          mercadoLivre: v.mercado_livre ?? null
         }
       });
     }
@@ -906,9 +902,7 @@ async function getProductsFromDatabase() {
         s.prefix,
         v.number,
         v.amazon,
-        v.mercadolivre,
         v.mercado_livre,
-        v.mercadoLivre
       FROM volumes v
       JOIN series s ON v.series_id = s.id
     `);
@@ -917,11 +911,7 @@ async function getProductsFromDatabase() {
       id: `${v.prefix}-${String(v.number).padStart(2, "0")}`,
       affiliate: {
         amazon: v.amazon,
-        mercadoLivre:
-          v.mercadolivre ??
-          v.mercado_livre ??
-          v.mercadoLivre ??
-          null
+        mercadoLivre: v.mercado_livre ?? null
       }
     }));
 
