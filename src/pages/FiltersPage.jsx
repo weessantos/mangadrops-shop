@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { getBestPrice } from "../utils/priceLoader";
 import "../styles/series-filters.css";
 
 /* =========================
@@ -36,6 +37,11 @@ function buildOptions(seriesArray) {
     genres: uniq(genres),
     formats: uniq(formats),
   };
+}
+
+function getPriceValue(v) {
+  const best = getBestPrice(v.id);
+  return best?.value ?? null;
 }
 
 /* =========================
@@ -97,33 +103,53 @@ export default function FiltersPage() {
     );
   }, [seriesData]);
 
+  console.log(
+    volumes.filter(v => v.best_price <= 30)
+  );
   // ========================
   // FILTER
   // ========================
   const filtered = useMemo(() => {
-    return volumes.filter((v) => {
-      if (q && !v.title.toLowerCase().includes(q.toLowerCase())) return false;
+  return volumes.filter((v) => {
+    // 🔎 busca
+    if (q && !v.title?.toLowerCase().includes(q.toLowerCase()))
+      return false;
 
-      if (brand.length && !brand.includes(v.brand)) return false;
+    // 🏷 brand
+    if (brand.length && !brand.includes(v.brand)) return false;
 
-      if (author.length && !author.includes(v.author)) return false;
+    // ✍️ author
+    if (author.length && !author.includes(v.author)) return false;
 
-      if (
-        genre.length &&
-        !genre.some((g) => v.genre?.includes(g))
+    // 🎭 genre
+    if (
+      genre.length &&
+      !genre.some((g) =>
+        v.genre?.toLowerCase().includes(g.toLowerCase())
       )
-        return false;
+    )
+      return false;
 
-      if (format.length && !format.includes(v.format)) return false;
+    // 📦 format
+    if (format.length && !format.includes(v.format)) return false;
 
-      if (price && (!v.best_price || v.best_price > Number(price))) return false;
+    // 💰 preço
+    if (price) {
+      if (v.best_price == null) return false;
+      if (v.best_price > Number(price)) return false;
+    }
 
-      if (discount && (!v.discount || v.discount < Number(discount))) return false;
+    // 🔥 desconto
+    if (discount) {
+      if (v.discount == null) return false;
+      if (v.discount < Number(discount)) return false;
+    }
 
-      return true;
-    });
-  }, [volumes, q, brand, author, genre, format, price, discount]);
-
+    return true;
+  });
+}, [volumes, q, brand, author, genre, format, price, discount]);
+console.log("FILTERED:", filtered.length);
+console.log("ORIGINAL:", volumes.length);
   // ========================
   // ACTIONS
   // ========================
@@ -158,7 +184,11 @@ export default function FiltersPage() {
     if (price) params.set("price", price);
     if (discount) params.set("discount", discount);
 
-    navigate(`/?${params.toString()}`);
+    // 🔥 mantém a rota atual
+    navigate({
+      pathname: "/",
+      search: `?${params.toString()}`
+    });
   };
 
   const close = () => navigate(-1);
@@ -183,81 +213,125 @@ export default function FiltersPage() {
 
       <main className="filtersBody">
         {/* Busca */}
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Buscar..."
-        />
+        <div className="filtersCard">
+          <h2>Busca</h2>
+
+          <div className="filtersSearchRow">
+            <input
+              className="filtersInput"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Buscar..."
+            />
+          </div>
+        </div>
 
         {/* Brand */}
-        {opts.brands.map((b) => (
-          <button
-            key={b}
-            className={brand.includes(b) ? "active" : ""}
-            onClick={() => toggle(setBrand, b)}
-          >
-            {b}
-          </button>
-        ))}
+        <div className="filtersCard">
+          <h2>Editora</h2>
+
+          <div className="filtersChips">
+            {opts.brands.map((b) => (
+              <button
+                key={b}
+                className={`chip ${brand.includes(b) ? "active" : ""}`}
+                onClick={() => toggle(setBrand, b)}
+              >
+                {b}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Author */}
-        {opts.authors.map((a) => (
-          <button
-            key={a}
-            className={author.includes(a) ? "active" : ""}
-            onClick={() => toggle(setAuthor, a)}
-          >
-            {a}
-          </button>
-        ))}
+        <div className="filtersCard">
+          <h2>Autor</h2>
+
+          <div className="filtersChips">
+            {opts.authors.map((a) => (
+              <button
+                key={a}
+                className={`chip ${author.includes(a) ? "active" : ""}`}
+                onClick={() => toggle(setAuthor, a)}
+              >
+                {a}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Genre */}
-        {opts.genres.map((g) => (
-          <button
-            key={g}
-            className={genre.includes(g) ? "active" : ""}
-            onClick={() => toggle(setGenre, g)}
-          >
-            {g}
-          </button>
-        ))}
+        <div className="filtersCard">
+          <h2>Gênero</h2>
+
+          <div className="filtersChips">
+            {opts.genres.map((g) => (
+              <button
+                key={g}
+                className={`chip ${genre.includes(g) ? "active" : ""}`}
+                onClick={() => toggle(setGenre, g)}
+              >
+                {g}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Format */}
-        {opts.formats.map((f) => (
-          <button
-            key={f}
-            className={format.includes(f) ? "active" : ""}
-            onClick={() => toggle(setFormat, f)}
-          >
-            {f}
-          </button>
-        ))}
+        <div className="filtersCard">
+          <h2>Formato</h2>
 
-        {/* Price */}
-        {PRICE_OPTIONS.map((p) => (
-          <button
-            key={p}
-            className={price === p ? "active" : ""}
-            onClick={() => setPrice(p)}
-          >
-            Até R${p}
-          </button>
-        ))}
+          <div className="filtersChips">
+            {opts.formats.map((f) => (
+              <button
+                key={f}
+                className={`chip ${format.includes(f) ? "active" : ""}`}
+                onClick={() => toggle(setFormat, f)}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+        </div>
 
-        {/* Discount */}
-        {DISCOUNT_OPTIONS.map((d) => (
-          <button
-            key={d}
-            className={discount === d ? "active" : ""}
-            onClick={() => setDiscount(d)}
-          >
-            {d}% OFF
-          </button>
-        ))}
+        {/* Price and Discount */}
+        <div className="filtersCard">
+          <h2>Preço</h2>
+
+          <div className="filtersGrid2">
+            {PRICE_OPTIONS.map((p) => (
+              <button
+                key={p}
+                className={`chip ${price === p ? "active" : ""}`}
+                onClick={() => setPrice(p)}
+              >
+                Até R${p}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="filtersCard">
+          <h2>Desconto</h2>
+
+          <div className="filtersGrid2">
+            {DISCOUNT_OPTIONS.map((d) => (
+              <button
+                key={d}
+                className={`chip ${discount === d ? "active" : ""}`}
+                onClick={() => setDiscount(d)}
+              >
+                {d}% OFF
+              </button>
+            ))}
+          </div>
+        </div>
       </main>
 
-      <footer>
-        <button onClick={apply}>Aplicar filtros</button>
+      <footer className="filtersBottom">
+        <button className="btnPrimary" onClick={apply}>
+          Aplicar filtros
+        </button>
       </footer>
     </div>
   );

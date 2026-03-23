@@ -20,46 +20,13 @@ export default function PromoRail({
 
   const items = useMemo(() => {
     return [...products]
-      .map((p) => {
-        const mlUrl =
-          typeof p?.affiliate?.mercadoLivre === "string"
-            ? p.affiliate.mercadoLivre.trim()
-            : "";
-
-        const amzUrl =
-          typeof p?.affiliate?.amazon === "string"
-            ? p.affiliate.amazon.trim()
-            : "";
-
-        const mlPrice = getPrice(p, "mercadoLivre");
-        const amzPrice = getPrice(p, "amazon");
-
-        const offer = getOfferData({
-          mlHref: mlUrl,
-          mlPrice,
-          amazonHref: amzUrl,
-          amazonPrice: amzPrice,
-        });
-
-        const discountData = getDiscountData(p, offer?.bestPrice);
-
-        return {
-          ...p,
-          _offer: offer,
-          _discountData: discountData,
-          _discountPercent: discountData?.discountPercent ?? 0,
-          _bestPriceValue: offer?.bestPrice ?? Infinity,
-        };
-      })
-      .filter((p) => p?._offer?.isAvailable)
-      .filter((p) => p?._discountData?.hasDiscount)
-      .filter((p) => p._discountPercent >= 40)
+      .filter((p) => Number(p.discount) >= 40) // 🔥 usa direto do banco
       .sort((a, b) => {
-        if (b._discountPercent !== a._discountPercent) {
-          return b._discountPercent - a._discountPercent;
+        if (b.discount !== a.discount) {
+          return b.discount - a.discount;
         }
 
-        return a._bestPriceValue - b._bestPriceValue;
+        return (a.best_price ?? Infinity) - (b.best_price ?? Infinity);
       })
       .slice(0, limit);
   }, [products, limit]);
@@ -195,7 +162,7 @@ export default function PromoRail({
                 onOpen={onOpenProduct}
                 priority={index < 4}
                 topBadge={{
-                  label: `🔥 -${p._discountPercent}%`,
+                  label: `🔥 -${p.discount}%`,
                   className: "discountBadge",
                 }}
               />

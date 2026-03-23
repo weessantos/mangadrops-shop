@@ -13,6 +13,7 @@
     "update-prices": "node scripts/updatePrices.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.100.0",
     "axios": "^1.13.6",
     "cheerio": "^1.2.0",
     "cors": "^2.8.6",

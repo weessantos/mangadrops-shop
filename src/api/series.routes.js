@@ -5,7 +5,6 @@ const router = express.Router()
 
 // 📦 GET /series/full → todas séries + volumes (USO INTERNO)
 router.get("/full", async (req, res) => {
-  console.log("🔥 ENTROU NO /full");
   try {
     const result = await pool.query(`
       SELECT 

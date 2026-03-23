@@ -20,8 +20,6 @@ import CheapRail from "./components/CheapRail.jsx";
 import BrandStats from "./components/BrandStats";
 import SectionHeader from "./components/SectionHeader";
 import ActiveFiltersBar from "./components/ActiveFiltersBar";
-import { getBestPrice } from "./utils/priceLoader";
-import { getDiscountData } from "./utils/priceUtils";
 
 import FiltersPage from "./pages/FiltersPage";
 
@@ -69,7 +67,6 @@ function hasAnyAffiliateLink(p) {
 }
 
 function priceNumber(p) {
-  const best = getBestPrice(p?.id);
   const value = best?.value;
 
   if (typeof value === "number" && Number.isFinite(value)) return value;
@@ -83,14 +80,6 @@ function priceNumber(p) {
 
   const n = Number(s[0]);
   return Number.isFinite(n) ? n : null;
-}
-
-function discountPercentNumber(p) {
-  const best = getBestPrice(p?.id);
-  const discountData = getDiscountData(p, best?.value ?? null);
-
-  if (!discountData?.hasDiscount) return 0;
-  return Number(discountData.discountPercent) || 0;
 }
 
 function hasReview(p) {
@@ -183,11 +172,13 @@ function AppShell() {
     authorParam.length > 0 ||
     genreParam.length > 0 ||
     formatParam.length > 0 ||
-    !!priceParam ||
-    !!discountParam ||
-    !!stParam ||
+    priceParam ||
+    discountParam ||
+    stParam ||
     rvParam === "1" ||
     (sortParam && sortParam !== "relevance");
+
+  const isFiltering = hasAnyFilter && !activeSeries;
 
   useEffect(() => {
     const onResize = () => {
@@ -202,7 +193,7 @@ function AppShell() {
   useEffect(() => {
     getSeriesCatalog().then(setSeriesCatalog);
 
-    getProducts(location.search).then(setProducts);
+    getProducts().then(setProducts);
   }, [location.search]);
 
   useEffect(() => {
@@ -277,9 +268,10 @@ function AppShell() {
 
         return true;
       });
-  }, [qParam, activeSeries]);
+  }, [products, qParam, activeSeries]);
 
   const filtered = useMemo(() => {
+    const spString = sp.toString();
     let arr = [...baseFiltered];
 
     const brandSet = brandParam.length ? new Set(brandParam.map(normLc)) : null;
@@ -313,13 +305,14 @@ function AppShell() {
 
     if (Number.isFinite(maxPrice)) {
       arr = arr.filter((p) => {
-        const value = priceNumber(p);
-        return Number.isFinite(value) && value <= maxPrice;
+        return p.best_price != null && p.best_price <= maxPrice;
       });
     }
 
     if (Number.isFinite(minDiscount)) {
-      arr = arr.filter((p) => discountPercentNumber(p) >= minDiscount);
+      arr = arr.filter((p) => {
+        return p.discount != null && p.discount >= minDiscount;
+      });
     }
 
     if (stParam === "in") arr = arr.filter((p) => hasAnyAffiliateLink(p));
@@ -328,9 +321,9 @@ function AppShell() {
 
     const sort = sortParam || "relevance";
     if (sort === "price_asc") {
-      arr.sort((a, b) => (priceNumber(a) ?? 1e15) - (priceNumber(b) ?? 1e15));
+      arr.sort((a, b) => (a.best_price ?? 1e15) - (b.best_price ?? 1e15));
     } else if (sort === "price_desc") {
-      arr.sort((a, b) => (priceNumber(b) ?? -1) - (priceNumber(a) ?? -1));
+      arr.sort((a, b) => (b.best_price ?? -1) - (a.best_price ?? -1));
     } else if (sort === "new") {
       arr.sort((a, b) => {
         const da = new Date(
@@ -359,12 +352,24 @@ function AppShell() {
     sortParam,
   ]);
 
-  const pagedProducts = useMemo(
-    () => filtered.slice(0, page * PAGE_SIZE),
-    [filtered, page]
-  );
+  useEffect(() => {
+    setPage(1);
+  }, [
+    qParam,
+    brandParam,
+    authorParam,
+    genreParam,
+    formatParam,
+    priceParam,
+    discountParam,
+    stParam,
+    rvParam,
+    sortParam,
+  ]);
+
+  const pagedProducts = filtered.slice(0, page * PAGE_SIZE);
+
   const hasMore = pagedProducts.length < filtered.length;
-  const showGlobalResults = !activeSeries && hasAnyFilter;
 
   const totalSeriesPages = useMemo(
     () => Math.max(1, Math.ceil(seriesList.length / SERIES_PAGE_SIZE)),
@@ -661,7 +666,7 @@ function AppShell() {
         </div>
       </section>
 
-      {!activeSeries && showGlobalResults && (
+      {isFiltering && (
         <section id="volumes" className="volumesSection">
           <section className="grid">
             {pagedProducts.map((p) => (
@@ -685,7 +690,7 @@ function AppShell() {
         </section>
       )}
 
-      {!activeSeries && (
+      {!activeSeries && !isFiltering && (
         <section className="railBlock" id="obras">
           <div id="lancamentos">
             <LaunchRail
