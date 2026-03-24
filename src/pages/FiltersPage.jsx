@@ -69,8 +69,15 @@ export default function FiltersPage() {
   // ========================
   useEffect(() => {
     async function load() {
-      const res = await fetch("http://localhost:3000/api/series/full");
-      const data = await res.json();
+      const { data, error } = await supabaseClient
+        .from("series_volumes_view")
+        .select("*")
+
+      if (error) {
+        console.error(error)
+        setLoading(false)
+        return
+      }
 
       setSeriesData(data);
       setOpts(buildOptions(data));

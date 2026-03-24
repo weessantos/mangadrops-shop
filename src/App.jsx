@@ -354,18 +354,7 @@ function AppShell() {
 
   useEffect(() => {
     setPage(1);
-  }, [
-    qParam,
-    brandParam,
-    authorParam,
-    genreParam,
-    formatParam,
-    priceParam,
-    discountParam,
-    stParam,
-    rvParam,
-    sortParam,
-  ]);
+  }, [location.search]);
 
   const pagedProducts = filtered.slice(0, page * PAGE_SIZE);
 

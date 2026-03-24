@@ -1,51 +1,58 @@
-import { getSERIES } from "./series.catalog.js";
-import { createSeriesVolumes } from "./series.factory.js";
+// import { getSERIES } from "./series.catalog.js";
+// import { createSeriesVolumes } from "./series.factory.js";
 
-import { affiliateMap } from "./affiliates/affiliates.map.js";
-import { descriptionMap } from "./descriptions/descriptions.map.js";
-import { tiktokMap } from "./tiktok/tiktok.map.js";
-
-// 🔥 URL dinâmica (resolve local + produção)
-const API_URL =
-  window.location.hostname === "localhost"
-    ? "http://localhost:3000"
-    : "https://mangadrops-db.onrender.com";
+// import { affiliateMap } from "./affiliates/affiliates.map.js";
+// import { descriptionMap } from "./descriptions/descriptions.map.js";
+// import { tiktokMap } from "./tiktok/tiktok.map.js";
+import { supabaseClient } from "../../lib/supabase";
 
 export async function getProducts(search = "") {
-  const res = await fetch(
-    `${API_URL}/api/series/full${search}`
-  );
+  const { data, error } = await supabaseClient
+    .from("series_volumes_view")
+    .select("*")
 
-  const data = await res.json();
+  if (error) {
+    console.error(error)
+    return []
+  }
 
-  return data.flatMap((series) =>
-    series.volumes.map((v) => ({
-      id: `${series.prefix}-${String(v.number).padStart(2, "0")}`,
+  const result = data.map((v) => ({
+    id: `${v.prefix}-${String(v.number).padStart(2, "0")}`,
 
-      title: `${series.title} Vol. ${String(v.number).padStart(2, "0")}`,
-      series: series.title,
-      volume: v.number,
+    prefix: v.prefix,
 
-      image: `/assets/${series.prefix}${String(v.number).padStart(2, "0")}.webp`,
+    title: `${v.series_title} Vol. ${String(v.number).padStart(2, "0")}`,
+    total_volumes: v.total_volumes,
 
-      brand: series.brand,
-      author: series.author,
-      genre: series.genre,
-      format: series.format,
-      coverPrice: series.cover_price,
+    series: v.series_title, // 🔥 ESSENCIAL
+    volume: v.number,      // 🔥 ESSENCIAL
 
-      description: v.description,
-      tiktokUrl: v.tiktok,
-      addedAt: v.addedAt,
+    image: `/assets/${v.prefix}${String(v.number).padStart(2, "0")}.webp`,
 
-      affiliate: {
-        amazon: v.amazon,
-        mercadoLivre: v.mercadoLivre,
-      },
+    thumb: v.thumb,
 
-      // 🔥 novos campos
-      bestPrice: v.best_price,
-      discount: v.discount,
-    }))
-  );
+    brand: v.brand,
+    author: v.author,
+    genre: v.genre,
+    format: v.format,
+    coverPrice: v.cover_price,
+    discount: Number(v.discount) || 0,
+
+    description: v.description,
+    tiktokUrl: v.tiktok,
+    addedAt: v.added_at,
+
+    affiliate: {
+      amazon: v.amazon,
+      mercadoLivre: v.mercado_livre,
+    },
+  }))
+
+  if (search) {
+    return result.filter((p) =>
+      p.title.toLowerCase().includes(search.toLowerCase())
+    )
+  }
+
+  return result
 }

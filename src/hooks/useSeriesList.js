@@ -17,22 +17,35 @@ export function useSeriesList(products, seriesCatalog) {
     const groups = new Map();
 
     for (const p of products) {
-      const key = p.series || "Outros";
+      const key =
+        p.series ||
+        p.series_title ||
+        (p.prefix ? p.prefix.toUpperCase() : null) ||
+        "Outros";
+
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key).push(p);
     }
 
     return Array.from(groups.entries())
       .map(([name, items]) => {
-        const cat = catalogMap.get(name) || {};
-        const total = Number.isFinite(Number(cat.totalVolumes))
-          ? Number(cat.totalVolumes)
-          : null;
+        const first = items[0];
 
+        // 🔥 dados do catálogo
+        const cat = catalogMap.get(name) || {};
+
+        const totalRaw =
+          first?.total_volumes ?? // 🔥 vindo do banco (correto)
+          cat.total_volumes;   // fallback (se tiver)
+
+        const total = Number.isFinite(Number(totalRaw))
+          ? Number(totalRaw)
+          : null;
         const vols = uniqueSortedAvailableVolumes(items);
         const haveCount = vols.length;
 
         const rangeLabel = total ? `Vol. 1–${total}` : "Volumes";
+
         const haveLabel = total
           ? `Disponível ${haveCount}/${total}`
           : `${haveCount} volume(s)`;
@@ -49,8 +62,17 @@ export function useSeriesList(products, seriesCatalog) {
         return {
           name,
           slug: slugify(name),
-          thumb: cat.thumb || "/assets/aot-series.webp",
-          subtitle: cat.subtitle || "Clique para ver os volumes disponíveis.",
+
+          // 🔥 agora usa thumb do banco primeiro
+          thumb:
+            first?.thumb ||
+            cat.thumb ||
+            "/assets/default-series.webp",
+
+          subtitle:
+            cat.subtitle ||
+            "Clique para ver os volumes disponíveis.",
+
           rangeLabel,
           haveLabel,
           statusLabel,
@@ -67,7 +89,10 @@ export function useSeriesList(products, seriesCatalog) {
     return map;
   }, [seriesList]);
 
-  const seriesNames = useMemo(() => seriesList.map((s) => s.name), [seriesList]);
+  const seriesNames = useMemo(
+    () => seriesList.map((s) => s.name),
+    [seriesList]
+  );
 
   return { seriesList, seriesBySlug, seriesNames };
 }

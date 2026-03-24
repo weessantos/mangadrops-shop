@@ -70,44 +70,98 @@ async function protectAdmin() {
   // =======================
 function showLoginScreen() {
   document.body.innerHTML = `
-    <div style="
-      position:fixed;
-      top:0;
-      left:0;
-      width:100vw;
-      height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:#020617;
-      z-index:9999;
-    ">
-      <div style="
-        display:flex;
-        flex-direction:column;
-        gap:12px;
-        padding:30px;
-        background:#0f172a;
-        border-radius:12px;
-        box-shadow:0 0 40px rgba(0,0,0,0.5);
-        min-width:320px;
-      ">
-        <h2 style="margin-bottom:10px;">🔐 Login Admin</h2>
+    <div id="auth-layer">
+      <div class="login-card">
+        <h2>🔐 Login Admin</h2>
 
-        <input id="login-email" placeholder="Email" style="padding:10px;">
-        <input id="login-pass" type="password" placeholder="Senha" style="padding:10px;">
+        <input id="login-email" placeholder="Email">
+        <input id="login-pass" type="password" placeholder="Senha">
 
-        <button onclick="login()" style="
-          padding:10px;
-          background:#6366f1;
-          color:white;
-          border:none;
-          border-radius:6px;
-        ">
-          Entrar
+        <span id="login-error"></span>
+
+        <button id="login-btn" onclick="login()">
+          <span id="login-text">Entrar</span>
         </button>
       </div>
     </div>
+
+    <style>
+      #auth-layer {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #020617, #0f172a);
+        z-index: 9999;
+        animation: fadeIn 0.4s ease;
+      }
+
+      .login-card {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 30px;
+        background: #020617;
+        border-radius: 14px;
+        box-shadow: 0 0 40px rgba(0,0,0,0.6);
+        min-width: 320px;
+        animation: slideUp 0.4s ease;
+      }
+
+      .login-card h2 {
+        margin-bottom: 10px;
+        color: #e5e7eb;
+      }
+
+      .login-card input {
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #1f2937;
+        background: #020617;
+        color: #e5e7eb;
+        outline: none;
+      }
+
+      .login-card input:focus {
+        border-color: #6366f1;
+      }
+
+      #login-error {
+        color: #ef4444;
+        font-size: 13px;
+        min-height: 16px;
+      }
+
+      #login-btn {
+        padding: 10px;
+        background: #6366f1;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      #login-btn:hover {
+        background: #4f46e5;
+      }
+
+      #login-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0 }
+        to { opacity: 1 }
+      }
+
+      @keyframes slideUp {
+        from { transform: translateY(20px); opacity: 0 }
+        to { transform: translateY(0); opacity: 1 }
+      }
+    </style>
   `
 }
 
@@ -115,17 +169,37 @@ async function login() {
   const email = document.getElementById("login-email").value
   const password = document.getElementById("login-pass").value
 
+  const btn = document.getElementById("login-btn")
+  const text = document.getElementById("login-text")
+  const errorEl = document.getElementById("login-error")
+
+  errorEl.textContent = ""
+
+  if (!email || !password) {
+    errorEl.textContent = "Preencha todos os campos"
+    return
+  }
+
+  btn.disabled = true
+  text.textContent = "Entrando..."
+
   const { error } = await supabaseClient.auth.signInWithPassword({
     email,
     password
   })
 
   if (error) {
-    alert("Erro ao logar ❌")
+    errorEl.textContent = "Email ou senha inválidos"
+    btn.disabled = false
+    text.textContent = "Entrar"
     return
   }
 
-  location.reload()
+  text.textContent = "✔ Sucesso!"
+
+  setTimeout(() => {
+    location.reload()
+  }, 500)
 }
 
   // =======================

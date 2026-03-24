@@ -8,6 +8,7 @@ const base =
 export const img = (path) => `${base}assets/${path}`;
 
 import { createSeries } from "./series.factory.js";
+import { supabaseClient } from "../../lib/supabase"
 
 /**
  * 🔥 ADAPTER: API → FACTORY
@@ -70,10 +71,16 @@ function buildSeriesFromAPI(apiData) {
  * 🔥 FETCH PRINCIPAL
  */
 export async function getSERIES() {
-  const res = await fetch("http://localhost:3000/api/series");
-  const data = await res.json();
+  const { data, error } = await supabaseClient
+    .from("series_volumes_view")
+    .select("*")
 
-  return buildSeriesFromAPI(data);
+  if (error) {
+    console.error(error)
+    return {}
+  }
+
+  return buildSeriesFromAPI(data)
 }
 
 /**
