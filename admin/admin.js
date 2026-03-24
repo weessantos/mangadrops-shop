@@ -53,6 +53,7 @@ if (window.__cms_loaded) {
   // 🔐 ADMIN
   // =======================
 async function protectAdmin() {
+  document.body.style.display = "flex"
   const { data: { session } } = await supabaseClient.auth.getSession()
 
   if (!session) {
@@ -70,41 +71,83 @@ async function protectAdmin() {
 function showLoginScreen() {
   document.body.innerHTML = `
     <div style="
+      position:fixed;
+      top:0;
+      left:0;
+      width:100vw;
+      height:100vh;
       display:flex;
       align-items:center;
       justify-content:center;
-      height:100vh;
-      background:#0f172a;
-      color:white;
-      flex-direction:column;
-      gap:10px;
+      background:#020617;
+      z-index:9999;
     ">
-      <h2>🔐 Login Admin</h2>
+      <div style="
+        display:flex;
+        flex-direction:column;
+        gap:12px;
+        padding:30px;
+        background:#0f172a;
+        border-radius:12px;
+        box-shadow:0 0 40px rgba(0,0,0,0.5);
+        min-width:320px;
+      ">
+        <h2 style="margin-bottom:10px;">🔐 Login Admin</h2>
 
-      <input id="login-email" placeholder="Email" style="padding:10px; width:250px;">
-      <input id="login-pass" type="password" placeholder="Senha" style="padding:10px; width:250px;">
+        <input id="login-email" placeholder="Email" style="padding:10px;">
+        <input id="login-pass" type="password" placeholder="Senha" style="padding:10px;">
 
-      <button onclick="login()" style="padding:10px 20px;">Entrar</button>
+        <button onclick="login()" style="
+          padding:10px;
+          background:#6366f1;
+          color:white;
+          border:none;
+          border-radius:6px;
+        ">
+          Entrar
+        </button>
+      </div>
     </div>
   `
 }
 
-  async function login() {
-    const email = document.getElementById("login-email").value
-    const password = document.getElementById("login-pass").value
+async function login() {
+  const email = document.getElementById("login-email").value
+  const password = document.getElementById("login-pass").value
 
-    const { error } = await supabaseClient.auth.signInWithPassword({
-      email,
-      password
-    })
+  const { error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  })
 
-    if (error) {
-      alert("Erro ao logar ❌")
-      return
-    }
-
-    location.reload()
+  if (error) {
+    alert("Erro ao logar ❌")
+    return
   }
+
+  location.reload()
+}
+
+  // =======================
+  // 🔐 LOGOUT
+  // =======================
+async function logout() {
+  try {
+    const { error } = await supabaseClient.auth.signOut()
+
+    if (error) throw error
+
+    showToast("Logout realizado 👋")
+
+    setTimeout(() => {
+      location.reload()
+    }, 400)
+
+  } catch (err) {
+    console.error("LOGOUT ERROR:", err)
+    showToast("Erro ao sair ❌")
+  }
+}
 
   // =======================
   //TOAST
@@ -366,11 +409,12 @@ btn.textContent = "Salvando..."
 
     // 🔥 gerar volumes automaticamente
     if (total_volumes > 0) {
-      const { error: volError } = await generateMissingVolumes(prefix)
+      const result = await generateMissingVolumes(prefix)
 
-      if (volError) {
-        console.error(volError)
+      if (result.error) {
         showToast("Série criada, mas erro ao gerar volumes ⚠️")
+      } else if (result.created > 0) {
+        showToast(`${result.created} volumes criados 🚀`)
       }
     }
 
@@ -432,10 +476,11 @@ async function generateVolumes(series) {
 }
 
 // =======================
-// 🔥 GERAR VOLUMES FALTANTES
+// 🔥 GERAR VOLUMES FALTANTES (PRO)
 // =======================
 async function generateMissingVolumes(prefix) {
   try {
+
     // 🔍 pega série
     const { data: series, error: seriesError } = await supabaseClient
       .from("series")
@@ -448,8 +493,7 @@ async function generateMissingVolumes(prefix) {
     const total = series.total_volumes || 0
 
     if (!total) {
-      showToast("Essa série não tem total_volumes definido")
-      return
+      return { error: "NO_TOTAL" }
     }
 
     // 🔍 pega volumes existentes
@@ -460,14 +504,12 @@ async function generateMissingVolumes(prefix) {
 
     if (volError) throw volError
 
-    // transforma em set pra lookup rápido
     const existingNumbers = new Set(
       existingVolumes.map(v => v.number)
     )
 
     const volumesToCreate = []
 
-    // 🔢 verifica quais estão faltando
     for (let i = 1; i <= total; i++) {
       if (!existingNumbers.has(i)) {
         const num = String(i).padStart(2, "0")
@@ -487,8 +529,7 @@ async function generateMissingVolumes(prefix) {
     }
 
     if (volumesToCreate.length === 0) {
-      showToast("Nenhum volume faltando 👍")
-      return
+      return { error: null, created: 0 }
     }
 
     const { error: insertError } = await supabaseClient
@@ -497,13 +538,14 @@ async function generateMissingVolumes(prefix) {
 
     if (insertError) throw insertError
 
-    showToast(`${volumesToCreate.length} volumes criados 🚀`)
-
     loadVolumes(prefix)
 
+    return { error: null, created: volumesToCreate.length }
+
   } catch (err) {
-    console.error(err)
-    showToast("Erro ao gerar volumes")
+    console.error("GENERATE ERROR:", err)
+
+    return { error: err }
   }
 }
 
