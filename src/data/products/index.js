@@ -9,7 +9,7 @@ import { tiktokMap } from "./tiktok/tiktok.map.js";
 const API_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:3000"
-    : "https://SEU-BACKEND.com"; // ⬅️ TROCAR DEPOIS
+    : "https://mangadrops-db.onrender.com";
 
 export async function getProducts(search = "") {
   const res = await fetch(
