@@ -1,114 +1,165 @@
-const API = "http://localhost:3000/api"
-
-const seriesList = document.getElementById("series-list")
-const volumesDiv = document.getElementById("volumes")
-let currentSeriesTitle = ""
-
 // =======================
-// ➕ BOTÃO NOVA SÉRIE
+// 🚀 BOOTSTRAP CMS
 // =======================
-const createSeriesBtn = document.createElement("button")
-createSeriesBtn.innerText = "+ Nova Série"
-createSeriesBtn.style.marginBottom = "10px"
 
-createSeriesBtn.onclick = openCreateSeries
+// 👉 deixa acessível no arquivo inteiro
+let supabaseClient
+let seriesList
+let volumesDiv
 
-seriesList.parentNode.insertBefore(createSeriesBtn, seriesList)
+if (window.__cms_loaded) {
+  console.warn("CMS já carregado, ignorando...")
+} else {
+  window.__cms_loaded = true
 
-// =======================
-// 🎨 TOAST BONITO
-// =======================
-function showToast(msg, type = "success") {
-  const toast = document.createElement("div")
+  console.log("✅ ADMIN JS CARREGADO")
 
-  toast.className = `toast ${type}`
-  toast.innerText = msg
-  toast.style.position = "fixed"
-  toast.style.bottom = "20px"
-  toast.style.right = "20px"
-  toast.style.padding = "12px 16px"
-  toast.style.borderRadius = "8px"
-  toast.style.color = "white"
-  toast.style.fontWeight = "bold"
-  toast.style.zIndex = "9999"
-  toast.style.boxShadow = "0 0 10px rgba(0,0,0,0.3)"
+  // =======================
+  // 🔐 CONFIG
+  // =======================
+  const SUPABASE_URL = "https://wcwxjqfsnvpyndmpbngr.supabase.co"
+  const SUPABASE_KEY = "sb_publishable_fLT7DCc3olBf97TxmkG8lQ_VLmOr424"
 
-  if (type === "error") {
-    toast.style.background = "#ef4444"
-  } else {
-    toast.style.background = "#22c55e"
+  // =======================
+  // 🧠 SAFE INIT SUPABASE
+  // =======================
+  if (!window.supabase) {
+    throw new Error("❌ Supabase não carregou (CDN faltando ou ordem errada)")
   }
 
-  document.body.appendChild(toast)
+  supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  )
+  
 
-  setTimeout(() => {
-    toast.style.opacity = "0"
-    setTimeout(() => toast.remove(), 300)
-  }, 2000)
-}
+  // =======================
+  // 🎯 DOM
+  // =======================
+  seriesList = document.getElementById("series-list")
+  volumesDiv = document.getElementById("volumes")
 
-// =======================
-// ⏳ LOADING
-// =======================
-function showLoading() {
-  volumesDiv.innerHTML = ""
-
-  for (let i = 0; i < 5; i++) {
-    const sk = document.createElement("div")
-    sk.className = "skeleton"
-    volumesDiv.appendChild(sk)
+  // =======================
+  // EXPORTA GLOBAL (opcional)
+  // =======================
+  window.cms = {
+    supabase: supabaseClient,
+    seriesList,
+    volumesDiv
   }
 }
 
-// =======================
-// 🐞 DEBUG VISUAL
-// =======================
-function showDebug(msg) {
-  let debug = document.getElementById("debug-box")
+  // =======================
+  // 🔐 ADMIN
+  // =======================
+async function protectAdmin() {
+  const { data: { session } } = await supabaseClient.auth.getSession()
 
-  if (!debug) {
-    debug = document.createElement("div")
-    debug.id = "debug-box"
-    setTimeout(() => {
-      debug.remove()
-    }, 3000)
+  if (!session) {
+    showLoginScreen()
+    return false
+  }
 
-    Object.assign(debug.style, {
-      position: "fixed",
-      top: "20px",
-      right: "20px",
-      width: "300px",
-      maxHeight: "300px",
-      overflowY: "auto",
-      background: "#020617",
-      border: "1px solid #1e293b",
-      padding: "10px",
-      fontSize: "12px",
-      zIndex: "9999"
+  return true
+}
+
+
+  // =======================
+  // 🔐 LOGIN SCREEN
+  // =======================
+function showLoginScreen() {
+  document.body.innerHTML = `
+    <div style="
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:100vh;
+      background:#0f172a;
+      color:white;
+      flex-direction:column;
+      gap:10px;
+    ">
+      <h2>🔐 Login Admin</h2>
+
+      <input id="login-email" placeholder="Email" style="padding:10px; width:250px;">
+      <input id="login-pass" type="password" placeholder="Senha" style="padding:10px; width:250px;">
+
+      <button onclick="login()" style="padding:10px 20px;">Entrar</button>
+    </div>
+  `
+}
+
+  async function login() {
+    const email = document.getElementById("login-email").value
+    const password = document.getElementById("login-pass").value
+
+    const { error } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password
     })
 
-    document.body.appendChild(debug)
+    if (error) {
+      alert("Erro ao logar ❌")
+      return
+    }
+
+    location.reload()
   }
 
-  // 🔥 LIMITE DE LINHAS
-  if (debug.childElementCount > 8) {
-    debug.innerHTML = "" // limpa tudo
-  }
+  // =======================
+  //TOAST
+  // =======================
 
-  const line = document.createElement("div")
-  line.innerText = msg
-  line.style.marginBottom = "5px"
-  line.style.color = "#38bdf8"
+function showToast(message) {
+  const toast = document.getElementById("toast")
 
-  debug.appendChild(line)
+  toast.textContent = message
+  toast.classList.add("show")
+
+  setTimeout(() => {
+    toast.classList.remove("show")
+  }, 2500)
+}
+
+  // =======================
+  // CONFIRMAÇÃO POP UP
+  // =======================
+function confirmAction(message) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById("modal")
+
+    modal.style.display = "flex"
+    modal.innerHTML = `
+      <div class="modal-content">
+        <h3>${message}</h3>
+        <div style="display:flex; gap:10px; margin-top:15px;">
+          <button onclick="closeModal(); window.__confirm = false">Cancelar</button>
+          <button class="danger" onclick="closeModal(); window.__confirm = true">Confirmar</button>
+        </div>
+      </div>
+    `
+
+    window.__confirm = null
+
+    const interval = setInterval(() => {
+      if (window.__confirm !== null) {
+        clearInterval(interval)
+        resolve(window.__confirm)
+      }
+    }, 100)
+  })
 }
 
 // =======================
 // 🔥 CARREGAR SÉRIES
 // =======================
 async function loadSeries() {
-  const res = await fetch(`${API}/series`)
-  const data = await res.json()
+  const { data, error } = await supabaseClient
+    .from("series")
+    .select("*")
+    .order("title")
+
+  if (error) return console.error(error)
 
   seriesList.innerHTML = ""
 
@@ -116,7 +167,6 @@ async function loadSeries() {
     const div = document.createElement("div")
     div.className = "series-item"
     div.textContent = s.title
-
     div.onclick = () => loadVolumes(s.prefix)
 
     seriesList.appendChild(div)
@@ -124,92 +174,80 @@ async function loadSeries() {
 }
 
 // =======================
-// 🆕 CRIAR NOVA SÉRIE (FORM SIMPLES)
-// =======================
-async function openCreateSeries() {
-  const title = prompt("Nome da série")
-  const prefix = prompt("Prefix (ex: OP, JJK)")
-  const subtitle = prompt("Subtitle (opcional)") || ""
-  const author = prompt("Autor")
-  const genre = prompt("Gênero")
-  const brand = prompt("Editora")
-  const format = prompt("Formato")
-  const edition_label = prompt("Edition Label (opcional)") || ""
-  const cover_price = prompt("Preço de capa")
-  const total_volumes = prompt("Total de volumes")
-
-  if (!title || !prefix || !author) {
-    showToast("Preencha os campos obrigatórios", "error")
-    return
-  }
-
-  await createSeriesRequest({
-    title,
-    prefix,
-    subtitle,
-    author,
-    genre,
-    brand,
-    format,
-    edition_label,
-    cover_price: Number(cover_price),
-    total_volumes: Number(total_volumes)
-  })
-}
-
-// =======================
 // 🔥 CARREGAR VOLUMES
 // =======================
 async function loadVolumes(prefix) {
-  showLoading()
-  showDebug(`Carregando série: ${prefix}`)
+  volumesDiv.innerHTML = "Carregando..."
 
-  const res = await fetch(`${API}/series/${prefix}`)
-  const data = await res.json()
-  currentSeriesTitle = data.title
+  const { data: series } = await supabaseClient
+    .from("series")
+    .select("*")
+    .eq("prefix", prefix)
+    .single()
+
+  const { data: volumes } = await supabaseClient
+    .from("volumes")
+    .select("*")
+    .eq("prefix", prefix)
+    .order("number")
 
   volumesDiv.innerHTML = `
-    <h1>${data.title}</h1>
+    <h1>${series.title}</h1>
+    <button onclick="openCreateVolume('${prefix}')">+ Novo Volume</button>
+  `
+  volumesDiv.innerHTML = `
+    <h1>${series.title}</h1>
 
     <button onclick="openCreateVolume('${prefix}')">
       + Novo Volume
     </button>
 
-    <button onclick="deleteSeries('${prefix}')"
-      style="margin-left:10px;background:#ef4444;">
+    <button onclick="generateMissingVolumes('${prefix}')">
+      ⚡ Gerar volumes faltantes
+    </button>
+
+    <button onclick="editSeries('${prefix}')">
+      ✏️ Editar Série
+    </button>
+
+    <button class="danger" onclick="deleteSeries('${prefix}')">
       🗑 Deletar Série
     </button>
-  `
+  `  
 
-  data.volumes.forEach(v => {
+  volumes.forEach(v => {
     const div = document.createElement("div")
     div.className = "card"
 
     div.innerHTML = `
       <h3>${v.title}</h3>
+      <div class="field">
+        <label>Descrição</label>
+        <textarea id="desc-${v.id}">${v.description || ""}</textarea>
+      </div>
 
-      <label>Descrição</label>
-      <textarea id="desc-${v.id}">${v.description || ""}</textarea>
+      <div class="field">
+        <label>Amazon</label>
+        <input id="amazon-${v.id}" value="${v.amazon || ""}">
+      </div>
 
-      <label>Amazon</label>
-      <input id="amazon-${v.id}" value="${v.amazon || ""}">
+      <div class="field">
+        <label>Mercado Livre</label>
+        <input id="ml-${v.id}" value="${v.mercado_livre || ""}">
+      </div>
 
-      <label>Mercado Livre</label>
-      <input id="ml-${v.id}" value="${v.mercado_livre || ""}">
+      <div class="field">
+        <label>TikTok</label>
+        <input id="tiktok-${v.id}" value="${v.tiktok || ""}">
+      </div>
 
-      <label>TikTok</label>
-      <input id="tiktok-${v.id}" value="${v.tiktok || ""}">
-
-      <label>Data</label>
-      <input type="date" id="date-${v.id}" value="${v.added_at || ""}">
-
-      <button id="btn-${v.id}" onclick="saveVolume(${v.id})">
-        💾 Salvar
-      </button>
-
-      <button onclick="deleteVolume(${v.id}, '${prefix}')"
-        style="margin-left:10px;background:#ef4444;">
-        🗑 Excluir
+      <div class="field">
+        <label>Adicionado em</label>
+        <input type="date" id="date-${v.id}" value="${v.added_at || ""}">
+      </div>
+      <button onclick="saveVolume(${v.id})">💾 Salvar</button>
+      <button id="delete-${v.id}" onclick="deleteVolume(${v.id}, '${prefix}')">
+        🗑
       </button>
     `
 
@@ -217,242 +255,537 @@ async function loadVolumes(prefix) {
   })
 }
 
+
 // =======================
-// 💾 ABRIR PARA CRIAÇÃO DE VOLUME
+// 🎯 MODAL - SÉRIE
 // =======================
-async function openCreateVolume(prefix) {
+function openSeriesModal() {
+  const modal = document.getElementById("modal")
+
+  modal.style.display = "flex"
+
+  modal.innerHTML = `
+    <div class="modal-content">
+      <h2>Nova Série</h2>
+
+      <input id="m-title" placeholder="Nome da série">
+      <input id="m-prefix" placeholder="Prefix (ex: csm)">
+      <input id="m-subtitle" placeholder="Subtítulo">
+      <input id="m-author" placeholder="Autor">
+      <input id="m-genre" placeholder="Gênero">
+      <input id="m-brand" placeholder="Editora">
+      <input id="m-format" placeholder="Formato">
+      <input id="m-edition" placeholder="Edition Label">
+      <input id="m-price" type="number" placeholder="Preço de capa">
+      <input id="m-total" type="number" placeholder="Total de volumes">
+      <input id="m-thumb" placeholder="/assets/thumb.webp">
+
+      <div style="display:flex; gap:10px; margin-top:10px;">
+        <button onclick="closeModal()">Cancelar</button>
+        <button id="save-btn" onclick="createSeries()">Salvar</button>
+      </div>
+    </div>
+  `
+}
+
+function closeModal() {
+  document.getElementById("modal").style.display = "none"
+}
+
+// =======================
+// ➕ CRIAR SÉRIE + GERAR VOLUMES
+// =======================
+async function createSeries() {
+  const btn = document.getElementById("save-btn")
+  btn.disabled = true
+  btn.textContent = "Salvando..."
+
+  const title = document.getElementById("m-title").value
+  const prefix = document.getElementById("m-prefix").value
+  const subtitle = document.getElementById("m-subtitle").value
+  const author = document.getElementById("m-author").value
+  const genre = document.getElementById("m-genre").value
+  const brand = document.getElementById("m-brand").value
+  const format = document.getElementById("m-format").value
+  const edition_label = document.getElementById("m-edition").value
+  const cover_price = Number(document.getElementById("m-price").value || 0)
+  const total_volumes = Number(document.getElementById("m-total").value || 0)
+  const thumb = document.getElementById("m-thumb").value
+
+ if (!title || !prefix) {
+  showToast("Título e prefix são obrigatórios ⚠️")
+  return
+}
+
+btn.disabled = true
+btn.textContent = "Salvando..."
+
   try {
-    showDebug("Calculando próximo volume...")
 
-    const res = await fetch(`${API}/series/${prefix}`)
-    const data = await res.json()
+    // 🔍 valida prefix duplicado
+    const { data: existing, error: checkError } = await supabaseClient
+      .from("series")
+      .select("prefix")
+      .eq("prefix", prefix)
+      .maybeSingle()
 
-    const volumes = data.volumes || []
+    if (checkError) {
+      throw checkError
+    }
 
-    // 🔢 pega último número
-    let next = 1
+    if (existing) {
+      showToast("Esse prefix já existe ⚠️")
 
-    if (volumes.length > 0) {
-      const last = volumes[volumes.length - 1]
+      btn.disabled = false
+      btn.textContent = "Salvar"
+      return
+    }
 
-      // tenta pegar do campo number (melhor)
-      if (last.number) {
-        next = last.number + 1
-      } else {
-        // fallback (caso não tenha number)
-        next = volumes.length + 1
+    // 🔥 insert
+    const { data: series, error } = await supabaseClient
+      .from("series")
+      .insert([{
+        title,
+        prefix,
+        subtitle,
+        author,
+        genre,
+        brand,
+        format,
+        edition_label,
+        cover_price,
+        total_volumes,
+        thumb
+      }])
+      .select()
+      .single()
+
+    if (error) {
+      throw error
+    }
+
+    // 🔥 gerar volumes automaticamente
+    if (total_volumes > 0) {
+      const { error: volError } = await generateMissingVolumes(prefix)
+
+      if (volError) {
+        console.error(volError)
+        showToast("Série criada, mas erro ao gerar volumes ⚠️")
       }
     }
 
-    const num = String(next).padStart(2, "0")
+    showToast("Série criada com sucesso 🚀")
 
-    const title = `${data.title} Vol. ${num}`
-
-    showDebug(`Criando ${title}`)
-
-    await createVolume(prefix, title)
+    closeModal()
+    loadSeries()
 
   } catch (err) {
-    console.error(err)
-    showToast("Erro ao gerar volume", "error")
+
+    console.error("CREATE SERIES ERROR:", err)
+
+    // 🔥 mensagens mais inteligentes
+    if (err.message?.includes("row-level security")) {
+      showToast("Você precisa estar logado 🔐")
+    } else {
+      showToast("Erro ao criar série ❌")
+    }
+
+  } finally {
+    btn.disabled = false
+    btn.textContent = "Salvar"
   }
 }
 
 // =======================
-// 💾 CRIAR VOLUME
+// ➕ CRIAR VOLUMES EM LOTE
 // =======================
-async function createVolume(prefix, title) {
-  try {
-    showDebug(`Criando volume ${title}`)
 
-    const res = await fetch(`${API}/volumes`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        series_prefix: prefix,
-        title,
-        description: "",
-        amazon: "",
-        mercado_livre: "",
-        tiktok: "",
-        added_at: new Date().toISOString().split("T")[0]
-      })
+async function generateVolumes(series) {
+  const volumes = []
+
+  for (let i = 1; i <= series.total_volumes; i++) {
+    const num = String(i).padStart(2, "0")
+
+    volumes.push({
+      prefix: series.prefix,
+      series_id: series.id,
+      number: i,
+      title: `${series.title} Vol. ${num}`,
+      description: "",
+      amazon: "",
+      mercado_livre: "",
+      tiktok: "",
+      added_at: new Date().toISOString().split("T")[0]
     })
+  }
 
-    if (!res.ok) throw new Error("Erro ao criar volume")
+  const { error } = await supabaseClient
+    .from("volumes")
+    .insert(volumes)
 
-    showToast("Volume criado com sucesso!")
+  if (error) {
+    console.error(error)
+    showToast("Erro ao gerar volumes")
+  } else {
+    showToast("Volumes gerados automaticamente 🚀")
+  }
+}
+
+// =======================
+// 🔥 GERAR VOLUMES FALTANTES
+// =======================
+async function generateMissingVolumes(prefix) {
+  try {
+    // 🔍 pega série
+    const { data: series, error: seriesError } = await supabaseClient
+      .from("series")
+      .select("*")
+      .eq("prefix", prefix)
+      .single()
+
+    if (seriesError) throw seriesError
+
+    const total = series.total_volumes || 0
+
+    if (!total) {
+      showToast("Essa série não tem total_volumes definido")
+      return
+    }
+
+    // 🔍 pega volumes existentes
+    const { data: existingVolumes, error: volError } = await supabaseClient
+      .from("volumes")
+      .select("number")
+      .eq("prefix", prefix)
+
+    if (volError) throw volError
+
+    // transforma em set pra lookup rápido
+    const existingNumbers = new Set(
+      existingVolumes.map(v => v.number)
+    )
+
+    const volumesToCreate = []
+
+    // 🔢 verifica quais estão faltando
+    for (let i = 1; i <= total; i++) {
+      if (!existingNumbers.has(i)) {
+        const num = String(i).padStart(2, "0")
+
+        volumesToCreate.push({
+          prefix: prefix,
+          series_id: series.id,
+          number: i,
+          title: `${series.title} Vol. ${num}`,
+          description: "",
+          amazon: "",
+          mercado_livre: "",
+          tiktok: "",
+          added_at: new Date().toISOString().split("T")[0]
+        })
+      }
+    }
+
+    if (volumesToCreate.length === 0) {
+      showToast("Nenhum volume faltando 👍")
+      return
+    }
+
+    const { error: insertError } = await supabaseClient
+      .from("volumes")
+      .insert(volumesToCreate)
+
+    if (insertError) throw insertError
+
+    showToast(`${volumesToCreate.length} volumes criados 🚀`)
 
     loadVolumes(prefix)
 
   } catch (err) {
     console.error(err)
-    showToast(err.message, "error")
+    showToast("Erro ao gerar volumes")
   }
 }
 
 // =======================
-// 💾 CRIAR SÉRIE
+// ✏️ EDITAR SÉRIE (MODAL)
 // =======================
-async function createSeriesRequest(data) {
+async function editSeries(prefix) {
+  const { data, error } = await supabaseClient
+    .from("series")
+    .select("*")
+    .eq("prefix", prefix)
+    .single()
+
+  if (error) return console.error(error)
+
+  const modal = document.getElementById("modal")
+
+  modal.style.display = "flex"
+
+  modal.innerHTML = `
+    <div class="modal-content">
+      <h2>Editar Série</h2>
+
+      <input id="e-title" value="${data.title}" placeholder="Nome">
+      <input id="e-subtitle" value="${data.subtitle || ""}" placeholder="Subtítulo">
+      <input id="e-author" value="${data.author || ""}" placeholder="Autor">
+      <input id="e-genre" value="${data.genre || ""}" placeholder="Gênero">
+      <input id="e-brand" value="${data.brand || ""}" placeholder="Editora">
+      <input id="e-format" value="${data.format || ""}" placeholder="Formato">
+      <input id="e-edition" value="${data.edition_label || ""}" placeholder="Edition Label">
+      <input id="e-price" type="number" value="${data.cover_price || 0}" placeholder="Preço">
+      <input id="e-total" type="number" value="${data.total_volumes || 0}" placeholder="Total Volumes">
+      <input id="e-thumb" value="${data.thumb || ""}" placeholder="Thumb">
+
+      <div style="display:flex; gap:10px; margin-top:10px;">
+        <button onclick="closeModal()">Cancelar</button>
+        <button onclick="updateSeries('${prefix}', ${data.total_volumes || 0})">
+          Salvar
+        </button>
+      </div>
+    </div>
+  `
+}
+
+// =======================
+// FUNÇÃO DE UPDATE
+// =======================
+async function updateSeries(prefix, oldTotal) {
+  const title = document.getElementById("e-title").value
+  const subtitle = document.getElementById("e-subtitle").value
+  const author = document.getElementById("e-author").value
+  const genre = document.getElementById("e-genre").value
+  const brand = document.getElementById("e-brand").value
+  const format = document.getElementById("e-format").value
+  const edition_label = document.getElementById("e-edition").value
+  const cover_price = Number(document.getElementById("e-price").value || 0)
+  const total_volumes = Number(document.getElementById("e-total").value || 0)
+  const thumb = document.getElementById("e-thumb").value
+
+  const btn = document.getElementById("save-btn")
+  btn.disabled = true
+  btn.textContent = "Salvando..."
+
   try {
-    showDebug(`Criando série: ${data.title}`)
 
-    const res = await fetch(`${API}/series`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    })
+    const { error } = await supabaseClient
+      .from("series")
+      .update({
+        title,
+        subtitle,
+        author,
+        genre,
+        brand,
+        format,
+        edition_label,
+        cover_price,
+        total_volumes,
+        thumb
+      })
+      .eq("prefix", prefix)
 
-    if (!res.ok) throw new Error("Erro ao criar série")
+    if (error) {
+      throw error
+    }
 
-    showToast("Série criada com sucesso! 🚀")
+    // 🔥 se aumentou, gera volumes automaticamente
+    if (total_volumes > oldTotal) {
+      const { error: volError } = await generateMissingVolumes(prefix)
 
-    loadSeries() // 🔄 recarrega lista
+      if (volError) {
+        console.error(volError)
+        showToast("Atualizado, mas erro ao gerar volumes ⚠️")
+      }
+    }
+
+    showToast("Série atualizada com sucesso ✏️")
+
+    closeModal()
+    loadSeries()
 
   } catch (err) {
-    console.error(err)
-    showToast(err.message, "error")
-    showDebug(`❌ Erro ao criar série`)
+
+    console.error("UPDATE ERROR:", err)
+
+    if (err.message?.includes("row-level security")) {
+      showToast("Você precisa estar logado 🔐")
+    } else {
+      showToast("Erro ao atualizar ❌")
+    }
+
+  } finally {
+    btn.disabled = false
+    btn.textContent = "Salvar"
   }
 }
 
 // =======================
-// 💾 SALVAR VOLUME
+// ➕ CRIAR VOLUME
+// =======================
+async function openCreateVolume(prefix) {
+  const { data: volumes } = await supabaseClient
+    .from("volumes")
+    .select("number")
+    .eq("prefix", prefix)
+    .order("number", { ascending: false })
+    .limit(1)
+
+  const next = volumes.length ? volumes[0].number + 1 : 1
+  const num = String(next).padStart(2, "0")
+
+  const { data: series } = await supabaseClient
+    .from("series")
+    .select("title")
+    .eq("prefix", prefix)
+    .single()
+
+  const title = `${series.title} Vol. ${num}`
+
+  await supabaseClient.from("volumes").insert([
+    {
+      prefix: prefix,
+      title,
+      number: next,
+      added_at: new Date().toISOString().split("T")[0]
+    }
+  ])
+
+  loadVolumes(prefix)
+}
+
+// =======================
+// 💾 SALVAR
 // =======================
 async function saveVolume(id) {
-
-  const btn = document.getElementById(`btn-${id}`)
-
   const description = document.getElementById(`desc-${id}`).value
   const amazon = document.getElementById(`amazon-${id}`).value
   const mercado_livre = document.getElementById(`ml-${id}`).value
   const tiktok = document.getElementById(`tiktok-${id}`).value
   const added_at = document.getElementById(`date-${id}`).value
 
-  try {
-    // 🔄 estado carregando
-    btn.innerText = "⏳ Salvando..."
-    btn.disabled = true
-
-    showDebug(`Enviando volume ${id}`)
-
-    const res = await fetch(`${API}/volumes/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        description,
-        amazon,
-        mercado_livre,
-        tiktok,
-        added_at
-      })
+  const { error } = await supabaseClient
+    .from("volumes")
+    .update({
+      description,
+      amazon,
+      mercado_livre,
+      tiktok,
+      added_at
     })
+    .eq("id", id)
 
-    const data = await res.json()
+  if (error) {
+    console.error(error)
+    showToast("Erro ao salvar ❌ (provavelmente não logado)")
+    return
+  }
 
-    if (!res.ok) {
-      throw new Error(data.error || "Erro desconhecido")
-    }
+  showToast("Salvo com sucesso 🚀")
+}
 
-    showDebug(`✅ Volume ${id} atualizado`)
+// =======================
+// 🗑 DELETAR SÉRIE (PRO)
+// =======================
+async function deleteSeries(prefix) {
 
-    // ✅ sucesso
-    btn.innerText = "✅ Salvo"
-    showToast("Salvo com sucesso!")
+  const ok = await confirmAction("Tem certeza que deseja deletar essa série?")
+  if (!ok) return
 
-    setTimeout(() => {
-      btn.innerText = "💾 Salvar"
-      btn.disabled = false
-    }, 1500)
+  const btn = document.getElementById("delete-btn")
+  if (btn) {
+    btn.disabled = true
+    btn.textContent = "Deletando..."
+  }
+
+  try {
+
+    const { error: volError } = await supabaseClient
+      .from("volumes")
+      .delete()
+      .eq("prefix", prefix)
+
+    if (volError) throw volError
+
+    const { error: seriesError } = await supabaseClient
+      .from("series")
+      .delete()
+      .eq("prefix", prefix)
+
+    if (seriesError) throw seriesError
+
+    showToast("Série deletada com sucesso 🗑")
+
+    volumesDiv.innerHTML = "Selecione uma série"
+    loadSeries()
 
   } catch (err) {
 
-    console.error(err)
+    console.error("DELETE ERROR:", err)
 
-    // ❌ erro
-    btn.innerText = "❌ Erro"
-    btn.disabled = false
+    if (err.message?.includes("row-level security")) {
+      showToast("Você precisa estar logado 🔐")
+    } else {
+      showToast("Erro ao deletar série ❌")
+    }
 
-    showToast(err.message, "error")
-    showDebug(`❌ Erro: ${err.message}`)
+  } finally {
+    if (btn) {
+      btn.disabled = false
+      btn.textContent = "Deletar Série"
+    }
   }
 }
 
 // =======================
-// 💾 DELETAR VOLUME
+// 🗑 DELETAR VOLUME (PRO)
 // =======================
 async function deleteVolume(id, prefix) {
-  const confirmDelete = confirm("Tem certeza que deseja excluir?")
 
-  if (!confirmDelete) return
+  const ok = await confirmAction("Deletar esse volume?")
+  if (!ok) return
+
+  const btn = document.getElementById(`delete-${id}`)
+  if (btn) {
+    btn.disabled = true
+    btn.textContent = "Deletando..."
+  }
 
   try {
-    const res = await fetch(`${API}/volumes/${id}`, {
-      method: "DELETE"
-    })
 
-    if (!res.ok) throw new Error("Erro ao deletar")
+    const { error } = await supabaseClient
+      .from("volumes")
+      .delete()
+      .eq("id", id)
 
-    showToast("Volume deletado!")
+    if (error) throw error
+
+    showToast("Volume deletado 🗑")
 
     loadVolumes(prefix)
 
   } catch (err) {
-    console.error(err)
-    showToast(err.message, "error")
-  }
 
-  // 🔥 atualizar total_volumes automaticamente
-  const result = await pool.query(
-    `
-    SELECT prefix, COUNT(*) as total
-    FROM volumes
-    WHERE prefix = $1
-    GROUP BY prefix
-    `,
-    [prefix]
-  )
+    console.error("DELETE VOLUME ERROR:", err)
 
-  const newTotal = result.rows[0]?.total || 0
+    if (err.message?.includes("row-level security")) {
+      showToast("Você precisa estar logado 🔐")
+    } else {
+      showToast("Erro ao deletar volume ❌")
+    }
 
-  await pool.query(
-    `
-    UPDATE series
-    SET total_volumes = $1
-    WHERE prefix = $2
-    `,
-    [newTotal, prefix]
-  )
-}
-
-// =======================
-// 🗑 DELETAR SÉRIE
-// =======================
-async function deleteSeries(prefix) {
-  const confirmDelete = confirm("Tem certeza que deseja deletar a série inteira?")
-
-  if (!confirmDelete) return
-
-  try {
-    const res = await fetch(`${API}/series/${prefix}`, {
-      method: "DELETE"
-    })
-
-    if (!res.ok) throw new Error("Erro ao deletar série")
-
-    showToast("Série deletada!")
-
-    volumesDiv.innerHTML = ""
-    loadSeries()
-
-  } catch (err) {
-    console.error(err)
-    showToast(err.message, "error")
+  } finally {
+    if (btn) {
+      btn.disabled = false
+      btn.textContent = "🗑"
+    }
   }
 }
-
 // iniciar
-loadSeries()
+(async () => {
+  const ok = await protectAdmin()
+
+  if (!ok) return
+
+  loadSeries()
+})()
