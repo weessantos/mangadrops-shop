@@ -15,7 +15,7 @@ app.use(express.json())
 app.use("/api/series", seriesRoutes)
 app.use("/api/volumes", volumesRoutes)
 
-const PORT = 3000
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`🚀 API rodando em http://localhost:${PORT}`)

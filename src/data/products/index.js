@@ -5,9 +5,15 @@ import { affiliateMap } from "./affiliates/affiliates.map.js";
 import { descriptionMap } from "./descriptions/descriptions.map.js";
 import { tiktokMap } from "./tiktok/tiktok.map.js";
 
+// 🔥 URL dinâmica (resolve local + produção)
+const API_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:3000"
+    : "https://SEU-BACKEND.com"; // ⬅️ TROCAR DEPOIS
+
 export async function getProducts(search = "") {
   const res = await fetch(
-    `http://localhost:3000/api/series/full${search}`
+    `${API_URL}/api/series/full${search}`
   );
 
   const data = await res.json();
@@ -37,7 +43,7 @@ export async function getProducts(search = "") {
         mercadoLivre: v.mercadoLivre,
       },
 
-      // 🔥 IMPORTANTE (novo)
+      // 🔥 novos campos
       bestPrice: v.best_price,
       discount: v.discount,
     }))
