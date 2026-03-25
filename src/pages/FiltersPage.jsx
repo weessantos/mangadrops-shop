@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getBestPrice } from "../utils/priceLoader";
 import "../styles/series-filters.css";
+import { supabaseClient } from "../lib/supabase";
 
 /* =========================
    Helpers
