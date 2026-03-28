@@ -237,14 +237,42 @@ function AppShell() {
     }, 0);
   }, [qParam, seriesNames, navigate, sp]);
 
+  const foundSeries = useMemo(() => {
+    if (!qParam) return null;
+
+    return pickSeriesFromQuery(
+      qParam,
+      seriesNames.map((name) => ({ name }))
+    );
+  }, [qParam, seriesNames]);
+   
   const baseFiltered = useMemo(() => {
     const { words, numbers } = parseQuery(qParam);
 
     return products
-      .filter((p) =>
-        activeSeries ? (p.series || "Outros") === activeSeries : true
-      )
       .filter((p) => {
+      // 🔥 PRIORIDADE TOTAL PARA SEARCH
+      if (foundSeries) {
+        return p.series === foundSeries;
+      }
+
+      // depois fallback
+      if (activeSeries) {
+        return (p.series || "Outros") === activeSeries;
+      }
+
+      // 🔥 AQUI É A MÁGICA
+      if (foundSeries) {
+          return p.series === foundSeries;
+        }
+
+        return true;
+      })
+
+      .filter((p) => {
+        // 🔥 SE JÁ ACHOU A SÉRIE, IGNORA O RESTO
+        if (foundSeries) return true;
+
         if (!words.length && !numbers.length) return true;
 
         const text = productSearchText(p);
@@ -480,14 +508,25 @@ function AppShell() {
       const el = document.getElementById(id);
       if (!el) return false;
 
-      const extraOffset =
-        window.innerWidth <= 768 ? 84 : isHeaderCompact ? 96 : 132;
-      const top = el.getBoundingClientRect().top + window.scrollY - extraOffset;
+      const header = document.querySelector(".heroHeader");
 
-      window.scrollTo({ top: Math.max(0, top), behavior });
+      // 🔥 pega a posição real do header na tela
+      const headerBottom = header?.getBoundingClientRect().bottom || 0;
+
+      const top =
+        el.getBoundingClientRect().top +
+        window.scrollY -
+        headerBottom -
+        8;
+
+      window.scrollTo({
+        top: Math.max(0, top),
+        behavior,
+      });
+
       return true;
     },
-    [isHeaderCompact]
+    []
   );
 
   const resolveScrollIds = useCallback((target, fallbackIds = []) => {

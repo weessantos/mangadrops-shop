@@ -61,7 +61,7 @@
 .productRail {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 86%;
+  grid-auto-columns: calc(50% - 8px);
   gap: 12px;
   align-items: stretch;
   padding: 0 8px 6px;
@@ -300,7 +300,7 @@
 }
 
 /* mobile pequeno */
-@media (max-width: 420px) {
+@media (max-width: 350px) {
   .productRail {
     grid-auto-columns: 86%;
     gap: 10px;

@@ -129,11 +129,21 @@ export default function Header({
   };
 
   const jumpToSection = (target) => {
-    scrollToNav?.({
-      target,
-      placement: isMobile ? "header_mobile" : "header_desktop",
-      ids: navTargets[target] || [target],
-    });
+    if (isMobile) {
+      setTimeout(() => {
+        scrollToNav?.({
+          target,
+          placement: "header_mobile",
+          ids: navTargets[target] || [target],
+        });
+      }, 120);
+    } else {
+      scrollToNav?.({
+        target,
+        placement: "header_desktop",
+        ids: navTargets[target] || [target],
+      });
+    }
   };
 
   const obras = useMemo(
