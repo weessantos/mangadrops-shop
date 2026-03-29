@@ -29,7 +29,15 @@ if (window.__cms_loaded) {
 
   supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
-    SUPABASE_KEY
+    SUPABASE_KEY,
+    {
+      auth: {
+        persistSession: true,
+        storage: window.sessionStorage,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+      }
+    }
   )
   
 
@@ -62,6 +70,11 @@ async function protectAdmin() {
   }
 
   return true
+}
+
+async function requireAuth() {
+  const { data: { session } } = await supabaseClient.auth.getSession()
+  return !!session
 }
 
 
@@ -340,30 +353,30 @@ async function loadVolumes(prefix) {
       <h3>${v.title}</h3>
       <div class="field">
         <label>Descrição</label>
-        <textarea id="desc-${v.id}">${v.description || ""}</textarea>
+        <textarea id="desc-${prefix}-${v.number}">${v.description || ""}</textarea>
       </div>
 
       <div class="field">
         <label>Amazon</label>
-        <input id="amazon-${v.id}" value="${v.amazon || ""}">
+        <input id="amazon-${prefix}-${v.number}" value="${v.amazon || ""}">
       </div>
 
       <div class="field">
         <label>Mercado Livre</label>
-        <input id="ml-${v.id}" value="${v.mercado_livre || ""}">
+        <input id="ml-${prefix}-${v.number}" value="${v.mercado_livre || ""}">
       </div>
 
       <div class="field">
         <label>TikTok</label>
-        <input id="tiktok-${v.id}" value="${v.tiktok || ""}">
+        <input id="tiktok-${prefix}-${v.number}" value="${v.tiktok || ""}">
       </div>
 
       <div class="field">
         <label>Adicionado em</label>
-        <input type="date" id="date-${v.id}" value="${v.added_at || ""}">
+        <input type="date" id="date-${prefix}-${v.number}" value="${v.added_at || ""}">
       </div>
-      <button onclick="saveVolume(${v.id})">💾 Salvar</button>
-      <button id="delete-${v.id}" onclick="deleteVolume(${v.id}, '${prefix}')">
+      <button onclick="saveVolume('${prefix}', ${v.number})">💾 Salvar</button>
+      <button onclick="deleteVolume('${prefix}', ${v.number})">
         🗑
       </button>
     `
@@ -413,6 +426,12 @@ function closeModal() {
 // ➕ CRIAR SÉRIE + GERAR VOLUMES
 // =======================
 async function createSeries() {
+
+  if (!(await requireAuth())) {
+    showToast("Sessão expirada 🔐")
+    return
+  }
+
   const btn = document.getElementById("save-btn")
   btn.disabled = true
   btn.textContent = "Salvando..."
@@ -668,6 +687,12 @@ async function editSeries(prefix) {
 // FUNÇÃO DE UPDATE
 // =======================
 async function updateSeries(prefix, oldTotal) {
+
+  if (!(await requireAuth())) {
+    showToast("Sessão expirada 🔐")
+    return
+  }
+
   const title = document.getElementById("e-title").value
   const subtitle = document.getElementById("e-subtitle").value
   const author = document.getElementById("e-author").value
@@ -740,6 +765,12 @@ async function updateSeries(prefix, oldTotal) {
 // ➕ CRIAR VOLUME
 // =======================
 async function openCreateVolume(prefix) {
+
+    if (!(await requireAuth())) {
+      showToast("Sessão expirada 🔐")
+      return
+    }
+
   const { data: volumes } = await supabaseClient
     .from("volumes")
     .select("number")
@@ -773,27 +804,43 @@ async function openCreateVolume(prefix) {
 // =======================
 // 💾 SALVAR
 // =======================
-async function saveVolume(id) {
-  const description = document.getElementById(`desc-${id}`).value
-  const amazon = document.getElementById(`amazon-${id}`).value
-  const mercado_livre = document.getElementById(`ml-${id}`).value
-  const tiktok = document.getElementById(`tiktok-${id}`).value
-  const added_at = document.getElementById(`date-${id}`).value
+async function saveVolume(prefix, number) {
+
+  if (!(await requireAuth())) {
+    showToast("Sessão expirada 🔐")
+    return
+  }
+
+  const description = document.getElementById(`desc-${prefix}-${number}`).value
+  const amazon = document.getElementById(`amazon-${prefix}-${number}`).value
+  const mercado_livre = document.getElementById(`ml-${prefix}-${number}`).value
+  const tiktok = document.getElementById(`tiktok-${prefix}-${number}`).value
+  const added_at = document.getElementById(`date-${prefix}-${number}`).value
+
+  // 🔥 monta objeto dinamicamente (corrige bug da data)
+  const updateData = {
+    description,
+    amazon,
+    mercado_livre,
+    tiktok
+  }
+
+  // só adiciona a data se existir
+  if (added_at) {
+    updateData.added_at = added_at
+  } else {
+    updateData.added_at = null // opcional (mais robusto)
+  }
 
   const { error } = await supabaseClient
     .from("volumes")
-    .update({
-      description,
-      amazon,
-      mercado_livre,
-      tiktok,
-      added_at
-    })
-    .eq("id", id)
+    .update(updateData)
+    .eq("prefix", prefix)
+    .eq("number", number)
 
   if (error) {
     console.error(error)
-    showToast("Erro ao salvar ❌ (provavelmente não logado)")
+    showToast("Erro ao salvar ❌")
     return
   }
 
@@ -804,6 +851,11 @@ async function saveVolume(id) {
 // 🗑 DELETAR SÉRIE (PRO)
 // =======================
 async function deleteSeries(prefix) {
+
+  if (!(await requireAuth())) {
+    showToast("Sessão expirada 🔐")
+    return
+  }
 
   const ok = await confirmAction("Tem certeza que deseja deletar essa série?")
   if (!ok) return
@@ -856,23 +908,23 @@ async function deleteSeries(prefix) {
 // =======================
 // 🗑 DELETAR VOLUME (PRO)
 // =======================
-async function deleteVolume(id, prefix) {
+async function deleteVolume(prefix, number) {
+
+  if (!(await requireAuth())) {
+    showToast("Sessão expirada 🔐")
+    return
+  }
 
   const ok = await confirmAction("Deletar esse volume?")
   if (!ok) return
-
-  const btn = document.getElementById(`delete-${id}`)
-  if (btn) {
-    btn.disabled = true
-    btn.textContent = "Deletando..."
-  }
 
   try {
 
     const { error } = await supabaseClient
       .from("volumes")
       .delete()
-      .eq("id", id)
+      .eq("prefix", prefix)
+      .eq("number", number)
 
     if (error) throw error
 
@@ -889,14 +941,9 @@ async function deleteVolume(id, prefix) {
     } else {
       showToast("Erro ao deletar volume ❌")
     }
-
-  } finally {
-    if (btn) {
-      btn.disabled = false
-      btn.textContent = "🗑"
-    }
   }
 }
+
 // iniciar
 (async () => {
   const ok = await protectAdmin()

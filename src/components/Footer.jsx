@@ -1,5 +1,9 @@
 import "../styles/footer.css";
 
+const base = import.meta.env.BASE_URL;
+const ML_ICON = `${base}assets/mercadolivre.svg`;
+const AMAZON_ICON = `${base}assets/amazon.svg`;
+
 export default function Footer({ scrollToNav }) {
   const handleJump = (target) => {
     scrollToNav?.({ target });
@@ -8,58 +12,56 @@ export default function Footer({ scrollToNav }) {
   return (
     <footer className="footer">
       <div className="footerContainer">
-        <div className="footerCol brand">
-          <h2 className="footerLogo">Mangá Drops</h2>
-          <p>
-            Acompanhe coleções de mangás, lançamentos e os melhores preços da internet.
-            Compare ofertas da Amazon e Mercado Livre em um só lugar.
-          </p>
+
+        {/* TOP */}
+        <div className="footerTop">
+          <div className="footerBrand">
+            <h2>Mangá Drops</h2>
+            <p>
+              Compare preços de mangás entre Amazon e Mercado Livre.
+              Descubra coleções, lançamentos e economize com segurança.
+            </p>
+          </div>
+
+          <div className="footerNav">
+            <h4>Navegação</h4>
+            <button onClick={() => handleJump("home")}>Início</button>
+            <button onClick={() => handleJump("colecoes")}>Coleções</button>
+            <button onClick={() => handleJump("lancamentos")}>Lançamentos</button>
+            <button onClick={() => handleJump("promocoes")}>Descontos</button>
+          </div>
+
+          <div className="footerProject">
+            <h4>Projeto</h4>
+            <p>Feito para fãs de mangá.</p>
+            <span>Por Wesley Santos</span>
+          </div>
         </div>
 
-        <div className="footerCol">
-          <h3>Navegação</h3>
-          <ul className="footerNavList">
-            <li>
-              <button type="button" className="footerLinkBtn" onClick={() => handleJump("home")}>
-                Início
-              </button>
-            </li>
-            <li>
-              <button type="button" className="footerLinkBtn" onClick={() => handleJump("colecoes")}>
-                Coleções
-              </button>
-            </li>
-            <li>
-              <button type="button" className="footerLinkBtn" onClick={() => handleJump("lancamentos")}>
-                Lançamentos
-              </button>
-            </li>
-            <li>
-              <button type="button" className="footerLinkBtn" onClick={() => handleJump("promocoes")}>
-                Melhores descontos
-              </button>
-            </li>
-          </ul>
-        </div>
+        {/* TRUST SECTION */}
+        <div className="footerTrust">
+          <div>
+            <span>🛡️</span>
+            <div>
+              <strong>Compra 100% segura</strong>
+              <p>Você finaliza sua compra diretamente na Amazon ou Mercado Livre</p>
+            </div>
+          </div>
 
-        <div className="footerCol">
-          <h3>Afiliados</h3>
-          <p>
-            Este site participa de programas de afiliados da Amazon e Mercado Livre.
-            Podemos receber uma pequena comissão nas compras feitas pelos links,
-            sem custo adicional para você.
-          </p>
-        </div>
+          <div>
+            <a href="#" className="trustBtn amazon">
+              <img src={AMAZON_ICON} alt="Amazon" />
+            </a>
 
-        <div className="footerCol">
-          <h3>Projeto</h3>
-          <p>Projeto independente feito para fãs de mangá.</p>
-          <p className="footerAuthor">Criado por Wesley Santos</p>
+            <a href="#" className="trustBtn ml">
+              <img src={ML_ICON} alt="Mercado Livre" />
+            </a>
+          </div>
         </div>
       </div>
 
       <div className="footerBottom">
-        © {new Date().getFullYear()} Mangá Drops — Todos os direitos reservados
+        © {new Date().getFullYear()} Mangá Drops
       </div>
     </footer>
   );
