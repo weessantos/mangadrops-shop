@@ -117,19 +117,13 @@ export default function ProductModal({ product, onClose }) {
   );
 
   const mlUrl =
-    product?.affiliate?.mercadoLivre &&
-    typeof product.affiliate.mercadoLivre === "string" &&
-    product.affiliate.mercadoLivre.trim() !== ""
-      ? product.affiliate.mercadoLivre
-      : typeof product?.affiliateUrl === "string"
-      ? product.affiliateUrl.trim()
+    typeof product?.affiliate?.mercadoLivre === "string"
+      ? product.affiliate.mercadoLivre.trim()
       : "";
 
   const amzUrl =
-    product?.affiliate?.amazon &&
-    typeof product.affiliate.amazon === "string" &&
-    product.affiliate.amazon.trim() !== ""
-      ? product.affiliate.amazon
+    typeof product?.affiliate?.amazon === "string"
+      ? product.affiliate.amazon.trim()
       : "";
 
   const hasML = !!mlUrl;
@@ -139,9 +133,15 @@ export default function ProductModal({ product, onClose }) {
 
   if (!product) return null;
 
-  const mlPrice = getPrice(product, "mercadoLivre");
-  const amazonPrice = getPrice(product, "amazon");
-  const bestPrice = getBestPrice(product);
+  const mlPrice = Number(product?.mercado_livre_price);
+  const amazonPrice = Number(product?.amazon_price);
+  const bestPrice = Number(product?.best_price);
+  
+  const isMlBest = bestPrice === mlPrice;
+  const isAmazonBest = bestPrice === amazonPrice;
+
+  const hasMlPrice = Number.isFinite(mlPrice);
+  const hasAmazonPrice = Number.isFinite(amazonPrice);
 
   const coverPrice = useMemo(() => {
     const raw = product?.coverPrice;
@@ -159,38 +159,6 @@ export default function ProductModal({ product, onClose }) {
     if (!Number.isFinite(coverPrice)) return null;
     return coverPrice * 1.15;
   }, [coverPrice]);
-
-  const shouldHideMlPrice = useMemo(() => {
-    if (!Number.isFinite(mlPrice)) return true;
-    if (!Number.isFinite(maxVisiblePrice)) return false;
-    return mlPrice > maxVisiblePrice;
-  }, [mlPrice, maxVisiblePrice]);
-
-  const shouldHideAmazonPrice = useMemo(() => {
-    if (!Number.isFinite(amazonPrice)) return true;
-    if (!Number.isFinite(maxVisiblePrice)) return false;
-    return amazonPrice > maxVisiblePrice;
-  }, [amazonPrice, maxVisiblePrice]);
-
-  const visibleMlPrice = !shouldHideMlPrice ? mlPrice : null;
-  const visibleAmazonPrice = !shouldHideAmazonPrice ? amazonPrice : null;
-
-  const hasVisibleMlPrice = visibleMlPrice != null;
-  const hasVisibleAmazonPrice = visibleAmazonPrice != null;
-
-  const visibleBestStore =
-    hasVisibleMlPrice && hasVisibleAmazonPrice
-      ? visibleMlPrice <= visibleAmazonPrice
-        ? "mercadoLivre"
-        : "amazon"
-      : hasVisibleMlPrice
-      ? "mercadoLivre"
-      : hasVisibleAmazonPrice
-      ? "amazon"
-      : null;
-
-  const isMlBest = visibleBestStore === "mercadoLivre";
-  const isAmazonBest = visibleBestStore === "amazon";
 
   const fireBuy = (store, placement) => {
     track("click_buy", {
@@ -225,8 +193,8 @@ export default function ProductModal({ product, onClose }) {
               store="Mercado Livre"
               logo={img("mercadolivre.svg")}
               alt="Mercado Livre"
-              price={visibleMlPrice}
-              showPrice={hasVisibleMlPrice}
+              price={mlPrice}
+              showPrice={hasMlPrice}
               isBest={isMlBest}
               onClick={(e) => {
                 e.stopPropagation();
@@ -241,8 +209,8 @@ export default function ProductModal({ product, onClose }) {
               store="Amazon"
               logo={img("amazon.svg")}
               alt="Amazon"
-              price={visibleAmazonPrice}
-              showPrice={hasVisibleAmazonPrice}
+              price={amazonPrice}
+              showPrice={hasAmazonPrice}
               isBest={isAmazonBest}
               onClick={(e) => {
                 e.stopPropagation();
@@ -478,10 +446,6 @@ export default function ProductModal({ product, onClose }) {
                     </div>
                   </div>
                 )}
-
-                <div className="mobileVideoBuyBlock">
-                  {renderBuyButtons("modal_mobile_video")}
-                </div>
               </div>
 
               <div className="modalHint">⟵ Voltar para o produto</div>

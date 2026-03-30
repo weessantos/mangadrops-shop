@@ -128,6 +128,10 @@ export function useSeriesFilters(seriesArray = []) {
       const discountPercent = getDiscountPercent(s);
       const reviewOk = !filters.hasReview || hasReviewContent(s);
 
+      console.log("FILTER MAX PRICE:", filters.maxPrice);
+      console.log("ITEM PRICE:", bestPriceValue);
+      console.log("ITEM:", s);
+
       const priceOk =
         filters.maxPrice == null
           ? true

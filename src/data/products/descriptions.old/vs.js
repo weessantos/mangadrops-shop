@@ -1,6 +1,0 @@
-export const vsDescriptions = {
-  1: "Vol. 01: Em um mundo dominado por demônios, a humanidade luta para sobreviver enquanto heróis se preparam para enfrentar o temido Rei Demônio. Durante um ritual desesperado, um evento inesperado conecta esse mundo a outro universo onde a humanidade também enfrenta uma ameaça devastadora.",
-  2: "Vol. 02: Dois mundos à beira da extinção entram em contato, cada um trazendo seus próprios inimigos apocalípticos. Enquanto os sobreviventes tentam entender a nova realidade, surge a possibilidade de usar as ameaças de um mundo contra as do outro.",
-  3: "Vol. 03: Com diferentes forças colidindo, o conflito entre monstros, demônios e outras entidades cresce rapidamente. Os humanos precisam encontrar maneiras de sobreviver em meio ao caos criado por essas potências destrutivas.",
-  4: "Vol. 04: A batalha entre as diversas ameaças continua a se expandir, revelando novos inimigos e perigos inesperados. Enquanto o mundo se transforma em um campo de guerra entre forças monstruosas, a humanidade tenta aproveitar qualquer oportunidade para sobreviver.",
-};

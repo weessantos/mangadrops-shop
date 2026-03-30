@@ -40,18 +40,14 @@
   text-wrap: pretty;
 }
 
-/* Mobile-first: carrossel horizontal */
+
 .seriesRail {
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 82%;
-  gap: 12px;
-  overflow-x: auto;
-  padding: 6px 0 6px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
 
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+  overflow: visible;
+  scroll-snap-type: none;
 }
 
 .seriesRail::-webkit-scrollbar {
@@ -66,26 +62,78 @@
   width: 100%;
 }
 
-/* Mobile maior */
-@media (min-width: 430px) and (max-width: 899px) {
-  .seriesRail {
-    grid-auto-columns: 64%;
-  }
-}
+/* =========================================================
+   GRID DA COLEÇÃO - MUDANÇA ENTRE PÁGINAÇÃO E SCROLL HORIZONTAL
+     - DESKTOP: PAGINAÇÃO
+     - MOBILE: SCROLL HORIZONTAL
+   ========================================================= */
 
-/* Desktop: grid de 6 por “página” visual (3x2) */
-@media (min-width: 900px) {
-  .seriesRail {
-    display: grid;
-    grid-auto-flow: unset;
-    grid-auto-columns: unset;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 18px;
-    overflow: visible;
-    scroll-snap-type: none;
-  }
-}
+   /* 📱 MOBILE */
+  @media (max-width: 500px) {
+    .collectionsSection .seriesRail {
+      display: flex;
+      overflow-x: auto;
+      gap: 14px;
+      padding-bottom: 8px;
+    }
 
+    .collectionsSection .railItem {
+      flex: 0 0 75%;
+      max-width: 75%;
+    }
+
+    .collectionsSection .seriesCard {
+      width: 100%;
+    }
+
+    .collectionsSection .collectionsTopbar,
+    .collectionsSection .collectionsBottomBar {
+      display: none;
+    }
+  }
+
+    /* 📲 TABLET PEQUENO */
+  @media (min-width: 501px) and (max-width: 650px) {
+    .collectionsSection .seriesRail {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      
+    }
+
+    .collectionsSection .collectionsTopbar,
+    .collectionsSection .collectionsBottomBar {
+      display: flex;
+    }
+  }
+
+  /* 📲 TABLET */
+  @media (min-width: 651px) and (max-width: 1023px) {
+    .collectionsSection .seriesRail {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .collectionsSection .collectionsTopbar,
+    .collectionsSection .collectionsBottomBar {
+      display: flex;
+    }
+  }
+
+  /* 💻 DESKTOP */
+  @media (min-width: 1024px) {
+    .collectionsSection .seriesRail {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .collectionsSection .collectionsTopbar,
+    .collectionsSection .collectionsBottomBar {
+      display: flex;
+    }
+  }
 /* =========================================================
    SERIES CARD
    ========================================================= */
@@ -93,6 +141,8 @@
 .seriesCard {
   position: relative;
   aspect-ratio: 4 / 5.25;
+  min-width: 0;
+  flex-shrink: 0;
   border-radius: 22px;
   overflow: hidden;
   cursor: pointer;
@@ -408,12 +458,6 @@ button.badgePill {
   .badgePill {
     font-size: 10px;
     padding: 6px 10px;
-  }
-}
-
-@media (max-width: 430px) {
-  .seriesRail {
-    grid-auto-columns: 84%;
   }
 }
 

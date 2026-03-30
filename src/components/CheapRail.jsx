@@ -31,24 +31,16 @@ export default function CheapRail({
             ? p.affiliate.amazon.trim()
             : "";
 
-        const mlPrice = getPrice(p, "mercadoLivre");
-        const amzPrice = getPrice(p, "amazon");
-
-        const offer = getOfferData({
-          mlHref: mlUrl,
-          mlPrice,
-          amazonHref: amzUrl,
-          amazonPrice: amzPrice,
-        });
-
         return {
           ...p,
-          _offer: offer,
-          _bestPriceValue: offer?.bestPrice ?? Infinity,
         };
       })
-      .filter((p) => p?._offer?.isAvailable)
-      .filter((p) => p._bestPriceValue <= 30)
+      .filter((p) => {
+        const price = Number(p.best_price);
+        return Number.isFinite(price) && price > 0;
+      })
+      .filter((p) => Number(p.best_price) <= 30)
+      .sort((a, b) => Number(a.best_price) - Number(b.best_price))
       .sort((a, b) => a._bestPriceValue - b._bestPriceValue)
       .slice(0, limit);
   }, [products, limit]);

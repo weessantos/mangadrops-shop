@@ -1,5 +1,0 @@
-export const daemDescriptions = {
-  1: "Vol. 01: Em uma vila isolada nas montanhas, Yuru vive uma rotina tranquila enquanto sua irmã gêmea Asa cumpre um papel misterioso ligado às tradições locais. Quando um ataque inesperado revela segredos ocultos, Yuru descobre que o mundo ao seu redor esconde forças sobrenaturais chamadas Tsugai.",
-  2: "Vol. 02: Após escapar de sua vila, Yuru começa a conhecer melhor o mundo dos Tsugai e as pessoas que controlam essas entidades. Enquanto novos aliados e inimigos surgem, os segredos envolvendo sua irmã e seu próprio destino começam a se aprofundar.",
-  3: "Vol. 03: O conflito entre diferentes usuários de Tsugai se intensifica. Em meio a perseguições e confrontos, Yuru precisa entender melhor seus próprios poderes enquanto tenta descobrir a verdade por trás dos acontecimentos que mudaram sua vida.",
-};

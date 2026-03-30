@@ -384,8 +384,11 @@ export default function Header({
                 <button
                   className="mobileLogoMiniBtn"
                   onClick={() => {
-                    track("click_logo", { placement: "header_mobile" });
-                    window.scrollTo({ top: 0, behavior: "smooth" });
+                    track("click_logo", { placement: "header_desktop" });
+                    navigate("/");
+                    setTimeout(() => {
+                      window.scrollTo({ top: 0, behavior: "instant" });
+                    }, 50);
                   }}
                   type="button"
                   aria-label="Voltar ao topo"
@@ -420,8 +423,11 @@ export default function Header({
               <button
                 className="compactLogoBtn"
                 onClick={() => {
-                  track("click_logo", { placement: "header_desktop_compact" });
-                  window.scrollTo({ top: 0, behavior: "smooth" });
+                  track("click_logo", { placement: "header_desktop" });
+                  navigate("/");
+                  setTimeout(() => {
+                    window.scrollTo({ top: 0, behavior: "instant" });
+                  }, 50);
                 }}
                 type="button"
                 aria-label="Voltar ao topo"
@@ -481,7 +487,10 @@ export default function Header({
                   className="heroLogoBtn"
                   onClick={() => {
                     track("click_logo", { placement: "header_desktop" });
-                    window.scrollTo({ top: 0, behavior: "smooth" });
+                    navigate("/");
+                    setTimeout(() => {
+                      window.scrollTo({ top: 0, behavior: "instant" });
+                    }, 50);                  
                   }}
                   type="button"
                   aria-label="Voltar ao topo"

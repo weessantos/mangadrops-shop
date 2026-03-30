@@ -8,6 +8,7 @@ import { fileURLToPath } from "url";
 import { chromium } from "playwright";
 import 'dotenv/config';
 import pool from "../src/db/database.js";
+import { createClient } from "@supabase/supabase-js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,16 +27,45 @@ const ML_WAIT_AFTER_PRODUCT_MS = 1000;
 // Para depurar:
   //const ML_DEBUG = true;
 
-  const ML_DEBUG = process.env.ML_DEBUG === "true";
+const ML_DEBUG = process.env.ML_DEBUG === "true";
 
 
 const USE_ML_SESSION = fs.existsSync(ML_SESSION_PATH);
 
 let browserPromise = null;
 
+function normalizePrice(value) {
+  if (value == null) return null;
+
+  // já é número
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : null;
+  }
+
+  // string → limpar e converter
+  if (typeof value === "string") {
+    const cleaned = value
+      .replace("R$", "")
+      .replace(/\./g, "")
+      .replace(",", ".")
+      .trim();
+
+    const num = Number(cleaned);
+    return Number.isFinite(num) ? num : null;
+  }
+
+  return null;
+}
+
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+//Supabase db
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
 //Helpers do mercado livre
 
@@ -721,10 +751,6 @@ async function processProduct(product, existingPrices, prices, counters, stats, 
   const mlLink = product.affiliate?.mercadoLivre?.trim() || "";
   const amazonLink = product.affiliate?.amazon?.trim() || "";
 
-  // 🧠 DEBUG 2: ver os links extraídos
-  console.log("ML LINK:", mlLink);
-  console.log("AMAZON LINK:", amazonLink);
-
   const previous = existingPrices[productId] || {};
 
   let mlPrice = null;
@@ -763,8 +789,8 @@ async function processProduct(product, existingPrices, prices, counters, stats, 
   // 🔥 SALVA IMEDIATO NO BANCO
   await savePricesToDatabase({
     [productId]: {
-      mercadoLivre: mlPrice ?? previous.mercadoLivre ?? null,
-      amazon: amazonPrice ?? previous.amazon ?? null,
+      mercadoLivre: mlPrice ?? null,
+      amazon: amazonPrice ?? null,
     }
   });
 
@@ -874,20 +900,32 @@ async function savePricesToDatabase(prices) {
       const [prefix, numberStr] = productId.split("-");
       const number = Number(numberStr);
 
-      await client.query(
-        `
+      const query = `
         UPDATE volumes
         SET
-          amazon_price = COALESCE($1, amazon_price),
-          mercado_livre_price = COALESCE($2, mercado_livre_price),
+          amazon_price = $1::numeric,
+          mercado_livre_price = $2::numeric,
+
+          best_price =
+            CASE
+              WHEN $1 IS NOT NULL AND $2 IS NOT NULL THEN LEAST($1, $2)
+              WHEN $1 IS NOT NULL THEN $1
+              WHEN $2 IS NOT NULL THEN $2
+              ELSE NULL
+            END,
+
           price_updated_at = NOW()
+
         WHERE number = $3
         AND series_id = (
           SELECT id FROM series WHERE prefix = $4
         )
-        `,
-        [data.amazon, data.mercadoLivre, number, prefix]
-      );
+      `;
+
+      const amazon = normalizePrice(data.amazon);
+      const ml = normalizePrice(data.mercadoLivre);
+
+      await client.query(query, [amazon, ml, number, prefix]);
     }
   } catch (err) {
     console.error("Erro ao salvar preços no banco:", err);
@@ -916,60 +954,26 @@ function mapSeriesToProducts(series) {
   return products;
 }
 
-async function getProductsFromDatabase() {
-  const client = await pool.connect();
+async function getProductsFromSupabase() {
+  console.log("📡 Buscando produtos do Supabase...");
 
-  try {
-    const result = await client.query(`
-      SELECT 
-        s.prefix,
-        v.number,
-        v.amazon,
-        v.mercado_livre
-      FROM volumes v
-      JOIN series s ON v.series_id = s.id
-    `);
+  const { data, error } = await supabase
+    .from("series_volumes_view")
+    .select("prefix, number, amazon, mercado_livre");
 
-    return result.rows.map((row) => {
-      const v = toCamel(row);
-
-      return {
-        id: `${v.prefix}-${String(v.number).padStart(2, "0")}`,
-        affiliate: {
-          amazon: v.amazon,
-          mercadoLivre: v.mercadoLivre ?? null
-        }
-      };
-    });
-
-  } finally {
-    client.release();
+  if (error) {
+    throw new Error("Erro ao buscar Supabase: " + error.message);
   }
-}
 
+  console.log("🧪 Exemplo produto:", data?.[0]);
 
-async function getProductsFromAPI() {
-  try {
-    console.log("🌐 Tentando buscar da API...");
-    console.log("DB URL:", process.env.DATABASE_URL);
-
-    const response = await axios.get("http://localhost:3000/api/series/full", {
-      timeout: 5000
-    });
-
-    const series = response.data;
-
-    if (!Array.isArray(series)) {
-      throw new Error("Formato inválido");
+  return data.map((v) => ({
+    id: `${v.prefix}-${String(v.number).padStart(2, "0")}`,
+    affiliate: {
+      amazon: v.amazon,
+      mercadoLivre: v.mercado_livre,
     }
-
-    return mapSeriesToProducts(series);
-
-  } catch (err) {
-    console.log("⚠️ API não disponível, usando banco direto...");
-
-    return await getProductsFromDatabase();
-  }
+  }));
 }
 
 async function updatePrices() {
@@ -980,7 +984,7 @@ async function updatePrices() {
   // descomente para rodar só uma série
   // const activeProducts = products.filter((product) => product.id.startsWith("aot-"));
 
-  const activeProducts = await getProductsFromAPI();
+  const activeProducts = await getProductsFromSupabase();
 
   // DEBUG OPCIONAL:
   // descomente para limpar preços antigos de uma série antes do teste

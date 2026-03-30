@@ -20,10 +20,11 @@ import CheapRail from "./components/CheapRail.jsx";
 import BrandStats from "./components/BrandStats";
 import SectionHeader from "./components/SectionHeader";
 import ActiveFiltersBar from "./components/ActiveFiltersBar";
+import { normalizeProduct } from "./utils/normalizeProduct";
 
 import FiltersPage from "./pages/FiltersPage";
 
-import { getProducts } from "./data/products/index.js";
+import { supabaseClient } from "./lib/supabase.js";
 import { getSeriesCatalog } from "./data/products/series.catalog.js";
 
 import { useSeriesList } from "./hooks/useSeriesList";
@@ -64,6 +65,17 @@ function hasAnyAffiliateLink(p) {
     p?.afiliado?.mercadoLivre;
 
   return Boolean(amazon || ml);
+}
+
+function getBestPrice(p) {
+  const price =
+    p.best_price ??
+    p.amazon_price ??
+    p.mercado_livre_price ??
+    null;
+
+  const n = Number(price);
+  return Number.isFinite(n) ? n : null;
 }
 
 function priceNumber(p) {
@@ -108,15 +120,11 @@ function AppShell() {
 
   const [page, setPage] = useState(1);
   const [seriesPage, setSeriesPage] = useState(1);
-  const [isDesktopCollections, setIsDesktopCollections] = useState(
-    typeof window !== "undefined" ? window.innerWidth >= 1024 : false
-  );
 
   const lastAppliedQueryRef = useRef("");
   const collectionsSectionRef = useRef(null);
 
-  const [inputValue, setInputValue] = useState("");
-  const [selected, setSelected] = useState(null);
+  const [inputValue, setInputValue] = useState("");;
   const [activeSeries, setActiveSeries] = useState(null);
   const [isHeaderCompact, setIsHeaderCompact] = useState(false);
   const [activeSection, setActiveSection] = useState("colecoes");
@@ -128,6 +136,8 @@ function AppShell() {
     products || [],
     seriesCatalog || []
   );
+
+  const [shouldScrollToVolumes, setShouldScrollToVolumes] = useState(false);
 
   const metaBySeries = useMemo(() => {
     const map = new Map();
@@ -181,20 +191,50 @@ function AppShell() {
   const isFiltering = hasAnyFilter && !activeSeries;
 
   useEffect(() => {
-    const onResize = () => {
-      setIsDesktopCollections(window.innerWidth >= 1024);
-    };
+    async function load() {
+      const { data, error } = await supabaseClient
+        .from("series_volumes_view")
+        .select("*");
 
-    onResize();
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
+      if (error) {
+        console.error("Erro Supabase:", error);
+        return;
+      }
+
+      console.log("🔥 DATA SUPABASE:", data?.[0]);
+
+      setProducts((data || []).map(normalizeProduct));
+    }
+
+    getSeriesCatalog().then(setSeriesCatalog);
+    load();
+  }, [location.search]);
 
   useEffect(() => {
-    getSeriesCatalog().then(setSeriesCatalog);
+  if (!shouldScrollToVolumes) return;
 
-    getProducts().then(setProducts);
-  }, [location.search]);
+  const tryScroll = () => {
+    const el = document.getElementById("volumes");
+    if (!el) {
+      requestAnimationFrame(tryScroll); // 🔥 tenta de novo
+      return;
+    }
+
+    const header = document.querySelector(".heroHeader");
+    const headerHeight = header?.offsetHeight || 80;
+
+    const top = el.getBoundingClientRect().top + window.scrollY;
+
+    window.scrollTo({
+      top: top - headerHeight - 8,
+      behavior: "smooth",
+    });
+
+    setShouldScrollToVolumes(false);
+  };
+
+  tryScroll();
+}, [location.pathname, shouldScrollToVolumes]);
 
   useEffect(() => {
     setInputValue(qParam);
@@ -205,7 +245,6 @@ function AppShell() {
       setActiveSeries(null);
       return;
     }
-
     if (volumeId) return;
 
     const name = seriesBySlug.get(seriesSlug) || null;
@@ -224,7 +263,6 @@ function AppShell() {
     const picked = pickSeriesFromQuery(q, seriesNames);
     if (!picked) return;
 
-    setSelected(null);
     setPage(1);
 
     navigate(`/${slugify(picked)}${sp.toString() ? `?${sp.toString()}` : ""}`);
@@ -302,6 +340,8 @@ function AppShell() {
     const spString = sp.toString();
     let arr = [...baseFiltered];
 
+    arr = arr.filter((p) => p.best_price != null);
+
     const brandSet = brandParam.length ? new Set(brandParam.map(normLc)) : null;
     const authorSet = authorParam.length
       ? new Set(authorParam.map(normLc))
@@ -333,7 +373,16 @@ function AppShell() {
 
     if (Number.isFinite(maxPrice)) {
       arr = arr.filter((p) => {
-        return p.best_price != null && p.best_price <= maxPrice;
+        // ❌ remove tudo que não tem preço
+        if (p.best_price == null) return false;
+
+        const price = Number(p.best_price);
+
+        // ❌ remove inválido
+        if (!Number.isFinite(price)) return false;
+
+        // ✅ só entra se for menor ou igual ao filtro
+        return price <= maxPrice;
       });
     }
 
@@ -349,9 +398,15 @@ function AppShell() {
 
     const sort = sortParam || "relevance";
     if (sort === "price_asc") {
-      arr.sort((a, b) => (a.best_price ?? 1e15) - (b.best_price ?? 1e15));
+      arr.sort(
+        (a, b) =>
+          (Number(a.best_price) || 1e15) - (Number(b.best_price) || 1e15)
+      );
     } else if (sort === "price_desc") {
-      arr.sort((a, b) => (b.best_price ?? -1) - (a.best_price ?? -1));
+      arr.sort(
+        (a, b) =>
+          (Number(b.best_price) || -1) - (Number(a.best_price) || -1)
+      );
     } else if (sort === "new") {
       arr.sort((a, b) => {
         const da = new Date(
@@ -394,10 +449,9 @@ function AppShell() {
   );
 
   const visibleSeriesList = useMemo(() => {
-    if (!isDesktopCollections) return seriesList;
     const start = (seriesPage - 1) * SERIES_PAGE_SIZE;
     return seriesList.slice(start, start + SERIES_PAGE_SIZE);
-  }, [isDesktopCollections, seriesList, seriesPage]);
+  }, [seriesList, seriesPage]);
 
   const seriesPageDots = useMemo(() => {
     return Array.from({ length: totalSeriesPages }, (_, i) => i + 1);
@@ -414,71 +468,52 @@ function AppShell() {
     setSp(next, { replace: true });
   };
 
-  useEffect(() => {
-    if (!volumeId) {
-      setSelected(null);
-      return;
-    }
+  const selectedProduct = useMemo(() => {
+    if (!volumeId) return null;
 
-    const prod = products.find((p) => p.id === volumeId) || null;
-    setSelected(prod);
-  }, [volumeId]);
-
+    return products.find((p) => {
+      const slug = p.url?.split("/").pop(); // pega "gb-04"
+      return slug === volumeId;
+    }) || null;
+  }, [volumeId, products]);
+  
   const openSeries = (name) => {
     setPage(1);
-    setSelected(null);
+    setShouldScrollToVolumes(true);
 
     const slug = slugify(name);
     const qs = sp.toString();
     navigate(`/${slug}${qs ? `?${qs}` : ""}`);
-
-    setTimeout(() => {
-      document.getElementById("volumes")?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }, 0);
   };
 
   const clearSeries = () => {
     setPage(1);
-    setSelected(null);
 
-    const qs = sp.toString();
-    navigate(`/${qs ? `?${qs}` : ""}`, { replace: true });
-
-    setTimeout(() => {
-      document.getElementById("obras")?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }, 0);
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate("/");
+      setTimeout(() => {
+        scrollToIdWithOffset("obras");
+      }, 80);
+    }
   };
 
   const openProduct = (product) => {
-    setSelected(product);
-
-    const seriesName = product?.series || activeSeries;
-    const parentSlug = seriesName ? slugify(seriesName) : seriesSlug || null;
-    const qs = sp.toString();
-
-    const backgroundPath = `${location.pathname}${location.search || ""}`;
-
-    if (parentSlug) {
-      navigate(`/${parentSlug}/${product.id}${qs ? `?${qs}` : ""}`, {
-        state: { backgroundPath },
-      });
+    if (!product?.url) {
+      console.warn("🚨 Produto sem URL:", product);
       return;
     }
 
-    navigate(`/${product.id}${qs ? `?${qs}` : ""}`, {
+    const qs = sp.toString();
+    const backgroundPath = `${location.pathname}${location.search || ""}`;
+
+    navigate(`${product.url}${qs ? `?${qs}` : ""}`, {
       state: { backgroundPath },
     });
   };
 
   const closeModal = () => {
-    setSelected(null);
-
     const backgroundPath = location.state?.backgroundPath;
 
     if (backgroundPath) {
@@ -581,9 +616,8 @@ function AppShell() {
       const safePage = Math.max(1, Math.min(totalSeriesPages, nextPage));
       setSeriesPage(safePage);
 
-      if (collectionsSectionRef.current && isDesktopCollections) {
-        const extraOffset =
-          window.innerWidth <= 768 ? 84 : isHeaderCompact ? 96 : 132;
+      if (collectionsSectionRef.current) {
+        const extraOffset = isHeaderCompact ? 96 : 132;
 
         const top =
           collectionsSectionRef.current.getBoundingClientRect().top +
@@ -596,12 +630,8 @@ function AppShell() {
         });
       }
     },
-    [isDesktopCollections, isHeaderCompact, totalSeriesPages]
+    [isHeaderCompact, totalSeriesPages]
   );
-
-  useEffect(() => {
-    setSeriesPage(1);
-  }, [isDesktopCollections]);
 
   useEffect(() => {
     const maxPage = Math.max(1, Math.ceil(seriesList.length / SERIES_PAGE_SIZE));
@@ -764,9 +794,7 @@ function AppShell() {
           </div>
 
           <section
-            className={`collectionsSection ${
-              isDesktopCollections ? "collectionsSectionDesktop" : ""
-            }`}
+            className="collectionsSection"
             id="railTitle"
             ref={collectionsSectionRef}
           >
@@ -775,95 +803,39 @@ function AppShell() {
               subtitle="Explore por obra e veja os volumes disponíveis."
             />
 
-            {isDesktopCollections ? (
-              <>
-                <div className="collectionsTopbar">
-                  <div className="collectionsTopbarLeft">
-                    <span className="collectionsEyebrow">Catálogo</span>
-                    <div className="collectionsMeta">
-                      Página <strong>{seriesPage}</strong> de{" "}
-                      <strong>{totalSeriesPages}</strong>
-                    </div>
-                  </div>
-
-                  <div className="collectionsPager">
-                    <button
-                      type="button"
-                      className="collectionsNavBtn"
-                      onClick={() => changeSeriesPage(seriesPage - 1)}
-                      disabled={seriesPage === 1}
-                      aria-label="Página anterior"
-                      title="Página anterior"
-                    >
-                      ‹
-                    </button>
-
-                    <button
-                      type="button"
-                      className="collectionsNavBtn"
-                      onClick={() => changeSeriesPage(seriesPage + 1)}
-                      disabled={seriesPage === totalSeriesPages}
-                      aria-label="Próxima página"
-                      title="Próxima página"
-                    >
-                      ›
-                    </button>
+            <>
+              <div className="collectionsTopbar">
+                <div className="collectionsTopbarLeft">
+                  <span className="collectionsEyebrow">Catálogo</span>
+                  <div className="collectionsMeta">
+                    Página <strong>{seriesPage}</strong> de{" "}
+                    <strong>{totalSeriesPages}</strong>
                   </div>
                 </div>
 
-                <div className="seriesRail collectionsDesktopGrid">
-                  {visibleSeriesList.map((s) => (
-                    <div className="railItem" key={s.name}>
-                      <SeriesCard
-                        name={s.name}
-                        thumb={s.thumb}
-                        subtitle={s.subtitle}
-                        rangeLabel={s.rangeLabel}
-                        haveLabel={s.haveLabel}
-                        statusLabel={s.statusLabel}
-                        missing={s.missing}
-                        missingCount={s.missingCount}
-                        active={activeSeries === s.name}
-                        onOpen={openSeries}
-                      />
-                    </div>
-                  ))}
+                <div className="collectionsPager">
+                  <button
+                    type="button"
+                    className="collectionsNavBtn"
+                    onClick={() => changeSeriesPage(seriesPage - 1)}
+                    disabled={seriesPage === 1}
+                  >
+                    ‹
+                  </button>
+
+                  <button
+                    type="button"
+                    className="collectionsNavBtn"
+                    onClick={() => changeSeriesPage(seriesPage + 1)}
+                    disabled={seriesPage === totalSeriesPages}
+                  >
+                    ›
+                  </button>
                 </div>
+              </div>
 
-                {totalSeriesPages > 1 ? (
-                  <div className="collectionsBottomBar">
-                    <div className="collectionsDots" aria-label="Paginação das coleções">
-                      {seriesPageDots.map((dotPage) => (
-                        <button
-                          key={dotPage}
-                          type="button"
-                          className={`collectionsDot ${
-                            dotPage === seriesPage ? "isActive" : ""
-                          }`}
-                          onClick={() => changeSeriesPage(dotPage)}
-                          aria-label={`Ir para página ${dotPage}`}
-                          title={`Página ${dotPage}`}
-                        />
-                      ))}
-                    </div>
-
-                    <div className="collectionsCounter">
-                      Exibindo{" "}
-                      <strong>
-                        {(seriesPage - 1) * SERIES_PAGE_SIZE + 1}
-                      </strong>
-                      –
-                      <strong>
-                        {Math.min(seriesPage * SERIES_PAGE_SIZE, seriesList.length)}
-                      </strong>{" "}
-                      de <strong>{seriesList.length}</strong> obras
-                    </div>
-                  </div>
-                ) : null}
-              </>
-            ) : (
               <div className="seriesRail">
-                {seriesList.map((s) => (
+                {visibleSeriesList.map((s) => (
                   <div className="railItem" key={s.name}>
                     <SeriesCard
                       name={s.name}
@@ -880,7 +852,35 @@ function AppShell() {
                   </div>
                 ))}
               </div>
-            )}
+
+              {totalSeriesPages > 1 && (
+                <div className="collectionsBottomBar">
+                  <div className="collectionsDots">
+                    {seriesPageDots.map((dotPage) => (
+                      <button
+                        key={dotPage}
+                        className={`collectionsDot ${
+                          dotPage === seriesPage ? "isActive" : ""
+                        }`}
+                        onClick={() => changeSeriesPage(dotPage)}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="collectionsCounter">
+                    Exibindo{" "}
+                    <strong>
+                      {(seriesPage - 1) * SERIES_PAGE_SIZE + 1}
+                    </strong>
+                    –
+                    <strong>
+                      {Math.min(seriesPage * SERIES_PAGE_SIZE, seriesList.length)}
+                    </strong>{" "}
+                    de <strong>{seriesList.length}</strong> obras
+                  </div>
+                </div>
+              )}
+            </>
           </section>
         </section>
       )}
@@ -925,7 +925,9 @@ function AppShell() {
         </section>
       )}
 
-      {selected && <ProductModal product={selected} onClose={closeModal} />}
+      {selectedProduct && (
+        <ProductModal product={selectedProduct} onClose={closeModal} />
+      )}
 
       {showScrollTop && (
         <button

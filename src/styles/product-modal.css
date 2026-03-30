@@ -1,7 +1,7 @@
 :root{
   --modal-pad: 16px;
   --topbar-h: 68px;
-  --footer-h: 166px;
+  --footer-h: 120px;
 }
 
 /* =========================================================
@@ -26,6 +26,8 @@
   box-shadow: 0 24px 90px rgba(0,0,0,0.55);
   overflow: hidden;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 /* =========================================================
@@ -159,16 +161,25 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 14px;
+  padding: 8px 12px; /* menor */
   border-radius: 999px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  background: transparent; /* remove aquele fundo pesado */
   border: 1px solid rgba(255,255,255,0.12);
+
+  color: rgba(255,255,255,0.8);
+
+  margin-top: 8px;
+}
+
+.tiktokExternalBtn:hover{
   background: rgba(255,255,255,0.06);
   color: #fff;
-  text-decoration: none;
-  font-weight: 700;
-  width: fit-content;
-  margin-top: 10px;
 }
+
 
 .mediaCard{
   border-radius: 18px;
@@ -531,7 +542,7 @@
     width: 100%;
     display: block;
     object-fit: contain;
-    max-height: 44vh;
+    max-height: 32vh;
     height: auto;
   }
 
@@ -579,8 +590,11 @@
     margin-top: 2px;
   }
 
-  .tiktokTall{ max-height: 72vh; }
-  .tiktokEmbedWrap.tiktokTall{ border-radius: 16px; }
+  .tiktokEmbedWrap.tiktokTall{
+    max-height: 60vh;
+    border-radius: 16px;
+  }
+
   .tiktokPlaceholder.tiktokCompact{ border-radius: 16px; }
 
   .mediaCard{ width: 100%; }
@@ -593,8 +607,9 @@
   }
 
   .storeBuyCard{
-    min-height: 84px;
-    padding: 12px 14px;
+    min-height: 64px;
+    padding: 10px 12px;
+    gap: 6px;
     border-radius: 16px;
   }
 
@@ -603,11 +618,12 @@
   }
 
   .storeBuyPrice{
-    font-size: 1rem;
+    font-size: 0.95rem;
+    font-weight: 700;
   }
 
   .storeBuyMeta{
-    font-size: 0.76rem;
+    font-size: 0.72rem;
   }
 
   .storeBestBadge{
@@ -639,48 +655,61 @@
     font-size: 0.95rem;
   }
 }
-
 @media (max-width: 380px){
-  :root{ --topbar-h: 64px; --footer-h: 172px; }
 
-  .railProduct .modalCover img{ max-height: 40vh; }
-
-  .productInfoUnder .modalTitle{ font-size: 15px; }
-  .modalHeading{ font-size: 18px; }
-
+  /* 🔽 BOTÕES MAIS COMPACTOS */
   .storeBuyCard{
-    padding: 11px 12px;
+    min-height: 56px; /* antes 64+ */
+    padding: 8px 10px;
+    gap: 4px;
+    border-radius: 12px;
   }
 
   .storeBuyCard .brandIcon{
-    height: 18px;
+    height: 16px;
+  }
+
+  .storeBuyTop{
+    gap: 6px;
   }
 
   .storeBuyPrice{
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  .storeBuyMeta{
+    font-size: 0.68rem;
   }
 
   .storeBestBadge{
-    font-size: 0.58rem;
-    padding: 3px 6px;
+    font-size: 0.5rem;
+    padding: 2px 5px;
   }
-}
 
-.desktopBuySection{
-  margin-top: 14px;
-  max-width: 72ch;
-}
+  /* 🔽 GRID MAIS JUSTO */
+  .buyRowCards{
+    gap: 6px;
+  }
 
-.desktopBuySectionVideo{
-  margin-top: 14px;
-}
+  /* 🔽 FOOTER MENOR */
+  :root{
+    --footer-h: 100px;
+  }
+    .buyRowCards.twoCols{
+    grid-template-columns: 1fr 1fr;
+  }
 
-.buyBlock{
-  width: 100%;
-}
+  /* força conteúdo a não "respirar demais" */
+  .modalFooter{
+    padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+  }
+  
+  .tiktokEmbedWrap.tiktokTall{
+    max-height: 55vh;
+    border-radius: 16px;
+  }
 
-.mobileVideoBuyBlock{
-  margin-top: 12px;
 }
 
 @media (min-width: 721px){

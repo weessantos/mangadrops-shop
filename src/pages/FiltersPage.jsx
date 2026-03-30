@@ -111,53 +111,8 @@ export default function FiltersPage() {
     );
   }, [seriesData]);
 
-  console.log(
-    volumes.filter(v => v.best_price <= 30)
-  );
-  // ========================
-  // FILTER
-  // ========================
-  const filtered = useMemo(() => {
-  return volumes.filter((v) => {
-    // 🔎 busca
-    if (q && !v.title?.toLowerCase().includes(q.toLowerCase()))
-      return false;
+  console.log("RENDER FILTER PAGE");
 
-    // 🏷 brand
-    if (brand.length && !brand.includes(v.brand)) return false;
-
-    // ✍️ author
-    if (author.length && !author.includes(v.author)) return false;
-
-    // 🎭 genre
-    if (
-      genre.length &&
-      !genre.some((g) =>
-        v.genre?.toLowerCase().includes(g.toLowerCase())
-      )
-    )
-      return false;
-
-    // 📦 format
-    if (format.length && !format.includes(v.format)) return false;
-
-    // 💰 preço
-    if (price) {
-      if (v.best_price == null) return false;
-      if (v.best_price > Number(price)) return false;
-    }
-
-    // 🔥 desconto
-    if (discount) {
-      if (v.discount == null) return false;
-      if (v.discount < Number(discount)) return false;
-    }
-
-    return true;
-  });
-}, [volumes, q, brand, author, genre, format, price, discount]);
-console.log("FILTERED:", filtered.length);
-console.log("ORIGINAL:", volumes.length);
   // ========================
   // ACTIONS
   // ========================

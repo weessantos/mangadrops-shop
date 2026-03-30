@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import ProductCard from "./ProductCard.jsx";
 import "../styles/product-rail.css";
-import { getPrice } from "../utils/priceLoader";
-import { getOfferData } from "../utils/priceUtils";
 
 function isValidDate(v) {
   return typeof v === "string" && !Number.isNaN(new Date(v).getTime());
@@ -50,17 +48,9 @@ export default function LaunchRail({
             ? p.affiliate.amazon.trim()
             : "";
 
-        const mlPrice = getPrice(p, "mercadoLivre");
-        const amzPrice = getPrice(p, "amazon");
+        const price = Number(p.best_price);
 
-        const { isAvailable } = getOfferData({
-          mlHref: mlUrl,
-          mlPrice,
-          amazonHref: amzUrl,
-          amazonPrice: amzPrice,
-        });
-
-        return isAvailable;
+        return Number.isFinite(price) && price > 0;
       })
       .sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt));
 
@@ -68,16 +58,6 @@ export default function LaunchRail({
     if (list.length === 0) {
       list = [...products]
         .filter((p) => {
-          const mlPrice = getPrice(p, "mercadoLivre");
-          const amzPrice = getPrice(p, "amazon");
-
-          const { isAvailable } = getOfferData({
-            mlHref: p?.affiliate?.mercadoLivre,
-            mlPrice,
-            amazonHref: p?.affiliate?.amazon,
-            amazonPrice: amzPrice,
-          });
-
           return isAvailable;
         })
         .slice(0, 12);
@@ -225,7 +205,7 @@ export default function LaunchRail({
                 : { label: "RECENTE", className: "recentBadge" };
 
             return (
-              <div className="railItem productItem" key={p.id}>
+              <div className="railItem productItem" key={p.volumeSlug}>
                 <ProductCard
                   product={p}
                   onOpen={onOpenProduct}

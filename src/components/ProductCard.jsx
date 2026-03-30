@@ -1,9 +1,8 @@
 import { memo, useCallback, useMemo } from "react";
 import "../styles/product-card.css";
 import { track } from "../utils/analytics.js";
-import { getBestPrice, formatPrice, getPrice } from "../utils/priceLoader";
-import { getOfferData, getDiscountData } from "../utils/priceUtils";
-
+import { getDiscountData } from "../utils/priceUtils";
+import { formatPrice } from "../utils/priceLoader";
 const base = import.meta.env.BASE_URL;
 const ML_ICON = `${base}assets/mercadolivre.svg`;
 const AMAZON_ICON = `${base}assets/amazon.svg`;
@@ -17,6 +16,7 @@ function ProductCardBase({
   priority = false,
 }) {
   console.log("🧪 PRODUCT:", product);
+// 🔗 LINKS
   const mlUrl =
     typeof product?.affiliate?.mercadoLivre === "string"
       ? product.affiliate.mercadoLivre.trim()
@@ -27,32 +27,29 @@ function ProductCardBase({
       ? product.affiliate.amazon.trim()
       : "";
 
-  const mlPrice = useMemo(
-    () => getPrice(product, "mercadoLivre"),
-    [product]
-  );
+  // 💰 PREÇOS DIRETO DO BANCO
+  const mlPrice = Number(product?.mercado_livre_price);
+  const amzPrice = Number(product?.amazon_price);
+  const bestPrice = Number(product?.best_price);
 
-  const amzPrice = useMemo(
-    () => getPrice(product, "amazon"),
-    [product]
-  );
+  // 🧠 FLAGS
+  const hasML = Boolean(mlUrl);
+  const hasAmazon = Boolean(amzUrl);
+  const hasBoth = hasML && hasAmazon;
 
-  const offerData = useMemo(
-    () =>
-      getOfferData({
-        mlHref: mlUrl,
-        mlPrice,
-        amazonHref: amzUrl,
-        amazonPrice: amzPrice,
-      }),
-    [mlUrl, mlPrice, amzUrl, amzPrice]
-  );
+  const hasMLPrice = Number.isFinite(mlPrice);
+  const hasAmazonPrice = Number.isFinite(amzPrice);
 
-  const { hasML, hasAmazon, hasBoth } = offerData;
-  const hasAffiliateLink = Boolean(mlUrl || amzUrl);
+  // 🔥 REGRAS PRINCIPAIS
+  const shouldShowPrice =
+    (hasMLPrice || hasAmazonPrice) && Number.isFinite(bestPrice);
 
-  const bestPrice = useMemo(() => getBestPrice(product), [product]);
+  const shouldShowConsultOnly =
+    (hasML || hasAmazon) && !shouldShowPrice;
 
+  const hasAffiliateLink = hasML || hasAmazon;
+
+  // 💸 COVER PRICE (mantém pra desconto)
   const coverPrice = useMemo(() => {
     const raw = product?.coverPrice;
     if (raw == null || raw === "") return null;
@@ -70,33 +67,10 @@ function ProductCardBase({
     return coverPrice * 1.15;
   }, [coverPrice]);
 
-  const isPriceTooHigh = useMemo(() => {
-    const value = bestPrice?.value;
-    if (!Number.isFinite(value)) return false;
-    if (!Number.isFinite(maxVisiblePrice)) return false;
-    return value > maxVisiblePrice;
-  }, [bestPrice?.value, maxVisiblePrice]);
-
-  const shouldShowPrice = Boolean(
-    hasAffiliateLink &&
-      bestPrice &&
-      Number.isFinite(bestPrice?.value) &&
-      !isPriceTooHigh
-  );
-
-  const shouldShowConsultOnly = Boolean(hasAffiliateLink && !shouldShowPrice);
-
-  const bestStoreLabel =
-    shouldShowPrice && bestPrice?.store === "amazon"
-      ? "Amazon"
-      : shouldShowPrice && bestPrice?.store === "mercadoLivre"
-      ? "Mercado Livre"
-      : null;
-
   const discountData = useMemo(
     () =>
       shouldShowPrice
-        ? getDiscountData(product, bestPrice?.value ?? null)
+        ? getDiscountData(product, bestPrice ?? null)
         : null,
     [product, bestPrice?.value, shouldShowPrice]
   );
@@ -194,6 +168,7 @@ function ProductCardBase({
         <img
           className="thumb"
           src={product.image}
+          onError={(e) => (e.target.src = "/placeholder.png")}
           alt={product.title}
           loading={priority ? "eager" : "lazy"}
           decoding="async"
@@ -241,7 +216,7 @@ function ProductCardBase({
 
               <div className="cardPriceMainRow">
                 <div className="cardPriceValue">
-                  {formatPrice(bestPrice.value)}
+                  {formatPrice(bestPrice)}
                 </div>
 
                 {discountData?.hasDiscount ? (
@@ -250,10 +225,6 @@ function ProductCardBase({
                   </span>
                 ) : null}
               </div>
-
-              {bestStoreLabel ? (
-                <div className="cardPriceStore">{bestStoreLabel}</div>
-              ) : null}
             </>
           ) : shouldShowConsultOnly ? (
             <>
@@ -270,53 +241,39 @@ function ProductCardBase({
         <div className="buttonsCol" onClick={(e) => e.stopPropagation()}>
           {hasAffiliateLink ? (
             <div className={hasBoth ? "buyRow" : ""}>
-              {hasML ? (
+              {hasML && mlUrl ? (
                 <a
                   href={mlUrl}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   onClick={() => fireBuy("mercadolivre")}
-                  className={hasBoth ? "buyLink grow" : "buyLink single"}
+                  className={`buyLink ${hasBoth ? "grow" : "single"} btn brandBtn mercado`}
                   aria-label="Comprar no Mercado Livre"
                   title="Comprar no Mercado Livre"
                 >
-                  <span className="btn brandBtn mercado">
-                    <img
-                      src={ML_ICON}
-                      alt="Mercado Livre"
-                      className="brandIcon"
-                      loading="lazy"
-                      decoding="async"
-                      width="92"
-                      height="24"
-                      draggable="false"
-                    />
-                  </span>
+                  <img
+                    src={ML_ICON}
+                    alt="Mercado Livre"
+                    className="brandIcon"
+                  />
                 </a>
               ) : null}
 
-              {hasAmazon ? (
+              {hasAmazon && amzUrl ? (
                 <a
                   href={amzUrl}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   onClick={() => fireBuy("amazon")}
-                  className={hasBoth ? "buyLink grow" : "buyLink single"}
+                  className={`buyLink ${hasBoth ? "grow" : "single"} btn brandBtn amazon`}
                   aria-label="Comprar na Amazon"
                   title="Comprar na Amazon"
                 >
-                  <span className="btn brandBtn amazon">
-                    <img
-                      src={AMAZON_ICON}
-                      alt="Amazon"
-                      className="brandIcon"
-                      loading="lazy"
-                      decoding="async"
-                      width="92"
-                      height="24"
-                      draggable="false"
-                    />
-                  </span>
+                  <img
+                    src={AMAZON_ICON}
+                    alt="Amazon"
+                    className="brandIcon"
+                  />
                 </a>
               ) : null}
             </div>
