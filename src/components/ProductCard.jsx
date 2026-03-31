@@ -40,14 +40,16 @@ function ProductCardBase({
   const hasMLPrice = Number.isFinite(mlPrice);
   const hasAmazonPrice = Number.isFinite(amzPrice);
 
+  const hasAffiliateLink = hasML || hasAmazon;
+
   // 🔥 REGRAS PRINCIPAIS
   const shouldShowPrice =
-    (hasMLPrice || hasAmazonPrice) && Number.isFinite(bestPrice);
+    hasAffiliateLink &&
+    (hasMLPrice || hasAmazonPrice) &&
+    Number.isFinite(bestPrice);
 
   const shouldShowConsultOnly =
     (hasML || hasAmazon) && !shouldShowPrice;
-
-  const hasAffiliateLink = hasML || hasAmazon;
 
   // 💸 COVER PRICE (mantém pra desconto)
   const coverPrice = useMemo(() => {
@@ -72,7 +74,7 @@ function ProductCardBase({
       shouldShowPrice
         ? getDiscountData(product, bestPrice ?? null)
         : null,
-    [product, bestPrice?.value, shouldShowPrice]
+    [product, bestPrice, shouldShowPrice]
   );
 
   const isNew = useMemo(() => {
@@ -234,7 +236,7 @@ function ProductCardBase({
               </div>
             </>
           ) : (
-            <div className="cardPriceEmpty" aria-hidden="true" />
+            <div className="cardPriceEmpty" />
           )}
         </div>
 

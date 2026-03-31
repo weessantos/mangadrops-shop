@@ -75,12 +75,15 @@
       overflow-x: auto;
       gap: 14px;
       padding-bottom: 8px;
+      flex-wrap: nowrap;
+      overflow-x: auto !important;
     }
 
     .collectionsSection .railItem {
-      flex: 0 0 75%;
-      max-width: 75%;
-    }
+        flex: 0 0 75%;
+        max-width: 75%;
+        flex-shrink: 0; /* 🔥 evita compressão */
+      }
 
     .collectionsSection .seriesCard {
       width: 100%;

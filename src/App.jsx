@@ -20,9 +20,10 @@ import CheapRail from "./components/CheapRail.jsx";
 import BrandStats from "./components/BrandStats";
 import SectionHeader from "./components/SectionHeader";
 import ActiveFiltersBar from "./components/ActiveFiltersBar";
-import { normalizeProduct } from "./utils/normalizeProduct";
-
 import FiltersPage from "./pages/FiltersPage";
+
+import { useIsMobile } from "./hooks/useIsMobile";
+import { normalizeProduct } from "./utils/normalizeProduct";
 
 import { supabaseClient } from "./lib/supabase.js";
 import { getSeriesCatalog } from "./data/products/series.catalog.js";
@@ -117,6 +118,8 @@ function AppShell() {
   const location = useLocation();
   const { seriesSlug, volumeId } = useParams();
   const [sp, setSp] = useSearchParams();
+
+  const isMobile = useIsMobile();
 
   const [page, setPage] = useState(1);
   const [seriesPage, setSeriesPage] = useState(1);
@@ -340,7 +343,7 @@ function AppShell() {
     const spString = sp.toString();
     let arr = [...baseFiltered];
 
-    arr = arr.filter((p) => p.best_price != null);
+    //arr = arr.filter((p) => p.best_price != null);
 
     const brandSet = brandParam.length ? new Set(brandParam.map(normLc)) : null;
     const authorSet = authorParam.length
@@ -835,7 +838,7 @@ function AppShell() {
               </div>
 
               <div className="seriesRail">
-                {visibleSeriesList.map((s) => (
+                {(isMobile ? seriesList : visibleSeriesList).map((s) => (
                   <div className="railItem" key={s.name}>
                     <SeriesCard
                       name={s.name}
