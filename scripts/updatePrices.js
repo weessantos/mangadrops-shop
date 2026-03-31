@@ -906,14 +906,6 @@ async function savePricesToDatabase(prices) {
           amazon_price = $1::numeric,
           mercado_livre_price = $2::numeric,
 
-          best_price =
-            CASE
-              WHEN $1 IS NOT NULL AND $2 IS NOT NULL THEN LEAST($1, $2)
-              WHEN $1 IS NOT NULL THEN $1
-              WHEN $2 IS NOT NULL THEN $2
-              ELSE NULL
-            END,
-
           price_updated_at = NOW()
 
         WHERE number = $3
