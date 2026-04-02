@@ -749,7 +749,7 @@ async function processProduct(product, existingPrices, prices, counters, stats, 
   console.log("AFFILIATE:", product.affiliate);
 
   const mlLink = product.affiliate?.mercadoLivre?.trim() || "";
-  const amazonLink = product.affiliate?.amazon?.trim() || "";
+  const amazonLink = product.raw?.amazon?.trim() || "";
 
   const previous = existingPrices[productId] || {};
 
@@ -951,7 +951,7 @@ async function getProductsFromSupabase() {
 
   const { data, error } = await supabase
     .from("series_volumes_view")
-    .select("prefix, number, amazon, mercado_livre");
+    .select("prefix, number, amazon, amazon_raw, mercado_livre");
 
   if (error) {
     throw new Error("Erro ao buscar Supabase: " + error.message);
@@ -962,8 +962,11 @@ async function getProductsFromSupabase() {
   return data.map((v) => ({
     id: `${v.prefix}-${String(v.number).padStart(2, "0")}`,
     affiliate: {
-      amazon: v.amazon,
+      amazon: v.amazon, // mantém afiliado
       mercadoLivre: v.mercado_livre,
+    },
+    raw: {
+      amazon: v.amazon_raw, // novo
     }
   }));
 }

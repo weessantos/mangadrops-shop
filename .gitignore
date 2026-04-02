@@ -17,6 +17,8 @@ playwright/.auth
 src/data/prices.json
 .env
 keys.txt
+pricesExtractor.js
+input_ml.json
 
 # Editor directories and files
 .vscode/*
