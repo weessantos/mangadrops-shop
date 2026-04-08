@@ -19,6 +19,8 @@ src/data/prices.json
 keys.txt
 pricesExtractor.js
 input_ml.json
+sketch.txt
+
 
 # Editor directories and files
 .vscode/*
