@@ -1,11 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import "../styles/product-modal.css";
 import { track } from "../utils/analytics.js";
-import {
-  getPrice,
-  formatPrice,
-  getBestPrice,
-} from "../utils/priceLoader";
+import { getPrice, formatPrice, getBestPrice } from "../utils/priceLoader";
 
 const base = import.meta.env.BASE_URL;
 const img = (path) => `${base}assets/${path}`;
@@ -32,7 +28,8 @@ const handleOverlayWheel = (e) => {
 
 function getTikTokEmbedUrl(tiktokUrl) {
   if (!tiktokUrl) return null;
-  const match = tiktokUrl.match(/video\/(\d+)/) || tiktokUrl.match(/\/v\/(\d+)/);
+  const match =
+    tiktokUrl.match(/video\/(\d+)/) || tiktokUrl.match(/\/v\/(\d+)/);
   const videoId = match?.[1];
   if (!videoId) return null;
   return `https://www.tiktok.com/embed/v2/${videoId}`;
@@ -113,9 +110,10 @@ export default function ProductModal({ product, onClose }) {
 
   const tiktokEmbedUrl = useMemo(
     () => getTikTokEmbedUrl(product?.tiktokUrl),
-    [product?.tiktokUrl]
+    [product?.tiktokUrl],
   );
 
+  // 🔗 LINKS
   const mlUrl =
     typeof product?.affiliate?.mercadoLivre === "string"
       ? product.affiliate.mercadoLivre.trim()
@@ -126,22 +124,36 @@ export default function ProductModal({ product, onClose }) {
       ? product.affiliate.amazon.trim()
       : "";
 
-  const hasML = !!mlUrl;
-  const hasAmazon = !!amzUrl;
-  const hasAffiliateLink = hasML || hasAmazon;
-  const hasBoth = hasML && hasAmazon;
+  const hasMLLink = Boolean(mlUrl);
+  const hasAmazonLink = Boolean(amzUrl);
 
   if (!product) return null;
 
-  const mlPrice = Number(product?.mercado_livre_price);
-  const amazonPrice = Number(product?.amazon_price);
-  const bestPrice = Number(product?.best_price);
-  
-  const isMlBest = bestPrice === mlPrice;
-  const isAmazonBest = bestPrice === amazonPrice;
+  // 💰 PREÇOS
+  const mlPrice =
+    product?.mercado_livre_price != null
+      ? Number(product.mercado_livre_price)
+      : null;
 
+  const amazonPrice =
+    product?.amazon_price != null ? Number(product.amazon_price) : null;
+
+  const bestPrice =
+    product?.best_price != null ? Number(product.best_price) : null;
+
+  // 🧠 FLAGS DE PREÇO
   const hasMlPrice = Number.isFinite(mlPrice);
   const hasAmazonPrice = Number.isFinite(amazonPrice);
+
+  // 🔥 REGRA FINAL (baseado em preço)
+  const hasML = hasMlPrice;
+  const hasAmazon = hasAmazonPrice;
+  const hasAffiliateLink = hasML || hasAmazon;
+  const hasBoth = hasML && hasAmazon;
+
+  // 🏆 MELHOR PREÇO
+  const isMlBest = bestPrice === mlPrice;
+  const isAmazonBest = bestPrice === amazonPrice;
 
   const coverPrice = useMemo(() => {
     const raw = product?.coverPrice;
@@ -160,6 +172,11 @@ export default function ProductModal({ product, onClose }) {
     return coverPrice * 1.15;
   }, [coverPrice]);
 
+  const isPriceWeird =
+    Number.isFinite(bestPrice) &&
+    Number.isFinite(maxVisiblePrice) &&
+    bestPrice > maxVisiblePrice;
+
   const fireBuy = (store, placement) => {
     track("click_buy", {
       product_id: product?.id,
@@ -174,7 +191,7 @@ export default function ProductModal({ product, onClose }) {
   };
 
   const renderBuyButtons = (placement = "modal_inline") => {
-    if (!hasAffiliateLink) {
+    if (!hasAffiliateLink && !isPriceWeird) {
       return (
         <div className="buyBlock">
           <button className="btn danger" type="button" disabled>
@@ -187,14 +204,14 @@ export default function ProductModal({ product, onClose }) {
     return (
       <div className="buyBlock">
         <div className={`buyRow buyRowCards ${hasBoth ? "twoCols" : "oneCol"}`}>
-          {hasML && (
+          {(hasML || isPriceWeird) && hasMLLink && (
             <StoreButton
               href={mlUrl}
               store="Mercado Livre"
               logo={img("mercadolivre.svg")}
               alt="Mercado Livre"
               price={mlPrice}
-              showPrice={hasMlPrice}
+              showPrice={hasMlPrice && !isPriceWeird}
               isBest={isMlBest}
               onClick={(e) => {
                 e.stopPropagation();
@@ -203,14 +220,14 @@ export default function ProductModal({ product, onClose }) {
             />
           )}
 
-          {hasAmazon && (
+          {(hasAmazon || isPriceWeird) && hasAmazonLink && (
             <StoreButton
               href={amzUrl}
               store="Amazon"
               logo={img("amazon.svg")}
               alt="Amazon"
               price={amazonPrice}
-              showPrice={hasAmazonPrice}
+              showPrice={hasAmazonPrice && !isPriceWeird}
               isBest={isAmazonBest}
               onClick={(e) => {
                 e.stopPropagation();
@@ -224,11 +241,20 @@ export default function ProductModal({ product, onClose }) {
   };
 
   return (
-    <div className="modalOverlay" onClick={onClose} onWheel={handleOverlayWheel}>
+    <div
+      className="modalOverlay"
+      onClick={onClose}
+      onWheel={handleOverlayWheel}
+    >
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modalTop">
           <h1 className="modalHeading">Detalhes do mangá</h1>
-          <button className="closeBtn" onClick={onClose} aria-label="Fechar" type="button">
+          <button
+            className="closeBtn"
+            onClick={onClose}
+            aria-label="Fechar"
+            type="button"
+          >
             ✕
           </button>
         </div>
@@ -237,7 +263,12 @@ export default function ProductModal({ product, onClose }) {
           <div className="modalBody desktopOnly">
             <div className="modalLeft">
               <div className="modalCover desktopCover">
-                <img src={product.image} alt={product.title} loading="eager" decoding="async" />
+                <img
+                  src={product.image}
+                  alt={product.title}
+                  loading="eager"
+                  decoding="async"
+                />
               </div>
 
               <p className="modalDesc modalDescLeft desktopCaption">
@@ -251,7 +282,9 @@ export default function ProductModal({ product, onClose }) {
                 <h2 className="modalTitle">{product.title}</h2>
 
                 <div className="modalBadges">
-                  {product.brand && <span className="badge">{product.brand}</span>}
+                  {product.brand && (
+                    <span className="badge">{product.brand}</span>
+                  )}
 
                   {Number.isFinite(Number(product.volume)) && (
                     <span className="badge">
@@ -318,7 +351,9 @@ export default function ProductModal({ product, onClose }) {
                 </div>
               ) : (
                 <div className="tabPanel" role="tabpanel">
-                  <div className={`mediaCard ${tiktokEmbedUrl ? "hasVideo" : "noVideo"}`}>
+                  <div
+                    className={`mediaCard ${tiktokEmbedUrl ? "hasVideo" : "noVideo"}`}
+                  >
                     {tiktokEmbedUrl ? (
                       <>
                         <div className="tiktokEmbedWrap tiktokDesktop">
@@ -370,14 +405,21 @@ export default function ProductModal({ product, onClose }) {
             <section className="railPage railProduct">
               <div className="productHero">
                 <div className="modalCover">
-                  <img src={product.image} alt={product.title} loading="eager" decoding="async" />
+                  <img
+                    src={product.image}
+                    alt={product.title}
+                    loading="eager"
+                    decoding="async"
+                  />
                 </div>
 
                 <div className="productInfoUnder">
                   <h2 className="modalTitle">{product.title}</h2>
 
                   <div className="modalBadges">
-                    {product.brand && <span className="badge">{product.brand}</span>}
+                    {product.brand && (
+                      <span className="badge">{product.brand}</span>
+                    )}
 
                     {Number.isFinite(Number(product.volume)) && (
                       <span className="badge">
@@ -392,7 +434,9 @@ export default function ProductModal({ product, onClose }) {
                       <span className="badge subtle">{product.author}</span>
                     )}
                     {product.genre && (
-                      <span className="badge subtle genre">{product.genre}</span>
+                      <span className="badge subtle genre">
+                        {product.genre}
+                      </span>
                     )}
                   </div>
                 </div>

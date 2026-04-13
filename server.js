@@ -11,9 +11,19 @@ app.use(cors())
 app.use(express.json())
 
 
+
 // rotas
 app.use("/api/series", seriesRoutes)
 app.use("/api/volumes", volumesRoutes)
+
+//imagens
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use('/assets', express.static(path.join(__dirname, 'public/assets')));
 
 const PORT = process.env.PORT || 3000;
 

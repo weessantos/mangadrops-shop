@@ -16,7 +16,7 @@ function ProductCardBase({
   priority = false,
 }) {
   console.log("🧪 PRODUCT:", product);
-// 🔗 LINKS
+  // 🔗 LINKS
   const mlUrl =
     typeof product?.affiliate?.mercadoLivre === "string"
       ? product.affiliate.mercadoLivre.trim()
@@ -28,28 +28,36 @@ function ProductCardBase({
       : "";
 
   // 💰 PREÇOS DIRETO DO BANCO
-  const mlPrice = Number(product?.mercado_livre_price);
-  const amzPrice = Number(product?.amazon_price);
-  const bestPrice = Number(product?.best_price);
+  const mlPrice =
+    product?.mercado_livre_price != null
+      ? Number(product.mercado_livre_price)
+      : null;
+
+  const amzPrice =
+    product?.amazon_price != null ? Number(product.amazon_price) : null;
+
+  const bestPrice =
+    product?.best_price != null ? Number(product.best_price) : null;
 
   // 🧠 FLAGS
-  const hasML = Boolean(mlUrl);
-  const hasAmazon = Boolean(amzUrl);
-  const hasBoth = hasML && hasAmazon;
-
   const hasMLPrice = Number.isFinite(mlPrice);
   const hasAmazonPrice = Number.isFinite(amzPrice);
 
+  const hasMLLink = Boolean(mlUrl);
+  const hasAmazonLink = Boolean(amzUrl);
+
+  // 🔥 regra final (botão depende de preço, não link)
+  const hasML = hasMLPrice;
+  const hasAmazon = hasAmazonPrice;
+  const hasBoth = hasML && hasAmazon;
+
+  const isAvailable = hasML || hasAmazon;
+  const isUnavailable = !hasMLLink && !hasAmazonLink;
+
+  // 🔥 mantém compatibilidade com resto do código
   const hasAffiliateLink = hasML || hasAmazon;
 
-  // 🔥 REGRAS PRINCIPAIS
-  const shouldShowPrice =
-    hasAffiliateLink &&
-    (hasMLPrice || hasAmazonPrice) &&
-    Number.isFinite(bestPrice);
-
-  const shouldShowConsultOnly =
-    (hasML || hasAmazon) && !shouldShowPrice;
+  // 🔥 REGRAS PRINCIPAIS (ajuste leve)
 
   // 💸 COVER PRICE (mantém pra desconto)
   const coverPrice = useMemo(() => {
@@ -69,12 +77,20 @@ function ProductCardBase({
     return coverPrice * 1.15;
   }, [coverPrice]);
 
+  const isPriceWeird =
+    Number.isFinite(bestPrice) &&
+    Number.isFinite(maxVisiblePrice) &&
+    bestPrice > maxVisiblePrice;
+
+  const shouldShowPrice =
+    hasAffiliateLink && Number.isFinite(bestPrice) && !isPriceWeird;
+
+  const shouldShowConsultOnly = isPriceWeird;
+
   const discountData = useMemo(
     () =>
-      shouldShowPrice
-        ? getDiscountData(product, bestPrice ?? null)
-        : null,
-    [product, bestPrice, shouldShowPrice]
+      shouldShowPrice ? getDiscountData(product, bestPrice ?? null) : null,
+    [product, bestPrice, shouldShowPrice],
   );
 
   const isNew = useMemo(() => {
@@ -114,7 +130,7 @@ function ProductCardBase({
     return null;
   }, [topBadge, shouldShowPrice, discountData, isNew]);
 
-  const availabilityText = hasAffiliateLink ? "Disponível" : "Em falta";
+  const availabilityText = isAvailable ? "Disponível" : "Em falta";
 
   const fireOpen = useCallback(
     (via = "card") => {
@@ -130,7 +146,7 @@ function ProductCardBase({
 
       onOpen?.(product);
     },
-    [product, hasAffiliateLink, placement, onOpen]
+    [product, hasAffiliateLink, placement, onOpen],
   );
 
   const fireBuy = useCallback(
@@ -145,7 +161,7 @@ function ProductCardBase({
         available: !!hasAffiliateLink,
       });
     },
-    [product, placement, hasAffiliateLink]
+    [product, placement, hasAffiliateLink],
   );
 
   const handleCardKeyDown = useCallback(
@@ -155,7 +171,7 @@ function ProductCardBase({
         fireOpen("keyboard");
       }
     },
-    [fireOpen]
+    [fireOpen],
   );
 
   return (
@@ -202,7 +218,7 @@ function ProductCardBase({
             </>
           ) : null}
 
-          <span className={`metaStock ${hasAffiliateLink ? "good" : "danger"}`}>
+          <span className={`metaStock ${isAvailable ? "good" : "danger"}`}>
             {availabilityText}
           </span>
         </div>
@@ -217,9 +233,7 @@ function ProductCardBase({
               ) : null}
 
               <div className="cardPriceMainRow">
-                <div className="cardPriceValue">
-                  {formatPrice(bestPrice)}
-                </div>
+                <div className="cardPriceValue">{formatPrice(bestPrice)}</div>
 
                 {discountData?.hasDiscount ? (
                   <span className="cardDiscountBadge">
@@ -241,7 +255,7 @@ function ProductCardBase({
         </div>
 
         <div className="buttonsCol" onClick={(e) => e.stopPropagation()}>
-          {hasAffiliateLink ? (
+          {hasML || hasAmazon ? (
             <div className={hasBoth ? "buyRow" : ""}>
               {hasML && mlUrl ? (
                 <a
@@ -271,11 +285,7 @@ function ProductCardBase({
                   aria-label="Comprar na Amazon"
                   title="Comprar na Amazon"
                 >
-                  <img
-                    src={AMAZON_ICON}
-                    alt="Amazon"
-                    className="brandIcon"
-                  />
+                  <img src={AMAZON_ICON} alt="Amazon" className="brandIcon" />
                 </a>
               ) : null}
             </div>
@@ -290,8 +300,6 @@ function ProductCardBase({
   );
 }
 
-
-
 export default memo(
   ProductCardBase,
   (prev, next) =>
@@ -301,5 +309,5 @@ export default memo(
     prev.placement === next.placement &&
     prev.priority === next.priority &&
     prev.topBadge?.label === next.topBadge?.label &&
-    prev.topBadge?.className === next.topBadge?.className
+    prev.topBadge?.className === next.topBadge?.className,
 );

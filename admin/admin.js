@@ -252,6 +252,129 @@ function showToast(message) {
 }
 
   // =======================
+  // NORMALIZAR LINKS AMAZON
+  // =======================
+  function normalizeAmazonUrl(url) {
+  if (!url) return "";
+
+  try {
+    // remove parâmetros e hash
+    const clean = url.split("?")[0].split("#")[0];
+
+    // tenta pegar /dp/ASIN
+    const dpMatch = clean.match(/\/dp\/([A-Z0-9]{10})/);
+
+    if (dpMatch) {
+      return `https://www.amazon.com.br/dp/${dpMatch[1]}`;
+    }
+
+    // fallback: tenta achar ASIN em qualquer lugar
+    const genericMatch = clean.match(/([A-Z0-9]{10})/);
+
+    if (genericMatch) {
+      return `https://www.amazon.com.br/dp/${genericMatch[1]}`;
+    }
+
+    return url;
+
+  } catch (err) {
+    console.error("Erro ao normalizar Amazon:", err);
+    return url;
+  }
+}
+
+function normalizeAmazon(prefix, number) {
+  const input = document.getElementById(`amazon-raw-${prefix}-${number}`);
+
+  const original = input.value;
+  const normalized = normalizeAmazonUrl(original);
+
+  input.value = normalized;
+
+  showToast("Amazon normalizado ✨");
+}
+
+  // =======================
+  // NORMALIZAR LINKS ML
+  // =======================
+
+  function normalizeMercadoLivreUrl(url) {
+  if (!url) return "";
+
+  try {
+    // remove parâmetros e hash
+    const clean = url.split("?")[0].split("#")[0];
+
+    // tenta pegar /p/MLB...
+    const pMatch = clean.match(/\/p\/(MLB\d+)/);
+
+    if (pMatch) {
+      return `https://www.mercadolivre.com.br/p/${pMatch[1]}`;
+    }
+
+    // tenta pegar /up/MLBU...
+    const upMatch = clean.match(/\/up\/(MLBU\d+)/);
+
+    if (upMatch) {
+      return `https://www.mercadolivre.com.br/up/${upMatch[1]}`;
+    }
+
+    // fallback: tenta achar qualquer MLB/MLBU na URL
+    const genericMatch = clean.match(/(MLB\d+|MLBU\d+)/);
+
+    if (genericMatch) {
+      const code = genericMatch[1];
+
+      if (code.startsWith("MLBU")) {
+        return `https://www.mercadolivre.com.br/up/${code}`;
+      } else {
+        return `https://www.mercadolivre.com.br/p/${code}`;
+      }
+    }
+
+    return url;
+
+  } catch (err) {
+    console.error("Erro ao normalizar ML:", err);
+    return url;
+  }
+}
+
+  // =======================
+  //OPEN LINKS
+  // =======================
+
+function openLink(inputId) {
+  const input = document.getElementById(inputId);
+
+  if (!input || !input.value) {
+    showToast("Link vazio ⚠️");
+    return;
+  }
+
+  let url = input.value.trim();
+
+  // garante http
+  if (!url.startsWith("http")) {
+    url = "https://" + url;
+  }
+
+  window.open(url, "_blank");
+}
+
+
+function normalizeML(prefix, number) {
+  const input = document.getElementById(`ml-raw-${prefix}-${number}`);
+
+  const original = input.value;
+  const normalized = normalizeMercadoLivreUrl(original);
+
+  input.value = normalized;
+
+  showToast("Link normalizado ✨");
+}
+
+  // =======================
   // CONFIRMAÇÃO POP UP
   // =======================
 function confirmAction(message) {
@@ -307,6 +430,7 @@ async function loadSeries() {
 // 🔥 CARREGAR VOLUMES
 // =======================
 async function loadVolumes(prefix) {
+
   volumesDiv.innerHTML = "Carregando..."
 
   const { data: series } = await supabaseClient
@@ -340,6 +464,10 @@ async function loadVolumes(prefix) {
       ✏️ Editar Série
     </button>
 
+    <button onclick="saveAllVolumes()">
+      💾 Salvar Tudo
+    </button>
+
     <button class="danger" onclick="deleteSeries('${prefix}')">
       🗑 Deletar Série
     </button>
@@ -349,25 +477,71 @@ async function loadVolumes(prefix) {
     const div = document.createElement("div")
     div.className = "card"
 
+    const num = String(v.number).padStart(2, "0");
+    const imgSrc = `/assets/${prefix}${num}.webp`;
+
     div.innerHTML = `
-      <h3>${v.title}</h3>
+      <div class="card-header">
+        <div class="title-with-thumb">
+          <img 
+            src="${imgSrc}" 
+            class="volume-thumb"
+            onerror="this.style.display='none'"
+          >
+
+          <h3>${v.title}</h3>
+        </div>
+      </div>
+
       <div class="field">
         <label>Descrição</label>
         <textarea id="desc-${prefix}-${v.number}">${v.description || ""}</textarea>
       </div>
 
       <div class="field">
-        <label>Amazon</label>
+        <label class="label-affiliate">💰 Amazon Afiliado</label>
         <input id="amazon-${prefix}-${v.number}" value="${v.amazon || ""}">
       </div>
 
       <div class="field">
-        <label>Mercado Livre</label>
-        <input id="ml-${prefix}-${v.number}" value="${v.mercado_livre || ""}">
+        <label class="label-raw">🔗 Amazon Raw</label>
+
+        <div class="input-row">
+          <input 
+            id="amazon-raw-${prefix}-${v.number}" 
+            value="${v.amazon_raw || ""}"
+          >
+
+          <button onclick="normalizeAmazon('${prefix}', ${v.number})">✨</button>
+          <button onclick="openLink('amazon-raw-${prefix}-${v.number}')">🔎</button>
+        </div>
       </div>
 
       <div class="field">
-        <label>TikTok</label>
+        <label class="label-affiliate">💰 Mercado Livre Afiliado</label>
+
+        <input 
+          id="ml-${prefix}-${v.number}" 
+          value="${v.mercado_livre || ""}"
+        >
+      </div>
+
+      <div class="field">
+        <label class="label-raw">🔗 Mercado Livre Raw</label>
+
+        <div class="input-row">
+          <input 
+            id="ml-raw-${prefix}-${v.number}" 
+            value="${v.mercado_livre_raw || ""}"
+          >
+
+          <button onclick="normalizeML('${prefix}', ${v.number})">✨</button>
+          <button onclick="openLink('ml-raw-${prefix}-${v.number}')">🔎</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label-tiktok">🎥 TikTok</label>
         <input id="tiktok-${prefix}-${v.number}" value="${v.tiktok || ""}">
       </div>
 
@@ -375,7 +549,7 @@ async function loadVolumes(prefix) {
         <label>Adicionado em</label>
         <input type="date" id="date-${prefix}-${v.number}" value="${v.added_at || ""}">
       </div>
-      <button onclick="saveVolume('${prefix}', ${v.number})">💾 Salvar</button>
+      <button class="save-btn" onclick="saveVolume('${prefix}', ${v.number})">💾 Salvar</button>
       <button onclick="deleteVolume('${prefix}', ${v.number})">
         🗑
       </button>
@@ -802,6 +976,33 @@ async function openCreateVolume(prefix) {
 }
 
 // =======================
+// 💾 SALVAR TUDO
+// =======================
+async function saveAllVolumes() {
+  const buttons = document.querySelectorAll(".save-btn");
+
+  showToast("Salvando tudo... ⏳");
+
+  const promises = [];
+
+  for (const btn of buttons) {
+    const onclick = btn.getAttribute("onclick");
+    const match = onclick?.match(/saveVolume\('(.+)',\s*(\d+)\)/);
+
+    if (!match) continue;
+
+    const prefix = match[1];
+    const number = parseInt(match[2]);
+
+    promises.push(saveVolume(prefix, number));
+  }
+
+  await Promise.all(promises);
+
+  showToast("Tudo salvo 🚀");
+}
+
+// =======================
 // 💾 SALVAR
 // =======================
 async function saveVolume(prefix, number) {
@@ -814,6 +1015,8 @@ async function saveVolume(prefix, number) {
   const description = document.getElementById(`desc-${prefix}-${number}`).value
   const amazon = document.getElementById(`amazon-${prefix}-${number}`).value
   const mercado_livre = document.getElementById(`ml-${prefix}-${number}`).value
+  const amazon_raw = document.getElementById(`amazon-raw-${prefix}-${number}`).value
+  const mercado_livre_raw = document.getElementById(`ml-raw-${prefix}-${number}`).value
   const tiktok = document.getElementById(`tiktok-${prefix}-${number}`).value
   const added_at = document.getElementById(`date-${prefix}-${number}`).value
 
@@ -821,7 +1024,9 @@ async function saveVolume(prefix, number) {
   const updateData = {
     description,
     amazon,
+    amazon_raw,
     mercado_livre,
+    mercado_livre_raw,
     tiktok
   }
 
