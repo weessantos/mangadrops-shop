@@ -59,8 +59,6 @@
 
   background: url("/assets/header-bg.webp") center/cover no-repeat;
 
-  filter: saturate(1.05) contrast(1.05);
-
   z-index:0;
 }
 

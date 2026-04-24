@@ -3,49 +3,44 @@
 // =======================
 
 // 👉 deixa acessível no arquivo inteiro
-let supabaseClient
-let seriesList
-let volumesDiv
+let supabaseClient;
+let seriesList;
+let volumesDiv;
 
 if (window.__cms_loaded) {
-  console.warn("CMS já carregado, ignorando...")
+  console.warn("CMS já carregado, ignorando...");
 } else {
-  window.__cms_loaded = true
+  window.__cms_loaded = true;
 
-  console.log("✅ ADMIN JS CARREGADO")
+  console.log("✅ ADMIN JS CARREGADO");
 
   // =======================
   // 🔐 CONFIG
   // =======================
-  const SUPABASE_URL = "https://wcwxjqfsnvpyndmpbngr.supabase.co"
-  const SUPABASE_KEY = "sb_publishable_fLT7DCc3olBf97TxmkG8lQ_VLmOr424"
+  const SUPABASE_URL = "https://wcwxjqfsnvpyndmpbngr.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_fLT7DCc3olBf97TxmkG8lQ_VLmOr424";
 
   // =======================
   // 🧠 SAFE INIT SUPABASE
   // =======================
   if (!window.supabase) {
-    throw new Error("❌ Supabase não carregou (CDN faltando ou ordem errada)")
+    throw new Error("❌ Supabase não carregou (CDN faltando ou ordem errada)");
   }
 
-  supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY,
-    {
-      auth: {
-        persistSession: true,
-        storage: window.sessionStorage,
-        autoRefreshToken: true,
-        detectSessionInUrl: true
-      }
-    }
-  )
-  
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: {
+      persistSession: true,
+      storage: window.sessionStorage,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+    },
+  });
 
   // =======================
   // 🎯 DOM
   // =======================
-  seriesList = document.getElementById("series-list")
-  volumesDiv = document.getElementById("volumes")
+  seriesList = document.getElementById("series-list");
+  volumesDiv = document.getElementById("volumes");
 
   // =======================
   // EXPORTA GLOBAL (opcional)
@@ -53,34 +48,37 @@ if (window.__cms_loaded) {
   window.cms = {
     supabase: supabaseClient,
     seriesList,
-    volumesDiv
-  }
+    volumesDiv,
+  };
 }
 
-  // =======================
-  // 🔐 ADMIN
-  // =======================
+// =======================
+// 🔐 ADMIN
+// =======================
 async function protectAdmin() {
-  document.body.style.display = "flex"
-  const { data: { session } } = await supabaseClient.auth.getSession()
+  document.body.style.display = "flex";
+  const {
+    data: { session },
+  } = await supabaseClient.auth.getSession();
 
   if (!session) {
-    showLoginScreen()
-    return false
+    showLoginScreen();
+    return false;
   }
 
-  return true
+  return true;
 }
 
 async function requireAuth() {
-  const { data: { session } } = await supabaseClient.auth.getSession()
-  return !!session
+  const {
+    data: { session },
+  } = await supabaseClient.auth.getSession();
+  return !!session;
 }
 
-
-  // =======================
-  // 🔐 LOGIN SCREEN
-  // =======================
+// =======================
+// 🔐 LOGIN SCREEN
+// =======================
 function showLoginScreen() {
   document.body.innerHTML = `
     <div id="auth-layer">
@@ -175,86 +173,119 @@ function showLoginScreen() {
         to { transform: translateY(0); opacity: 1 }
       }
     </style>
-  `
+  `;
 }
 
 async function login() {
-  const email = document.getElementById("login-email").value
-  const password = document.getElementById("login-pass").value
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-pass").value;
 
-  const btn = document.getElementById("login-btn")
-  const text = document.getElementById("login-text")
-  const errorEl = document.getElementById("login-error")
+  const btn = document.getElementById("login-btn");
+  const text = document.getElementById("login-text");
+  const errorEl = document.getElementById("login-error");
 
-  errorEl.textContent = ""
+  errorEl.textContent = "";
 
   if (!email || !password) {
-    errorEl.textContent = "Preencha todos os campos"
-    return
+    errorEl.textContent = "Preencha todos os campos";
+    return;
   }
 
-  btn.disabled = true
-  text.textContent = "Entrando..."
+  btn.disabled = true;
+  text.textContent = "Entrando...";
 
   const { error } = await supabaseClient.auth.signInWithPassword({
     email,
-    password
-  })
+    password,
+  });
 
   if (error) {
-    errorEl.textContent = "Email ou senha inválidos"
-    btn.disabled = false
-    text.textContent = "Entrar"
-    return
+    errorEl.textContent = "Email ou senha inválidos";
+    btn.disabled = false;
+    text.textContent = "Entrar";
+    return;
   }
 
-  text.textContent = "✔ Sucesso!"
+  text.textContent = "✔ Sucesso!";
 
   setTimeout(() => {
-    location.reload()
-  }, 500)
+    location.reload();
+  }, 500);
 }
 
-  // =======================
-  // 🔐 LOGOUT
-  // =======================
+// =======================
+// 🔐 LOGOUT
+// =======================
 async function logout() {
   try {
-    const { error } = await supabaseClient.auth.signOut()
+    const { error } = await supabaseClient.auth.signOut();
 
-    if (error) throw error
+    if (error) throw error;
 
-    showToast("Logout realizado 👋")
+    showToast("Logout realizado 👋");
 
     setTimeout(() => {
-      location.reload()
-    }, 400)
-
+      location.reload();
+    }, 400);
   } catch (err) {
-    console.error("LOGOUT ERROR:", err)
-    showToast("Erro ao sair ❌")
+    console.error("LOGOUT ERROR:", err);
+    showToast("Erro ao sair ❌");
   }
 }
 
-  // =======================
-  //TOAST
-  // =======================
+// =======================
+//TOAST
+// =======================
 
 function showToast(message) {
-  const toast = document.getElementById("toast")
+  const overlay = document.getElementById("toast-overlay");
+  const text = document.getElementById("toast-message");
 
-  toast.textContent = message
-  toast.classList.add("show")
+  if (!overlay) return;
+
+  text.textContent = message;
+
+  overlay.style.display = "flex";
+
+  // força reflow pra animar
+  requestAnimationFrame(() => {
+    overlay.classList.add("show");
+  });
 
   setTimeout(() => {
-    toast.classList.remove("show")
-  }, 2500)
+    overlay.classList.remove("show");
+
+    setTimeout(() => {
+      overlay.style.display = "none";
+    }, 250);
+  }, 2000);
 }
 
-  // =======================
-  // NORMALIZAR LINKS AMAZON
-  // =======================
-  function normalizeAmazonUrl(url) {
+//==============
+//LOAD DO TOAST
+//==============
+
+function showLoading(text = "Processando...") {
+  const overlay = document.getElementById("loading-overlay");
+  const label = document.getElementById("loading-text");
+
+  if (!overlay) return;
+
+  label.textContent = text;
+  overlay.style.display = "flex";
+}
+
+function hideLoading() {
+  const overlay = document.getElementById("loading-overlay");
+  if (!overlay) return;
+
+  overlay.style.display = "none";
+}
+
+// =======================
+// NORMALIZAR LINKS AMAZON
+// =======================
+function normalizeAmazonUrl(url) {
   if (!url) return "";
 
   try {
@@ -276,7 +307,6 @@ function showToast(message) {
     }
 
     return url;
-
   } catch (err) {
     console.error("Erro ao normalizar Amazon:", err);
     return url;
@@ -294,11 +324,102 @@ function normalizeAmazon(prefix, number) {
   showToast("Amazon normalizado ✨");
 }
 
-  // =======================
-  // NORMALIZAR LINKS ML
-  // =======================
+// =======================
+// 💲 BUSCAR PREÇO (API)
+// =======================
+async function fetchPrice(url, source) {
+  try {
+    const res = await fetch(
+      `http://localhost:3000/api/price?url=${encodeURIComponent(url)}&source=${source}`,
+    );
 
-  function normalizeMercadoLivreUrl(url) {
+    const data = await res.json();
+
+    return data.price || null;
+  } catch (err) {
+    console.error("Erro ao buscar preço:", err);
+    return null;
+  }
+}
+
+// =======================================
+// 💲 SALVAR PREÇO DE UM VOLUME - AMAZON
+// =======================================
+
+async function updateAmazonPriceRaw(id, prefix, number) {
+  const rawInput = document.getElementById(`amazon-raw-${prefix}-${number}`);
+  const url = rawInput.value;
+
+  if (!url) {
+    showToast("Link RAW vazio ⚠️");
+    return;
+  }
+
+  showLoading("Buscando preço Amazon...");
+
+  try {
+    const res = await fetch(
+      `http://localhost:3000/api/price?url=${encodeURIComponent(url)}&source=amazon&id=${id}`,
+    );
+
+    const data = await res.json();
+
+    if (!data.success) {
+      hideLoading();
+      showToast("Erro: " + (data.error || "Falha ao atualizar"));
+      return;
+    }
+
+    hideLoading();
+    showToast("Preço atualizado 💰");
+  } catch (err) {
+    console.error(err);
+    hideLoading();
+    showToast("Erro na requisição ❌");
+  }
+}
+
+// =============================================
+// 💲 SALVAR PREÇO DE UM VOLUME - MERCADO LIVRE
+// =============================================
+
+async function updateMLPriceRaw(id, prefix, number) {
+  const rawInput = document.getElementById(`ml-raw-${prefix}-${number}`);
+  const url = rawInput.value;
+
+  if (!url) {
+    showToast("Link ML vazio ⚠️", "error");
+    return;
+  }
+
+  showLoading("Buscando preço Mercado Livre...");
+
+  try {
+    const res = await fetch(
+      `http://localhost:3000/api/price?url=${encodeURIComponent(url)}&source=ml&id=${id}`,
+    );
+
+    const data = await res.json();
+
+    if (!data.success) {
+      hideLoading();
+      showToast("Erro ML: " + (data.error || "Falha"), "error");
+      return;
+    }
+
+    hideLoading();
+    showToast("Preço ML atualizado 💰", "success");
+  } catch (err) {
+    console.error(err);
+    hideLoading();
+    showToast("Erro na requisição ML ❌", "error");
+  }
+}
+// =======================
+// NORMALIZAR LINKS ML
+// =======================
+
+function normalizeMercadoLivreUrl(url) {
   if (!url) return "";
 
   try {
@@ -333,16 +454,15 @@ function normalizeAmazon(prefix, number) {
     }
 
     return url;
-
   } catch (err) {
     console.error("Erro ao normalizar ML:", err);
     return url;
   }
 }
 
-  // =======================
-  //OPEN LINKS
-  // =======================
+// =======================
+//OPEN LINKS
+// =======================
 
 function openLink(inputId) {
   const input = document.getElementById(inputId);
@@ -362,7 +482,6 @@ function openLink(inputId) {
   window.open(url, "_blank");
 }
 
-
 function normalizeML(prefix, number) {
   const input = document.getElementById(`ml-raw-${prefix}-${number}`);
 
@@ -374,14 +493,14 @@ function normalizeML(prefix, number) {
   showToast("Link normalizado ✨");
 }
 
-  // =======================
-  // CONFIRMAÇÃO POP UP
-  // =======================
+// =======================
+// CONFIRMAÇÃO POP UP
+// =======================
 function confirmAction(message) {
   return new Promise((resolve) => {
-    const modal = document.getElementById("modal")
+    const modal = document.getElementById("modal");
 
-    modal.style.display = "flex"
+    modal.style.display = "flex";
     modal.innerHTML = `
       <div class="modal-content">
         <h3>${message}</h3>
@@ -390,17 +509,117 @@ function confirmAction(message) {
           <button class="danger" onclick="closeModal(); window.__confirm = true">Confirmar</button>
         </div>
       </div>
-    `
+    `;
 
-    window.__confirm = null
+    window.__confirm = null;
 
     const interval = setInterval(() => {
       if (window.__confirm !== null) {
-        clearInterval(interval)
-        resolve(window.__confirm)
+        clearInterval(interval);
+        resolve(window.__confirm);
       }
-    }, 100)
-  })
+    }, 100);
+  });
+}
+
+// =======================
+// 🔥 UPDATE GLOBAL DE PREÇOS
+// =======================
+
+function updateAllPrices() {
+  if (!confirm("🔥 Atualizar TODOS os preços? Isso pode demorar.")) return;
+
+  document.getElementById("progress-modal").style.display = "flex";
+
+  const eventSource = new EventSource("/api/update-prices-stream");
+
+  eventSource.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+
+    if (data.type === "log") {
+      appendLog(data.text);
+      updateProgressFromLog(data.text);
+    }
+
+    if (data.type === "error") {
+      appendLog("❌ " + data.text);
+    }
+
+    if (data.type === "done") {
+      appendLog("✅ Finalizado!");
+      eventSource.close();
+
+      setTimeout(() => {
+        document.getElementById("progress-modal").style.display = "none";
+      }, 1500);
+    }
+  };
+}
+
+async function pollProgress() {
+  const bar = document.getElementById("progress-bar");
+  const text = document.getElementById("progress-text");
+  const logs = document.getElementById("progress-logs");
+
+  const interval = setInterval(async () => {
+    const res = await fetch("http://localhost:3000/api/update-progress");
+    const data = await res.json();
+
+    if (!data.running) {
+      clearInterval(interval);
+      showToast("Atualização finalizada 🚀");
+      return;
+    }
+
+    const percent = data.total
+      ? Math.round((data.current / data.total) * 100)
+      : 0;
+
+    bar.style.width = percent + "%";
+    text.textContent = `${data.current} / ${data.total}`;
+
+    logs.innerHTML = data.logs
+      .map((l) => `<div class="log-line">${l}</div>`)
+      .join("");
+
+    logs.scrollTop = logs.scrollHeight;
+  }, 1000);
+}
+
+// ====================================
+//APEND DO LOG E CONTADOR DE PROGRESSO
+// ====================================
+function appendLog(text) {
+  const log = document.getElementById("progress-logs");
+
+  let color = "#22c55e";
+
+  if (text.includes("❌")) color = "#ef4444";
+  if (text.includes("🔥")) color = "#f97316";
+  if (text.includes("[Amazon]")) color = "#60a5fa";
+  if (text.includes("[ML]")) color = "#facc15";
+
+  log.innerHTML += `<div style="color:${color}">${text}</div>`;
+  log.scrollTop = log.scrollHeight;
+}
+
+let total = 0;
+let current = 0;
+
+function updateProgressFromLog(text) {
+  // pega padrão [1/153]
+  const match = text.match(/\[(\d+)\/(\d+)\]/);
+
+  if (match) {
+    current = parseInt(match[1]);
+    total = parseInt(match[2]);
+
+    const percent = (current / total) * 100;
+
+    document.getElementById("progress-bar").style.width = percent + "%";
+    document.getElementById("progress-text").textContent =
+      `${current} / ${total}`;
+  }
 }
 
 // =======================
@@ -410,45 +629,44 @@ async function loadSeries() {
   const { data, error } = await supabaseClient
     .from("series")
     .select("*")
-    .order("title")
+    .order("title");
 
-  if (error) return console.error(error)
+  if (error) return console.error(error);
 
-  seriesList.innerHTML = ""
+  seriesList.innerHTML = "";
 
-  data.forEach(s => {
-    const div = document.createElement("div")
-    div.className = "series-item"
-    div.textContent = s.title
-    div.onclick = () => loadVolumes(s.prefix)
+  data.forEach((s) => {
+    const div = document.createElement("div");
+    div.className = "series-item";
+    div.textContent = s.title;
+    div.onclick = () => loadVolumes(s.prefix);
 
-    seriesList.appendChild(div)
-  })
+    seriesList.appendChild(div);
+  });
 }
 
 // =======================
 // 🔥 CARREGAR VOLUMES
 // =======================
 async function loadVolumes(prefix) {
-
-  volumesDiv.innerHTML = "Carregando..."
+  volumesDiv.innerHTML = "Carregando...";
 
   const { data: series } = await supabaseClient
     .from("series")
     .select("*")
     .eq("prefix", prefix)
-    .single()
+    .single();
 
   const { data: volumes } = await supabaseClient
     .from("volumes")
     .select("*")
     .eq("prefix", prefix)
-    .order("number")
+    .order("number");
 
   volumesDiv.innerHTML = `
     <h1>${series.title}</h1>
     <button onclick="openCreateVolume('${prefix}')">+ Novo Volume</button>
-  `
+  `;
   volumesDiv.innerHTML = `
     <h1>${series.title}</h1>
 
@@ -471,11 +689,11 @@ async function loadVolumes(prefix) {
     <button class="danger" onclick="deleteSeries('${prefix}')">
       🗑 Deletar Série
     </button>
-  `  
+  `;
 
-  volumes.forEach(v => {
-    const div = document.createElement("div")
-    div.className = "card"
+  volumes.forEach((v) => {
+    const div = document.createElement("div");
+    div.className = "card";
 
     const num = String(v.number).padStart(2, "0");
     const imgSrc = `/assets/${prefix}${num}.webp`;
@@ -499,8 +717,13 @@ async function loadVolumes(prefix) {
       </div>
 
       <div class="field">
-        <label class="label-affiliate">💰 Amazon Afiliado</label>
-        <input id="amazon-${prefix}-${v.number}" value="${v.amazon || ""}">
+        <div class="field">
+          <label class="label-affiliate">💰 Amazon Afiliado</label>
+
+          <div class="input-row">
+            <input id="amazon-${prefix}-${v.number}" value="${v.amazon || ""}">
+          </div>
+        </div>
       </div>
 
       <div class="field">
@@ -514,6 +737,7 @@ async function loadVolumes(prefix) {
 
           <button onclick="normalizeAmazon('${prefix}', ${v.number})">✨</button>
           <button onclick="openLink('amazon-raw-${prefix}-${v.number}')">🔎</button>
+          <button onclick="updateAmazonPriceRaw(${v.id}, '${prefix}', ${v.number})">💲</button>
         </div>
       </div>
 
@@ -537,6 +761,7 @@ async function loadVolumes(prefix) {
 
           <button onclick="normalizeML('${prefix}', ${v.number})">✨</button>
           <button onclick="openLink('ml-raw-${prefix}-${v.number}')">🔎</button>
+            <button onclick="updateMLPriceRaw(${v.id}, '${prefix}', ${v.number})">💲</button>
         </div>
       </div>
 
@@ -547,30 +772,37 @@ async function loadVolumes(prefix) {
 
       <div class="field">
         <label>Adicionado em</label>
-        <input type="date" id="date-${prefix}-${v.number}" value="${v.added_at || ""}">
+        <input type="datetime-local" step="1" id="date-${prefix}-${v.number}" value="${v.added_at || ""}">
       </div>
       <button class="save-btn" onclick="saveVolume('${prefix}', ${v.number})">💾 Salvar</button>
       <button onclick="deleteVolume('${prefix}', ${v.number})">
         🗑
       </button>
-    `
+    `;
 
-    volumesDiv.appendChild(div)
-  })
+    volumesDiv.appendChild(div);
+  });
 }
-
 
 // =======================
 // 🎯 MODAL - SÉRIE
 // =======================
 function openSeriesModal() {
-  const modal = document.getElementById("modal")
+  const modal = document.getElementById("modal");
 
-  modal.style.display = "flex"
+  modal.style.display = "flex";
 
   modal.innerHTML = `
     <div class="modal-content">
-      <h2>Nova Série</h2>
+      <div class="series-actions">
+        <button class="btn-primary">
+          + Nova Série
+        </button>
+
+        <button class="btn-warning" onclick="updateAllPrices()">
+          🔥 Atualizar Preços
+        </button>
+      </div>
 
       <input id="m-title" placeholder="Nome da série">
       <input id="m-prefix" placeholder="Prefix (ex: csm)">
@@ -589,121 +821,118 @@ function openSeriesModal() {
         <button id="save-btn" onclick="createSeries()">Salvar</button>
       </div>
     </div>
-  `
+  `;
 }
 
 function closeModal() {
-  document.getElementById("modal").style.display = "none"
+  document.getElementById("modal").style.display = "none";
 }
 
 // =======================
 // ➕ CRIAR SÉRIE + GERAR VOLUMES
 // =======================
 async function createSeries() {
-
   if (!(await requireAuth())) {
-    showToast("Sessão expirada 🔐")
-    return
+    showToast("Sessão expirada 🔐");
+    return;
   }
 
-  const btn = document.getElementById("save-btn")
-  btn.disabled = true
-  btn.textContent = "Salvando..."
+  const btn = document.getElementById("save-btn");
+  btn.disabled = true;
+  btn.textContent = "Salvando...";
 
-  const title = document.getElementById("m-title").value
-  const prefix = document.getElementById("m-prefix").value
-  const subtitle = document.getElementById("m-subtitle").value
-  const author = document.getElementById("m-author").value
-  const genre = document.getElementById("m-genre").value
-  const brand = document.getElementById("m-brand").value
-  const format = document.getElementById("m-format").value
-  const edition_label = document.getElementById("m-edition").value
-  const cover_price = Number(document.getElementById("m-price").value || 0)
-  const total_volumes = Number(document.getElementById("m-total").value || 0)
-  const thumb = document.getElementById("m-thumb").value
+  const title = document.getElementById("m-title").value;
+  const prefix = document.getElementById("m-prefix").value;
+  const subtitle = document.getElementById("m-subtitle").value;
+  const author = document.getElementById("m-author").value;
+  const genre = document.getElementById("m-genre").value;
+  const brand = document.getElementById("m-brand").value;
+  const format = document.getElementById("m-format").value;
+  const edition_label = document.getElementById("m-edition").value;
+  const cover_price = Number(document.getElementById("m-price").value || 0);
+  const total_volumes = Number(document.getElementById("m-total").value || 0);
+  const thumb = document.getElementById("m-thumb").value;
 
- if (!title || !prefix) {
-  showToast("Título e prefix são obrigatórios ⚠️")
-  return
-}
+  if (!title || !prefix) {
+    showToast("Título e prefix são obrigatórios ⚠️");
+    return;
+  }
 
-btn.disabled = true
-btn.textContent = "Salvando..."
+  btn.disabled = true;
+  btn.textContent = "Salvando...";
 
   try {
-
     // 🔍 valida prefix duplicado
     const { data: existing, error: checkError } = await supabaseClient
       .from("series")
       .select("prefix")
       .eq("prefix", prefix)
-      .maybeSingle()
+      .maybeSingle();
 
     if (checkError) {
-      throw checkError
+      throw checkError;
     }
 
     if (existing) {
-      showToast("Esse prefix já existe ⚠️")
+      showToast("Esse prefix já existe ⚠️");
 
-      btn.disabled = false
-      btn.textContent = "Salvar"
-      return
+      btn.disabled = false;
+      btn.textContent = "Salvar";
+      return;
     }
 
     // 🔥 insert
     const { data: series, error } = await supabaseClient
       .from("series")
-      .insert([{
-        title,
-        prefix,
-        subtitle,
-        author,
-        genre,
-        brand,
-        format,
-        edition_label,
-        cover_price,
-        total_volumes,
-        thumb
-      }])
+      .insert([
+        {
+          title,
+          prefix,
+          subtitle,
+          author,
+          genre,
+          brand,
+          format,
+          edition_label,
+          cover_price,
+          total_volumes,
+          thumb,
+        },
+      ])
       .select()
-      .single()
+      .single();
 
     if (error) {
-      throw error
+      throw error;
     }
 
     // 🔥 gerar volumes automaticamente
     if (total_volumes > 0) {
-      const result = await generateMissingVolumes(prefix)
+      const result = await generateMissingVolumes(prefix);
 
       if (result.error) {
-        showToast("Série criada, mas erro ao gerar volumes ⚠️")
+        showToast("Série criada, mas erro ao gerar volumes ⚠️");
       } else if (result.created > 0) {
-        showToast(`${result.created} volumes criados 🚀`)
+        showToast(`${result.created} volumes criados 🚀`);
       }
     }
 
-    showToast("Série criada com sucesso 🚀")
+    showToast("Série criada com sucesso 🚀");
 
-    closeModal()
-    loadSeries()
-
+    closeModal();
+    loadSeries();
   } catch (err) {
-
-    console.error("CREATE SERIES ERROR:", err)
+    console.error("CREATE SERIES ERROR:", err);
 
     // 🔥 mensagens mais inteligentes
     if (err.message?.includes("row-level security")) {
-      showToast("Você precisa estar logado 🔐")
+      showToast("Você precisa estar logado 🔐");
     } else {
-      showToast("Erro ao criar série ❌")
+      showToast("Erro ao criar série ❌");
     }
-
   } finally {
-    btn.disabled = false
-    btn.textContent = "Salvar"
+    btn.disabled = false;
+    btn.textContent = "Salvar";
   }
 }
 
@@ -712,10 +941,10 @@ btn.textContent = "Salvando..."
 // =======================
 
 async function generateVolumes(series) {
-  const volumes = []
+  const volumes = [];
 
   for (let i = 1; i <= series.total_volumes; i++) {
-    const num = String(i).padStart(2, "0")
+    const num = String(i).padStart(2, "0");
 
     volumes.push({
       prefix: series.prefix,
@@ -726,19 +955,17 @@ async function generateVolumes(series) {
       amazon: "",
       mercado_livre: "",
       tiktok: "",
-      added_at: new Date().toISOString().split("T")[0]
-    })
+      added_at: new Date(added_at).toLocaleString("pt-BR"),
+    });
   }
 
-  const { error } = await supabaseClient
-    .from("volumes")
-    .insert(volumes)
+  const { error } = await supabaseClient.from("volumes").insert(volumes);
 
   if (error) {
-    console.error(error)
-    showToast("Erro ao gerar volumes")
+    console.error(error);
+    showToast("Erro ao gerar volumes");
   } else {
-    showToast("Volumes gerados automaticamente 🚀")
+    showToast("Volumes gerados automaticamente 🚀");
   }
 }
 
@@ -747,39 +974,36 @@ async function generateVolumes(series) {
 // =======================
 async function generateMissingVolumes(prefix) {
   try {
-
     // 🔍 pega série
     const { data: series, error: seriesError } = await supabaseClient
       .from("series")
       .select("*")
       .eq("prefix", prefix)
-      .single()
+      .single();
 
-    if (seriesError) throw seriesError
+    if (seriesError) throw seriesError;
 
-    const total = series.total_volumes || 0
+    const total = series.total_volumes || 0;
 
     if (!total) {
-      return { error: "NO_TOTAL" }
+      return { error: "NO_TOTAL" };
     }
 
     // 🔍 pega volumes existentes
     const { data: existingVolumes, error: volError } = await supabaseClient
       .from("volumes")
       .select("number")
-      .eq("prefix", prefix)
+      .eq("prefix", prefix);
 
-    if (volError) throw volError
+    if (volError) throw volError;
 
-    const existingNumbers = new Set(
-      existingVolumes.map(v => v.number)
-    )
+    const existingNumbers = new Set(existingVolumes.map((v) => v.number));
 
-    const volumesToCreate = []
+    const volumesToCreate = [];
 
     for (let i = 1; i <= total; i++) {
       if (!existingNumbers.has(i)) {
-        const num = String(i).padStart(2, "0")
+        const num = String(i).padStart(2, "0");
 
         volumesToCreate.push({
           prefix: prefix,
@@ -790,29 +1014,28 @@ async function generateMissingVolumes(prefix) {
           amazon: "",
           mercado_livre: "",
           tiktok: "",
-          added_at: new Date().toISOString().split("T")[0]
-        })
+          added_at: new Date().toISOString().split("T")[0],
+        });
       }
     }
 
     if (volumesToCreate.length === 0) {
-      return { error: null, created: 0 }
+      return { error: null, created: 0 };
     }
 
     const { error: insertError } = await supabaseClient
       .from("volumes")
-      .insert(volumesToCreate)
+      .insert(volumesToCreate);
 
-    if (insertError) throw insertError
+    if (insertError) throw insertError;
 
-    loadVolumes(prefix)
+    loadVolumes(prefix);
 
-    return { error: null, created: volumesToCreate.length }
-
+    return { error: null, created: volumesToCreate.length };
   } catch (err) {
-    console.error("GENERATE ERROR:", err)
+    console.error("GENERATE ERROR:", err);
 
-    return { error: err }
+    return { error: err };
   }
 }
 
@@ -824,13 +1047,13 @@ async function editSeries(prefix) {
     .from("series")
     .select("*")
     .eq("prefix", prefix)
-    .single()
+    .single();
 
-  if (error) return console.error(error)
+  if (error) return console.error(error);
 
-  const modal = document.getElementById("modal")
+  const modal = document.getElementById("modal");
 
-  modal.style.display = "flex"
+  modal.style.display = "flex";
 
   modal.innerHTML = `
     <div class="modal-content">
@@ -854,36 +1077,34 @@ async function editSeries(prefix) {
         </button>
       </div>
     </div>
-  `
+  `;
 }
 
 // =======================
 // FUNÇÃO DE UPDATE
 // =======================
 async function updateSeries(prefix, oldTotal) {
-
   if (!(await requireAuth())) {
-    showToast("Sessão expirada 🔐")
-    return
+    showToast("Sessão expirada 🔐");
+    return;
   }
 
-  const title = document.getElementById("e-title").value
-  const subtitle = document.getElementById("e-subtitle").value
-  const author = document.getElementById("e-author").value
-  const genre = document.getElementById("e-genre").value
-  const brand = document.getElementById("e-brand").value
-  const format = document.getElementById("e-format").value
-  const edition_label = document.getElementById("e-edition").value
-  const cover_price = Number(document.getElementById("e-price").value || 0)
-  const total_volumes = Number(document.getElementById("e-total").value || 0)
-  const thumb = document.getElementById("e-thumb").value
+  const title = document.getElementById("e-title").value;
+  const subtitle = document.getElementById("e-subtitle").value;
+  const author = document.getElementById("e-author").value;
+  const genre = document.getElementById("e-genre").value;
+  const brand = document.getElementById("e-brand").value;
+  const format = document.getElementById("e-format").value;
+  const edition_label = document.getElementById("e-edition").value;
+  const cover_price = Number(document.getElementById("e-price").value || 0);
+  const total_volumes = Number(document.getElementById("e-total").value || 0);
+  const thumb = document.getElementById("e-thumb").value;
 
-  const btn = document.getElementById("save-btn")
-  btn.disabled = true
-  btn.textContent = "Salvando..."
+  const btn = document.getElementById("save-btn");
+  btn.disabled = true;
+  btn.textContent = "Salvando...";
 
   try {
-
     const { error } = await supabaseClient
       .from("series")
       .update({
@@ -896,42 +1117,39 @@ async function updateSeries(prefix, oldTotal) {
         edition_label,
         cover_price,
         total_volumes,
-        thumb
+        thumb,
       })
-      .eq("prefix", prefix)
+      .eq("prefix", prefix);
 
     if (error) {
-      throw error
+      throw error;
     }
 
     // 🔥 se aumentou, gera volumes automaticamente
     if (total_volumes > oldTotal) {
-      const { error: volError } = await generateMissingVolumes(prefix)
+      const { error: volError } = await generateMissingVolumes(prefix);
 
       if (volError) {
-        console.error(volError)
-        showToast("Atualizado, mas erro ao gerar volumes ⚠️")
+        console.error(volError);
+        showToast("Atualizado, mas erro ao gerar volumes ⚠️");
       }
     }
 
-    showToast("Série atualizada com sucesso ✏️")
+    showToast("Série atualizada com sucesso ✏️");
 
-    closeModal()
-    loadSeries()
-
+    closeModal();
+    loadSeries();
   } catch (err) {
-
-    console.error("UPDATE ERROR:", err)
+    console.error("UPDATE ERROR:", err);
 
     if (err.message?.includes("row-level security")) {
-      showToast("Você precisa estar logado 🔐")
+      showToast("Você precisa estar logado 🔐");
     } else {
-      showToast("Erro ao atualizar ❌")
+      showToast("Erro ao atualizar ❌");
     }
-
   } finally {
-    btn.disabled = false
-    btn.textContent = "Salvar"
+    btn.disabled = false;
+    btn.textContent = "Salvar";
   }
 }
 
@@ -939,40 +1157,39 @@ async function updateSeries(prefix, oldTotal) {
 // ➕ CRIAR VOLUME
 // =======================
 async function openCreateVolume(prefix) {
-
-    if (!(await requireAuth())) {
-      showToast("Sessão expirada 🔐")
-      return
-    }
+  if (!(await requireAuth())) {
+    showToast("Sessão expirada 🔐");
+    return;
+  }
 
   const { data: volumes } = await supabaseClient
     .from("volumes")
     .select("number")
     .eq("prefix", prefix)
     .order("number", { ascending: false })
-    .limit(1)
+    .limit(1);
 
-  const next = volumes.length ? volumes[0].number + 1 : 1
-  const num = String(next).padStart(2, "0")
+  const next = volumes.length ? volumes[0].number + 1 : 1;
+  const num = String(next).padStart(2, "0");
 
   const { data: series } = await supabaseClient
     .from("series")
     .select("title")
     .eq("prefix", prefix)
-    .single()
+    .single();
 
-  const title = `${series.title} Vol. ${num}`
+  const title = `${series.title} Vol. ${num}`;
 
   await supabaseClient.from("volumes").insert([
     {
       prefix: prefix,
       title,
       number: next,
-      added_at: new Date().toISOString().split("T")[0]
-    }
-  ])
+      added_at: new Date().toISOString().split("T")[0],
+    },
+  ]);
 
-  loadVolumes(prefix)
+  loadVolumes(prefix);
 }
 
 // =======================
@@ -1006,19 +1223,39 @@ async function saveAllVolumes() {
 // 💾 SALVAR
 // =======================
 async function saveVolume(prefix, number) {
-
   if (!(await requireAuth())) {
-    showToast("Sessão expirada 🔐")
-    return
+    showToast("Sessão expirada 🔐");
+    return;
   }
 
-  const description = document.getElementById(`desc-${prefix}-${number}`).value
-  const amazon = document.getElementById(`amazon-${prefix}-${number}`).value
-  const mercado_livre = document.getElementById(`ml-${prefix}-${number}`).value
-  const amazon_raw = document.getElementById(`amazon-raw-${prefix}-${number}`).value
-  const mercado_livre_raw = document.getElementById(`ml-raw-${prefix}-${number}`).value
-  const tiktok = document.getElementById(`tiktok-${prefix}-${number}`).value
-  const added_at = document.getElementById(`date-${prefix}-${number}`).value
+  const dateInput = document.getElementById(`date-${prefix}-${number}`);
+  const now = new Date();
+
+  const formatted =
+    now.getFullYear() +
+    "-" +
+    String(now.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(now.getDate()).padStart(2, "0") +
+    "T" +
+    String(now.getHours()).padStart(2, "0") +
+    ":" +
+    String(now.getMinutes()).padStart(2, "0") +
+    ":" +
+    String(now.getSeconds()).padStart(2, "0");
+
+  dateInput.value = formatted;
+  const description = document.getElementById(`desc-${prefix}-${number}`).value;
+  const amazon = document.getElementById(`amazon-${prefix}-${number}`).value;
+  const mercado_livre = document.getElementById(`ml-${prefix}-${number}`).value;
+  const amazon_raw = document.getElementById(
+    `amazon-raw-${prefix}-${number}`,
+  ).value;
+  const mercado_livre_raw = document.getElementById(
+    `ml-raw-${prefix}-${number}`,
+  ).value;
+  const tiktok = document.getElementById(`tiktok-${prefix}-${number}`).value;
+  const added_at = new Date().toISOString();
 
   // 🔥 monta objeto dinamicamente (corrige bug da data)
   const updateData = {
@@ -1027,85 +1264,80 @@ async function saveVolume(prefix, number) {
     amazon_raw,
     mercado_livre,
     mercado_livre_raw,
-    tiktok
-  }
+    tiktok,
+  };
 
   // só adiciona a data se existir
   if (added_at) {
-    updateData.added_at = added_at
+    updateData.added_at = added_at;
   } else {
-    updateData.added_at = null // opcional (mais robusto)
+    updateData.added_at = null; // opcional (mais robusto)
   }
 
   const { error } = await supabaseClient
     .from("volumes")
     .update(updateData)
     .eq("prefix", prefix)
-    .eq("number", number)
+    .eq("number", number);
 
   if (error) {
-    console.error(error)
-    showToast("Erro ao salvar ❌")
-    return
+    console.error(error);
+    showToast("Erro ao salvar ❌");
+    return;
   }
 
-  showToast("Salvo com sucesso 🚀")
+  showToast("Salvo com sucesso 🚀");
 }
 
 // =======================
 // 🗑 DELETAR SÉRIE (PRO)
 // =======================
 async function deleteSeries(prefix) {
-
   if (!(await requireAuth())) {
-    showToast("Sessão expirada 🔐")
-    return
+    showToast("Sessão expirada 🔐");
+    return;
   }
 
-  const ok = await confirmAction("Tem certeza que deseja deletar essa série?")
-  if (!ok) return
+  const ok = await confirmAction("Tem certeza que deseja deletar essa série?");
+  if (!ok) return;
 
-  const btn = document.getElementById("delete-btn")
+  const btn = document.getElementById("delete-btn");
   if (btn) {
-    btn.disabled = true
-    btn.textContent = "Deletando..."
+    btn.disabled = true;
+    btn.textContent = "Deletando...";
   }
 
   try {
-
     const { error: volError } = await supabaseClient
       .from("volumes")
       .delete()
-      .eq("prefix", prefix)
+      .eq("prefix", prefix);
 
-    if (volError) throw volError
+    if (volError) throw volError;
 
     const { error: seriesError } = await supabaseClient
       .from("series")
       .delete()
-      .eq("prefix", prefix)
+      .eq("prefix", prefix);
 
-    if (seriesError) throw seriesError
+    if (seriesError) throw seriesError;
 
-    showToast("Série deletada com sucesso 🗑")
+    showToast("Série deletada com sucesso 🗑");
 
-    volumesDiv.innerHTML = "Selecione uma série"
-    loadSeries()
-
+    volumesDiv.innerHTML = "Selecione uma série";
+    loadSeries();
   } catch (err) {
-
-    console.error("DELETE ERROR:", err)
+    console.error("DELETE ERROR:", err);
 
     if (err.message?.includes("row-level security")) {
-      showToast("Você precisa estar logado 🔐")
+      showToast("Você precisa estar logado 🔐");
     } else {
-      showToast("Erro ao deletar série ❌")
+      showToast("Erro ao deletar série ❌");
     }
-
   } finally {
     if (btn) {
-      btn.disabled = false
-      btn.textContent = "Deletar Série"
+      btn.disabled = false;
+      btn.textContent = "Deletar Série";
     }
   }
 }
@@ -1114,46 +1346,42 @@ async function deleteSeries(prefix) {
 // 🗑 DELETAR VOLUME (PRO)
 // =======================
 async function deleteVolume(prefix, number) {
-
   if (!(await requireAuth())) {
-    showToast("Sessão expirada 🔐")
-    return
+    showToast("Sessão expirada 🔐");
+    return;
   }
 
-  const ok = await confirmAction("Deletar esse volume?")
-  if (!ok) return
+  const ok = await confirmAction("Deletar esse volume?");
+  if (!ok) return;
 
   try {
-
     const { error } = await supabaseClient
       .from("volumes")
       .delete()
       .eq("prefix", prefix)
-      .eq("number", number)
+      .eq("number", number);
 
-    if (error) throw error
+    if (error) throw error;
 
-    showToast("Volume deletado 🗑")
+    showToast("Volume deletado 🗑");
 
-    loadVolumes(prefix)
-
+    loadVolumes(prefix);
   } catch (err) {
-
-    console.error("DELETE VOLUME ERROR:", err)
+    console.error("DELETE VOLUME ERROR:", err);
 
     if (err.message?.includes("row-level security")) {
-      showToast("Você precisa estar logado 🔐")
+      showToast("Você precisa estar logado 🔐");
     } else {
-      showToast("Erro ao deletar volume ❌")
+      showToast("Erro ao deletar volume ❌");
     }
   }
 }
 
 // iniciar
 (async () => {
-  const ok = await protectAdmin()
+  const ok = await protectAdmin();
 
-  if (!ok) return
+  if (!ok) return;
 
-  loadSeries()
-})()
+  loadSeries();
+})();

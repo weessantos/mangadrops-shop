@@ -1,315 +1,506 @@
 <!-- =======================
 ADMIN.HTML
 ======================= -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
-<head>
-<meta charset="UTF-8">
-<title>CMS Mangá</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CMS Mangá</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
 
-<style>
-:root {
-  --bg: #0b1120;
-  --card: #111827;
-  --card-2: #0f172a;
-  --border: #1f2937;
-  --accent: #6366f1;
-  --accent-hover: #4f46e5;
-  --danger: #ef4444;
+    <style>
+      :root {
+        --bg: #0b1120;
+        --card: #111827;
+        --card-2: #0f172a;
+        --border: #1f2937;
+        --accent: #6366f1;
+        --accent-hover: #4f46e5;
+        --danger: #ef4444;
 
-  --text: #e5e7eb;
-  --muted: #9ca3af;
-}
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+      }
 
-/* RESET */
-* {
-  box-sizing: border-box;
-}
+      /* RESET */
+      * {
+        box-sizing: border-box;
+      }
 
-/* BODY */
-body {
-  margin: 0;
-  font-family: Inter, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  display: flex;
-  height: 100vh;
-}
+      /* BODY */
+      body {
+        margin: 0;
+        font-family: Inter, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        display: flex;
+        height: 100vh;
+      }
 
-/* SIDEBAR */
-.sidebar {
-  width: 260px;
-  border-right: 1px solid var(--border);
-  padding: 20px;
-  background: #020617;
-}
+      /* SIDEBAR */
+      .sidebar {
+        width: 260px;
+        border-right: 1px solid var(--border);
+        padding: 20px;
+        background: #020617;
+      }
 
-.sidebar h3 {
-  margin-top: 0;
-  margin-bottom: 15px;
-}
+      .sidebar h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+      }
 
-.sidebar button {
-  width: 100%;
-  margin-bottom: 15px;
-  font-weight: 600;
-}
+      .sidebar button {
+        width: 100%;
+        margin-bottom: 15px;
+        font-weight: 600;
+      }
 
-.series-item {
-  padding: 10px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  color: var(--muted);
-  transition: 0.2s;
-}
+      .series-item {
+        padding: 10px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        color: var(--muted);
+        transition: 0.2s;
+      }
 
-.series-item:hover {
-  background: var(--card);
-  color: var(--text);
-}
+      .series-item:hover {
+        background: var(--card);
+        color: var(--text);
+      }
 
-/* MAIN */
-.main {
-  flex: 1;
-  padding: 30px;
-  overflow-y: auto;
-}
+      .series-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
 
-/* TOPBAR */
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-}
+      .btn-warning {
+        background: linear-gradient(135deg, #f59e0b, #ef4444);
+        color: white;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 10px;
+        cursor: pointer;
+        transition: 0.2s;
+      }
 
-.topbar h2 {
-  margin: 0;
-  font-size: 22px;
-}
+      .btn-warning:hover {
+        transform: scale(1.03);
+        opacity: 0.9;
+      }
 
-/* CARDS */
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  padding: 20px;
-  border-radius: 14px;
-  margin-bottom: 15px;
-  transition: 0.2s;
-}
+      /* MAIN */
+      .main {
+        flex: 1;
+        padding: 30px;
+        overflow-y: auto;
+      }
 
-.card:hover {
-  border-color: var(--accent);
-}
+      /* TOPBAR */
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+      }
 
-/* INPUTS */
-input, textarea {
-  width: 100%;
-  margin-top: 5px;
-  margin-bottom: 12px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: #020617;
-  color: white;
-  transition: 0.2s;
-}
+      .topbar h2 {
+        margin: 0;
+        font-size: 22px;
+      }
 
-input:focus, textarea:focus {
-  outline: none;
-  border-color: var(--accent);
-}
+      /* CARDS */
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        padding: 20px;
+        border-radius: 14px;
+        margin-bottom: 15px;
+        transition: 0.2s;
+      }
 
-/* BOTÕES */
-button {
-  background: var(--accent);
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  color: white;
-  font-weight: 500;
-  transition: 0.2s;
-}
+      .card:hover {
+        border-color: var(--accent);
+      }
 
-button:hover {
-  background: var(--accent-hover);
-}
+      /* INPUTS */
+      input,
+      textarea {
+        width: 100%;
+        margin-top: 5px;
+        margin-bottom: 12px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: #020617;
+        color: white;
+        transition: 0.2s;
+      }
 
-/* BOTÕES ESPECIAIS */
-button.danger {
-  background: var(--danger);
-}
+      input:focus,
+      textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
 
-button.secondary {
-  background: var(--card-2);
-  border: 1px solid var(--border);
-}
+      /* BOTÕES */
+      button {
+        background: var(--accent);
+        border: none;
+        padding: 8px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        color: white;
+        font-weight: 500;
+        transition: 0.2s;
+      }
 
-button.secondary:hover {
-  background: var(--card);
-}
+      button:hover {
+        background: var(--accent-hover);
+      }
 
-/* AÇÕES (botões de topo da série) */
-.actions {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
+      /* BOTÕES ESPECIAIS */
+      button.danger {
+        background: var(--danger);
+      }
 
-/* MODAL */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.7);
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
+      button.secondary {
+        background: var(--card-2);
+        border: 1px solid var(--border);
+      }
 
-.modal-content {
-  background: var(--card);
-  padding: 20px;
-  border-radius: 12px;
-  width: 400px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-}
+      button.secondary:hover {
+        background: var(--card);
+      }
 
-/* SCROLL BONITO */
-::-webkit-scrollbar {
-  width: 6px;
-}
+      /* AÇÕES (botões de topo da série) */
+      .actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
 
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 10px;
-}
+      /* MODAL */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
 
-.toast {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #111827;
-  color: white;
-  padding: 12px 16px;
-  border-radius: 10px;
-  border: 1px solid #1f2937;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: 0.3s;
-  z-index: 9999;
-}
+      .modal-content {
+        background: var(--card);
+        padding: 20px;
+        border-radius: 12px;
+        width: 400px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      }
 
-.toast.show {
-  opacity: 1;
-  transform: translateY(0);
-}
+      /* SCROLL BONITO */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
 
-.field label {
-  font-weight: 600;
-  display: block;
-  margin-bottom: 4px;
-}
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 10px;
+      }
 
-/* 💰 afiliado */
-.label-affiliate {
-  color: #22c55e;
-}
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #111827;
+        color: white;
+        padding: 12px 16px;
+        border-radius: 10px;
+        border: 1px solid #1f2937;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: 0.3s;
+        z-index: 9999;
+      }
 
-/* 🔗 raw */
-.label-raw {
-  color: #3b82f6;
-}
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
 
-/* 🎥 tiktok */
-.label-tiktok {
-  color: #ec4899;
-}
+      .field label {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 4px;
+      }
 
-/* 📝 descrição */
-.label-desc {
-  color: #9ca3af;
-}
+      /* 💰 afiliado */
+      .label-affiliate {
+        color: #22c55e;
+      }
 
-.input-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-  margin-bottom: 10px;
-}
+      /* 🔗 raw */
+      .label-raw {
+        color: #3b82f6;
+      }
 
-.input-actions button {
-  padding: 6px 10px;
-  font-size: 14px;
-}
+      /* 🎥 tiktok */
+      .label-tiktok {
+        color: #ec4899;
+      }
 
-.input-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
+      /* 📝 descrição */
+      .label-desc {
+        color: #9ca3af;
+      }
 
-.input-row input {
-  flex: 1;
-}
+      .input-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+        margin-bottom: 10px;
+      }
 
-.input-row button {
-  height: 38px;
-  padding: 0 10px;
-}
+      .input-actions button {
+        padding: 6px 10px;
+        font-size: 14px;
+      }
 
-.card-header {
-  margin-bottom: 10px;
-}
+      .input-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
 
-.title-with-thumb {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+      .input-row input {
+        flex: 1;
+      }
 
-.volume-thumb {
-  width: 50px;
-  height: 70px;
-  object-fit: cover;
-  border-radius: 6px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.4);
-}
+      .input-row button {
+        min-width: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .card-header {
+        margin-bottom: 10px;
+      }
 
-</style>
-</head>
+      .title-with-thumb {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
 
-<body>
+      .volume-thumb {
+        width: 50px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 6px;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+      }
 
-<div class="sidebar">
-  <h3>Séries</h3>
-  <button onclick="openSeriesModal()">+ Nova Série</button>
-  <div id="series-list"></div>
-</div>
+      #loading-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        backdrop-filter: blur(4px);
+      }
 
-<div class="main">
-  <div class="topbar">
-    <h2 id="title">Selecione uma série</h2>
-    <button onclick="logout()" class="secondary">Sair</button>
-    <button id="new-volume" style="display:none">+ Volume</button>
-  </div>
-  <div id="volumes"></div>
-</div>
+      .loader-box {
+        background: #020617;
+        padding: 28px 36px;
+        border-radius: 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+        border: 1px solid #1f2937;
+      }
 
-<!-- MODAL -->
-<div class="modal" id="modal">
-  <div class="modal-content" id="modal-content"></div>
-</div>
+      .spinner {
+        width: 42px;
+        height: 42px;
+        border: 4px solid #1f2937;
+        border-top: 4px solid #6366f1;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
 
-<!-- ✅ AGORA CORRETO -->
-<script src="/admin/admin.js?v=2"></script>
+      #loading-text {
+        color: #e5e7eb;
+        font-size: 14px;
+        font-weight: 500;
+      }
 
-<div id="toast" class="toast"></div>
+      #toast-overlay {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        pointer-events: none;
+      }
 
-</body>
+      .toast-box {
+        background: #020617;
+        padding: 18px 28px;
+        border-radius: 12px;
+        color: #e5e7eb;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        border: 1px solid #1f2937;
+
+        transform: translateY(20px) scale(0.95);
+        opacity: 0;
+        transition: all 0.25s ease;
+      }
+
+      /* 🔥 animação */
+      #toast-overlay.show .toast-box {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="sidebar">
+      <h3>Séries</h3>
+
+      <div class="series-actions">
+        <button onclick="openSeriesModal()">+ Nova Série</button>
+
+        <button class="btn-warning" onclick="updateAllPrices()">
+          🔥 Atualizar Preços
+        </button>
+      </div>
+
+      <div id="series-list"></div>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <h2 id="title">Selecione uma série</h2>
+        <button onclick="logout()" class="secondary">Sair</button>
+        <button id="new-volume" style="display: none">+ Volume</button>
+      </div>
+      <div id="volumes"></div>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal" id="modal">
+      <div class="modal-content" id="modal-content"></div>
+    </div>
+
+    <!-- ✅ AGORA CORRETO -->
+    <script src="/admin/admin.js?v=2"></script>
+
+    <div id="loading-overlay">
+      <div class="loader-box">
+        <div class="spinner"></div>
+        <span id="loading-text">Carregando...</span>
+      </div>
+    </div>
+
+    <div id="toast-overlay">
+      <div class="toast-box" id="toast-box">
+        <span id="toast-message">Mensagem</span>
+      </div>
+    </div>
+
+    <!-- 🔥 PROGRESS MODAL -->
+    <div
+      id="progress-modal"
+      style="
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        backdrop-filter: blur(4px);
+      "
+    >
+      <div
+        style="
+          background: #020617;
+          padding: 24px 28px;
+          border-radius: 14px;
+          width: 800px;
+          max-width: 90vw;
+          border: 1px solid #1f2937;
+          box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+        "
+      >
+        <h3 style="margin-top: 0">🔥 Atualizando preços...</h3>
+
+        <!-- barra -->
+        <div
+          style="
+            background: #1f2937;
+            height: 10px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 12px;
+          "
+        >
+          <div
+            id="progress-bar"
+            style="
+              height: 100%;
+              width: 0%;
+              background: #22c55e;
+              transition: 0.3s;
+            "
+          ></div>
+        </div>
+
+        <!-- contador -->
+        <div
+          id="progress-text"
+          style="margin-top: 8px; font-size: 13px; color: #9ca3af"
+        >
+          0 / 0
+        </div>
+
+        <!-- logs -->
+        <div
+          id="progress-logs"
+          style="
+            margin-top: 12px;
+            max-height: 260px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 13px;
+            color: #22c55e;
+            line-height: 1.6;
+            white-space: pre; /* 🔥 NÃO QUEBRA LINHA */
+          "
+        ></div>
+      </div>
+    </div>
+  </body>
 </html>

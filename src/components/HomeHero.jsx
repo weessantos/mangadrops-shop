@@ -10,12 +10,7 @@ export default function HomeHero({ onHeroSearch }) {
       {
         src: img("banner-0.jpeg"),
         alt: "Mangá Drops banner",
-        title: "Do Hype à Estante",
-        subtitle: "Do TikTok direto para sua coleção.",
-        description:
-          "Reviews, lançamentos e links organizados para você encontrar seus próximos volumes com facilidade.",
-        ctaLabel: "Ver Mangás Disponíveis",
-        cta: { type: "scroll", value: "obras" },
+        position: "center center",
       },
       {
         src: img("banner-1.jpeg"),
@@ -25,6 +20,7 @@ export default function HomeHero({ onHeroSearch }) {
         description: "Vídeos de One Piece em breve no Mangá Drops",
         ctaLabel: "Mangá Drops no TikTok",
         cta: { type: "url", value: "https://www.tiktok.com/@_mangadrops" },
+        position: "90% center",
       },
       {
         src: img("banner-2.jpeg"),
@@ -34,15 +30,18 @@ export default function HomeHero({ onHeroSearch }) {
         description: "Garanta já o seu volume e acompanhe os vídeos no TikTok",
         ctaLabel: "Mangá Drops no TikTok",
         cta: { type: "url", value: "https://www.tiktok.com/@_mangadrops" },
+        position: "82% center",
       },
       {
         src: img("banner-3.jpeg"),
         alt: "Attack on Titan",
         title: "Attack on Titan",
         subtitle: "Já está disponível.",
-        description: "Todos os volumes de Attack on Titan, somente no Mangá Drops",
+        description:
+          "Todos os volumes de Attack on Titan, somente no Mangá Drops",
         ctaLabel: "Mangá Drops no TikTok",
         cta: { type: "url", value: "https://www.tiktok.com/@_mangadrops" },
+        position: "90% center",
       },
       {
         src: img("banner-4.jpeg"),
@@ -52,6 +51,7 @@ export default function HomeHero({ onHeroSearch }) {
         description: "Demon Slayer, incluindo versão com o box",
         ctaLabel: "Solicitar uma obra",
         cta: { type: "url", value: "https://forms.gle/Vz1PUw5V9TxSUzqc8" },
+        position: "80% center",
       },
       {
         src: img("banner-5.jpeg"),
@@ -61,9 +61,10 @@ export default function HomeHero({ onHeroSearch }) {
         description: "Template para membros.",
         ctaLabel: "Entrar na lista",
         cta: { type: "url", value: "https://forms.gle/hWzYHck2xPsNRcee9" },
+        position: "center center",
       },
     ],
-    []
+    [],
   );
 
   const [index, setIndex] = useState(0);
@@ -148,7 +149,8 @@ export default function HomeHero({ onHeroSearch }) {
 
       setTimeout(() => {
         const target =
-          document.getElementById("volumes") || document.getElementById("obras");
+          document.getElementById("volumes") ||
+          document.getElementById("obras");
 
         target?.scrollIntoView({
           behavior: "smooth",
@@ -181,27 +183,53 @@ export default function HomeHero({ onHeroSearch }) {
             className={`heroSlidePremium ${i === index ? "active" : ""}`}
             aria-hidden={i !== index}
           >
-            <img src={slide.src} alt={slide.alt} loading={i === 0 ? "eager" : "lazy"} />
+            <img
+              src={slide.src}
+              alt={slide.alt}
+              style={{ objectPosition: slide.position || "center" }}
+              loading={i === 0 ? "eager" : "lazy"}
+            />
 
-            <div className="heroTextWrapper">
-              <div className="heroTextCard">
-                <h1>{slide.title}</h1>
-                <h3>{slide.subtitle}</h3>
-                <p>{slide.description}</p>
+            {(slide.title ||
+              slide.subtitle ||
+              slide.description ||
+              (slide.cta && slide.ctaLabel)) && (
+              <div className="heroTextWrapper">
+                <div className="heroTextCard">
+                  {slide.title && <h1>{slide.title}</h1>}
+                  {slide.subtitle && <h3>{slide.subtitle}</h3>}
+                  {slide.description && <p>{slide.description}</p>}
 
-                <button className="heroCTA" type="button" onClick={() => handleCTA(slide)}>
-                  {slide.ctaLabel ?? "Explorar agora"}
-                </button>
+                  {slide.cta && slide.ctaLabel && (
+                    <button
+                      className="heroCTA"
+                      type="button"
+                      onClick={() => handleCTA(slide)}
+                    >
+                      {slide.ctaLabel}
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         ))}
 
         {/* setas somem no mobile via CSS */}
-        <button className="heroArrowPremium left" onClick={prev} type="button" aria-label="Anterior">
+        <button
+          className="heroArrowPremium left"
+          onClick={prev}
+          type="button"
+          aria-label="Anterior"
+        >
           ‹
         </button>
-        <button className="heroArrowPremium right" onClick={next} type="button" aria-label="Próximo">
+        <button
+          className="heroArrowPremium right"
+          onClick={next}
+          type="button"
+          aria-label="Próximo"
+        >
           ›
         </button>
 

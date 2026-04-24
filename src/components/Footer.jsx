@@ -61,6 +61,7 @@ export default function Footer({ scrollToNav }) {
       </div>
 
       <div className="footerBottom">
+        <p>Amazon e o logotipo da Amazon são marcas comerciais da Amazon.com, Inc. ou de suas afiliadas</p>
         © {new Date().getFullYear()} Mangá Drops
       </div>
     </footer>

@@ -39,13 +39,28 @@ async function processBatch({ rows, getPrice, field, column, name }) {
   console.log("🔥 Aquecendo sessão...");
   await new Promise((r) => setTimeout(r, 10000));
 
+  // 🔥 Warmup só para Amazon
+  if (name === "Amazon") {
+    console.log("🔥 Warmup Amazon...");
+
+    const warmupPage = await context.newPage();
+
+    await warmupPage.goto("https://www.amazon.com.br");
+    await warmupPage.waitForTimeout(5000);
+
+    await warmupPage.goto("https://www.amazon.com.br/s?k=manga");
+    await warmupPage.waitForTimeout(5000);
+
+    await warmupPage.close();
+  }
+
   for (const row of rows) {
     index++;
 
     // 🐢 WARMUP (primeiros 5 mais lentos)
-    if (index <= 5) {
+    if (index <= 5 && name === "Amazon") {
       console.log("🐢 Modo humano (warmup)");
-      await new Promise((r) => setTimeout(r, 7000 + Math.random() * 3000));
+      await new Promise((r) => setTimeout(r, 10000 + Math.random() * 5000));
     }
 
     // 🔁 reset de contexto a cada 15 produtos
@@ -62,6 +77,7 @@ async function processBatch({ rows, getPrice, field, column, name }) {
       });
 
       console.log("🔁 Contexto reiniciado");
+      console.log("⚠️ Todas páginas anteriores foram invalidadas");
     }
 
     const start = Date.now();
@@ -70,18 +86,98 @@ async function processBatch({ rows, getPrice, field, column, name }) {
       const url = row[field];
       if (!url) continue;
 
-      const tempPage = await context.newPage();
-
       let result = null;
+      let price = null;
 
-      try {
-        result = await getPriceWithRetry(getPrice, tempPage, url, 2);
-      } finally {
-        await tempPage.close();
+      const MAX_RETRIES = 3;
+
+      for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+        let page;
+
+        try {
+          page = await context.newPage();
+
+          result = await getPriceWithRetry(getPrice, page, url, 2);
+          price = result?.price ?? null;
+
+          // ✅ sucesso
+          if (price) {
+            break;
+          }
+
+          // 🔥 Anti-block Amazon
+          if (!price && name === "Amazon") {
+            let html = "";
+
+            try {
+              html = await page.content();
+            } catch {
+              console.log("⚠️ Página morreu antes do HTML");
+            }
+
+            if (
+              html &&
+              (html.includes("opfcaptcha") ||
+                html.includes("continuar comprando"))
+            ) {
+              console.log(`🤖 Bloqueio detectado (tentativa ${attempt})`);
+
+              await new Promise((r) =>
+                setTimeout(r, 2000 + Math.random() * 3000),
+              );
+
+              continue; // 🔁 tenta novamente
+            }
+          }
+
+          // ❌ não tem preço mas não é bloqueio → para
+          break;
+        } catch (err) {
+          console.log(`⚠️ Erro tentativa ${attempt}:`, err.message);
+
+          // 🔁 erro de página/contexto → tenta de novo
+          if (err.message.includes("Target page")) {
+            continue;
+          }
+
+          // ❌ erro desconhecido → para
+          break;
+        } finally {
+          if (page) {
+            try {
+              await page.close();
+            } catch {}
+          }
+        }
       }
 
-      const price = result?.price ?? null;
-      const title = result?.title ?? "Sem título";
+      const dbTitle = row.title;
+
+      // 🔥 DEBUG: salva HTML se falhar (última tentativa)
+      if (!price) {
+        try {
+          const debugPage = await context.newPage();
+          await debugPage.goto(url, { waitUntil: "domcontentloaded" });
+
+          const html = await debugPage.content();
+
+          const fs = await import("fs");
+
+          if (!fs.existsSync("./errors")) {
+            fs.mkdirSync("./errors");
+          }
+
+          const fileName = `./errors/error-${row.id}.html`;
+
+          fs.writeFileSync(fileName, html);
+
+          console.log(`💾 HTML salvo em: ${fileName}`);
+
+          await debugPage.close();
+        } catch {
+          console.log("⚠️ Não conseguiu salvar HTML");
+        }
+      }
 
       // 🔍 pega preço atual
       const current = await pool.query(
@@ -91,16 +187,23 @@ async function processBatch({ rows, getPrice, field, column, name }) {
 
       const currentPrice = current.rows[0]?.[column];
 
-      // ✅ calcula mudança (AGORA correto)
+      // ✅ calcula mudança
       const changed = Number(currentPrice) !== Number(price);
 
-      // ⏱️ calcula a duração
       const duration = Date.now() - start;
 
-      // 🔥 LOG (centralizado)
-      logProduct(index, rows.length, name, title, price, changed, duration);
+      // 🔥 LOG
+      logProduct(
+        index,
+        rows.length,
+        name,
+        `[ID:${row.id}] ${dbTitle}`,
+        price,
+        changed,
+        duration,
+      );
 
-      // 🧠 se mudou → guarda
+      // 🧠 salva
       if (changed) {
         updates.push({
           id: row.id,
@@ -114,7 +217,7 @@ async function processBatch({ rows, getPrice, field, column, name }) {
         });
       }
     } catch (err) {
-      console.log("❌ Erro:", err.message);
+      console.log("❌ Erro geral:", err.message);
     }
 
     await sleepRandom();
@@ -207,7 +310,7 @@ async function processBatch({ rows, getPrice, field, column, name }) {
 // MAIN
 // ==============================
 
-(async () => {
+export async function runUpdatePrices() {
   console.log("🚀 Iniciando scraper escalável...");
 
   // ============================
@@ -215,7 +318,7 @@ async function processBatch({ rows, getPrice, field, column, name }) {
   // ============================
   if (RUN_AMAZON) {
     const amazonRes = await pool.query(`
-    SELECT id, amazon_raw
+    SELECT id, title, amazon_raw
     FROM volumes
     WHERE COALESCE(amazon_raw, '') != ''
     ORDER BY title ASC
@@ -235,7 +338,7 @@ async function processBatch({ rows, getPrice, field, column, name }) {
   // ============================
   if (RUN_ML) {
     const mlRes = await pool.query(`
-    SELECT id, mercado_livre_raw
+    SELECT id, title, mercado_livre_raw
     FROM volumes
     WHERE COALESCE(mercado_livre_raw, '') != ''
     ORDER BY title ASC
@@ -251,4 +354,8 @@ async function processBatch({ rows, getPrice, field, column, name }) {
   }
 
   console.log("🎉 Tudo finalizado com sucesso!");
-})();
+}
+
+if (process.argv.includes("--run")) {
+  runUpdatePrices();
+}
