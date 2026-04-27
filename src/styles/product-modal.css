@@ -21,9 +21,9 @@
   width: min(900px, 100%);
   max-height: 92vh;
   border-radius: 22px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(20, 24, 36, 0.98);
-  box-shadow: 0 24px 90px rgba(0,0,0,0.55);
+  background: #0B0B0C;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 20px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(220,38,38,0.08);
   overflow: hidden;
   position: relative;
   display: flex;
@@ -43,7 +43,7 @@
   gap: 12px;
   padding: var(--modal-pad);
   padding-bottom: 12px;
-  background: rgba(20, 24, 36, 0.98);
+  background: #0B0B0C;
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
@@ -65,7 +65,11 @@
   width: 6px;
   height: 26px;
   border-radius: 4px;
-  background: linear-gradient(180deg, #7c3aed, #3b82f6);
+  background: linear-gradient(
+    180deg,
+    #EF4444,
+    #DC2626
+  );
 }
 
 .closeBtn{
@@ -445,7 +449,9 @@
     border-right: 0;
     border-top: 0;
     overflow: hidden;
-    background: #0f1420;
+    background: #0B0B0C;
+    border: none;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(220,38,38,0.08);
   }
 
   .desktopOnly{ display: none; }
@@ -458,7 +464,7 @@
     right: 0;
     z-index: 50;
     padding: calc(env(safe-area-inset-top) + 12px) 14px 12px;
-    background: rgba(15,20,32,0.98);
+    background: #0B0B0C;
     border-bottom: 1px solid rgba(255,255,255,0.06);
   }
 

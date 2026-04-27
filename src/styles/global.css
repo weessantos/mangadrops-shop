@@ -7,7 +7,7 @@
   --border: rgba(255,255,255,0.12);
   --text: rgba(255,255,255,0.92);
   --muted: rgba(255,255,255,0.68);
-  --accent: #7c3aed;
+  --accent: #DC2626;
   --accent2: #22c55e;
   --danger: #ef4444;
 }
@@ -422,9 +422,9 @@ a,
   width: min(820px, 95%);
   background: linear-gradient(
     to right,
-    rgba(139,92,246,0.0),
-    rgba(139,92,246,0.85),
-    rgba(139,92,246,0.0)
+    rgba(220,38,38,0.0),
+    rgba(220,38,38,0.9),
+    rgba(220,38,38,0.0)
   );
   border-radius: 999px;
 }
