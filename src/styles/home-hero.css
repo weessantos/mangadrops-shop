@@ -1,3 +1,6 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
 /* =========================================================
    HOME HERO (Slider premium)
    - Usado pelo HomeHero.jsx
@@ -86,6 +89,44 @@
   opacity: 0;
   transform: translateY(20px);
   transition: all 700ms ease;
+}
+
+.heroTextCard h1{
+  font-size: clamp(16px, 4.2vw, 48px);
+  margin: 0 0 10px 0;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+
+  font-family: 'Russo One', sans-serif;
+}
+
+.heroTextCard h3{
+  font-size: clamp(12px, 2.6vw, 22px);
+  margin: 0 0 12px 0;
+  font-weight: 500;
+  opacity: 0.9;
+
+  font-family: 'Poppins', sans-serif;
+}
+
+.heroTextCard p{
+  font-size: clamp(10px, 2.2vw, 18px);
+  margin: 0 0 20px 0;
+  opacity: 0.85;
+
+  font-family: 'Poppins', sans-serif;
+}
+
+.heroCTA{
+  padding: clamp(10px, 2.2vw, 12px) clamp(16px, 3.2vw, 22px);
+  border-radius: 10px;
+  border: none;
+  font-weight: 800;
+  background: #e50914;
+  color: #fff;
+  cursor: pointer;
+
+  font-family: 'Poppins', sans-serif;
 }
 
 .heroSlidePremium.active .heroTextCard{
