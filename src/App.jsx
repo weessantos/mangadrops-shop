@@ -69,11 +69,7 @@ function hasAnyAffiliateLink(p) {
 }
 
 function getBestPrice(p) {
-  const price =
-    p.best_price ??
-    p.amazon_price ??
-    p.mercado_livre_price ??
-    null;
+  const price = p.best_price ?? p.amazon_price ?? p.mercado_livre_price ?? null;
 
   const n = Number(price);
   return Number.isFinite(n) ? n : null;
@@ -88,7 +84,10 @@ function priceNumber(p) {
   if (raw == null) return null;
   if (typeof raw === "number" && Number.isFinite(raw)) return raw;
 
-  const s = String(raw).replace(/\./g, "").replace(",", ".").match(/[\d.]+/);
+  const s = String(raw)
+    .replace(/\./g, "")
+    .replace(",", ".")
+    .match(/[\d.]+/);
   if (!s) return null;
 
   const n = Number(s[0]);
@@ -98,15 +97,15 @@ function priceNumber(p) {
 function hasReview(p) {
   return Boolean(
     p?.tiktok ||
-      p?.tiktokUrl ||
-      p?.video ||
-      p?.videoUrl ||
-      p?.tiktokId ||
-      p?.review ||
-      p?.reviewText ||
-      p?.reviewTitle ||
-      p?.reviewContent ||
-      p?.reviews?.length
+    p?.tiktokUrl ||
+    p?.video ||
+    p?.videoUrl ||
+    p?.tiktokId ||
+    p?.review ||
+    p?.reviewText ||
+    p?.reviewTitle ||
+    p?.reviewContent ||
+    p?.reviews?.length,
   );
 }
 
@@ -127,7 +126,7 @@ function AppShell() {
   const lastAppliedQueryRef = useRef("");
   const collectionsSectionRef = useRef(null);
 
-  const [inputValue, setInputValue] = useState("");;
+  const [inputValue, setInputValue] = useState("");
   const [activeSeries, setActiveSeries] = useState(null);
   const [isHeaderCompact, setIsHeaderCompact] = useState(false);
   const [activeSection, setActiveSection] = useState("colecoes");
@@ -137,7 +136,7 @@ function AppShell() {
   const [products, setProducts] = useState([]);
   const { seriesList, seriesBySlug, seriesNames } = useSeriesList(
     products || [],
-    seriesCatalog || []
+    seriesCatalog || [],
   );
 
   const [shouldScrollToVolumes, setShouldScrollToVolumes] = useState(false);
@@ -214,30 +213,30 @@ function AppShell() {
   }, [location.search]);
 
   useEffect(() => {
-  if (!shouldScrollToVolumes) return;
+    if (!shouldScrollToVolumes) return;
 
-  const tryScroll = () => {
-    const el = document.getElementById("volumes");
-    if (!el) {
-      requestAnimationFrame(tryScroll); // 🔥 tenta de novo
-      return;
-    }
+    const tryScroll = () => {
+      const el = document.getElementById("volumes");
+      if (!el) {
+        requestAnimationFrame(tryScroll); // 🔥 tenta de novo
+        return;
+      }
 
-    const header = document.querySelector(".heroHeader");
-    const headerHeight = header?.offsetHeight || 80;
+      const header = document.querySelector(".heroHeader");
+      const headerHeight = header?.offsetHeight || 80;
 
-    const top = el.getBoundingClientRect().top + window.scrollY;
+      const top = el.getBoundingClientRect().top + window.scrollY;
 
-    window.scrollTo({
-      top: top - headerHeight - 8,
-      behavior: "smooth",
-    });
+      window.scrollTo({
+        top: top - headerHeight - 8,
+        behavior: "smooth",
+      });
 
-    setShouldScrollToVolumes(false);
-  };
+      setShouldScrollToVolumes(false);
+    };
 
-  tryScroll();
-}, [location.pathname, shouldScrollToVolumes]);
+    tryScroll();
+  }, [location.pathname, shouldScrollToVolumes]);
 
   useEffect(() => {
     setInputValue(qParam);
@@ -283,27 +282,27 @@ function AppShell() {
 
     return pickSeriesFromQuery(
       qParam,
-      seriesNames.map((name) => ({ name }))
+      seriesNames.map((name) => ({ name })),
     );
   }, [qParam, seriesNames]);
-   
+
   const baseFiltered = useMemo(() => {
     const { words, numbers } = parseQuery(qParam);
 
     return products
       .filter((p) => {
-      // 🔥 PRIORIDADE TOTAL PARA SEARCH
-      if (foundSeries) {
-        return p.series === foundSeries;
-      }
+        // 🔥 PRIORIDADE TOTAL PARA SEARCH
+        if (foundSeries) {
+          return p.series === foundSeries;
+        }
 
-      // depois fallback
-      if (activeSeries) {
-        return (p.series || "Outros") === activeSeries;
-      }
+        // depois fallback
+        if (activeSeries) {
+          return (p.series || "Outros") === activeSeries;
+        }
 
-      // 🔥 AQUI É A MÁGICA
-      if (foundSeries) {
+        // 🔥 AQUI É A MÁGICA
+        if (foundSeries) {
           return p.series === foundSeries;
         }
 
@@ -359,19 +358,19 @@ function AppShell() {
 
     if (brandSet)
       arr = arr.filter((p) =>
-        getMeta(p).brand.some((b) => brandSet.has(normLc(b)))
+        getMeta(p).brand.some((b) => brandSet.has(normLc(b))),
       );
     if (authorSet)
       arr = arr.filter((p) =>
-        getMeta(p).author.some((a) => authorSet.has(normLc(a)))
+        getMeta(p).author.some((a) => authorSet.has(normLc(a))),
       );
     if (genreSet)
       arr = arr.filter((p) =>
-        getMeta(p).genre.some((g) => genreSet.has(normLc(g)))
+        getMeta(p).genre.some((g) => genreSet.has(normLc(g))),
       );
     if (formatSet)
       arr = arr.filter((p) =>
-        getMeta(p).format.some((f) => formatSet.has(normLc(f)))
+        getMeta(p).format.some((f) => formatSet.has(normLc(f))),
       );
 
     if (Number.isFinite(maxPrice)) {
@@ -403,20 +402,19 @@ function AppShell() {
     if (sort === "price_asc") {
       arr.sort(
         (a, b) =>
-          (Number(a.best_price) || 1e15) - (Number(b.best_price) || 1e15)
+          (Number(a.best_price) || 1e15) - (Number(b.best_price) || 1e15),
       );
     } else if (sort === "price_desc") {
       arr.sort(
-        (a, b) =>
-          (Number(b.best_price) || -1) - (Number(a.best_price) || -1)
+        (a, b) => (Number(b.best_price) || -1) - (Number(a.best_price) || -1),
       );
     } else if (sort === "new") {
       arr.sort((a, b) => {
         const da = new Date(
-          a?.date || a?.releasedAt || a?.createdAt || 0
+          a?.date || a?.releasedAt || a?.createdAt || 0,
         ).getTime();
         const db = new Date(
-          b?.date || b?.releasedAt || b?.createdAt || 0
+          b?.date || b?.releasedAt || b?.createdAt || 0,
         ).getTime();
         return db - da;
       });
@@ -448,7 +446,7 @@ function AppShell() {
 
   const totalSeriesPages = useMemo(
     () => Math.max(1, Math.ceil(seriesList.length / SERIES_PAGE_SIZE)),
-    [seriesList.length]
+    [seriesList.length],
   );
 
   const visibleSeriesList = useMemo(() => {
@@ -474,12 +472,14 @@ function AppShell() {
   const selectedProduct = useMemo(() => {
     if (!volumeId) return null;
 
-    return products.find((p) => {
-      const slug = p.url?.split("/").pop(); // pega "gb-04"
-      return slug === volumeId;
-    }) || null;
+    return (
+      products.find((p) => {
+        const slug = p.url?.split("/").pop(); // pega "gb-04"
+        return slug === volumeId;
+      }) || null
+    );
   }, [volumeId, products]);
-  
+
   const openSeries = (name) => {
     setPage(1);
     setShouldScrollToVolumes(true);
@@ -541,31 +541,25 @@ function AppShell() {
     navigate(`/${qs ? `?${qs}` : ""}`, { replace: true });
   };
 
-  const scrollToIdWithOffset = useCallback(
-    (id, behavior = "smooth") => {
-      const el = document.getElementById(id);
-      if (!el) return false;
+  const scrollToIdWithOffset = useCallback((id, behavior = "smooth") => {
+    const el = document.getElementById(id);
+    if (!el) return false;
 
-      const header = document.querySelector(".heroHeader");
+    const header = document.querySelector(".heroHeader");
 
-      // 🔥 pega a posição real do header na tela
-      const headerBottom = header?.getBoundingClientRect().bottom || 0;
+    // 🔥 pega a posição real do header na tela
+    const headerBottom = header?.getBoundingClientRect().bottom || 0;
 
-      const top =
-        el.getBoundingClientRect().top +
-        window.scrollY -
-        headerBottom -
-        8;
+    const top =
+      el.getBoundingClientRect().top + window.scrollY - headerBottom - 8;
 
-      window.scrollTo({
-        top: Math.max(0, top),
-        behavior,
-      });
+    window.scrollTo({
+      top: Math.max(0, top),
+      behavior,
+    });
 
-      return true;
-    },
-    []
-  );
+    return true;
+  }, []);
 
   const resolveScrollIds = useCallback((target, fallbackIds = []) => {
     const map = {
@@ -583,7 +577,9 @@ function AppShell() {
   const scrollToNav = useCallback(
     ({ target, ids = [] } = {}) => {
       const targetIds = resolveScrollIds(target, ids);
-      const routeHasSeriesContext = Boolean(seriesSlug || volumeId || activeSeries);
+      const routeHasSeriesContext = Boolean(
+        seriesSlug || volumeId || activeSeries,
+      );
 
       const performScroll = () => {
         for (const id of targetIds) {
@@ -611,7 +607,7 @@ function AppShell() {
       scrollToIdWithOffset,
       seriesSlug,
       volumeId,
-    ]
+    ],
   );
 
   const changeSeriesPage = useCallback(
@@ -633,11 +629,14 @@ function AppShell() {
         });
       }
     },
-    [isHeaderCompact, totalSeriesPages]
+    [isHeaderCompact, totalSeriesPages],
   );
 
   useEffect(() => {
-    const maxPage = Math.max(1, Math.ceil(seriesList.length / SERIES_PAGE_SIZE));
+    const maxPage = Math.max(
+      1,
+      Math.ceil(seriesList.length / SERIES_PAGE_SIZE),
+    );
     if (seriesPage > maxPage) {
       setSeriesPage(maxPage);
     }
@@ -657,7 +656,9 @@ function AppShell() {
 
       let current = "colecoes";
       for (const section of sections) {
-        const el = section.ids.map((id) => document.getElementById(id)).find(Boolean);
+        const el = section.ids
+          .map((id) => document.getElementById(id))
+          .find(Boolean);
         if (!el) continue;
         const top = el.getBoundingClientRect().top;
         if (top <= 180) current = section.key;
@@ -704,7 +705,9 @@ function AppShell() {
       <section className="brandBlock">
         <div className="brandHeader">
           <h2 className="brandTitle">Mangá Drops no TikTok</h2>
-          <p className="brandSubtitle">Reviews, indicações e novidades toda semana.</p>
+          <p className="brandSubtitle">
+            Reviews, indicações e novidades toda semana.
+          </p>
         </div>
         <BrandStats />
       </section>
@@ -713,12 +716,12 @@ function AppShell() {
         <div className="chapterHeader">
           <div className="chapterTop">
             <h1 className="chapterTitle">Mangás Disponíveis</h1>
+            <h1 className="seoTitle">Mangás à Venda | One Piece, Jujutsu Kaisen e mais</h1>
           </div>
-
           <p className="chapterDesc">
             {!activeSeries
-              ? "Confira os volumes em estoque e garanta o seu antes que esgote. Atualizado com lançamentos e reposições recentes."
-              : "Adquira seu mangá preferido com os melhores preços do mercado. Links atualizados."}
+              ? "Veja os mangás disponíveis em estoque com preços atualizados e novas reposições."
+              : "Compre mangás com os melhores preços do mercado. Links atualizados diariamente."}
           </p>
 
           <ActiveFiltersBar />
@@ -872,12 +875,12 @@ function AppShell() {
 
                   <div className="collectionsCounter">
                     Exibindo{" "}
+                    <strong>{(seriesPage - 1) * SERIES_PAGE_SIZE + 1}</strong>–
                     <strong>
-                      {(seriesPage - 1) * SERIES_PAGE_SIZE + 1}
-                    </strong>
-                    –
-                    <strong>
-                      {Math.min(seriesPage * SERIES_PAGE_SIZE, seriesList.length)}
+                      {Math.min(
+                        seriesPage * SERIES_PAGE_SIZE,
+                        seriesList.length,
+                      )}
                     </strong>{" "}
                     de <strong>{seriesList.length}</strong> obras
                   </div>

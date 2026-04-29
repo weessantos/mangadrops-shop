@@ -5,7 +5,7 @@ export default function BrandStats() {
     <div className="brandStatsWrap">
       <section className="brandStats" aria-label="Estatísticas do Mangá Drops">
         <div className="brandStat">
-          <span className="statNumber">+50k</span>
+          <span className="statNumber">+100k</span>
           <span className="statLabel">visualizações</span>
         </div>
 
