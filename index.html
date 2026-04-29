@@ -1,35 +1,76 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mangá Drops</title>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- ✅ GitHub Pages SPA fallback -->
-    <script>
-      (function () {
-        const params = new URLSearchParams(location.search);
-        const p = params.get("__gh_path__");
-        if (p) {
-          params.delete("__gh_path__");
-          const clean = params.toString();
-          history.replaceState(null, "", p + (clean ? "?" + clean : ""));
-        }
-      })();
-    </script>
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+  <!-- SEO básico -->
+  <title>Mangás à Venda | One Piece, Jujutsu Kaisen e mais | Mangá Drops</title>
+  <meta
+    name="description"
+    content="Compre mangás originais com envio rápido! One Piece, Jujutsu Kaisen, Demon Slayer e mais. Veja ofertas e garanta sua coleção agora."
+  />
+  <meta name="robots" content="index, follow" />
 
-      gtag('config', 'G-C5VWWDR3S2');
-    </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>
+  <!-- Open Graph (preview quando compartilha link) -->
+  <meta property="og:title" content="Mangá Drops - Mangás à Venda" />
+  <meta
+    property="og:description"
+    content="Compre mangás originais com envio rápido. Confira nossas ofertas!"
+  />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://mangasdrops.online" />
+  <meta property="og:image" content="https://mangasdrops.online/preview.png" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Mangá Drops - Mangás à Venda" />
+  <meta
+    name="twitter:description"
+    content="Compre mangás com os melhores preços!"
+  />
+  <meta name="twitter:image" content="https://mangasdrops.online/preview.png" />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://mangasdrops.online" />
+
+  <!-- Schema (Google entende melhor seu site) -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Store",
+      "name": "Mangá Drops",
+      "url": "https://mangasdrops.online",
+      "sameAs": [
+        "https://www.instagram.com/_mangadrops",
+        "https://www.tiktok.com/@_mangadrops"
+      ]
+    }
+  </script>
+
+  <!-- GitHub Pages SPA fallback -->
+  <script>
+    (function () {
+      const params = new URLSearchParams(location.search);
+      const p = params.get("__gh_path__");
+      if (p) {
+        params.delete("__gh_path__");
+        const clean = params.toString();
+        history.replaceState(null, "", p + (clean ? "?" + clean : ""));
+      }
+    })();
+  </script>
+
+  <!-- Google Analytics -->
+  <script
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=G-C5VWWDR3S2"
+  ></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+    gtag("config", "G-C5VWWDR3S2");
+  </script>
+</head>
