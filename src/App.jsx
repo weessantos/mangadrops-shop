@@ -21,7 +21,9 @@ import BrandStats from "./components/BrandStats";
 import SectionHeader from "./components/SectionHeader";
 import ActiveFiltersBar from "./components/ActiveFiltersBar";
 import FiltersPage from "./pages/FiltersPage";
-import CollectionHero from "./components/CollectionHero.jsx";
+import CollectionHero, {
+  CollectionsHero,
+} from "./components/CollectionHero.jsx";
 
 import { useIsMobile } from "./hooks/useIsMobile";
 import { normalizeProduct } from "./utils/normalizeProduct";
@@ -111,14 +113,12 @@ function hasReview(p) {
 }
 
 function AppShell() {
-  const PAGE_SIZE = 12;
-  const SERIES_PAGE_SIZE = 6;
-
   const navigate = useNavigate();
   const location = useLocation();
   const { seriesSlug, volumeId } = useParams();
   const [sp, setSp] = useSearchParams();
 
+  const isAllCollectionsPage = location.pathname === "/colecoes";
   const isMobile = useIsMobile();
 
   const [page, setPage] = useState(1);
@@ -443,23 +443,50 @@ function AppShell() {
     setPage(1);
   }, [location.search]);
 
-  const pagedProducts = filtered.slice(0, page * PAGE_SIZE);
+  const [seriesPageSize, setSeriesPageSize] = useState(6);
+  const [pageSize, setPageSize] = useState(6);
+
+  const pagedProducts = filtered.slice(0, page * pageSize);
 
   const hasMore = pagedProducts.length < filtered.length;
 
   const totalSeriesPages = useMemo(
-    () => Math.max(1, Math.ceil(seriesList.length / SERIES_PAGE_SIZE)),
-    [seriesList.length],
+    () => Math.max(1, Math.ceil(seriesList.length / seriesPageSize)),
+    [seriesList.length, seriesPageSize],
   );
 
   const visibleSeriesList = useMemo(() => {
-    const start = (seriesPage - 1) * SERIES_PAGE_SIZE;
-    return seriesList.slice(start, start + SERIES_PAGE_SIZE);
-  }, [seriesList, seriesPage]);
+    const start = (seriesPage - 1) * seriesPageSize;
+    return seriesList.slice(start, start + seriesPageSize);
+  }, [seriesList, seriesPage, seriesPageSize]);
+
+  useEffect(() => {
+    const updateSizes = () => {
+      const w = window.innerWidth;
+
+      if (w >= 1200) {
+        setSeriesPageSize(10);
+        setPageSize(10);
+      } else if (w >= 768) {
+        setSeriesPageSize(8);
+        setPageSize(8);
+      } else {
+        setSeriesPageSize(6);
+        setPageSize(6);
+      }
+    };
+
+    updateSizes();
+    window.addEventListener("resize", updateSizes);
+
+    return () => window.removeEventListener("resize", updateSizes);
+  }, []);
 
   const seriesPageDots = useMemo(() => {
     return Array.from({ length: totalSeriesPages }, (_, i) => i + 1);
   }, [totalSeriesPages]);
+
+  const seriesToRender = isAllCollectionsPage ? seriesList : visibleSeriesList;
 
   const updateSearchParams = (patch) => {
     const next = new URLSearchParams(sp);
@@ -580,6 +607,14 @@ function AppShell() {
         seriesSlug || volumeId || activeSeries,
       );
 
+      // 👉 Se não estamos na home, navega e deixa o useEffect cuidar do scroll
+      if (location.pathname !== "/") {
+        navigate("/", {
+          state: { scrollTo: target },
+        });
+        return;
+      }
+
       const performScroll = () => {
         for (const id of targetIds) {
           if (scrollToIdWithOffset(id)) return;
@@ -652,14 +687,12 @@ function AppShell() {
   }, [seriesSlug]);
 
   useEffect(() => {
-    const maxPage = Math.max(
-      1,
-      Math.ceil(seriesList.length / SERIES_PAGE_SIZE),
-    );
+    const maxPage = Math.max(1, Math.ceil(seriesList.length / seriesPageSize));
+
     if (seriesPage > maxPage) {
       setSeriesPage(maxPage);
     }
-  }, [seriesList.length, seriesPage]);
+  }, [seriesList.length, seriesPage, seriesPageSize]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -731,7 +764,7 @@ function AppShell() {
         <BrandStats />
       </section>
 
-      {!isCollectionPage && (
+      {!isCollectionPage && !isAllCollectionsPage && (
         <section id="home" className="chapterBlock">
           <div className="chapterHeader">
             <div className="chapterTop">
@@ -764,6 +797,40 @@ function AppShell() {
         />
       )}
 
+      {isAllCollectionsPage && (
+        <CollectionsHero
+          title="Coleções"
+          total={seriesList.length}
+          onBack={clearSeries}
+        />
+      )}
+
+      {isAllCollectionsPage && !isCollectionPage && !isFiltering && (
+        <div
+          className={isAllCollectionsPage ? "collectionsGrid" : "seriesRail"}
+        >
+          {(isAllCollectionsPage ? seriesList : seriesToRender).map((s) => (
+            <div
+              className={isAllCollectionsPage ? "" : "railItem"}
+              key={s.name}
+            >
+              <SeriesCard
+                name={s.name}
+                thumb={s.thumb}
+                subtitle={s.subtitle}
+                rangeLabel={s.rangeLabel}
+                haveLabel={s.haveLabel}
+                statusLabel={s.statusLabel}
+                missing={s.missing}
+                missingCount={s.missingCount}
+                active={activeSeries === s.name}
+                onOpen={openSeries}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
       {isFiltering && !isCollectionPage && (
         <section id="volumes" className="volumesSection">
           <section className="grid">
@@ -778,7 +845,7 @@ function AppShell() {
                 className="btn showMoreBtn"
                 onClick={() => setPage((prev) => prev + 1)}
               >
-                Mostrar mais {PAGE_SIZE}
+                Mostrar mais {pageSize}
               </button>
               <div className="showMoreHint">
                 Exibindo {pagedProducts.length}/{filtered.length}
@@ -788,7 +855,7 @@ function AppShell() {
         </section>
       )}
 
-      {!isCollectionPage && !isFiltering && (
+      {!isCollectionPage && !isFiltering && !isAllCollectionsPage && (
         <section className="railBlock" id="obras">
           <div id="lancamentos">
             <LaunchRail
@@ -838,44 +905,66 @@ function AppShell() {
             id="railTitle"
             ref={collectionsSectionRef}
           >
-            <SectionHeader
-              title="Coleções 📚"
-              subtitle="Explore por obra e veja os volumes disponíveis."
-            />
-
+            {!isAllCollectionsPage && (
+              <SectionHeader
+                title="Coleções 📚"
+                subtitle="Explore por obra e veja os volumes disponíveis."
+              />
+            )}
             <>
-              <div className="collectionsTopbar">
-                <div className="collectionsTopbarLeft">
-                  <span className="collectionsEyebrow">Catálogo</span>
-                  <div className="collectionsMeta">
-                    Página <strong>{seriesPage}</strong> de{" "}
-                    <strong>{totalSeriesPages}</strong>
+              {isAllCollectionsPage && (
+                <CollectionsHero
+                  total={seriesList.length}
+                  onBack={clearSeries}
+                />
+              )}
+              {!isAllCollectionsPage && (
+                <div className="collectionsTopbar">
+                  <div className="collectionsTopbarLeft">
+                    <span className="collectionsEyebrow">Catálogo</span>
+                    <div className="collectionsMeta">
+                      Página <strong>{seriesPage}</strong> de{" "}
+                      <strong>{totalSeriesPages}</strong>
+                    </div>
+                  </div>
+
+                  <div className="collectionsTopbarRight">
+                    <button
+                      className="seeAllBtn"
+                      onClick={() =>
+                        navigate("/colecoes", {
+                          state: { scrollTo: "collection-hero" },
+                        })
+                      }
+                    >
+                      Ver todas →
+                    </button>
+
+                    <div className="collectionsPager">
+                      <button
+                        type="button"
+                        className="collectionsNavBtn"
+                        onClick={() => changeSeriesPage(seriesPage - 1)}
+                        disabled={seriesPage === 1}
+                      >
+                        ‹
+                      </button>
+
+                      <button
+                        type="button"
+                        className="collectionsNavBtn"
+                        onClick={() => changeSeriesPage(seriesPage + 1)}
+                        disabled={seriesPage === totalSeriesPages}
+                      >
+                        ›
+                      </button>
+                    </div>
                   </div>
                 </div>
-
-                <div className="collectionsPager">
-                  <button
-                    type="button"
-                    className="collectionsNavBtn"
-                    onClick={() => changeSeriesPage(seriesPage - 1)}
-                    disabled={seriesPage === 1}
-                  >
-                    ‹
-                  </button>
-
-                  <button
-                    type="button"
-                    className="collectionsNavBtn"
-                    onClick={() => changeSeriesPage(seriesPage + 1)}
-                    disabled={seriesPage === totalSeriesPages}
-                  >
-                    ›
-                  </button>
-                </div>
-              </div>
+              )}
 
               <div className="seriesRail">
-                {(isMobile ? seriesList : visibleSeriesList).map((s) => (
+                {seriesToRender.map((s) => (
                   <div className="railItem" key={s.name}>
                     <SeriesCard
                       name={s.name}
@@ -893,7 +982,7 @@ function AppShell() {
                 ))}
               </div>
 
-              {totalSeriesPages > 1 && (
+              {!isAllCollectionsPage && totalSeriesPages > 1 && (
                 <div className="collectionsBottomBar">
                   <div className="collectionsDots">
                     {seriesPageDots.map((dotPage) => (
@@ -909,12 +998,9 @@ function AppShell() {
 
                   <div className="collectionsCounter">
                     Exibindo{" "}
-                    <strong>{(seriesPage - 1) * SERIES_PAGE_SIZE + 1}</strong>–
+                    <strong>{(seriesPage - 1) * seriesPageSize + 1}</strong>–
                     <strong>
-                      {Math.min(
-                        seriesPage * SERIES_PAGE_SIZE,
-                        seriesList.length,
-                      )}
+                      {Math.min(seriesPage * seriesPageSize, seriesList.length)}
                     </strong>{" "}
                     de <strong>{seriesList.length}</strong> obras
                   </div>
@@ -939,7 +1025,7 @@ function AppShell() {
                 className="btn showMoreBtn"
                 onClick={() => setPage((prev) => prev + 1)}
               >
-                Mostrar mais {PAGE_SIZE}
+                Mostrar mais {pageSize}
               </button>
               <div className="showMoreHint">
                 Exibindo {pagedProducts.length}/{filtered.length}
@@ -973,6 +1059,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/filtros" element={<FiltersPage />} />
+      <Route path="/colecoes" element={<AppShell isAllCollectionsPage />} />
       <Route path="/" element={<AppShell />} />
       <Route path="/:seriesSlug" element={<AppShell />} />
       <Route path="/:seriesSlug/:volumeId" element={<AppShell />} />

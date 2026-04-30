@@ -330,7 +330,7 @@ export default function Header({
                   </a>
                   <a
                     className="sideMenuSocialBtn"
-                    href="https://instagram.com/"
+                    href="https://www.instagram.com/_mangadrops/"
                     target="_blank"
                     rel="noreferrer"
                     aria-label="Instagram"
@@ -361,11 +361,6 @@ export default function Header({
   return (
     <>
       <header className={`heroHeader ${isHeaderCompact && !isMobile ? "isCompact" : ""}`}>
-        <div
-          className="heroBg"
-          style={{ backgroundImage: `url(${img("header-bg.webp")})` }}
-          aria-hidden="true"
-        />
         <div className="heroShade" aria-hidden="true" />
 
         <div className={`heroContent ${isHeaderCompact && !isMobile ? "isCompact" : ""}`}>
@@ -530,7 +525,7 @@ export default function Header({
                   </a>
                   <a
                     className="socialBtn"
-                    href="https://instagram.com/"
+                    href="https://www.instagram.com/_mangadrops/"
                     target="_blank"
                     rel="noreferrer"
                     aria-label="Instagram"

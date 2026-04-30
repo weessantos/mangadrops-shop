@@ -13,7 +13,6 @@ export default function CollectionHero({ seriesSlug, title, total, onBack }) {
       }}
     >
       <div className="heroOverlay">
-
         <button className="heroBackBtn" onClick={onBack}>
           ← Voltar para obras
         </button>
@@ -26,6 +25,39 @@ export default function CollectionHero({ seriesSlug, title, total, onBack }) {
 
         <div className="heroMeta">
           <span>📚 {total} volumes</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function CollectionsHero({ total, onBack }) {
+  return (
+    <section
+      id="collection-hero"
+      className="collectionHero"
+      style={{
+        backgroundImage: `url(${img("collections-bg.jpeg")})`,
+      }}
+    >
+      <div className="heroOverlay">
+        <button className="heroBackBtn" onClick={onBack}>
+          ← Voltar para obras
+        </button>
+
+        <span className="heroTag">CATÁLOGO</span>
+
+        <h1>Coleções</h1>
+
+        <p>
+          Explore todas as obras disponíveis e descubra volumes em estoque,
+          ofertas e coleções completas.
+        </p>
+
+        <div className="heroMeta">
+          <span>
+            📚 {total} {total === 1 ? "obra" : "obras"}
+          </span>
         </div>
       </div>
     </section>
