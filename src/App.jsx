@@ -21,6 +21,7 @@ import BrandStats from "./components/BrandStats";
 import SectionHeader from "./components/SectionHeader";
 import ActiveFiltersBar from "./components/ActiveFiltersBar";
 import FiltersPage from "./pages/FiltersPage";
+import CollectionHero from "./components/CollectionHero.jsx";
 
 import { useIsMobile } from "./hooks/useIsMobile";
 import { normalizeProduct } from "./utils/normalizeProduct";
@@ -191,6 +192,8 @@ function AppShell() {
     (sortParam && sortParam !== "relevance");
 
   const isFiltering = hasAnyFilter && !activeSeries;
+
+  const isCollectionPage = Boolean(seriesSlug && !volumeId);
 
   useEffect(() => {
     async function load() {
@@ -492,14 +495,10 @@ function AppShell() {
   const clearSeries = () => {
     setPage(1);
 
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate("/");
-      setTimeout(() => {
-        scrollToIdWithOffset("obras");
-      }, 80);
-    }
+    navigate("/", {
+      replace: true,
+      state: { scrollTo: "railTitle" },
+    });
   };
 
   const openProduct = (product) => {
@@ -632,6 +631,26 @@ function AppShell() {
     [isHeaderCompact, totalSeriesPages],
   );
 
+  // quando fecha uma coleção, tenta scroll pro menu de coleções
+  useEffect(() => {
+    if (location.pathname === "/" && location.state?.scrollTo === "railTitle") {
+      window.scrollTo({ top: 0, behavior: "instant" });
+
+      requestAnimationFrame(() => {
+        scrollToIdWithOffset("railTitle");
+      });
+    }
+  }, [location]);
+
+  // 🔥 quando entra na página de coleção, já tenta scroll pro banner
+  useEffect(() => {
+    if (isCollectionPage) {
+      requestAnimationFrame(() => {
+        scrollToIdWithOffset("collection-hero");
+      });
+    }
+  }, [seriesSlug]);
+
   useEffect(() => {
     const maxPage = Math.max(
       1,
@@ -645,7 +664,7 @@ function AppShell() {
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY || 0;
-      setIsHeaderCompact(y > 150);
+      setIsHeaderCompact(y > 50);
 
       const sections = [
         { key: "lancamentos", ids: ["lancamentos"] },
@@ -700,7 +719,7 @@ function AppShell() {
         isHeaderCompact={isHeaderCompact}
       />
 
-      <HomeHero />
+      <HomeHero isHeaderCompact={isHeaderCompact} />
 
       <section className="brandBlock">
         <div className="brandHeader">
@@ -712,25 +731,40 @@ function AppShell() {
         <BrandStats />
       </section>
 
-      <section id="home" className="chapterBlock">
-        <div className="chapterHeader">
-          <div className="chapterTop">
-            <h1 className="chapterTitle">Mangás Disponíveis</h1>
-            <h1 className="seoTitle">Mangás à Venda | One Piece, Jujutsu Kaisen e mais</h1>
+      {!isCollectionPage && (
+        <section id="home" className="chapterBlock">
+          <div className="chapterHeader">
+            <div className="chapterTop">
+              <h1 className="chapterTitle">Mangás Disponíveis</h1>
+
+              <p className="chapterDesc">
+                Veja os mangás disponíveis em estoque com preços atualizados e
+                novas reposições.
+              </p>
+
+              {/* SEO escondido */}
+              <h1 className="seoTitle">
+                Mangás à Venda | One Piece, Jujutsu Kaisen e mais
+              </h1>
+            </div>
+
+            <ActiveFiltersBar />
+
+            <div className="chapterLine" aria-hidden="true" />
           </div>
-          <p className="chapterDesc">
-            {!activeSeries
-              ? "Veja os mangás disponíveis em estoque com preços atualizados e novas reposições."
-              : "Compre mangás com os melhores preços do mercado. Links atualizados diariamente."}
-          </p>
+        </section>
+      )}
 
-          <ActiveFiltersBar />
+      {isCollectionPage && (
+        <CollectionHero
+          seriesSlug={seriesSlug}
+          title={activeSeries}
+          total={filtered.length}
+          onBack={clearSeries}
+        />
+      )}
 
-          <div className="chapterLine" aria-hidden="true" />
-        </div>
-      </section>
-
-      {isFiltering && (
+      {isFiltering && !isCollectionPage && (
         <section id="volumes" className="volumesSection">
           <section className="grid">
             {pagedProducts.map((p) => (
@@ -754,7 +788,7 @@ function AppShell() {
         </section>
       )}
 
-      {!activeSeries && !isFiltering && (
+      {!isCollectionPage && !isFiltering && (
         <section className="railBlock" id="obras">
           <div id="lancamentos">
             <LaunchRail
@@ -889,22 +923,6 @@ function AppShell() {
             </>
           </section>
         </section>
-      )}
-
-      {activeSeries && (
-        <div id="volumes" className="backRow">
-          <button className="btn ghost backButton" onClick={clearSeries}>
-            ← Voltar para obras
-          </button>
-
-          <div className="infoTag">
-            <span>Exibindo</span>
-            <strong>{activeSeries}</strong>
-            <span>
-              • {pagedProducts.length}/{filtered.length} volume(s)
-            </span>
-          </div>
-        </div>
       )}
 
       {activeSeries && (

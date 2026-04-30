@@ -11,7 +11,7 @@ export const ALIASES = {
   skmt: "sakamoto",
   ddd: "dandadan",
   vs: "versus",
-  GashBell : "gash bell",
+  GashBell: "gash bell",
 };
 
 export function normalizeText(s) {

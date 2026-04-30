@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/home-hero.css";
 
 const base = import.meta.env.BASE_URL;
 const img = (path) => `${base}assets/${path}`;
 
-export default function HomeHero({ onHeroSearch }) {
+export default function HomeHero({ onHeroSearch, isHeaderCompact }) {
+  const navigate = useNavigate();
   const slides = useMemo(
     () => [
       {
@@ -18,8 +20,8 @@ export default function HomeHero({ onHeroSearch }) {
         title: "One Piece",
         subtitle: "Já está disponível",
         description: "Vídeos de One Piece em breve no Mangá Drops",
-        ctaLabel: "Mangá Drops no TikTok",
-        cta: { type: "url", value: "https://www.tiktok.com/@_mangadrops" },
+        ctaLabel: "Ver One Piece",
+        cta: { type: "series", slug: "one-piece" },
         position: "90% center",
       },
       {
@@ -29,7 +31,7 @@ export default function HomeHero({ onHeroSearch }) {
         subtitle: "Já está disponível",
         description: "Anime anunciado, mangá atualizado somente no Mangá Drops",
         ctaLabel: "Kagurabachi já disponível",
-        cta: {  },
+        cta: { type: "series", slug: "kagurabachi" },
         position: "92% center",
       },
       {
@@ -37,9 +39,9 @@ export default function HomeHero({ onHeroSearch }) {
         alt: "Jujutsu Kaisen",
         title: "Jujutsu Kaisen",
         subtitle: "Já está disponível.",
-        description: "Garanta já o seu volume e acompanhe os vídeos no TikTok",
-        ctaLabel: "Mangá Drops no TikTok",
-        cta: { type: "url", value: "https://www.tiktok.com/@_mangadrops" },
+        description: "Jujutsu Kaisen, completo e atualizado, somente no Mangá Drops",
+        ctaLabel: "Ver Jujutsu Kaisen",
+        cta: { type: "series", slug: "jujutsu-kaisen" },
         position: "82% center",
       },
       {
@@ -47,10 +49,9 @@ export default function HomeHero({ onHeroSearch }) {
         alt: "Attack on Titan",
         title: "Attack on Titan",
         subtitle: "Já está disponível.",
-        description:
-          "Todos os volumes de Attack on Titan, somente no Mangá Drops",
-        ctaLabel: "Mangá Drops no TikTok",
-        cta: { type: "url", value: "https://www.tiktok.com/@_mangadrops" },
+        description: "Todos os volumes de Attack on Titan, somente no Mangá Drops",
+        ctaLabel: "Ver Attack on Titan",
+        cta: { type: "series", slug: "attack-on-titan" },
         position: "90% center",
       },
       {
@@ -172,12 +173,14 @@ export default function HomeHero({ onHeroSearch }) {
 
       return;
     }
-
+    if (action.type === "series") {
+      navigate(`/${action.slug}`, { state: { scrollTo: "collection-hero" } });
+    }
     setPaused(false);
   };
 
   return (
-    <section className="heroPremium">
+    <section className={`heroPremium ${isHeaderCompact ? "compact" : ""}`}>
       <div
         className="heroContainerPremium"
         onMouseEnter={() => setPaused(true)}

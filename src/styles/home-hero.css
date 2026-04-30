@@ -247,3 +247,15 @@
   height: 10px;
   background: #fff;
 }
+
+@media (min-width: 800px){
+/* transição suave */
+.heroPremium {
+  transition: margin-top 0.3s ease;
+}
+
+/* quando header compacta */
+.heroPremium.compact {
+  margin-top: 150px; /* ajusta conforme altura do header compacto */
+}
+}

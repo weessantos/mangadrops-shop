@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+/* CONTAINER */
+.collectionHero {
+  position: relative;
+  height: 240px;
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 24px;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* depth */
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.6),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* desktop hero */
+@media (min-width: 1024px) {
+  .collectionHero {
+    height: 340px;
+  }
+}
+
+/* subtle zoom cinematic */
+.collectionHero:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.8),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+/* OVERLAY PRINCIPAL (legibilidade) */
+.collectionHero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.95) 30%,
+    rgba(0, 0, 0, 0.75) 55%,
+    rgba(0, 0, 0, 0.35) 75%,
+    transparent 100%
+  );
+}
+
+/* CONTEÚDO */
+.heroOverlay {
+  position: relative;
+  z-index: 2;
+
+  height: 100%;
+  padding: 36px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  max-width: 540px;
+}
+
+/* BOTÃO VOLTAR */
+.heroBackBtn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+
+  padding: 10px 16px;
+  font-size: 13px;
+  font-family: 'Poppins', sans-serif;
+
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.6);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  color: #fff;
+  cursor: pointer;
+
+  backdrop-filter: blur(10px);
+
+  transition: all 0.25s ease;
+}
+
+.heroBackBtn:hover {
+  background: rgba(0, 0, 0, 0.85);
+  transform: translateY(-1px);
+}
+
+/* TAG */
+.heroTag {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+/* TÍTULO */
+.collectionHero h1 {
+  font-size: clamp(20px, 4vw, 48px);
+  font-weight: 800;
+  color: #fff;
+  font-family: 'Russo One', sans-serif;
+
+  margin-bottom: 10px;
+
+  line-height: 1.1;
+
+  /* glow leve */
+  text-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+/* DESCRIÇÃO */
+.collectionHero p {
+  font-size: clamp(13px, 2.4vw, 18px);
+  margin: 0 0 12px 0;
+  font-weight: 500;
+  opacity: 0.9;
+
+  font-family: 'Poppins', sans-serif;
+  color: #bbb;
+
+  margin-bottom: 16px;
+  line-height: 1.5;
+
+  max-width: 460px;
+}
+
+/* META INFO */
+.heroMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 13px;
+  font-family: 'Poppins', sans-serif;
+  color: #aaa;
+}
+
+/* MICRO BADGE */
+.heroMeta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 10px;
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(6px);
+
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+  .collectionHero {
+    height: 200px;
+  }
+
+  .heroOverlay {
+    padding: 20px;
+  }
+
+  .collectionHero h1 {
+    font-size: 28px;
+  }
+
+  .collectionHero p {
+    font-size: 13px;
+  }
+}
+
+.heroOverlay {
+  padding: 36px;
+  padding-top: 70px; /* 👈 espaço pro botão respirar */
+}

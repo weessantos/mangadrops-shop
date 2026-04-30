@@ -157,7 +157,7 @@ export default function Header({
       "Sakamoto Days 🔫",
       "Bleach 👻",
       "Shaman King 🔮",
-      "GashBell ⚡",
+      "Gash Bell ⚡",
       "Naruto 🍥",
       "Dragon Ball 🐉",
       "Haikyu 🏐",
