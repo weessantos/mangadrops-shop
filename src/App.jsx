@@ -668,23 +668,23 @@ function AppShell() {
 
   // quando fecha uma coleção, tenta scroll pro menu de coleções
   useEffect(() => {
-    if (location.pathname === "/" && location.state?.scrollTo === "railTitle") {
-      window.scrollTo({ top: 0, behavior: "instant" });
+    if (!location.state?.scrollTo) return;
 
-      requestAnimationFrame(() => {
-        scrollToIdWithOffset("railTitle");
-      });
-    }
+    const targetId = location.state.scrollTo;
+
+    requestAnimationFrame(() => {
+      scrollToIdWithOffset(targetId);
+    });
   }, [location]);
 
   // 🔥 quando entra na página de coleção, já tenta scroll pro banner
   useEffect(() => {
-    if (isCollectionPage) {
+    if (isCollectionPage && !location.state?.scrollTo) {
       requestAnimationFrame(() => {
         scrollToIdWithOffset("collection-hero");
       });
     }
-  }, [seriesSlug]);
+  }, [seriesSlug, location.state]);
 
   useEffect(() => {
     const maxPage = Math.max(1, Math.ceil(seriesList.length / seriesPageSize));

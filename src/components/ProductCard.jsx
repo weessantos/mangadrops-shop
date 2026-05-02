@@ -3,6 +3,7 @@ import "../styles/product-card.css";
 import { track } from "../utils/analytics.js";
 import { getDiscountData } from "../utils/priceUtils";
 import { formatPrice } from "../utils/priceLoader";
+import { getDiscountState, toNumber } from "../utils/pricing";
 const base = import.meta.env.BASE_URL;
 const ML_ICON = `${base}assets/mercadolivre.svg`;
 const AMAZON_ICON = `${base}assets/amazon.svg`;
@@ -39,6 +40,8 @@ function ProductCardBase({
   const bestPrice =
     product?.best_price != null ? Number(product.best_price) : null;
 
+  const discountState = getDiscountState(product.discount);
+
   // 🧠 FLAGS
   const hasMLPrice = Number.isFinite(mlPrice);
   const hasAmazonPrice = Number.isFinite(amzPrice);
@@ -51,8 +54,13 @@ function ProductCardBase({
   const hasAmazon = hasAmazonPrice;
   const hasBoth = hasML && hasAmazon;
 
-  const isAvailable = hasML || hasAmazon;
-  const isUnavailable = !hasMLLink && !hasAmazonLink;
+  const hasPrice = hasML || hasAmazon;
+
+  const shouldShowConsultOnly = discountState === "CONSULT";
+  const isOutOfStock = discountState === "ABUSIVE";
+
+  const isAvailable = hasPrice && !isOutOfStock;
+  const isUnavailable = !hasPrice || isOutOfStock;
 
   // 🔥 mantém compatibilidade com resto do código
   const hasAffiliateLink = hasML || hasAmazon;
@@ -72,20 +80,8 @@ function ProductCardBase({
     return Number.isFinite(parsed) ? parsed : null;
   }, [product?.coverPrice]);
 
-  const maxVisiblePrice = useMemo(() => {
-    if (!Number.isFinite(coverPrice)) return null;
-    return coverPrice * 1.15;
-  }, [coverPrice]);
-
-  const isPriceWeird =
-    Number.isFinite(bestPrice) &&
-    Number.isFinite(maxVisiblePrice) &&
-    bestPrice > maxVisiblePrice;
-
   const shouldShowPrice =
-    hasAffiliateLink && Number.isFinite(bestPrice) && !isPriceWeird;
-
-  const shouldShowConsultOnly = isPriceWeird;
+    hasAffiliateLink && Number.isFinite(bestPrice) && discountState === "OK";
 
   const discountData = useMemo(
     () =>
@@ -130,7 +126,11 @@ function ProductCardBase({
     return null;
   }, [topBadge, shouldShowPrice, discountData, isNew]);
 
-  const availabilityText = isAvailable ? "Disponível" : "Em falta";
+  const availabilityText = isOutOfStock
+    ? "Em falta"
+    : isAvailable
+      ? "Disponível"
+      : "Em falta";
 
   const fireOpen = useCallback(
     (via = "card") => {
@@ -249,13 +249,19 @@ function ProductCardBase({
                 {hasML ? "Mercado Livre" : hasAmazon ? "Amazon" : ""}
               </div>
             </>
+          ) : isOutOfStock ? (
+            <div className="cardPriceEmpty" />
           ) : (
             <div className="cardPriceEmpty" />
           )}
         </div>
 
         <div className="buttonsCol" onClick={(e) => e.stopPropagation()}>
-          {hasML || hasAmazon ? (
+          {isOutOfStock ? (
+            <button className="btn danger" type="button" disabled>
+              Em falta
+            </button>
+          ) : hasML || hasAmazon ? (
             <div className={hasBoth ? "buyRow" : ""}>
               {hasML && mlUrl ? (
                 <a

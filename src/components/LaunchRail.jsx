@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import BaseRail from "./ProductRail.jsx";
+import { shouldShowProduct } from "../utils/pricing";
 
 function isValidDate(v) {
   return typeof v === "string" && !Number.isNaN(new Date(v).getTime());
@@ -30,10 +31,7 @@ export default function LaunchRail({
         const diffDays = (now - d) / (1000 * 60 * 60 * 24);
         return diffDays >= 0 && diffDays <= 30;
       })
-      .filter((p) => {
-        const price = Number(p.best_price);
-        return Number.isFinite(price) && price > 0;
-      })
+      .filter((p) => shouldShowProduct(p))
       .sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt));
 
     // fallback
