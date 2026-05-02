@@ -16,8 +16,8 @@ export const getDiscountState = (discount) => {
 
   if (d === null) return "NO_DATA";
 
-  if (d < -15) return "ABUSIVE";        // ❌ não aparece
-  if (d < 0) return "CONSULT";         // ⚠️ aparece sem preço
+  if (d < -25) return "ABUSIVE";        // ❌ não aparece
+  if (d < -15) return "CONSULT";         // ⚠️ aparece sem preço
 
   return "OK";                         // ✅ preço normal
 };
