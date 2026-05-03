@@ -500,7 +500,11 @@ function AppShell() {
     return Array.from({ length: totalSeriesPages }, (_, i) => i + 1);
   }, [totalSeriesPages]);
 
-  const seriesToRender = isAllCollectionsPage ? seriesList : visibleSeriesList;
+  const seriesToRender = isMobile
+    ? seriesList // 🔥 mobile = scroll infinito
+    : isAllCollectionsPage
+      ? seriesList
+      : visibleSeriesList;
 
   const updateSearchParams = (patch) => {
     const next = new URLSearchParams(sp);

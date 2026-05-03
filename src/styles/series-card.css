@@ -103,6 +103,10 @@
     .collectionsSection .seeAllBtn {
       display: inline-flex;
     }
+
+    .collectionsTopbarLeft .collectionsMeta {
+      display: none;
+    }
     
   }
 
