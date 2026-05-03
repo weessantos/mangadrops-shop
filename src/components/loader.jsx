@@ -24,6 +24,7 @@ const messages = [
   "O próximo capítulo te espera...",
   "Descobertas estão por vir...",
   "Um instante antes da magia...",
+  "Prepare-se para explorar...",
   "Prepare-se para explorar..."
 ];
 
