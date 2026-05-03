@@ -9,17 +9,18 @@ import {
 } from "react-router-dom";
 import "./styles/global.css";
 
-import Header from "./components/Header";
-import HomeHero from "./components/HomeHero";
-import SeriesCard from "./components/SeriesCard";
-import ProductCard from "./components/ProductCard";
-import ProductModal from "./components/ProductModal";
-import LaunchRail from "./components/LaunchRail";
+import Loader from "./components/Loader.jsx";
+import Header from "./components/Header.jsx";
+import HomeHero from "./components/HomeHero.jsx";
+import SeriesCard from "./components/SeriesCard.jsx";
+import ProductCard from "./components/ProductCard.jsx";
+import ProductModal from "./components/ProductModal.jsx";
+import LaunchRail from "./components/LaunchRail.jsx";
 import PromoRail from "./components/PromoRail.jsx";
 import CheapRail from "./components/CheapRail.jsx";
 import BrandStats from "./components/BrandStats";
-import SectionHeader from "./components/SectionHeader";
-import ActiveFiltersBar from "./components/ActiveFiltersBar";
+import SectionHeader from "./components/SectionHeader.jsx";
+import ActiveFiltersBar from "./components/ActiveFiltersBar.jsx";
 import FiltersPage from "./pages/FiltersPage";
 import CollectionHero, {
   CollectionsHero,
@@ -279,6 +280,19 @@ function AppShell() {
       });
     }, 0);
   }, [qParam, seriesNames, navigate, sp]);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (seriesCatalog.length && products.length) {
+      // dados carregaram → espera 6s antes de liberar
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [seriesCatalog, products]);
 
   const foundSeries = useMemo(() => {
     if (!qParam) return null;
@@ -727,14 +741,8 @@ function AppShell() {
     };
   }, []);
 
-  if (!seriesCatalog.length || !products.length) {
-    return (
-      <div className="container">
-        <div style={{ padding: "40px", textAlign: "center" }}>
-          Carregando catálogo...
-        </div>
-      </div>
-    );
+  if (loading) {
+    return <Loader />;
   }
 
   return (

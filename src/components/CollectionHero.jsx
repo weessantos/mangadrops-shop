@@ -50,8 +50,7 @@ export function CollectionsHero({ total, onBack }) {
         <h1>Coleções</h1>
 
         <p>
-          Explore todas as obras disponíveis e descubra volumes em estoque,
-          ofertas e coleções completas.
+          Explore todas as obras disponíveis.
         </p>
 
         <div className="heroMeta">

@@ -3,19 +3,19 @@ import { useNavigate } from "react-router-dom";
 import "../styles/home-hero.css";
 
 const base = import.meta.env.BASE_URL;
-const img = (path) => `${base}assets/${path}`;
+const img = (path) => `${base}assets/hero-banner/${path}`;
 
 export default function HomeHero({ onHeroSearch, isHeaderCompact }) {
   const navigate = useNavigate();
   const slides = useMemo(
     () => [
       {
-        src: img("banner-0.jpeg"),
+        src: img("manga-drops-banner.jpeg"),
         alt: "Mangá Drops banner",
         position: "center center",
       },
       {
-        src: img("banner-1.jpeg"),
+        src: img("op-banner.jpeg"),
         alt: "One Piece",
         title: "One Piece",
         subtitle: "Já está disponível",
@@ -25,7 +25,18 @@ export default function HomeHero({ onHeroSearch, isHeaderCompact }) {
         position: "90% center",
       },
       {
-        src: img("banner-6.jpeg"),
+        src: img("awh-banner.jpeg"),
+        alt: "Atelier of Witch Hat",
+        title: "Atelier of Witch Hat",
+        subtitle: "Já está disponível.",
+        description:
+          "Atelier of Witch Hat, o mais novo anime de sucesso, só aqui na Mangá Drops",
+        ctaLabel: "Ver Atelier of Witch Hat",
+        cta: { type: "series", slug: "atelier-of-witch-hat" },
+        position: "80% center",
+      },
+      {
+        src: img("kgb-banner.jpeg"),
         alt: "Kagurabachi",
         title: "Kagurabachi",
         subtitle: "Já está disponível",
@@ -35,37 +46,29 @@ export default function HomeHero({ onHeroSearch, isHeaderCompact }) {
         position: "92% center",
       },
       {
-        src: img("banner-2.jpeg"),
+        src: img("jjk-banner.jpeg"),
         alt: "Jujutsu Kaisen",
         title: "Jujutsu Kaisen",
         subtitle: "Já está disponível.",
-        description: "Jujutsu Kaisen, completo e atualizado, somente no Mangá Drops",
+        description:
+          "Jujutsu Kaisen, completo e atualizado, somente no Mangá Drops",
         ctaLabel: "Ver Jujutsu Kaisen",
         cta: { type: "series", slug: "jujutsu-kaisen" },
         position: "82% center",
       },
       {
-        src: img("banner-3.jpeg"),
+        src: img("aot-banner.jpeg"),
         alt: "Attack on Titan",
         title: "Attack on Titan",
         subtitle: "Já está disponível.",
-        description: "Todos os volumes de Attack on Titan, somente no Mangá Drops",
+        description:
+          "Todos os volumes de Attack on Titan, somente no Mangá Drops",
         ctaLabel: "Ver Attack on Titan",
         cta: { type: "series", slug: "attack-on-titan" },
         position: "90% center",
       },
       {
-        src: img("banner-4.jpeg"),
-        alt: "Demon Slayer",
-        title: "Demon Slayer",
-        subtitle: "Em breve.",
-        description: "Demon Slayer, incluindo versão com o box",
-        ctaLabel: "Solicitar uma obra",
-        cta: { type: "url", value: "https://forms.gle/Vz1PUw5V9TxSUzqc8" },
-        position: "80% center",
-      },
-      {
-        src: img("banner-5.jpeg"),
+        src: img("notion-banner.jpeg"),
         alt: "Notion",
         title: "Organize sua coleção",
         subtitle: "Em breve",

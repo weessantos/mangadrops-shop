@@ -25,7 +25,8 @@
 /* desktop hero */
 @media (min-width: 1024px) {
   .collectionHero {
-    height: 340px;
+    height: 400px;
+    background-position: 70% 35%;
   }
 }
 
@@ -154,7 +155,7 @@
 /* RESPONSIVO */
 @media (max-width: 768px) {
   .collectionHero {
-    height: 200px;
+    height: 250px;
   }
 
   .heroOverlay {
@@ -167,6 +168,12 @@
 
   .collectionHero p {
     font-size: 13px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .collectionHero {
+    height: 300px;
   }
 }
 

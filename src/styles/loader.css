@@ -1,0 +1,122 @@
+/* ================= CONTAINER ================= */
+.loader-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+    background:#000;
+  z-index: 9999;
+}
+
+/* ================= BACKGROUND ================= */
+.loader-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  /* duas camadas pra evitar “anel chapado” */
+  background:
+    radial-gradient(
+      ellipse at center,
+      #000 0%,
+      #000 60%,                  /* 👈 centro fica PRETO por mais tempo */
+      rgba(120, 0, 0, 0.10) 78%,/* 👈 começa o vermelho longe */
+      rgba(255, 0, 0, 0.06) 88%,
+      transparent 100%          /* 👈 dissolve nas bordas */
+    ),
+    radial-gradient(
+      ellipse at center,
+      transparent 65%,
+      rgba(255, 0, 0, 0.04) 92%,
+      transparent 100%
+    );
+
+  animation: edgePulse 10s ease-in-out infinite;
+}
+
+@keyframes edgePulse {
+  0%   { opacity: 0.7; transform: scale(1); }
+  50%  { opacity: 0.9; transform: scale(1.02); }
+  100% { opacity: 0.7; transform: scale(1); }
+}
+
+/* ================= CONTENT ================= */
+.loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ================= LOGO ================= */
+.loader-video {
+  width: 220px;
+  height: auto;
+  animation: floatLogo 3s ease-in-out infinite;
+}
+
+@keyframes floatLogo {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-6px); }
+  100% { transform: translateY(0px); }
+}
+
+/* ================= TEXTO ================= */
+.loader-text {
+  margin-top: 24px;
+
+  font-family: 'Russo One', sans-serif;
+  font-size: 16px;
+  letter-spacing: 1.5px;
+  color: #e5e5e5;
+
+  display: inline-flex;        /* 🔥 resolve alinhamento */
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  text-align: center;
+
+  text-shadow:
+    0 0 6px rgba(255, 0, 0, 0.4),
+    0 0 12px rgba(255, 0, 0, 0.2);
+
+  animation: premiumFade 2.5s ease-in-out infinite;
+}
+
+/* ================= ANIMAÇÕES ================= */
+@keyframes premiumFade {
+  0%   { opacity: 0.4; transform: translateY(2px); }
+  50%  { opacity: 1;   transform: translateY(0); }
+  100% { opacity: 0.4; transform: translateY(2px); }
+}
+
+/* ================= DOTS ================= */
+.dots::after {
+  content: "";
+  animation: dots 1.5s steps(3, end) infinite;
+}
+
+@keyframes dots {
+  0% { content: ""; }
+  33% { content: "."; }
+  66% { content: ".."; }
+  100% { content: "..."; }
+}
+
+/* ================= VÍDEO (CACHORRO) ================= */
+.dots-video {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dots-video video {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  display: block;
+
+  transform: translateY(-3px); /* 🔥 AJUSTE FINAL */
+}

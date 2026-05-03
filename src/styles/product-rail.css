@@ -107,16 +107,16 @@
 }
 
 /* tablet pequeno / paisagem */
-@media (min-width: 761px) and (max-width: 1023px) {
+@media (min-width: 600px) and (max-width: 1023px) {
   .productRail {
-    grid-auto-columns: 48%;
+    grid-auto-columns: 30%;
   }
 }
 
 /* desktop com largura fixa */
-@media (min-width: 1024px) {
+@media (min-width: 1023px) {
   .productRail {
-    grid-auto-columns: 320px;
+    grid-auto-columns: 280px;
   }
 }
 
