@@ -3,6 +3,7 @@ const img = (path) => `${base}assets/${path}`;
 
 import "../styles/collection-hero.css";
 
+//Hero da página de coleção específica.
 export default function CollectionHero({ seriesSlug, title, total, onBack }) {
   return (
     <section
@@ -16,9 +17,7 @@ export default function CollectionHero({ seriesSlug, title, total, onBack }) {
         <button className="heroBackBtn" onClick={onBack}>
           ← Voltar para obras
         </button>
-
-        <span className="heroTag">COLEÇÃO</span>
-
+        
         <h1>{title}</h1>
 
         <p>Explore todos os volumes disponíveis dessa coleção.</p>
@@ -31,6 +30,7 @@ export default function CollectionHero({ seriesSlug, title, total, onBack }) {
   );
 }
 
+//Hero da página de coleções no geral.
 export function CollectionsHero({ total, onBack }) {
   return (
     <section
@@ -45,18 +45,44 @@ export function CollectionsHero({ total, onBack }) {
           ← Voltar para obras
         </button>
 
-        <span className="heroTag">CATÁLOGO</span>
-
         <h1>Coleções</h1>
 
-        <p>
-          Explore todas as obras disponíveis.
-        </p>
+        <p>Explore todas as obras disponíveis.</p>
 
         <div className="heroMeta">
           <span>
             📚 {total} {total === 1 ? "obra" : "obras"}
           </span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+//Hero das páginas do site - Lançamentos - Promoções - Saldão
+
+export function PageHero({ title, subtitle, total, tag, background, onBack }) {
+  return (
+    <section
+      id="collection-hero"
+      className="collectionHero"
+      style={{
+        backgroundImage: `url(${img(background)})`,
+      }}
+    >
+      <div className="heroOverlay">
+        <button className="heroBackBtn" onClick={onBack}>
+          ← Voltar para {title}
+        </button>
+
+        <span className="heroTag">{tag}</span>
+
+        <h1>{title}</h1>
+
+        <p>{subtitle}</p>
+
+        <div className="heroMeta">
+          <span>📚 {total} itens</span>
         </div>
       </div>
     </section>

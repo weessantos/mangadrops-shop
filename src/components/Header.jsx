@@ -122,7 +122,7 @@ export default function Header({
       : undefined;
 
   const navTargets = {
-    colecoes: ["railTitle", "obras"],
+    colecoes: ["collectionsSection", "obras"],
     lancamentos: ["lancamentos"],
     promocoes: ["promotions"],
     saldao: ["deals"],

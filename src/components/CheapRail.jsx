@@ -2,8 +2,10 @@ import { useMemo } from "react";
 import ProductRail from "./ProductRail";
 
 export default function CheapRail({
-  title = "Mais baratos 💰",
-  subtitle = "Os mangás com menor preço do site.",
+  title = "",
+  subtitle = "",
+  titleClassName = "",
+  subtitleClassName = "",
   products = [],
   limit = 30,
   initialVisible = 20,
@@ -30,10 +32,14 @@ export default function CheapRail({
 
   return (
     <ProductRail
+      sectionId="saldao"
       title={title}
       subtitle={subtitle}
+      titleClassName={titleClassName}
+      subtitleClassName={subtitleClassName}
       meta={meta}
       items={items}
+      viewAllLink="/saldao"
       initialVisible={initialVisible}
       onOpenProduct={onOpenProduct}
     />

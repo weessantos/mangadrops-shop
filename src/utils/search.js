@@ -118,10 +118,10 @@ export function pickSeriesFromQuery(query, seriesNames) {
     const nameCompact = normalizeCompact(name);
     const acronym = getAcronym(name);
 
-      console.log("------");
-      console.log("📚 Série:", name);
-      console.log("👉 nameNorm:", nameNorm);
-      console.log("👉 nameCompact:", nameCompact);
+      // console.log("------");
+      // console.log("📚 Série:", name);
+      // console.log("👉 nameNorm:", nameNorm);
+      // console.log("👉 nameCompact:", nameCompact);
 
     let score = 0;
 

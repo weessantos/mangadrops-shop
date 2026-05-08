@@ -1,35 +1,29 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import ProductCard from "./ProductCard.jsx";
+import { useRef, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import ProductCard from "./ProductCard";
 import "../styles/product-rail.css";
 
 export default function ProductRail({
+  sectionId,
   title,
   subtitle,
-  meta = "",
+  titleClassName = "",
+  subtitleClassName = "",
   items = [],
   initialVisible = 20,
+  viewAllLink = "/",
   onOpenProduct,
 }) {
   const railRef = useRef(null);
 
   const [canLeft, setCanLeft] = useState(false);
   const [canRight, setCanRight] = useState(false);
-  const [expanded, setExpanded] = useState(false);
 
-  const visibleItems = useMemo(() => {
-    return expanded ? items : items.slice(0, initialVisible);
-  }, [items, expanded, initialVisible]);
-
-  const hasMore = items.length > initialVisible;
+  const visibleItems = items.slice(0, initialVisible);
 
   const updateArrows = () => {
     const el = railRef.current;
-
-    if (!el || expanded) {
-      setCanLeft(false);
-      setCanRight(false);
-      return;
-    }
+    if (!el) return;
 
     const maxScroll = el.scrollWidth - el.clientWidth;
 
@@ -41,119 +35,89 @@ export default function ProductRail({
     updateArrows();
 
     const el = railRef.current;
+    if (!el) return;
 
-    if (!el || expanded) return;
-
-    const onScroll = () => updateArrows();
-    const onResize = () => updateArrows();
-
-    el.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onResize);
+    el.addEventListener("scroll", updateArrows, { passive: true });
+    window.addEventListener("resize", updateArrows);
 
     return () => {
-      el.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onResize);
+      el.removeEventListener("scroll", updateArrows);
+      window.removeEventListener("resize", updateArrows);
     };
-  }, [visibleItems.length, expanded]);
+  }, [items.length]);
 
-  const scrollByAmount = (dir) => {
+  const scroll = (dir) => {
     const el = railRef.current;
-
-    if (!el || expanded) return;
-
-    const amount = Math.round(el.clientWidth * 0.85) * dir;
+    if (!el) return;
 
     el.scrollBy({
-      left: amount,
+      left: el.clientWidth * 0.85 * dir,
       behavior: "smooth",
-    });
-  };
-
-  const handleToggleExpanded = () => {
-    setExpanded((prev) => {
-      const next = !prev;
-
-      if (railRef.current) {
-        railRef.current.scrollTo({
-          left: 0,
-          behavior: "auto",
-        });
-      }
-
-      return next;
     });
   };
 
   if (!items.length) return null;
 
   return (
-    <section className={`railSection ${expanded ? "isExpanded" : ""}`}>
+    <section className="railSection">
       <div className="railBlock">
         <div className="sectionHeader">
-          <div className="sectionHeaderLeft">
-            <h2 className="sectionTitle">
-              <span className="sectionAccent" aria-hidden="true" />
-              {title}
-            </h2>
-
-            {subtitle ? (
-              <p className="sectionSubtitle">{subtitle}</p>
-            ) : null}
+          <div>
+            <h2 className={titleClassName}>{title}</h2>
+            {subtitle && <p className={subtitleClassName}>{subtitle}</p>}
           </div>
 
           <div className="sectionHeaderRight">
-            <span className="sectionMeta">
-              {meta || `${visibleItems.length} de ${items.length} exibidos`}
+            <span>
+              {visibleItems.length} de {items.length}
             </span>
 
-            {hasMore ? (
+            <Link to={viewAllLink} className="railToggleBtn">
+              Ver todos
+            </Link>
+
+            <div className="railArrows">
               <button
-                type="button"
-                className="railToggleBtn"
-                onClick={handleToggleExpanded}
-                aria-expanded={expanded}
+                className={`railArrow ${!canLeft ? "disabled" : ""}`}
+                onClick={() => scroll(-1)}
+                disabled={!canLeft}
+                aria-label="Voltar"
               >
-                {expanded ? "Recolher" : "Ver todos"}
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M15 6L9 12L15 18"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </button>
-            ) : null}
 
-            {!expanded ? (
-              <div className="railArrows" aria-hidden="true">
-                <button
-                  type="button"
-                  className={`railArrow ${canLeft ? "" : "disabled"}`}
-                  onClick={() => scrollByAmount(-1)}
-                  disabled={!canLeft}
-                >
-                  ‹
-                </button>
-
-                <button
-                  type="button"
-                  className={`railArrow ${canRight ? "" : "disabled"}`}
-                  onClick={() => scrollByAmount(1)}
-                  disabled={!canRight}
-                >
-                  ›
-                </button>
-              </div>
-            ) : null}
+              <button
+                className={`railArrow ${!canRight ? "disabled" : ""}`}
+                onClick={() => scroll(1)}
+                disabled={!canRight}
+                aria-label="Avançar"
+              >
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M9 6L15 12L9 18"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 
-        <div
-          className={`productRail ${expanded ? "productRailExpanded" : ""}`}
-          ref={railRef}
-          aria-label={title}
-        >
-          {visibleItems.map((p, index) => (
-            <div className="railItem productItem" key={p.volumeSlug}>
-              <ProductCard
-                product={p}
-                onOpen={onOpenProduct}
-                priority={index === 0}
-                topBadge={p.__badge}
-              />
+        <div className="productRail" ref={railRef}>
+          {visibleItems.map((p) => (
+            <div className="railItem" key={p.volumeSlug}>
+              <ProductCard product={p} onOpen={onOpenProduct} />
             </div>
           ))}
         </div>

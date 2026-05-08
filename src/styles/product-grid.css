@@ -1,0 +1,125 @@
+/* 🔁 PAGINATION */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 🔥 CENTRALIZA */
+  gap: 16px;
+  margin-top: 28px;
+}
+
+/* BOTÃO */
+
+.paginationArrow {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+
+  color: #fff;
+  font-size: 20px;
+  font-weight: 900;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: all 0.18s ease;
+}
+
+/* =========================
+   🔁 PAGINATION ARROW
+   ========================= */
+
+.paginationArrow {
+  width: 42px;
+  height: 42px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+
+  color: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease,
+    opacity 0.18s ease;
+}
+
+/* SVG dentro do botão */
+.paginationArrow svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* HOVER (igual ao original) */
+.paginationArrow:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+/* DISABLED (igual ao original) */
+.paginationArrow:disabled {
+  opacity: 0.34;
+  cursor: not-allowed;
+}
+
+/* FECHAR PÁGINA */
+
+.pageBlock {
+  position: relative;
+}
+
+.pageCloseBtn {
+  position: absolute;
+
+  top: 18px;
+  right: 18px;
+
+  width: 44px;
+  height: 44px;
+
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  background: rgba(255, 255, 255, 0.06);
+
+  color: #fff;
+  font-size: 22px;
+  font-weight: 500;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  z-index: 20;
+
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.pageCloseBtn:hover {
+  transform: translateY(-1px) scale(1.03);
+
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}

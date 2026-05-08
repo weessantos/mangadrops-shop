@@ -2,8 +2,10 @@ import { useMemo } from "react";
 import ProductRail from "./ProductRail";
 
 export default function PromoRail({
-  title = "Promoções 💸",
-  subtitle = "Mangás com 40% OFF ou mais.",
+  title = "",
+  subtitle = "",
+  titleClassName = "",
+  subtitleClassName = "",
   products = [],
   limit = 30,
   initialVisible = 20,
@@ -32,11 +34,15 @@ export default function PromoRail({
 
   return (
     <ProductRail
+      sectionId="promocoes"
       title={title}
       subtitle={subtitle}
       meta={meta}
       items={items}
+      viewAllLink="/promocoes"
       initialVisible={initialVisible}
+      titleClassName={titleClassName}
+      subtitleClassName={subtitleClassName}
       onOpenProduct={onOpenProduct}
     />
   );

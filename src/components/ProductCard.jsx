@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import "../styles/product-card.css";
 import { track } from "../utils/analytics.js";
 import { getDiscountData } from "../utils/priceUtils";
@@ -16,7 +16,7 @@ function ProductCardBase({
   topBadge = null,
   priority = false,
 }) {
-  console.log("🧪 PRODUCT:", product);
+  //console.log("🧪 PRODUCT:", product);
   // 🔗 LINKS
   const mlUrl =
     typeof product?.affiliate?.mercadoLivre === "string"
@@ -105,6 +105,10 @@ function ProductCardBase({
       };
     }
 
+    if (product?.__badge) {
+      return product.__badge;
+    }
+
     if (
       shouldShowPrice &&
       discountData?.hasDiscount &&
@@ -132,8 +136,14 @@ function ProductCardBase({
       ? "Disponível"
       : "Em falta";
 
+  //Abertura do modal com loading e tracking
+
+  const [isOpening, setIsOpening] = useState(false);
+
   const fireOpen = useCallback(
     (via = "card") => {
+      setIsOpening(true);
+
       track("open_product", {
         product_id: product?.id,
         product_name: product?.title,
@@ -145,10 +155,14 @@ function ProductCardBase({
       });
 
       onOpen?.(product);
+
+      setTimeout(() => {
+        setIsOpening(false);
+      }, 1200);
     },
     [product, hasAffiliateLink, placement, onOpen],
   );
-
+  
   const fireBuy = useCallback(
     (store) => {
       track("click_buy", {
@@ -176,7 +190,7 @@ function ProductCardBase({
 
   return (
     <div
-      className="card"
+      className={`card ${isOpening ? "isOpening" : ""}`}
       onClick={() => fireOpen("card")}
       role="button"
       tabIndex={0}

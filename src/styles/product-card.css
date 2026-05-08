@@ -407,3 +407,42 @@
   align-items: center;
   min-height: 34px;
 }
+
+.productCard {
+  position: relative;
+  overflow: hidden;
+}
+
+.productCard.isOpening {
+  opacity: 0.72;
+  transform: scale(0.985);
+  pointer-events: none;
+}
+
+.productCard.isOpening::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,0.08),
+      transparent
+    );
+
+  animation: cardShimmer 0.9s linear infinite;
+}
+
+@keyframes cardShimmer {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}

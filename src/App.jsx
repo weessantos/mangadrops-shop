@@ -18,22 +18,32 @@ import ProductModal from "./components/ProductModal.jsx";
 import LaunchRail from "./components/LaunchRail.jsx";
 import PromoRail from "./components/PromoRail.jsx";
 import CheapRail from "./components/CheapRail.jsx";
-import BrandStats from "./components/BrandStats";
+import CollectionsRail from "./components/CollectionsRail.jsx";
+import BrandStats from "./components/BrandStats.jsx";
+import ProductGrid from "./components/ProductGrid.jsx";
 import SectionHeader from "./components/SectionHeader.jsx";
 import ActiveFiltersBar from "./components/ActiveFiltersBar.jsx";
-import FiltersPage from "./pages/FiltersPage";
+import FiltersPage from "./pages/FiltersPage.jsx";
+import ProductPage from "./pages/ProductPage.jsx";
+import ReleasesPage from "./pages/ReleasesPage.jsx";
+import PromotionsPage from "./pages/PromotionsPage.jsx";
+import CheapPage from "./pages/CheapPage.jsx";
+import CollectionsPage from "./pages/CollectionsPage.jsx";
+import CollectionPage from "./pages/CollectionPage.jsx";
 import CollectionHero, {
   CollectionsHero,
 } from "./components/CollectionHero.jsx";
 
 import { useIsMobile } from "./hooks/useIsMobile";
 import { normalizeProduct } from "./utils/normalizeProduct";
+import { getReleases } from "./utils/getReleases";
 
 import { supabaseClient } from "./lib/supabase.js";
 import { getSeriesCatalog } from "./data/products/series.catalog.js";
 
 import { useSeriesList } from "./hooks/useSeriesList";
 import { useScrollTop } from "./hooks/useScrollTop";
+import { getSelectedProduct } from "./utils/getSelectedProduct.js";
 
 import {
   parseQuery,
@@ -114,35 +124,44 @@ function hasReview(p) {
 }
 
 function AppShell() {
+  // 🔹 Router hooks
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+  const isModalNavigation = Boolean(location.state?.backgroundLocation);
   const { seriesSlug, volumeId } = useParams();
   const [sp, setSp] = useSearchParams();
 
-  const isAllCollectionsPage = location.pathname === "/colecoes";
-  const isMobile = useIsMobile();
+  // 🔹 States principais (ANTES de usar em qualquer lugar)
+  const [products, setProducts] = useState([]);
+  const [seriesCatalog, setSeriesCatalog] = useState([]);
 
+  // 🔹 Outros states
+  const [releasesPage, setReleasesPage] = useState(1);
   const [page, setPage] = useState(1);
   const [seriesPage, setSeriesPage] = useState(1);
-
-  const lastAppliedQueryRef = useRef("");
-  const collectionsSectionRef = useRef(null);
 
   const [inputValue, setInputValue] = useState("");
   const [activeSeries, setActiveSeries] = useState(null);
   const [isHeaderCompact, setIsHeaderCompact] = useState(false);
   const [activeSection, setActiveSection] = useState("colecoes");
+  const [shouldScrollToVolumes, setShouldScrollToVolumes] = useState(false);
 
+  // 🔹 Refs
+  const lastAppliedQueryRef = useRef("");
+  const collectionsSectionRef = useRef(null);
+
+  // 🔹 Hooks custom
+  const isMobile = useIsMobile();
   const { showScrollTop, scrollToTop } = useScrollTop(400);
-  const [seriesCatalog, setSeriesCatalog] = useState([]);
-  const [products, setProducts] = useState([]);
+
+  // 🔹 Derivados de dados (dependem de products / seriesCatalog)
   const { seriesList, seriesBySlug, seriesNames } = useSeriesList(
     products || [],
     seriesCatalog || [],
   );
 
-  const [shouldScrollToVolumes, setShouldScrollToVolumes] = useState(false);
-
+  // 🔹 Meta por série
   const metaBySeries = useMemo(() => {
     const map = new Map();
     for (const s of seriesCatalog || []) {
@@ -158,6 +177,7 @@ function AppShell() {
     return map;
   }, [seriesCatalog]);
 
+  // 🔹 Helper de meta
   const getMeta = (p) => {
     const seriesName = norm(p?.series);
     const m = metaBySeries.get(seriesName) || {};
@@ -169,6 +189,7 @@ function AppShell() {
     };
   };
 
+  // 🔹 Query params
   const qParam = sp.get("q") || "";
   const brandParam = sp.getAll("brand");
   const authorParam = sp.getAll("author");
@@ -180,6 +201,80 @@ function AppShell() {
   const rvParam = sp.get("rv") || "";
   const sortParam = sp.get("sort") || "relevance";
 
+  // 🔹 Releases
+  const releases = useMemo(() => {
+    return getReleases(products);
+  }, [products]);
+
+  // 🔹 Paginação lançamentos (isolada)
+  const RELEASES_PAGE_SIZE = 20;
+
+  const paginatedReleases = useMemo(() => {
+    return releases.slice(
+      (releasesPage - 1) * RELEASES_PAGE_SIZE,
+      releasesPage * RELEASES_PAGE_SIZE,
+    );
+  }, [releases, releasesPage]);
+
+  //🔹 Tipos de páginas
+  const pageType = location.pathname.startsWith("/lancamentos")
+    ? "releases"
+    : location.pathname.startsWith("/promocoes")
+      ? "promotions"
+      : location.pathname.startsWith("/saldao")
+        ? "cheap"
+        : location.pathname === "/colecoes"
+          ? "allCollections"
+          : "home";
+
+  const isRailPage = [
+    "releases",
+    "promotions",
+    "cheap",
+    "allCollections",
+  ].includes(pageType);
+
+  const isHomePage = pageType === "home";
+
+  const isAllCollectionsPage = pageType === "allCollections";
+
+  const isReleasesPage = pageType === "releases";
+
+  const isPromotionsPage = pageType === "promotions";
+
+  const isCheapPage = pageType === "cheap";
+
+  const isCollectionPage = Boolean(seriesSlug && !volumeId);
+
+  //🔹 Títulos de das páginas
+  const PAGE_CONTENT = {
+    home: {
+      title: "Mangás Disponíveis",
+      desc: "Veja os mangás disponíveis em estoque com preços atualizados e novas reposições.",
+    },
+    releases: {
+      title: "Lançamentos 🔥",
+      desc: "Confira os mangás adicionados recentemente e últimas reposições.",
+    },
+    promotions: {
+      title: "Promoções 💸",
+      desc: "Os melhores descontos do momento em mangás.",
+    },
+    cheap: {
+      title: "Baratinhos 🪙",
+      desc: "Mangás com os menores preços disponíveis.",
+    },
+    allCollections: {
+      title: "Todas as Coleções",
+      desc: "Explore todas as coleções de mangás disponíveis.",
+    },
+  };
+
+  const pageContent = PAGE_CONTENT[pageType];
+
+  const releasesTotalPages = Math.ceil(releases.length / RELEASES_PAGE_SIZE);
+
+  // 🔹 Filtros
   const hasAnyFilter =
     (qParam && qParam.trim().length > 0) ||
     brandParam.length > 0 ||
@@ -194,9 +289,11 @@ function AppShell() {
 
   const isFiltering = hasAnyFilter && !activeSeries;
 
-  const isCollectionPage = Boolean(seriesSlug && !volumeId);
+  //Loader inicial
 
   useEffect(() => {
+    let isMounted = true;
+
     async function load() {
       const { data, error } = await supabaseClient
         .from("series_volumes_view")
@@ -207,14 +304,28 @@ function AppShell() {
         return;
       }
 
-      console.log("🔥 DATA SUPABASE:", data?.[0]);
+      if (!isMounted) return;
 
       setProducts((data || []).map(normalizeProduct));
+      setIsInitialLoading(false);
     }
 
-    getSeriesCatalog().then(setSeriesCatalog);
+    getSeriesCatalog().then((catalog) => {
+      if (isMounted) setSeriesCatalog(catalog);
+    });
+
     load();
-  }, [location.search]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isReleasesPage) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [releasesPage]);
 
   useEffect(() => {
     if (!shouldScrollToVolumes) return;
@@ -280,19 +391,6 @@ function AppShell() {
       });
     }, 0);
   }, [qParam, seriesNames, navigate, sp]);
-
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (seriesCatalog.length && products.length) {
-      // dados carregaram → espera 6s antes de liberar
-      const timer = setTimeout(() => {
-        setLoading(false);
-      }, 5000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [seriesCatalog, products]);
 
   const foundSeries = useMemo(() => {
     if (!qParam) return null;
@@ -460,6 +558,11 @@ function AppShell() {
   const [seriesPageSize, setSeriesPageSize] = useState(6);
   const [pageSize, setPageSize] = useState(6);
 
+  // 🔹 Paginação geral (home / filtros)
+  const PRODUCTS_LOAD_SIZE = pageSize;
+
+  const totalProductsPages = Math.ceil(filtered.length / PRODUCTS_LOAD_SIZE);
+
   const pagedProducts = filtered.slice(0, page * pageSize);
 
   const hasMore = pagedProducts.length < filtered.length;
@@ -517,16 +620,7 @@ function AppShell() {
     setSp(next, { replace: true });
   };
 
-  const selectedProduct = useMemo(() => {
-    if (!volumeId) return null;
-
-    return (
-      products.find((p) => {
-        const slug = p.url?.split("/").pop(); // pega "gb-04"
-        return slug === volumeId;
-      }) || null
-    );
-  }, [volumeId, products]);
+  const selectedProduct = getSelectedProduct(products, volumeId);
 
   const openSeries = (name) => {
     setPage(1);
@@ -540,31 +634,41 @@ function AppShell() {
   const clearSeries = () => {
     setPage(1);
 
+    const pathname = location.pathname;
+
+    const scrollTarget = pathname.startsWith("/lancamentos")
+      ? "lancamentos"
+      : pathname.startsWith("/promocoes")
+        ? "promocoes"
+        : pathname.startsWith("/saldao")
+          ? "saldao"
+          : "collectionsRail";
+
     navigate("/", {
       replace: true,
-      state: { scrollTo: "railTitle" },
+      state: {
+        scrollTo: scrollTarget,
+      },
     });
   };
 
+  //Clique no produto para abrir o modal
   const openProduct = (product) => {
-    if (!product?.url) {
-      console.warn("🚨 Produto sem URL:", product);
+    if (!product?.seriesSlug || !product?.volumeSlug) {
+      console.warn("🚨 Produto sem slug:", product);
       return;
     }
 
-    const qs = sp.toString();
-    const backgroundPath = `${location.pathname}${location.search || ""}`;
-
-    navigate(`${product.url}${qs ? `?${qs}` : ""}`, {
-      state: { backgroundPath },
+    navigate(`/${product.seriesSlug}/${product.volumeSlug}`, {
+      state: { backgroundLocation: location },
     });
   };
 
   const closeModal = () => {
-    const backgroundPath = location.state?.backgroundPath;
+    const backgroundLocation = location.state?.backgroundLocation;
 
-    if (backgroundPath) {
-      navigate(backgroundPath, { replace: true });
+    if (backgroundLocation) {
+      navigate(backgroundLocation, { replace: true });
       return;
     }
 
@@ -607,7 +711,7 @@ function AppShell() {
 
   const resolveScrollIds = useCallback((target, fallbackIds = []) => {
     const map = {
-      colecoes: ["railTitle", "obras", "collectionsSection"],
+      colecoes: ["collections", "obras", "collectionsSection"],
       lancamentos: ["lancamentos", "releasesSection", "obras"],
       promocoes: ["promotions", "promocoes", "deals"],
       saldao: ["deals", "saldao", "baratinhos"],
@@ -690,9 +794,24 @@ function AppShell() {
 
     const targetId = location.state.scrollTo;
 
-    requestAnimationFrame(() => {
-      scrollToIdWithOffset(targetId);
-    });
+    let attempts = 0;
+
+    const tryScroll = () => {
+      const el = document.getElementById(targetId);
+
+      if (el) {
+        scrollToIdWithOffset(targetId);
+        return;
+      }
+
+      attempts++;
+
+      if (attempts < 20) {
+        requestAnimationFrame(tryScroll);
+      }
+    };
+
+    tryScroll();
   }, [location]);
 
   // 🔥 quando entra na página de coleção, já tenta scroll pro banner
@@ -712,6 +831,7 @@ function AppShell() {
     }
   }, [seriesList.length, seriesPage, seriesPageSize]);
 
+  //Controle do header compacto e seção ativa no scroll
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY || 0;
@@ -721,7 +841,7 @@ function AppShell() {
         { key: "lancamentos", ids: ["lancamentos"] },
         { key: "promocoes", ids: ["promotions"] },
         { key: "saldao", ids: ["deals"] },
-        { key: "colecoes", ids: ["railTitle", "obras"] },
+        { key: "colecoes", ids: ["collections"] },
       ];
 
       let current = "colecoes";
@@ -745,9 +865,27 @@ function AppShell() {
     };
   }, []);
 
-  if (loading) {
+  if (isInitialLoading && !isModalNavigation) {
     return <Loader />;
   }
+
+  // ========================================
+  // PAGE HELPERS
+  // ========================================
+
+  const showHero = !isRailPage && !isCollectionPage;
+
+  const showChapterHeader = !isRailPage && !isCollectionPage;
+
+  const showCollectionsGrid = pageType === "collections" && !isFiltering;
+
+  const showFilteringGrid = isFiltering && pageType !== "collection";
+
+  const showRails = isHomePage && !isFiltering && !isCollectionPage;
+
+  const showCollectionsPagination = pageType === "home" && totalSeriesPages > 1;
+
+  const forceCompactHeader = pageType !== "home" || isCollectionPage;
 
   return (
     <div className="container">
@@ -761,31 +899,24 @@ function AppShell() {
         }}
         scrollToNav={scrollToNav}
         activeSection={activeSection}
-        isHeaderCompact={isHeaderCompact}
+        isHeaderCompact={isHeaderCompact || forceCompactHeader}
       />
+      {showHero && (
+        <>
+          <HomeHero isHeaderCompact={isHeaderCompact} />
 
-      <HomeHero isHeaderCompact={isHeaderCompact} />
-
-      <section className="brandBlock">
-        <div className="brandHeader">
-          <h2 className="brandTitle">Mangá Drops no TikTok</h2>
-          <p className="brandSubtitle">
-            Reviews, indicações e novidades toda semana.
-          </p>
-        </div>
-        <BrandStats />
-      </section>
-
-      {!isCollectionPage && !isAllCollectionsPage && (
+          <section className="brandBlock">
+            <div className="brandHeader"></div>
+            <BrandStats />
+          </section>
+        </>
+      )}
+      {showChapterHeader && (
         <section id="home" className="chapterBlock">
           <div className="chapterHeader">
             <div className="chapterTop">
-              <h1 className="chapterTitle">Mangás Disponíveis</h1>
-
-              <p className="chapterDesc">
-                Veja os mangás disponíveis em estoque com preços atualizados e
-                novas reposições.
-              </p>
+              <h1 className="chapterTitle">{pageContent.title}</h1>
+              <p className="chapterDesc">{pageContent.desc}</p>
 
               {/* SEO escondido */}
               <h1 className="seoTitle">
@@ -799,79 +930,50 @@ function AppShell() {
           </div>
         </section>
       )}
-
       {isCollectionPage && (
-        <CollectionHero
-          seriesSlug={seriesSlug}
-          title={activeSeries}
-          total={filtered.length}
-          onBack={clearSeries}
+        <CollectionPage
+          activeSeries={activeSeries}
+          filtered={filtered}
+          pagedProducts={pagedProducts}
+          pageSize={pageSize}
+          hasMore={hasMore}
+          setPage={setPage}
+          openProduct={openProduct}
+          clearSeries={clearSeries}
+          collectionsSectionRef={collectionsSectionRef}
         />
       )}
 
-      {isAllCollectionsPage && (
-        <CollectionsHero
-          title="Coleções"
-          total={seriesList.length}
-          onBack={clearSeries}
+      {pageType === "releases" && (
+        <ReleasesPage products={products} onOpenProduct={openProduct} />
+      )}
+      {pageType === "promotions" && (
+        <PromotionsPage products={products} onOpenProduct={openProduct} />
+      )}
+      {pageType === "cheap" && (
+        <CheapPage products={products} onOpenProduct={openProduct} />
+      )}
+      {pageType === "allCollections" && (
+        <CollectionsPage
+          products={products}
+          seriesCatalog={seriesCatalog}
+          activeSeries={activeSeries}
+          collectionsSectionRef={collectionsSectionRef}
+          openSeries={openSeries}
+          clearSeries={clearSeries}
+          changeSeriesPage={changeSeriesPage}
         />
       )}
 
-      {isAllCollectionsPage && !isCollectionPage && !isFiltering && (
-        <div
-          className={isAllCollectionsPage ? "collectionsGrid" : "seriesRail"}
-        >
-          {(isAllCollectionsPage ? seriesList : seriesToRender).map((s) => (
-            <div
-              className={isAllCollectionsPage ? "" : "railItem"}
-              key={s.name}
-            >
-              <SeriesCard
-                name={s.name}
-                thumb={s.thumb}
-                subtitle={s.subtitle}
-                rangeLabel={s.rangeLabel}
-                haveLabel={s.haveLabel}
-                statusLabel={s.statusLabel}
-                missing={s.missing}
-                missingCount={s.missingCount}
-                active={activeSeries === s.name}
-                onOpen={openSeries}
-              />
-            </div>
-          ))}
-        </div>
-      )}
-
-      {isFiltering && !isCollectionPage && (
-        <section id="volumes" className="volumesSection">
-          <section className="grid">
-            {pagedProducts.map((p) => (
-              <ProductCard key={p.id} product={p} onOpen={openProduct} />
-            ))}
-          </section>
-
-          {hasMore && (
-            <div className="showMoreRow">
-              <button
-                className="btn showMoreBtn"
-                onClick={() => setPage((prev) => prev + 1)}
-              >
-                Mostrar mais {pageSize}
-              </button>
-              <div className="showMoreHint">
-                Exibindo {pagedProducts.length}/{filtered.length}
-              </div>
-            </div>
-          )}
-        </section>
-      )}
-
-      {!isCollectionPage && !isFiltering && !isAllCollectionsPage && (
-        <section className="railBlock" id="obras">
+      {showRails && (
+        <section className="railBlock">
           <div id="lancamentos">
             <LaunchRail
+              id="lancamentos"
               title="Lançamentos 🔥"
+              subtitle="Mangás adicionados recentemente e últimas reposições."
+              titleClassName="sectionTitle"
+              subtitleClassName="sectionSubtitle"
               products={products}
               limit={40}
               initialVisible={20}
@@ -887,6 +989,9 @@ function AppShell() {
             <PromoRail
               id="promotions"
               title="Promoções 💸"
+              subtitle="Mangás com 40% OFF ou mais."
+              titleClassName="sectionTitle"
+              subtitleClassName="sectionSubtitle"
               products={products}
               limit={40}
               onOpenProduct={openProduct}
@@ -900,8 +1005,10 @@ function AppShell() {
           <div id="deals">
             <CheapRail
               id="deals"
-              title="Baratinhos da galera 🪙"
+              title="Saldão 🪙"
               subtitle="Mangás por até R$30."
+              titleClassName="sectionTitle"
+              subtitleClassName="sectionSubtitle"
               products={products}
               limit={40}
               onOpenProduct={openProduct}
@@ -912,145 +1019,32 @@ function AppShell() {
             <span className="sectionBreakLine" />
           </div>
 
-          <section
-            className="collectionsSection"
-            id="railTitle"
-            ref={collectionsSectionRef}
-          >
-            {!isAllCollectionsPage && (
-              <SectionHeader
-                title="Coleções 📚"
-                subtitle="Explore por obra e veja os volumes disponíveis."
-              />
-            )}
-            <>
-              {isAllCollectionsPage && (
-                <CollectionsHero
-                  total={seriesList.length}
-                  onBack={clearSeries}
-                />
-              )}
-              {!isAllCollectionsPage && (
-                <div className="collectionsTopbar">
-                  <div className="collectionsTopbarLeft">
-                    <span className="collectionsEyebrow">Catálogo</span>
-                    <div className="collectionsMeta">
-                      Página <strong>{seriesPage}</strong> de{" "}
-                      <strong>{totalSeriesPages}</strong>
-                    </div>
-                  </div>
+          <div id="collections">
+            <CollectionsRail
+              seriesList={seriesList}
+              seriesToRender={seriesToRender}
+              seriesPage={seriesPage}
+              totalSeriesPages={totalSeriesPages}
+              seriesPageDots={seriesPageDots}
+              seriesPageSize={seriesPageSize}
+              activeSeries={activeSeries}
+              showCollectionsPagination={showCollectionsPagination}
+              collectionsSectionRef={collectionsSectionRef}
+              openSeries={openSeries}
+              clearSeries={clearSeries}
+              changeSeriesPage={changeSeriesPage}
+            />
+          </div>
 
-                  <div className="collectionsTopbarRight">
-                    <button
-                      className="seeAllBtn"
-                      onClick={() =>
-                        navigate("/colecoes", {
-                          state: { scrollTo: "collection-hero" },
-                        })
-                      }
-                    >
-                      Ver todas →
-                    </button>
-
-                    <div className="collectionsPager">
-                      <button
-                        type="button"
-                        className="collectionsNavBtn"
-                        onClick={() => changeSeriesPage(seriesPage - 1)}
-                        disabled={seriesPage === 1}
-                      >
-                        ‹
-                      </button>
-
-                      <button
-                        type="button"
-                        className="collectionsNavBtn"
-                        onClick={() => changeSeriesPage(seriesPage + 1)}
-                        disabled={seriesPage === totalSeriesPages}
-                      >
-                        ›
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div className="seriesRail">
-                {seriesToRender.map((s) => (
-                  <div className="railItem" key={s.name}>
-                    <SeriesCard
-                      name={s.name}
-                      thumb={s.thumb}
-                      subtitle={s.subtitle}
-                      rangeLabel={s.rangeLabel}
-                      haveLabel={s.haveLabel}
-                      statusLabel={s.statusLabel}
-                      missing={s.missing}
-                      missingCount={s.missingCount}
-                      active={activeSeries === s.name}
-                      onOpen={openSeries}
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {!isAllCollectionsPage && totalSeriesPages > 1 && (
-                <div className="collectionsBottomBar">
-                  <div className="collectionsDots">
-                    {seriesPageDots.map((dotPage) => (
-                      <button
-                        key={dotPage}
-                        className={`collectionsDot ${
-                          dotPage === seriesPage ? "isActive" : ""
-                        }`}
-                        onClick={() => changeSeriesPage(dotPage)}
-                      />
-                    ))}
-                  </div>
-
-                  <div className="collectionsCounter">
-                    Exibindo{" "}
-                    <strong>{(seriesPage - 1) * seriesPageSize + 1}</strong>–
-                    <strong>
-                      {Math.min(seriesPage * seriesPageSize, seriesList.length)}
-                    </strong>{" "}
-                    de <strong>{seriesList.length}</strong> obras
-                  </div>
-                </div>
-              )}
-            </>
-          </section>
+          <div className="sectionBreak" aria-hidden="true">
+            <span className="sectionBreakLine" />
+          </div>
         </section>
       )}
 
-      {activeSeries && (
-        <section className="volumesSection">
-          <section className="grid">
-            {pagedProducts.map((p) => (
-              <ProductCard key={p.id} product={p} onOpen={openProduct} />
-            ))}
-          </section>
-
-          {hasMore && (
-            <div className="showMoreRow">
-              <button
-                className="btn showMoreBtn"
-                onClick={() => setPage((prev) => prev + 1)}
-              >
-                Mostrar mais {pageSize}
-              </button>
-              <div className="showMoreHint">
-                Exibindo {pagedProducts.length}/{filtered.length}
-              </div>
-            </div>
-          )}
-        </section>
-      )}
-
-      {selectedProduct && (
+      {selectedProduct && isModalNavigation && (
         <ProductModal product={selectedProduct} onClose={closeModal} />
       )}
-
       {showScrollTop && (
         <button
           className="scrollTopBtn"
@@ -1061,20 +1055,38 @@ function AppShell() {
           ↑
         </button>
       )}
-
       <Footer scrollToNav={scrollToNav} />
     </div>
   );
 }
 
 export default function App() {
+  const location = useLocation();
+  const state = location.state;
+
+  const backgroundLocation = state?.backgroundLocation;
+
   return (
-    <Routes>
-      <Route path="/filtros" element={<FiltersPage />} />
-      <Route path="/colecoes" element={<AppShell isAllCollectionsPage />} />
-      <Route path="/" element={<AppShell />} />
-      <Route path="/:seriesSlug" element={<AppShell />} />
-      <Route path="/:seriesSlug/:volumeId" element={<AppShell />} />
-    </Routes>
+    <>
+      <Routes location={backgroundLocation || location}>
+        <Route path="/filtros" element={<FiltersPage />} />
+        <Route path="/colecoes" element={<AppShell isAllCollectionsPage />} />
+        <Route path="/lancamentos" element={<AppShell isReleasesPage />} />
+        <Route path="/promocoes" element={<AppShell isPromotionsPage />} />
+        <Route path="/saldao" element={<AppShell isCheapPage />} />
+        <Route path="/" element={<AppShell />} />
+        <Route path="/:seriesSlug" element={<AppShell />} />
+        <Route path="/:seriesSlug/:volumeId" element={<AppShell />} />
+
+        {/* 🔥 fallback (acesso direto) */}
+        <Route path="/produto/:slug" element={<ProductPage />} />
+      </Routes>
+
+      {backgroundLocation && (
+        <Routes>
+          <Route path="/:seriesSlug/:volumeId" element={<AppShell />} />
+        </Routes>
+      )}
+    </>
   );
 }

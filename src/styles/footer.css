@@ -38,6 +38,11 @@
   margin-bottom: 60px;
 }
 
+.footerBrand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 /* BRAND */
 .footerBrand h2 {
   font-size: 28px;

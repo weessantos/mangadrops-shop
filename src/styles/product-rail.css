@@ -127,28 +127,43 @@
 .railArrows {
   display: none;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+
   position: relative;
   z-index: 10;
+
   pointer-events: none;
 }
 
-.railArrows .railArrow {
+.railArrow {
+  width: 40px;
+  height: 40px;
+
+  border-radius: 14px;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  background: rgba(255, 255, 255, 0.045);
+
+  color: rgba(255, 255, 255, 0.96);
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  backdrop-filter: blur(10px);
+
   pointer-events: auto;
+
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease,
+    opacity 0.18s ease;
 }
 
-.railArrow {
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.92);
-  font-size: 22px;
-  font-weight: 900;
-  cursor: pointer;
-  transition: background 0.2s ease, opacity 0.2s ease;
-}
 
 .railArrow:hover {
   background: rgba(255, 255, 255, 0.12);
@@ -159,7 +174,7 @@
   cursor: not-allowed;
 }
 
-@media (min-width: 1024px) {
+@media (hover: hover) and (pointer: fine) {
   .railArrows {
     display: flex;
   }
@@ -186,27 +201,6 @@
 }
 
 /* =========================================================
-   BOTÃO VER TODOS
-   ========================================================= */
-
-.railToggleBtn {
-  height: 42px;
-  padding: 0 16px;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: background 0.2s ease;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
-}
-
-.railToggleBtn:hover {
-  background: rgba(255, 255, 255, 0.12);
-}
-/* =========================================================
    SECTION HEADER PREMIUM
    ========================================================= */
 
@@ -223,33 +217,6 @@
   display:flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.sectionTitle{
-  margin: 0 0 20px 0;
-  font-size: clamp(22px, 3vw, 32px);
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  position: relative;
-  display: inline-block;
-  font-family: 'Russo One', sans-serif;
-}
-
-.sectionTitle::after{
-  content:"";
-  display:block;
-  width: 60%;
-  height: 3px;
-  margin-top: 8px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--accent), transparent);
-}
-
-.sectionSubtitle{
-  margin: 0;
-  font-size: 14px;
-  color: var(--muted);
-  max-width: 520px;
 }
 
 .sectionHint{
@@ -272,62 +239,11 @@
   gap: 10px;
   flex-shrink: 0; /* impede quebrar */
 }
-
-/* Garante que as setas nunca quebrem linha */
-.railArrows{
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
 /* Remove qualquer margem que possa estar empurrando */
 .sectionSubtitle{
   margin-bottom: 0;
 }
 
-/* =========================================================
-   RAIL EXPANDIDO
-   ========================================================= */
-
-.productRail.productRailExpanded {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  grid-auto-flow: row;
-  grid-auto-columns: unset;
-  gap: 14px;
-  padding: 0 8px 6px;
-  overflow: visible;
-  scroll-snap-type: none;
-}
-
-.productRail.productRailExpanded .productItem {
-  display: flex;
-  width: 100%;
-  min-width: 0;
-}
-
-.productRail.productRailExpanded .productItem > * {
-  width: 100%;
-  min-width: 0;
-}
-
-.productRail.productRailExpanded .card {
-  width: 100% !important;
-  min-width: 0 !important;
-  max-width: none !important;
-}
-
-@media (max-width: 1023px) {
-  .productRail.productRailExpanded {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 640px) {
-  .productRail.productRailExpanded {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
 
 /* =========================================================
    MOBILE
@@ -363,20 +279,11 @@
     line-height: 1.2;
   }
 
-  .sectionTitle {
-    line-height: 1.04;
-  }
-
   .sectionSubtitle {
     margin-top: 8px;
     max-width: 100%;
   }
 
-  .railToggleBtn {
-    height: 40px;
-    padding: 0 14px;
-    border-radius: 14px;
-  }
 }
 
 /* mobile pequeno */
@@ -391,3 +298,101 @@
     padding: 0 6px 4px;
   }
 }
+
+/* =========================================================
+   PRODUCT GRID (PÁGINAS - /lancamentos, /promocoes, etc)
+   ========================================================= */
+
+.collectionsSection{
+  margin: 60px 0 28px;
+}
+
+#collectionsRail{
+  margin: 0;
+  padding: 50px 14px 18px;
+}
+
+.pageSection {
+  position: relative;
+  margin: 60px 0 28px;
+  padding: 0;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.045),
+    rgba(255, 255, 255, 0.02)
+  );
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+@media (max-width: 768px) {
+  .pageSection {
+   margin-top: 30px;
+  }
+
+  .collectionsSection{
+    margin-top:  30px;
+  }
+}
+
+.pageBlock {
+  margin-top: 8px;
+  padding: 0;
+}
+
+/* GRID REAL (SEM SCROLL HORIZONTAL) */
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 18px;
+  padding: 0 8px;
+}
+
+/*TELAS DE CELULAR NO GERAL, TIPO IPHONE 14 PRO*/
+@media (min-width: 350px) and (max-width: 500px) {
+  .productGrid {
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+  }
+}
+
+/*TELAS ACIMA DE CELULAR MAS MENORES QUE IPAD*/
+@media (min-width: 501px) and (max-width: 700px) {
+  .productGrid {
+    grid-template-columns: repeat(3, minmax(120px, 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  .productGrid {
+    grid-template-columns: repeat(5, minmax(180px, 1fr));
+    padding: 0 6px;
+  }
+}
+
+
+/* ITEM DO GRID */
+.gridItem {
+  width: 100%;
+  min-width: 0;
+}
+
+/* garante que o card expanda corretamente */
+.productGrid .card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.productGrid .card .content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.productGrid .card .content > *:last-child {
+  margin-top: auto;
+}
+
