@@ -1,32 +1,115 @@
-import { useParams } from "react-router-dom"
+/*
+|--------------------------------------------------------------------------
+| ProductPage
+|--------------------------------------------------------------------------
+|
+| Página dedicada de produto (fallback futuro).
+|
+| Atualmente o projeto utiliza:
+| -> AppShell + ProductModal
+|
+| Mas este arquivo existe para:
+| - futuras páginas SEO
+| - compartilhamento social
+| - metadata dinâmica
+| - OpenGraph
+| - indexação Google
+| - experiência standalone
+|
+| Hoje o modal é a experiência principal do produto.
+|
+|--------------------------------------------------------------------------
+*/
 
-function ProductPage({ products }) {
-  const { slug } = useParams()
+import { useEffect, useState } from "react";
 
-  const product = products.find(p => p.slug === slug)
+import { useParams } from "react-router-dom";
+
+import ProductContent from "../components/ProductContent";
+
+import { supabaseClient } from "../lib/supabase.js";
+import { normalizeProduct } from "../utils/normalizeProduct";
+
+function ProductPage() {
+  const { volumeId } = useParams();
+
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadProduct() {
+      const { data, error } = await supabaseClient
+        .from("series_volumes_view")
+        .select("*");
+
+      if (error) {
+        console.error(error);
+        setLoading(false);
+        return;
+      }
+
+      if (!mounted) return;
+
+      const normalized = (data || []).map(
+        normalizeProduct,
+      );
+
+      const found = normalized.find(
+        (p) => p.volumeSlug === volumeId,
+      );
+
+      setProduct(found || null);
+      setLoading(false);
+    }
+
+    loadProduct();
+
+    return () => {
+      mounted = false;
+    };
+  }, [volumeId]);
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "#111",
+          color: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        Carregando produto...
+      </div>
+    );
+  }
 
   if (!product) {
-    return <p>Produto não encontrado</p>
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "#111",
+          color: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        Produto não encontrado
+      </div>
+    );
   }
 
   return (
-    <div className="productPage">
-      <h1>{product.name}</h1>
-
-      <img src={product.image} alt={product.name} />
-
-      <p>{product.description}</p>
-
-      <a
-        href={product.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="buyBtn"
-      >
-        Comprar
-      </a>
-    </div>
-  )
+    <main className="productPage">
+      <ProductContent product={product} />
+    </main>
+  );
 }
 
-export default ProductPage
+export default ProductPage;

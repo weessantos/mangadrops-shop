@@ -1,765 +1,1285 @@
-@import url('https://fonts.googleapis.com/css2?family=Russo+One&family=Poppins:wght@300;400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Russo+One&family=Poppins:wght@300;400;500;600;700;800&display=swap");
 
-:root{
-  --modal-pad: 16px;
-  --topbar-h: 68px;
-  --footer-h: 120px;
+:root {
+  --modal-pad: 18px;
 }
 
 /* =========================================================
-   OVERLAY + CONTAINER
+   OVERLAY
    ========================================================= */
-.modalOverlay{
+
+.modalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.68);
+
+  background: rgba(2, 2, 4, 0.72);
+
+  backdrop-filter: blur(18px) saturate(120%);
+
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+
   display: grid;
   place-items: center;
+
   padding: 18px;
+
   z-index: 12000;
+
+  overscroll-behavior: contain;
 }
 
-.modal{
-  width: min(900px, 100%);
-  max-height: 92vh;
-  border-radius: 22px;
-  background: #0B0B0C;
-  border: 1px solid rgba(255,255,255,0.06);
-  box-shadow: 0 20px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(220,38,38,0.08);
-  overflow: hidden;
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.modal {
   position: relative;
+
+  width: min(1180px, 100%);
+  max-height: 92vh;
+
   display: flex;
   flex-direction: column;
+
+  border-radius: 28px;
+
+  overflow: hidden;
+
+  background: rgba(5, 5, 8, 0.38);
+
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  box-shadow: 0 30px 120px rgba(0, 0, 0, 0.55);
+
+  isolation: isolate;
+}
+
+/* =========================================================
+   DYNAMIC BACKGROUND
+   ========================================================= */
+.modalTop,
+.relatedWorks {
+  position: relative;
+  z-index: 3;
+
+  background: linear-gradient(
+    180deg,
+    rgba(8, 8, 10, 0.52),
+    rgba(8, 8, 10, 0.72)
+  );
+
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+/* =========================================================
+   LAYERS
+   ========================================================= */
+
+.modalTop,
+.modalBody,
+.relatedWorks {
+  position: relative;
+  z-index: 2;
 }
 
 /* =========================================================
    TOP BAR
    ========================================================= */
-.modalTop{
+
+.modalTop {
   position: sticky;
   top: 0;
-  z-index: 20;
-  display:flex;
-  justify-content: space-between;
+
+  z-index: 3;
+
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+
   gap: 12px;
+
   padding: var(--modal-pad);
-  padding-bottom: 12px;
-  background: #0B0B0C;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
-.modalHeading{
-  position: relative;
+.modalRightTop {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 18px;
+}
+
+.tabPanel {
+  display: flex;
+  flex-direction: column;
+
+  gap: 24px;
+}
+
+.modalHeading {
   margin: 0;
-  margin-left: var(--modal-pad);
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: -0.4px;
-  color: #fff;
+
   display: flex;
   align-items: center;
   gap: 14px;
-  font-family: 'Russo One', sans-serif;
-}
 
-.modalHeading::before{
-  content: "";
-  width: 6px;
-  height: 26px;
-  border-radius: 4px;
-  background: linear-gradient(
-    180deg,
-    #EF4444,
-    #DC2626
-  );
-}
+  font-family: "Russo One", sans-serif;
 
-.closeBtn{
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.05);
+  font-size: 28px;
+  letter-spacing: -0.04em;
+
   color: #fff;
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
-  cursor: pointer;
-  font-size: 18px;
 }
 
-/* =========================================================
-   CONTENT SCROLL
-   ========================================================= */
-.modalContent{
-  max-height: calc(92vh - 74px);
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 10px;
-}
+.modalHeading::before {
+  content: "";
 
-.desktopOnly{ display: block; }
-.mobileOnly{ display: none; }
-.modalFooterSpacer{ height: 110px; }
+  width: 6px;
+  height: 28px;
 
-/* =========================================================
-   SHARED
-   ========================================================= */
-.modalCover{
-  width: 100%;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.08);
-  overflow: hidden;
-  background: rgba(0,0,0,0.25);
-}
-
-.modalCover img{
-  display: block;
-  width: 100%;
-}
-
-.tiktokEmbedWrap{
-  aspect-ratio: 9 / 16;
-  width: 100%;
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(0,0,0,0.25);
-}
-
-.tiktokIframe{
-  width: 100%;
-  height: 100%;
-  border: 0;
-  display: block;
-}
-
-.tiktokPlaceholder{
-  width: 100%;
-  border-radius: 16px;
-  text-align: center;
-}
-
-.tiktokTall{ aspect-ratio: 9 / 16; }
-
-.tiktokCompact{
-  min-height: auto;
-  padding: 14px 16px;
-  border-radius: 16px;
-  border: 1px dashed rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.02);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.tiktokPlaceholderIcon{
-  font-size: 22px;
-  opacity: 0.9;
-}
-
-.tiktokPlaceholderText{
-  color: rgba(255,255,255,0.72);
-  font-weight: 700;
-  font-size: 13px;
-}
-
-.tiktokExternalBtn{
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 12px; /* menor */
   border-radius: 999px;
 
-  font-size: 13px;
-  font-weight: 600;
-
-  background: transparent; /* remove aquele fundo pesado */
-  border: 1px solid rgba(255,255,255,0.12);
-
-  color: rgba(255,255,255,0.8);
-
-  margin-top: 8px;
+  background: linear-gradient(180deg, #ef4444, #dc2626);
 }
 
-.tiktokExternalBtn:hover{
-  background: rgba(255,255,255,0.06);
+.closeBtn {
+  width: 44px;
+  height: 44px;
+
+  border-radius: 16px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  background: rgba(255, 255, 255, 0.06);
+
   color: #fff;
+
+  font-size: 18px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.16s ease,
+    transform 0.16s ease;
 }
 
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
 
-.mediaCard{
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(0,0,0,0.18);
-  box-shadow: 0 18px 60px rgba(0,0,0,0.25);
-  padding: 14px;
-  width: fit-content;
-  max-width: 100%;
-}
-
-.mediaCard.hasVideo{
-  padding: 18px;
-  border: 1px solid rgba(255,255,255,0.14);
-  box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+  transform: scale(1.04);
 }
 
 /* =========================================================
-   STORE CARDS
+   CONTENT
    ========================================================= */
-.buyRowCards{
+
+.modalContent {
+  overflow: auto;
+
+  max-height: calc(92vh - 78px);
+
+  overscroll-behavior: contain;
+
+  position: relative;
+}
+
+.modalContent::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  z-index: 0;
+
+  pointer-events: none;
+
+  background-image:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.72) 0%,
+      rgba(0, 0, 0, 0.42) 35%,
+      rgba(0, 0, 0, 0.62) 100%
+    ),
+    var(--cover-image);
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  opacity: 0.8;
+
+  filter: blur(32px) saturate(1.35);
+}
+
+.modalBody {
   display: grid;
-  gap: 12px;
+
+  align-items: stretch;
+
+  grid-template-columns:
+    clamp(220px, 32vw, 420px)
+    minmax(0, 1fr);
+
+  gap: clamp(24px, 3vw, 48px);
+
+  padding: 32px clamp(20px, 4vw, 80px) 0;
 }
 
-.buyRowCards.twoCols{
-  grid-template-columns: 1fr 1fr;
-}
+/* =========================================================
+   SIDES
+   ========================================================= */
 
-.buyRowCards.oneCol{
-  grid-template-columns: 1fr;
-}
+.modalLeft {
+  width: 100%;
 
-.storeBuyCard{
+  min-width: 0;
+
+  max-width: 100%;
+
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 8px;
-  min-height: 92px;
-  padding: 14px 16px;
-  border-radius: 18px;
-  text-decoration: none;
-  border: 1px solid rgba(255,255,255,0.08);
-  transition: border-color 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+
+  gap: clamp(12px, 1.4vw, 18px);
 }
 
-.storeBuyCard:hover{
-  border-color: rgba(255,255,255,0.16);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.24);
-  filter: brightness(1.02);
-}
+.modalRight {
+  height: 100%;
 
-.storeBuyTop{
   display: flex;
+  flex-direction: column;
+
+  gap: clamp(18px, 2vw, 28px);
+}
+
+.modalLeft,
+.modalRight {
+  position: relative;
+  z-index: 2;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================================================
+   COVER
+   ========================================================= */
+
+.modalCover {
+  width: 100%;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  border-radius: clamp(18px, 2vw, 24px);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  background: rgba(0, 0, 0, 0.22);
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+}
+
+.modalCover img {
+  width: 100%;
+
+  height: auto;
+
+  max-height: min(72vh, 720px);
+
+  object-fit: cover;
+
+  display: block;
+
+  will-change: transform;
+
+  transition: transform 0.12s linear;
+}
+
+/* =========================================================
+   TITLES
+   ========================================================= */
+
+.modalTitle {
+  margin: 0;
+
+  font-family: "Russo One", sans-serif;
+
+  font-size: clamp(34px, 2.8vw, 52px);
+
+  line-height: 0.95;
+
+  letter-spacing: -0.04em;
+
+  color: #fff;
+
+  max-width: 100%;
+
+  min-width: 0;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+.modalAuthor {
+  margin-top: 0;
+  margin-bottom: 20px;
+
+  font-size: 1.15rem;
+  font-weight: 600;
+
+  opacity: 0.82;
+}
+
+.modalBadges {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.badge {
+  font-weight: 600;
+
+  border-radius: 999px;
+  margin: 0 10px 20px 0;
+
+  padding: clamp(10px, 1vw, 14px) clamp(16px, 1.6vw, 24px);
+
+  font-size: clamp(0.85rem, 1vw, 1rem);
+}
+
+/* =========================================================
+   TABS
+   ========================================================= */
+
+.tabPills {
+  display: inline-flex;
   align-items: center;
+  margin-top: 20px;
+
+  gap: 6px;
+
+  width: fit-content;
+
+  padding: 6px;
+
+  border-radius: 999px;
+
+  background: rgba(12, 12, 16, 0.52);
+
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  backdrop-filter: blur(18px) saturate(140%);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+.tabPill {
+  border: 0;
+
+  background: transparent;
+
+  color: rgba(255, 255, 255, 0.72);
+
+  padding: 12px 20px;
+
+  border-radius: 999px;
+
+  font-size: 0.98rem;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    background 0.16s ease,
+    color 0.16s ease,
+    transform 0.16s ease;
+}
+
+.tabPill:hover {
+  color: #fff;
+}
+
+.tabPill.active {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.04)
+  );
+
+  color: #fff;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 8px 24px rgba(0, 0, 0, 0.22);
+}
+
+/* =========================================================
+   DETAILS
+   ========================================================= */
+
+.detailsCard {
+  padding: 28px;
+
+  border-radius: 28px;
+
+  background: rgba(10, 10, 12, 0.32);
+
+  backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  overflow: hidden;
+}
+
+.detailsCard::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.06),
+    transparent 40%
+  );
+
+  opacity: 0.7;
+}
+
+.detailsTitle {
+  margin: 0 0 14px;
+
+  font-size: 1.1rem;
+
+  font-weight: 800;
+
+  color: #fff;
+}
+
+.detailsText {
+  margin: 0;
+
+  font-size: 1.05rem;
+
+  line-height: 1.72;
+
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.detailsNote {
+  margin-top: 18px;
+
+  font-size: 0.98rem;
+
+  line-height: 1.6;
+
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.detailsNote b {
+  color: #fff;
+}
+
+/* =========================================================
+   STORE
+   ========================================================= */
+
+.desktopBuySection,
+.desktopBuySectionVideo {
+  margin-top: auto;
+}
+
+.storeBuyCard * {
+  margin: 0;
+}
+
+.storeBuyTop > * {
+  min-width: 0;
+}
+
+.storeBuyTop {
+  display: flex;
+
+  align-items: center;
+
   justify-content: space-between;
-  gap: 10px;
+
+  gap: 12px;
+
+  width: 100%;
 }
 
-.storeBuyCard .brandIcon{
-  height: 24px;
-  width: auto;
-  object-fit: contain;
-}
+.storeBuyPrice {
+  font-size: clamp(0.9rem, 2vw, 1.4rem);
+  font-weight: 800;
 
-.storeBuyPrice{
-  font-size: 1.16rem;
   line-height: 1;
-  font-weight: 900;
-  letter-spacing: -0.02em;
+
+  letter-spacing: -0.03em;
 }
 
-.storeBuyMeta{
-  font-size: 0.82rem;
-  font-weight: 700;
+.storeBuyMeta {
+  font-size: clamp(0.82rem, 0.9vw, 0.96rem);
+  font-weight: 600;
+
   opacity: 0.78;
 }
 
-.storeBestBadge{
+.buyRowCards {
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+
+  gap: 16px;
+
+  width: 100%;
+}
+
+.storeBuyCard {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  width: 100%;
+
+  min-width: 0;
+
+  max-width: 100%;
+
+  min-height: clamp(108px, 12vw, 132px);
+
+  padding: clamp(14px, 1.2vw, 18px);
+
+  border-radius: clamp(18px, 2vw, 22px);
+
+  overflow: hidden;
+}
+
+.storeBuyCard:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+}
+
+.storeBuyCard::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.18),
+    transparent 45%
+  );
+
+  pointer-events: none;
+}
+
+.storeBuyCard.mercado {
+  background: #ffe100;
+  color: #111;
+}
+
+.storeBuyCard.amazon {
+  background: #f3f4f6;
+  color: #111;
+}
+
+.storeBestBadge {
   display: inline-flex;
+
   align-items: center;
   justify-content: center;
-  padding: 4px 8px;
-  border-radius: 999px;
-  font-size: 0.68rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  background: rgba(255,255,255,0.22);
-  color: inherit;
+
+  flex-shrink: 1;
+
+  min-width: 0;
+
+  max-width: 100%;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
   white-space: nowrap;
+
+  padding: 6px 12px;
+
+  border-radius: 999px;
+
+  background: rgba(17, 17, 17, 0.08);
+
+  border: 1px solid rgba(17, 17, 17, 0.06);
+
+  font-size: clamp(0.58rem, 0.7vw, 0.78rem);
+
+  line-height: 1;
+
+  font-weight: 900;
+
+  letter-spacing: 0.03em;
+
+  text-transform: uppercase;
+
+  color: rgba(17, 17, 17, 0.78);
+
+  backdrop-filter: blur(8px);
 }
 
-.storeBuyCard.mercado{
-  background: #ffe600;
-  color: #1f1f1f;
+.brandIcon {
+  display: block;
+
+  width: auto;
+
+  max-width: 110px;
+
+  height: auto;
+
+  object-fit: contain;
 }
 
-.storeBuyCard.amazon{
-  background: #f3f4f6;
-  color: #111111;
+/* Mercado Livre */
+
+.storeBuyCard.mercado .storeBestBadge {
+  background: rgba(0, 0, 0, 0.08);
+
+  color: rgba(17, 17, 17, 0.85);
 }
 
-/* =========================================================
-   DESKTOP
-   ========================================================= */
-@media (min-width: 721px){
-  .modalBody{
-    display:grid;
-    grid-template-columns: 360px 1fr;
-    gap: 18px;
-    align-items: stretch;
-    padding: var(--modal-pad);
-  }
+/* Amazon */
 
-  .modalLeft, .modalRight{ min-width: 0; }
+.storeBuyCard.amazon .storeBestBadge {
+  background: rgba(17, 17, 17, 0.06);
 
-  .desktopCover img{
-    width: 100%;
-    display:block;
-    object-fit: contain;
-    max-height: 520px;
-    height: auto;
-  }
+  color: rgba(17, 17, 17, 0.72);
+}
 
-  .modalLeft{
-    display: flex;
-    flex-direction: column;
-  }
+.storeUnavailableCard {
+  position: relative;
 
-  .modalRight{
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
+  overflow: hidden;
 
-  .desktopBuySection{
-    margin-top: auto;
-  }
+  padding: 20px;
 
-  .modalRightTop{ padding: 6px 2px 0; }
+  border-radius: 26px;
 
-  .modalTitle{
-    margin: 4px 0 10px;
-    font-size: 26px;
-    line-height: 1.15;
-    letter-spacing: -0.4px;
-    font-family: 'Russo One', sans-serif;
-  }
+  display: flex;
+  flex-direction: column;
 
-  .modalBadges{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 0 0 12px;
-  }
+  justify-content: center;
 
-  .tabPills{
-    margin-top: 12px;
-    width: fit-content;
-    display: inline-flex;
-    gap: 6px;
-    padding: 6px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.12);
-    background: rgba(0,0,0,0.18);
-  }
+  gap: 12px;
 
-  .tabPill{
-    border: 0;
-    cursor: pointer;
-    padding: 10px 14px;
-    border-radius: 999px;
-    font-weight: 800;
-    color: rgba(255,255,255,0.75);
-    background: transparent;
-    transition: background 120ms ease, color 120ms ease, filter 120ms ease;
-  }
+  min-height: 148px;
 
-  .tabPill:hover{
-    filter: brightness(1.08);
-  }
+  background: linear-gradient(180deg, #ff4458 0%, #d61133 100%);
 
-  .tabPill.active{
-    color: #fff;
-    background: rgba(255,255,255,0.10);
-    border: 1px solid rgba(255,255,255,0.14);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-  }
+  color: #fff;
 
-  .tabPanel {
-    flex: 1;
+  box-shadow:
+    0 18px 44px rgba(214, 17, 51, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
-    display: flex;
-    flex-direction: column;
-  }
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
 
-  .detailsCard{
-    border-radius: 18px;
-    border: 1px solid rgba(255,255,255,0.10);
-    background: rgba(0,0,0,0.16);
-    box-shadow: 0 18px 60px rgba(0,0,0,0.20);
-    padding: 16px;
-    max-width: 72ch;
-  }
+.storeUnavailableCard::after {
+  content: "SEM ESTOQUE";
 
-  .detailsTitle{
-    font-weight: 900;
-    letter-spacing: -0.2px;
-    margin-bottom: 10px;
-  }
+  position: absolute;
 
-  .detailsText{
-    margin: 0;
-    color: rgba(255,255,255,0.75);
-    line-height: 1.65;
-    font-size: 14px;
-  }
+  top: 14px;
+  right: 14px;
 
-  .detailsNote{
-    margin-top: 12px;
-    font-size: 13px;
-    color: rgba(255,255,255,0.60);
-  }
+  padding: 6px 10px;
 
-  .tiktokEmbedWrap.tiktokTall{
-    width: 380px;
-    max-width: 100%;
-    max-height: 600px;
-  }
+  border-radius: 999px;
 
-  .tiktokPlaceholder.tiktokCompact{
-    width: 380px;
-    max-width: 100%;
-  }
+  background: rgba(255, 255, 255, 0.14);
 
-  .mediaCard.hasVideo{ width: 420px; }
+  border: 1px solid rgba(255, 255, 255, 0.08);
 
-  .modalDescLeft{
-    position: static !important;
-    margin-top: 14px;
-    padding: 0;
-    background: none;
-    border: none;
-    box-shadow: none;
-    font-size: 14px;
-    line-height: 1.6;
-    color: rgba(255,255,255,0.72);
-    max-width: 32ch;
-  }
+  backdrop-filter: blur(10px);
 
-  .modalDescLeft::before,
-  .modalDescLeft::after{ display: none !important; }
+  font-size: 0.58rem;
+
+  font-weight: 800;
+
+  letter-spacing: 0.14em;
+
+  text-transform: uppercase;
+
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.storeUnavailableTop {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  font-size: 1rem;
+
+  font-weight: 800;
+
+  line-height: 1.2;
+
+  color: rgba(255, 255, 255, 0.98);
+
+  padding-right: 108px;
+}
+
+.storeUnavailableCard p {
+  margin: 0;
+
+  max-width: 24ch;
+
+  font-size: 0.9rem;
+
+  line-height: 1.55;
+
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.storeUnavailableCard::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1),
+    transparent 38%
+  );
+
+  opacity: 0.5;
 }
 
 /* =========================================================
-   MOBILE
+   NAV ARROWS
    ========================================================= */
-@media (max-width: 720px){
-  .modalOverlay{
-    padding: 0;
-    place-items: stretch;
-    align-items: stretch;
-    background: rgba(0,0,0,0.76);
+
+.volumeNav {
+  position: absolute;
+
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 52px;
+  height: 120px;
+
+  font-size: 28px;
+  font-weight: 700;
+
+  border-radius: 999px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(
+    180deg,
+    rgba(16, 16, 18, 0.18),
+    rgba(8, 8, 10, 0.58)
+  );
+
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  backdrop-filter: blur(18px);
+
+  color: #fff;
+
+  z-index: 40;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease,
+    background 0.22s ease,
+    border-color 0.22s ease;
+}
+
+/* aparecer */
+
+.modal:hover .volumeNav {
+  opacity: 1;
+
+  pointer-events: auto;
+
+  cursor: pointer;
+}
+
+/* hover */
+
+.volumeNav:hover {
+  transform: translateY(-50%) scale(1.03);
+
+  background: linear-gradient(
+    180deg,
+    rgba(24, 24, 28, 0.34),
+    rgba(10, 10, 14, 0.82)
+  );
+
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* posições */
+
+.volumePrev {
+  left: 18px;
+}
+
+.volumeNext {
+  right: 18px;
+}
+
+/* ícone */
+.volumeNav svg {
+  width: 24px;
+  height: 24px;
+
+  stroke-width: 2.8;
+
+  color: rgba(255, 255, 255, 0.92);
+}
+/* =========================
+     AFFILIATE NOTE
+     ========================= */
+.modalAffiliateNote {
+  width: 100%;
+
+  margin-top: 26px;
+  padding: 18px 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.015),
+    rgba(255, 255, 255, 0.005)
+  );
+
+  opacity: 0.78;
+}
+
+.modalAffiliateNote p {
+  margin: 0;
+
+  font-size: 0.95rem;
+  line-height: 1.5;
+
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.affiliateDot {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 999px;
+
+  background: linear-gradient(180deg, #ffe066, #ffb703);
+
+  box-shadow: 0 0 14px rgba(255, 208, 0, 0.4);
+}
+
+/* =========================
+     AFFILIATE NOTE
+     ========================= */
+.modalAffiliateNote {
+  width: 100%;
+
+  margin-top: 26px;
+  padding: 18px 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.015),
+    rgba(255, 255, 255, 0.005)
+  );
+
+  opacity: 0.78;
+}
+
+.modalAffiliateNote p {
+  margin: 0;
+
+  font-size: 0.95rem;
+  line-height: 1.5;
+
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.affiliateDot {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 999px;
+
+  background: linear-gradient(180deg, #ffe066, #ffb703);
+
+  box-shadow: 0 0 14px rgba(255, 208, 0, 0.4);
+}
+/* =========================================================
+   RELATED
+   ========================================================= */
+
+.relatedWorks {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: var(--modal-pad);
+}
+
+.relatedWorks::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.32), transparent);
+
+  pointer-events: none;
+}
+
+.relatedHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  margin-bottom: 22px;
+}
+
+.relatedHeader h3 {
+  margin: 0;
+
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.relatedTitle {
+  margin: 0;
+
+  font-size: 2rem;
+
+  font-weight: 900;
+
+  letter-spacing: -0.03em;
+
+  color: #fff;
+}
+
+.relatedViewAll {
+  border: 0;
+
+  background: rgba(255, 255, 255, 0.06);
+
+  color: rgba(255, 255, 255, 0.88);
+
+  padding: 12px 18px;
+
+  border-radius: 999px;
+
+  font-size: 0.92rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease;
+}
+
+.relatedViewAll:hover {
+  background: rgba(255, 255, 255, 0.12);
+
+  transform: translateY(-1px);
+}
+
+.relatedRail {
+  display: flex;
+  gap: 14px;
+
+  overflow-x: auto;
+
+  scrollbar-width: none;
+}
+
+.relatedRail::-webkit-scrollbar {
+  display: none;
+}
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+.desktopOnly {
+  display: block;
+}
+
+.mobileOnly {
+  display: none;
+}
+
+/* =========================================================
+   FULL FLIP COVER
+========================================================= */
+
+.modalCover {
+  perspective: 1600px;
+}
+
+.modalCover img {
+  transform-style: preserve-3d;
+
+  backface-visibility: hidden;
+
+  will-change: transform;
+}
+
+/* NEXT */
+
+.modal.switching.next .modalCover img {
+  animation: coverFlipNext 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* PREV */
+
+.modal.switching.prev .modalCover img {
+  animation: coverFlipPrev 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* =========================================================
+   KEYFRAMES
+========================================================= */
+
+@keyframes coverFlipNext {
+  0% {
+    transform: rotateY(0deg) translateX(0) scale(1);
   }
 
-  .modal{
-    width: 100vw;
-    height: 100dvh;
-    max-height: none;
-    border-radius: 0;
-    border-left: 0;
-    border-right: 0;
-    border-top: 0;
-    overflow: hidden;
-    background: #0B0B0C;
-    border: none;
-    box-shadow: 0 20px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(220,38,38,0.08);
+  50% {
+    transform: rotateY(180deg) translateX(12px) scale(0.96);
   }
 
-  .desktopOnly{ display: none; }
-  .mobileOnly{ display: block; }
-
-  .modalTop{
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 50;
-    padding: calc(env(safe-area-inset-top) + 12px) 14px 12px;
-    background: #0B0B0C;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-
-  .modalHeading{
-    margin-left: 0;
-    font-size: 20px;
-    font-weight: 600;
-    letter-spacing: -0.2px;
-  }
-
-  .modalHeading::before{
-    width: 4px;
-    height: 20px;
-    border-radius: 3px;
-  }
-
-  .closeBtn{
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
-    background: rgba(255,255,255,0.06);
-  }
-
-  .modalContent{
-    flex: 1 1 auto;
-    min-height: 0;
-    max-height: none;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-top: calc(var(--topbar-h) + env(safe-area-inset-top));
-    padding-bottom: calc(var(--footer-h) + env(safe-area-inset-bottom));
-  }
-
-  .modalFooter{
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 60;
-    padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
-    background: rgba(15,20,32,0.98);
-    border-top: 1px solid rgba(255,255,255,0.06);
-  }
-
-  .modalRail{
-    display: flex;
-    gap: 0;
-    padding: 14px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    scroll-padding-left: 14px;
-    scroll-padding-right: 14px;
-  }
-  .modalRail::-webkit-scrollbar{ display:none; }
-
-  .railPage{
-    flex: 0 0 100%;
-    min-width: 100%;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    border-radius: 18px;
-    border: 1px solid rgba(255,255,255,0.05);
-    background: rgba(255,255,255,0.02);
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    min-height: auto;
-  }
-
-  .railProduct .modalCover{
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,0.06);
-  }
-
-  .railProduct .modalCover img{
-    width: 100%;
-    display: block;
-    object-fit: contain;
-    max-height: 32vh;
-    height: auto;
-  }
-
-  .productInfoUnder .modalTitle{
-    margin: 4px 0 8px;
-    font-size: 17px;
-    font-weight: 600;
-    letter-spacing: -0.2px;
-    line-height: 1.3;
-  }
-
-  .detailsText,
-  .productInfoUnder p,
-  .modalDescLeft{
-    line-height: 1.7;
-    font-size: 14px;
-    color: rgba(255,255,255,0.78);
-  }
-
-  .productInfoUnder{ gap: 10px; }
-
-  .modalBadges{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 0;
-  }
-
-  .modalBadges .badge,
-  .modalBadges .pill,
-  .modalBadges > *{
-    flex: 0 0 auto;
-    white-space: nowrap;
-    font-size: 12px;
-    padding: 6px 10px;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.08);
-    font-weight: 500;
-  }
-
-  .modalHint{
-    color: rgba(255,255,255,0.55);
-    font-size: 12px;
-    margin-top: 2px;
-  }
-
-  .tiktokEmbedWrap.tiktokTall{
-    max-height: 60vh;
-    border-radius: 16px;
-  }
-
-  .tiktokPlaceholder.tiktokCompact{ border-radius: 16px; }
-
-  .mediaCard{ width: 100%; }
-  .mediaCard.hasVideo{ width: 100%; }
-
-  .modalFooterSpacer{ height: 0; }
-
-  .buyRowCards{
-    gap: 10px;
-  }
-
-  .storeBuyCard{
-    min-height: 64px;
-    padding: 10px 12px;
-    gap: 6px;
-    border-radius: 16px;
-  }
-
-  .storeBuyCard .brandIcon{
-    height: 20px;
-  }
-
-  .storeBuyPrice{
-    font-size: 0.95rem;
-    font-weight: 700;
-  }
-
-  .storeBuyMeta{
-    font-size: 0.72rem;
-  }
-
-  .storeBestBadge{
-    font-size: 0.62rem;
-    padding: 4px 7px;
+  100% {
+    transform: rotateY(360deg) translateX(0) scale(1);
   }
 }
 
-@media (max-width: 480px){
-  .productInfoUnder .modalTitle{
-    font-size: clamp(15px, 4.2vw, 17px);
+@keyframes coverFlipPrev {
+  0% {
+    transform: rotateY(0deg) translateX(0) scale(1);
   }
 
-  .detailsText,
-  .productInfoUnder p,
-  .modalDescLeft{
-    font-size: clamp(13px, 3.6vw, 14px);
+  50% {
+    transform: rotateY(-180deg) translateX(-12px) scale(0.96);
   }
 
-  .modalHeading{
-    font-size: clamp(18px, 4.5vw, 20px);
-  }
-
-  .buyRowCards.twoCols{
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .storeBuyPrice{
-    font-size: 0.95rem;
-  }
-}
-@media (max-width: 380px){
-
-  /* 🔽 BOTÕES MAIS COMPACTOS */
-  .storeBuyCard{
-    min-height: 56px; /* antes 64+ */
-    padding: 8px 10px;
-    gap: 4px;
-    border-radius: 12px;
-  }
-
-  .storeBuyCard .brandIcon{
-    height: 16px;
-  }
-
-  .storeBuyTop{
-    gap: 6px;
-  }
-
-  .storeBuyPrice{
-    font-size: 0.85rem;
-    font-weight: 700;
-  }
-
-  .storeBuyMeta{
-    font-size: 0.68rem;
-  }
-
-  .storeBestBadge{
-    font-size: 0.5rem;
-    padding: 2px 5px;
-  }
-
-  /* 🔽 GRID MAIS JUSTO */
-  .buyRowCards{
-    gap: 6px;
-  }
-
-  /* 🔽 FOOTER MENOR */
-  :root{
-    --footer-h: 100px;
-  }
-    .buyRowCards.twoCols{
-    grid-template-columns: 1fr 1fr;
-  }
-
-  /* força conteúdo a não "respirar demais" */
-  .modalFooter{
-    padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
-  }
-  
-  .tiktokEmbedWrap.tiktokTall{
-    max-height: 55vh;
-    border-radius: 16px;
-  }
-
-}
-
-@media (min-width: 721px){
-  .desktopBuySection .storeBuyCard{
-    min-height: 72px;
-    padding: 12px 14px;
-    border-radius: 16px;
-  }
-
-  .desktopBuySection .storeBuyCard .brandIcon{
-    height: 16px;
-  }
-
-  .desktopBuySection .storeBuyPrice{
-    font-size: 0.95rem;
-  }
-
-  .desktopBuySection .storeBuyMeta{
-    font-size: 0.72rem;
-  }
-
-  .desktopBuySection .storeBestBadge{
-    font-size: 0.54rem;
-    padding: 3px 6px;
+  100% {
+    transform: rotateY(-360deg) translateX(0) scale(1);
   }
 }
 
-.modalOverlay{
-  overscroll-behavior: contain;
+/* =========================================================
+   VÍDEO CARD
+========================================================= */
+.videoHeroCard {
+  position: relative;
+
+  overflow: hidden;
+
+  padding: 26px 28px;
+
+  border-radius: 30px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 22px;
+
+  background: rgba(10, 10, 12, 0.32);
+
+  backdrop-filter: blur(18px);
+
+  -webkit-backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  overflow: hidden;
 }
 
-.modalContent{
-  overscroll-behavior: contain;
+.videoHeroCard::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.06),
+    transparent 40%
+  );
+
+  opacity: 0.7;
+}
+
+.videoHeroRow {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 22px;
+}
+
+.videoHeroPlay {
+  width: 62px;
+  height: 62px;
+
+  border-radius: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  font-size: 1.2rem;
+
+  color: #fff;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.02)
+  );
+
+  color: rgba(255, 255, 255, 0.92);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 24px rgba(0, 0, 0, 0.18);
+
+  backdrop-filter: blur(12px);
+}
+
+.videoHeroMeta {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+.videoHeroMeta span {
+  font-size: 0.65rem;
+
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+
+  opacity: 0.62;
+}
+
+.videoHeroMeta h3 {
+  margin: 6px 0 10px;
+
+  font-size: clamp(1.5rem, 2vw, 2rem);
+
+  line-height: 1.02;
+}
+
+.videoHeroMeta p {
+  margin: 0;
+
+  font-size: 1rem;
+  line-height: 1.6;
+
+  opacity: 0.82;
+
+  max-width: 520px;
+}
+
+.videoHeroButton {
+  width: fit-content;
+
+  margin-left: 84px;
+
+  padding: 13px 22px;
+
+  border-radius: 16px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.03)
+  );
+
+  backdrop-filter: blur(12px);
+
+  color: #fff;
+
+  font-weight: 700;
+
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.videoHeroButton:hover {
+  transform: translateY(-1px);
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0.05)
+  );
+
+  border-color: rgba(255, 255, 255, 0.12);
 }

@@ -6,6 +6,7 @@ import {
   useNavigate,
   useParams,
   useSearchParams,
+  matchPath,
 } from "react-router-dom";
 import "./styles/global.css";
 
@@ -128,7 +129,9 @@ function AppShell() {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
-  const isModalNavigation = Boolean(location.state?.backgroundLocation);
+  const isModalNavigation =
+    Boolean(location.state?.backgroundLocation) &&
+    window.history.state?.idx > 0;
   const { seriesSlug, volumeId } = useParams();
   const [sp, setSp] = useSearchParams();
 
@@ -620,8 +623,6 @@ function AppShell() {
     setSp(next, { replace: true });
   };
 
-  const selectedProduct = getSelectedProduct(products, volumeId);
-
   const openSeries = (name) => {
     setPage(1);
     setShouldScrollToVolumes(true);
@@ -659,8 +660,12 @@ function AppShell() {
       return;
     }
 
+    //Products TEMPORARIAMENTEAMENTE para passar pro modal sem precisar refazer toda a lógica de pegar o produto selecionado lá
     navigate(`/${product.seriesSlug}/${product.volumeSlug}`, {
-      state: { backgroundLocation: location },
+      state: {
+        backgroundLocation: location,
+        products,
+      },
     });
   };
 
@@ -1042,9 +1047,6 @@ function AppShell() {
         </section>
       )}
 
-      {selectedProduct && isModalNavigation && (
-        <ProductModal product={selectedProduct} onClose={closeModal} />
-      )}
       {showScrollTop && (
         <button
           className="scrollTopBtn"
@@ -1060,33 +1062,50 @@ function AppShell() {
   );
 }
 
-export default function App() {
+//AppRoutes é o componente que controla as rotas da aplicação, incluindo a lógica de exibir o modal de produto quando necessário. Ele é usado dentro do App para renderizar as rotas principais e o modal de produto de forma condicional, dependendo do estado da navegação.
+
+function AppRoutes() {
   const location = useLocation();
   const state = location.state;
 
   const backgroundLocation = state?.backgroundLocation;
 
+  const productMatch = matchPath("/:seriesSlug/:volumeId", location.pathname);
+
+  const volumeId = productMatch?.params?.volumeId;
+
   return (
     <>
       <Routes location={backgroundLocation || location}>
         <Route path="/filtros" element={<FiltersPage />} />
-        <Route path="/colecoes" element={<AppShell isAllCollectionsPage />} />
-        <Route path="/lancamentos" element={<AppShell isReleasesPage />} />
-        <Route path="/promocoes" element={<AppShell isPromotionsPage />} />
-        <Route path="/saldao" element={<AppShell isCheapPage />} />
-        <Route path="/" element={<AppShell />} />
-        <Route path="/:seriesSlug" element={<AppShell />} />
-        <Route path="/:seriesSlug/:volumeId" element={<AppShell />} />
 
-        {/* 🔥 fallback (acesso direto) */}
-        <Route path="/produto/:slug" element={<ProductPage />} />
+        <Route path="/colecoes" element={<AppShell isAllCollectionsPage />} />
+
+        <Route path="/lancamentos" element={<AppShell isReleasesPage />} />
+
+        <Route path="/promocoes" element={<AppShell isPromotionsPage />} />
+
+        <Route path="/saldao" element={<AppShell isCheapPage />} />
+
+        <Route path="/" element={<AppShell />} />
+
+        <Route path="/:seriesSlug" element={<AppShell />} />
+
+        {/* 🔥 página REAL */}
+        <Route path="/:seriesSlug/:volumeId" element={<AppShell />} />
       </Routes>
 
-      {backgroundLocation && (
+      {/* 🔥 modal SOMENTE quando veio da home */}
+      {volumeId && (
         <Routes>
-          <Route path="/:seriesSlug/:volumeId" element={<AppShell />} />
+          <Route path="/:seriesSlug/:volumeId" element={<ProductModal />} />
         </Routes>
       )}
     </>
   );
+}
+
+//App é o componente raiz da aplicação, responsável por renderizar o AppRoutes, que por sua vez gerencia as rotas e a exibição do modal de produto. Ele também pode conter outros elementos comuns a todas as páginas, como o Header e o Footer.
+export default function App() {
+  return <AppRoutes />;
 }

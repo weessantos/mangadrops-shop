@@ -1,10 +1,45 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import "../styles/product-modal.css";
-import { track } from "../utils/analytics.js";
-import { getPrice, formatPrice, getBestPrice } from "../utils/priceLoader";
+/*
+|--------------------------------------------------------------------------
+| ProductModal
+|--------------------------------------------------------------------------
+|
+| Responsável SOMENTE pelo comportamento de modal.
+|
+| Aqui ficam:
+| - overlay/backdrop
+| - fechamento do modal
+| - ESC key
+| - controle de navegação
+| - leitura da URL
+| - busca do produto via rota
+| - comportamento visual de modal
+|
+| NÃO colocar aqui:
+| - UI detalhada do produto
+| - preços
+| - descrição
+| - tabs
+| - lógica de conteúdo
+|
+| Toda a interface visual do produto vive em:
+| -> ProductContent.jsx
+|
+|--------------------------------------------------------------------------
+*/
 
-const base = import.meta.env.BASE_URL;
-const img = (path) => `${base}assets/${path}`;
+import { useEffect, useState, useRef } from "react";
+
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+
+import ProductContent from "./ProductContent";
+
+import { getSelectedProduct } from "../utils/getSelectedProduct.js";
+
+import { supabaseClient } from "../lib/supabase.js";
+import { normalizeProduct } from "../utils/normalizeProduct";
+
+import "../styles/product-modal.css";
+import "../styles/product-modal-mobile.css";
 
 const handleOverlayWheel = (e) => {
   const scrollContainer = e.target.closest(".modalContent");
@@ -15,10 +50,12 @@ const handleOverlayWheel = (e) => {
   }
 
   const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
+
   const goingDown = e.deltaY > 0;
   const goingUp = e.deltaY < 0;
 
   const atTop = scrollTop <= 0;
+
   const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
 
   if ((goingUp && atTop) || (goingDown && atBottom)) {
@@ -26,219 +63,194 @@ const handleOverlayWheel = (e) => {
   }
 };
 
-function getTikTokEmbedUrl(tiktokUrl) {
-  if (!tiktokUrl) return null;
-  const match =
-    tiktokUrl.match(/video\/(\d+)/) || tiktokUrl.match(/\/v\/(\d+)/);
-  const videoId = match?.[1];
-  if (!videoId) return null;
-  return `https://www.tiktok.com/embed/v2/${videoId}`;
-}
+export default function ProductModal() {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-function StoreButton({
-  href,
-  store,
-  logo,
-  alt,
-  price,
-  isBest,
-  showPrice,
-  onClick,
-}) {
-  const storeClass = store === "Mercado Livre" ? "mercado" : "amazon";
-  const hasVisiblePrice = showPrice && price != null;
+  const { volumeId } = useParams();
 
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noreferrer"
-      onClick={onClick}
-      className={`storeBuyCard ${storeClass}`}
-      aria-label={
-        hasVisiblePrice ? `Comprar na ${store}` : `Consultar valor na ${store}`
-      }
-      title={
-        hasVisiblePrice ? `Comprar na ${store}` : `Consultar valor na ${store}`
-      }
-    >
-      <div className="storeBuyTop">
-        <img src={logo} alt={alt} className="brandIcon" />
-        {hasVisiblePrice && isBest ? (
-          <span className="storeBestBadge">melhor oferta</span>
-        ) : null}
-      </div>
+  const stateProducts = location.state?.products || [];
 
-      <div className="storeBuyPrice">
-        {hasVisiblePrice ? formatPrice(price) : "Consultar valor"}
-      </div>
-
-      <div className="storeBuyMeta">
-        {hasVisiblePrice ? "Ver oferta na loja" : "Toque para consultar"}
-      </div>
-    </a>
-  );
-}
-
-export default function ProductModal({ product, onClose }) {
-  const railRef = useRef(null);
-  const [desktopTab, setDesktopTab] = useState("details");
-
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === "Escape") onClose();
-    };
-
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [onClose]);
-
-  useEffect(() => {
-    const el = railRef.current;
-    if (!el) return;
-
-    const onWheel = (e) => {
-      if (e.shiftKey) return;
-      if (el.clientWidth === 0 || el.scrollWidth <= el.clientWidth) return;
-      e.preventDefault();
-      el.scrollLeft += e.deltaY;
-    };
-
-    el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
-  }, []);
-
-  const tiktokEmbedUrl = useMemo(
-    () => getTikTokEmbedUrl(product?.tiktokUrl),
-    [product?.tiktokUrl],
+  const [product, setProduct] = useState(() =>
+    getSelectedProduct(stateProducts, volumeId),
   );
 
-  // 🔗 LINKS
-  const mlUrl =
-    typeof product?.affiliate?.mercadoLivre === "string"
-      ? product.affiliate.mercadoLivre.trim()
-      : "";
+  const [seriesProducts, setSeriesProducts] = useState([]);
 
-  const amzUrl =
-    typeof product?.affiliate?.amazon === "string"
-      ? product.affiliate.amazon.trim()
-      : "";
+  const [isSwitching, setIsSwitching] = useState(false);
 
-  const hasMLLink = Boolean(mlUrl);
-  const hasAmazonLink = Boolean(amzUrl);
+  const [switchDirection, setSwitchDirection] = useState("next");
 
-  if (!product) return null;
+  const touchStartX = useRef(0);
 
-  // 💰 PREÇOS
-  const mlPrice =
-    product?.mercado_livre_price != null
-      ? Number(product.mercado_livre_price)
-      : null;
+  const [dragOffset, setDragOffset] = useState(0);
 
-  const amazonPrice =
-    product?.amazon_price != null ? Number(product.amazon_price) : null;
+  useEffect(() => {
+    // ✅ já veio da navegação interna
+    if (product) return;
 
-  const bestPrice =
-    product?.best_price != null ? Number(product.best_price) : null;
+    let mounted = true;
 
-  // 🧠 FLAGS DE PREÇO
-  const hasMlPrice = Number.isFinite(mlPrice);
-  const hasAmazonPrice = Number.isFinite(amazonPrice);
+    async function loadProduct() {
+      const { data, error } = await supabaseClient
+        .from("series_volumes_view")
+        .select("*");
 
-  // 🔥 REGRA FINAL (baseado em preço)
-  const hasML = hasMlPrice;
-  const hasAmazon = hasAmazonPrice;
-  const hasAffiliateLink = hasML || hasAmazon;
-  const hasBoth = hasML && hasAmazon;
+      if (error) {
+        console.error(error);
+        return;
+      }
 
-  // 🏆 MELHOR PREÇO
-  const isMlBest = bestPrice === mlPrice;
-  const isAmazonBest = bestPrice === amazonPrice;
+      if (!mounted) return;
 
-  const coverPrice = useMemo(() => {
-    const raw = product?.coverPrice;
-    if (raw == null || raw === "") return null;
+      const normalized = (data || []).map(normalizeProduct);
 
-    const parsed =
-      typeof raw === "number"
-        ? raw
-        : Number(String(raw).replace(",", ".").trim());
+      const found = getSelectedProduct(normalized, volumeId);
 
-    return Number.isFinite(parsed) ? parsed : null;
-  }, [product?.coverPrice]);
+      if (!found) {
+        setProduct(null);
+        return;
+      }
 
-  const maxVisiblePrice = useMemo(() => {
-    if (!Number.isFinite(coverPrice)) return null;
-    return coverPrice * 1.15;
-  }, [coverPrice]);
+      const sameSeries = normalized
+        .filter((p) => p.seriesSlug === found.seriesSlug)
+        .sort((a, b) => Number(a.volume || 0) - Number(b.volume || 0));
 
-  const isPriceWeird =
-    Number.isFinite(bestPrice) &&
-    Number.isFinite(maxVisiblePrice) &&
-    bestPrice > maxVisiblePrice;
+      setSeriesProducts(sameSeries);
 
-  const fireBuy = (store, placement) => {
-    track("click_buy", {
-      product_id: product?.id,
-      product_name: product?.title,
-      series: product?.series || "",
-      volume: product?.volume ?? "",
-      store,
-      placement,
-      available: !!hasAffiliateLink,
-      has_both: !!hasBoth,
+      setProduct(found);
+    }
+
+    loadProduct();
+
+    return () => {
+      mounted = false;
+    };
+  }, [volumeId, product]);
+
+  useEffect(() => {
+    if (!product || !stateProducts.length) return;
+
+    const sameSeries = stateProducts
+      .filter((p) => p.seriesSlug === product.seriesSlug)
+      .sort((a, b) => Number(a.volume || 0) - Number(b.volume || 0));
+
+    setSeriesProducts(sameSeries);
+  }, [product, stateProducts]);
+
+  const onClose = () => {
+    const backgroundLocation = location.state?.backgroundLocation;
+
+    if (backgroundLocation) {
+      navigate(backgroundLocation, {
+        replace: true,
+      });
+
+      return;
+    }
+
+    navigate("/", {
+      replace: true,
     });
   };
 
-  const renderBuyButtons = (placement = "modal_inline") => {
-    if (!hasAffiliateLink && !isPriceWeird) {
-      return (
-        <div className="buyBlock">
-          <button className="btn danger" type="button" disabled>
-            Em falta
-          </button>
-        </div>
-      );
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.addEventListener("keydown", onKey);
+
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
+
+  /* =====================================================
+   NAVEGAÇÃO ENTRE VOLUMES
+===================================================== */
+
+  const currentIndex = seriesProducts.findIndex((p) => p.id === product.id);
+
+  const hasPrev = currentIndex > 0;
+
+  const hasNext = currentIndex < seriesProducts.length - 1;
+
+  const switchVolume = (nextProduct, direction = "next") => {
+    if (!nextProduct) return;
+
+    setSwitchDirection(direction);
+
+    setIsSwitching(true);
+
+    setTimeout(() => {
+      navigate(`/${nextProduct.seriesSlug}/${nextProduct.volumeSlug}`, {
+        replace: true,
+        state: location.state,
+      });
+
+      setProduct(nextProduct);
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setIsSwitching(false);
+        });
+      });
+    }, 170);
+  };
+
+  const goPrevVolume = () => {
+    if (!hasPrev) return;
+
+    const prev = seriesProducts[currentIndex - 1];
+
+    switchVolume(prev, "prev");
+  };
+
+  const goNextVolume = () => {
+    if (!hasNext) return;
+
+    const next = seriesProducts[currentIndex + 1];
+
+    switchVolume(next, "next");
+  };
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.changedTouches[0].screenX;
+  };
+
+  const handleTouchMove = (e) => {
+    if (window.innerWidth > 768) return;
+
+    const currentX = e.changedTouches[0].screenX;
+
+    const diff = currentX - touchStartX.current;
+
+    // limita o movimento
+    const limited = Math.max(-80, Math.min(80, diff));
+
+    setDragOffset(limited);
+  };
+
+  const handleTouchEnd = (e) => {
+    const endX = e.changedTouches[0].screenX;
+
+    const diff = endX - touchStartX.current;
+
+    setDragOffset(0);
+
+    // swipe direita
+    if (diff > 70 && hasPrev) {
+      goPrevVolume();
     }
 
-    return (
-      <div className="buyBlock">
-        <div className={`buyRow buyRowCards ${hasBoth ? "twoCols" : "oneCol"}`}>
-          {(hasML || isPriceWeird) && hasMLLink && (
-            <StoreButton
-              href={mlUrl}
-              store="Mercado Livre"
-              logo={img("mercadolivre.svg")}
-              alt="Mercado Livre"
-              price={mlPrice}
-              showPrice={hasMlPrice && !isPriceWeird}
-              isBest={isMlBest}
-              onClick={(e) => {
-                e.stopPropagation();
-                fireBuy("mercadolivre", placement);
-              }}
-            />
-          )}
-
-          {(hasAmazon || isPriceWeird) && hasAmazonLink && (
-            <StoreButton
-              href={amzUrl}
-              store="Amazon"
-              logo={img("amazon.svg")}
-              alt="Amazon"
-              price={amazonPrice}
-              showPrice={hasAmazonPrice && !isPriceWeird}
-              isBest={isAmazonBest}
-              onClick={(e) => {
-                e.stopPropagation();
-                fireBuy("amazon", placement);
-              }}
-            />
-          )}
-        </div>
-      </div>
-    );
+    // swipe esquerda
+    if (diff < -70 && hasNext) {
+      goNextVolume();
+    }
   };
+
+  if (!product) return null;
 
   return (
     <div
@@ -246,9 +258,44 @@ export default function ProductModal({ product, onClose }) {
       onClick={onClose}
       onWheel={handleOverlayWheel}
     >
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+      <div
+        className={`modal ${isSwitching ? `switching ${switchDirection}` : ""}`}
+        onClick={(e) => e.stopPropagation()}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* =====================================================
+          NAVEGAÇÃO ENTRE VOLUMES
+         ===================================================== */}
+
+        <button
+          className="volumeNav volumePrev"
+          type="button"
+          aria-label="Volume anterior"
+          onClick={goPrevVolume}
+          disabled={!hasPrev}
+        >
+          <span>‹</span>
+        </button>
+
+        <button
+          className="volumeNav volumeNext"
+          type="button"
+          aria-label="Próximo volume"
+          onClick={goNextVolume}
+          disabled={!hasNext}
+        >
+          <span>›</span>
+        </button>
+
+        {/* =====================================================
+          TOPO MODAL
+         ===================================================== */}
+
         <div className="modalTop">
           <h1 className="modalHeading">Detalhes do mangá</h1>
+
           <button
             className="closeBtn"
             onClick={onClose}
@@ -259,267 +306,27 @@ export default function ProductModal({ product, onClose }) {
           </button>
         </div>
 
-        <div className="modalContent">
-          <div className="modalBody desktopOnly">
-            <div className="modalLeft">
-              <div className="modalCover desktopCover">
-                <img
-                  src={product.image}
-                  alt={product.title}
-                  loading="eager"
-                  decoding="async"
-                />
-              </div>
+        <ProductContent
+          product={product}
+          onClose={onClose}
+          dragOffset={dragOffset}
+        />
 
-              <p className="modalDesc modalDescLeft desktopCaption">
-                Clique em comprar. Se você comprar pelo link, pode me ajudar sem
-                pagar nada a mais 🙌
-              </p>
-            </div>
+        {/* =====================================================
+          OBRAS RELACIONADAS
+         ===================================================== */}
 
-            <div className="modalRight">
-              <div className="modalRightTop">
-                <h2 className="modalTitle">{product.title}</h2>
+        <section className="relatedWorks">
+          <div className="relatedHeader">
+            <h3>Obras relacionadas</h3>
 
-                <div className="modalBadges">
-                  {product.brand && (
-                    <span className="badge">{product.brand}</span>
-                  )}
-
-                  {Number.isFinite(Number(product.volume)) && (
-                    <span className="badge">
-                      Vol. {String(product.volume).padStart(2, "0")}
-                    </span>
-                  )}
-
-                  {product.format && (
-                    <span className="badge subtle">{product.format}</span>
-                  )}
-                  {product.author && (
-                    <span className="badge subtle">{product.author}</span>
-                  )}
-                  {product.genre && (
-                    <span className="badge subtle genre">{product.genre}</span>
-                  )}
-                </div>
-
-                <div
-                  className="tabPills"
-                  role="tablist"
-                  aria-label="Alternar conteúdo do modal"
-                >
-                  <button
-                    type="button"
-                    role="tab"
-                    aria-selected={desktopTab === "details"}
-                    className={`tabPill ${desktopTab === "details" ? "active" : ""}`}
-                    onClick={() => setDesktopTab("details")}
-                  >
-                    Detalhes
-                  </button>
-
-                  <button
-                    type="button"
-                    role="tab"
-                    aria-selected={desktopTab === "video"}
-                    className={`tabPill ${desktopTab === "video" ? "active" : ""}`}
-                    onClick={() => setDesktopTab("video")}
-                  >
-                    Vídeo
-                  </button>
-                </div>
-              </div>
-
-              {desktopTab === "details" ? (
-                <div className="tabPanel" role="tabpanel">
-                  <div className="detailsCard">
-                    <div className="detailsTitle">Sobre este volume</div>
-                    <p className="detailsText">
-                      {product.description ||
-                        "Clique em comprar para ir ao Mercado Livre. Se você comprar pelo link, pode me ajudar sem pagar nada a mais 🙌"}
-                    </p>
-
-                    <div className="detailsNote">
-                      Dica: troque para <b>Vídeo</b> para ver o review/mostrando
-                      o volume.
-                    </div>
-                  </div>
-
-                  <div className="desktopBuySection">
-                    {renderBuyButtons("modal_desktop_details")}
-                  </div>
-                </div>
-              ) : (
-                <div className="tabPanel" role="tabpanel">
-                  <div
-                    className={`mediaCard ${tiktokEmbedUrl ? "hasVideo" : "noVideo"}`}
-                  >
-                    {tiktokEmbedUrl ? (
-                      <>
-                        <div className="tiktokEmbedWrap tiktokDesktop">
-                          <iframe
-                            src={tiktokEmbedUrl}
-                            title={`TikTok ${product.id}`}
-                            className="tiktokIframe"
-                            allow="encrypted-media;"
-                            allowFullScreen
-                            loading="lazy"
-                          />
-                        </div>
-
-                        <a
-                          href={product.tiktokUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="tiktokExternalBtn"
-                          onClick={() =>
-                            track("click_tiktok", {
-                              product_id: product?.id,
-                              product_name: product?.title,
-                              placement: "modal_desktop",
-                            })
-                          }
-                        >
-                          Ver no TikTok
-                        </a>
-                      </>
-                    ) : (
-                      <div className="tiktokPlaceholder tiktokDesktop">
-                        <div className="tiktokPlaceholderIcon">🎥</div>
-                        <div className="tiktokPlaceholderText">
-                          Vídeo em breve neste volume.
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="desktopBuySection desktopBuySectionVideo">
-                    {renderBuyButtons("modal_desktop_video")}
-                  </div>
-                </div>
-              )}
-            </div>
+            <button className="relatedViewAll" type="button">
+              Ver todas
+            </button>
           </div>
 
-          <div className="modalRail mobileOnly" ref={railRef}>
-            <section className="railPage railProduct">
-              <div className="productHero">
-                <div className="modalCover">
-                  <img
-                    src={product.image}
-                    alt={product.title}
-                    loading="eager"
-                    decoding="async"
-                  />
-                </div>
-
-                <div className="productInfoUnder">
-                  <h2 className="modalTitle">{product.title}</h2>
-
-                  <div className="modalBadges">
-                    {product.brand && (
-                      <span className="badge">{product.brand}</span>
-                    )}
-
-                    {Number.isFinite(Number(product.volume)) && (
-                      <span className="badge">
-                        Vol. {String(product.volume).padStart(2, "0")}
-                      </span>
-                    )}
-
-                    {product.format && (
-                      <span className="badge subtle">{product.format}</span>
-                    )}
-                    {product.author && (
-                      <span className="badge subtle">{product.author}</span>
-                    )}
-                    {product.genre && (
-                      <span className="badge subtle genre">
-                        {product.genre}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <p className="modalDesc modalDescLeft">
-                {product.description ||
-                  "Clique em comprar para ir ao Mercado Livre. Se você comprar pelo link, pode me ajudar sem pagar nada a mais 🙌"}
-              </p>
-
-              <div className="modalHint">Deslize para o vídeo ➜</div>
-              <div className="modalFooterSpacer" />
-            </section>
-
-            <section className="railPage railTikTok">
-              <div className="tiktokBlock">
-                {tiktokEmbedUrl ? (
-                  <>
-                    <div className="tiktokEmbedWrap tiktokTall">
-                      <iframe
-                        src={tiktokEmbedUrl}
-                        title={`TikTok ${product.id}`}
-                        className="tiktokIframe"
-                        allow="encrypted-media;"
-                        allowFullScreen
-                        loading="lazy"
-                      />
-                    </div>
-
-                    <a
-                      href={product.tiktokUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="tiktokExternalBtn"
-                      onClick={() =>
-                        track("click_tiktok", {
-                          product_id: product?.id,
-                          product_name: product?.title,
-                          placement: "modal_mobile",
-                        })
-                      }
-                    >
-                      Ver no TikTok
-                    </a>
-                  </>
-                ) : (
-                  <div className="tiktokPlaceholder tiktokCompact">
-                    <div className="tiktokPlaceholderIcon">🎥</div>
-                    <div className="tiktokPlaceholderText">
-                      Vídeo em breve neste volume.
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="modalHint">⟵ Voltar para o produto</div>
-              <div className="modalFooterSpacer" />
-            </section>
-          </div>
-        </div>
-
-        <div className="modalFooter mobileOnly">
-          <div className="buttonsCol" onClick={(e) => e.stopPropagation()}>
-            {hasAffiliateLink ? (
-              <>
-                {renderBuyButtons("modal_mobile_footer")}
-
-                <button className="btn ghost" onClick={onClose} type="button">
-                  Voltar
-                </button>
-              </>
-            ) : (
-              <>
-                <button className="btn danger" type="button" disabled>
-                  Em falta
-                </button>
-                <button className="btn ghost" onClick={onClose} type="button">
-                  Voltar
-                </button>
-              </>
-            )}
-          </div>
-        </div>
+          <div className="relatedRail">{/* cards futuramente */}</div>
+        </section>
       </div>
     </div>
   );
