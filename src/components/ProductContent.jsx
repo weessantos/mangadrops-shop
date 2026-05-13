@@ -112,6 +112,12 @@ function StoreButton({
 export default function ProductContent({ product, onClose, dragOffset }) {
   const railRef = useRef(null);
 
+  const titleRef = useRef(null);
+
+  const wrapRef = useRef(null);
+
+  const [isOverflowing, setIsOverflowing] = useState(false);
+
   const [desktopTab, setDesktopTab] = useState("details");
 
   useEffect(() => {
@@ -127,6 +133,7 @@ export default function ProductContent({ product, onClose, dragOffset }) {
       }
 
       e.preventDefault();
+
       el.scrollLeft += e.deltaY;
     };
 
@@ -136,6 +143,26 @@ export default function ProductContent({ product, onClose, dragOffset }) {
 
     return () => el.removeEventListener("wheel", onWheel);
   }, []);
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (!titleRef.current || !wrapRef.current) return;
+
+      const titleWidth = titleRef.current.scrollWidth;
+
+      const wrapWidth = wrapRef.current.clientWidth;
+
+      setIsOverflowing(titleWidth > wrapWidth);
+    };
+
+    checkOverflow();
+
+    window.addEventListener("resize", checkOverflow);
+
+    return () => {
+      window.removeEventListener("resize", checkOverflow);
+    };
+  }, [product?.title]);
 
   const tiktokEmbedUrl = useMemo(
     () => getTikTokEmbedUrl(product?.tiktokUrl),
@@ -267,7 +294,16 @@ export default function ProductContent({ product, onClose, dragOffset }) {
         <div className="modalRight">
           <div className="mobileInfoTop">
             <div className="modalRightTop">
-              <h2 className="modalTitle">{product.title}</h2>
+              <div
+                ref={wrapRef}
+                className={`modalTitleWrap ${
+                  isOverflowing ? "is-marquee" : ""
+                }`}
+              >
+                <h2 ref={titleRef} className="modalTitle">
+                  {product.title}
+                </h2>
+              </div>
 
               {product.author && (
                 <p className="modalAuthor">Por {product.author}</p>
@@ -447,7 +483,9 @@ export default function ProductContent({ product, onClose, dragOffset }) {
             </div>
 
             <div className="productInfoUnder">
-              <h2 className="modalTitle">{product.title}</h2>
+              <div className="modalTitleWrap">
+                <h2 className="modalTitle">{product.title}</h2>
+              </div>
 
               <div className="modalBadges">
                 {product.brand && (
@@ -463,9 +501,11 @@ export default function ProductContent({ product, onClose, dragOffset }) {
                 {product.format && (
                   <span className="badge subtle">{product.format}</span>
                 )}
+
                 {product.author && (
                   <span className="badge subtle">{product.author}</span>
                 )}
+
                 {product.genre && (
                   <span className="badge subtle genre">{product.genre}</span>
                 )}
