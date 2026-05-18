@@ -54,6 +54,12 @@
   isolation: isolate;
 }
 
+body.modalOpen {
+  overflow: hidden;
+
+  touch-action: none;
+}
+
 /* =========================================================
    DYNAMIC BACKGROUND
    ========================================================= */
@@ -176,13 +182,16 @@
    ========================================================= */
 
 .modalContent {
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 
   max-height: calc(92vh - 78px);
 
   overscroll-behavior: contain;
 
   position: relative;
+
+  -webkit-overflow-scrolling: touch;
 }
 
 .modalContent::before {

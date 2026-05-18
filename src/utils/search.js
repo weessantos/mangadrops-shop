@@ -1,18 +1,178 @@
+// ============================================================================
 // src/utils/search.js
+// ============================================================================
+//
+// RESPONSABILIDADE DESTE ARQUIVO
+// ----------------------------------------------------------------------------
+// Este arquivo centraliza TODA a inteligência de busca do site.
+//
+// Ele é responsável por:
+//
+// ✅ Normalização de texto
+// ✅ Criação de slugs
+// ✅ Parsing de query
+// ✅ Alias/siglas
+// ✅ Busca fuzzy
+// ✅ Busca exata
+// ✅ Utilitários de volumes
+//
+//
+//
+// O QUE ESTE ARQUIVO NÃO DEVE FAZER
+// ----------------------------------------------------------------------------
+// ❌ Não deve navegar entre páginas
+// ❌ Não deve usar React
+// ❌ Não deve usar hooks
+// ❌ Não deve renderizar UI
+// ❌ Não deve acessar DOM
+//
+//
+//
+// ARQUITETURA DA BUSCA
+// ----------------------------------------------------------------------------
+//
+// detectExactSeries()
+// ↓
+// Navegação precisa
+// Rotas
+// URLs
+//
+//
+//
+// pickSeriesFromQuery()
+// ↓
+// Busca fuzzy/inteligente
+// Sugestões
+// Relevância
+// Busca parcial
+//
+//
+//
+// EXEMPLOS
+// ----------------------------------------------------------------------------
+//
+// detectExactSeries("jjk")
+// → "Jujutsu Kaisen"
+//
+// detectExactSeries("jujutsu 03")
+// → null
+//
+//
+//
+// pickSeriesFromQuery("jujutsu")
+// → "Jujutsu Kaisen"
+//
+// pickSeriesFromQuery("attack")
+// → "Attack on Titan"
+//
+// ============================================================================
 
-export const ALIASES = {
-  jjk: "jujutsu kaisen",
-  aot: "attack on titan",
-  snk: "shingeki no kyojin",
-  op: "one piece",
-  kgb: "kagurabachi",
-  vinland: "vinland saga",
-  haikyu: "haikyu",
-  skmt: "sakamoto",
-  ddd: "dandadan",
-  vs: "versus",
-  GashBell: "gash bell",
+// ============================================================================
+// ALIASES
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Permite que o usuário use:
+//
+// - siglas
+// - apelidos
+// - nomes alternativos
+// - abreviações
+//
+// sem precisar digitar o nome completo.
+//
+//
+//
+// EXEMPLOS
+// ----------------------------------------------------------------------------
+//
+// "jjk"
+// → "jujutsu kaisen"
+//
+// "aot"
+// → "attack on titan"
+//
+// "op"
+// → "one piece"
+//
+//
+//
+// ESTRUTURA
+// ----------------------------------------------------------------------------
+// O ideal é separar:
+//
+// - aliases oficiais
+// - aliases da comunidade
+// - aliases internos
+//
+// Isso facilita manutenção futura.
+//
+// ============================================================================
+
+// ============================================================================
+// Definição de aliases oficiais
+// ============================================================================
+
+export const SERIES_ALIASES = {
+  "jujutsu kaisen": ["jjk", "jujutsu"],
+
+  "attack on titan": ["aot", "snk", "shingeki"],
+
+  "one piece": ["op"],
+
+  kagurabachi: ["kgb"],
+
+  dandadan: ["ddd"],
+
+  "sakamoto days": ["skmt"],
+
+  "vinland saga": ["vinland"],
+
+  "gash bell": ["gb", "gashbell"],
+
+  "atelier of witch hat": ["ahw"],
+
+  versus: ["vs"],
 };
+
+export const ALIASES = Object.entries(SERIES_ALIASES).reduce(
+  (acc, [series, aliases]) => {
+    aliases.forEach((alias) => {
+      acc[alias] = series;
+    });
+
+    return acc;
+  },
+  {},
+);
+
+// ============================================================================
+// normalizeText
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Normaliza qualquer texto para comparação.
+//
+// Remove:
+// - maiúsculas/minúsculas
+// - acentos
+// - símbolos
+// - espaços duplicados
+//
+//
+//
+// EXEMPLO
+// ----------------------------------------------------------------------------
+//
+// "Jujutsu Kaisen!!!"
+// → "jujutsu kaisen"
+//
+// "Shingeki no Kyojin"
+// → "shingeki no kyojin"
+//
+// ============================================================================
 
 export function normalizeText(s) {
   return String(s || "")
@@ -23,9 +183,57 @@ export function normalizeText(s) {
     .trim();
 }
 
+// ============================================================================
+// normalizeCompact
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Remove TODOS os espaços do texto.
+//
+// Usado para:
+//
+// - busca compacta
+// - aliases
+// - comparação agressiva
+//
+//
+//
+// EXEMPLO
+// ----------------------------------------------------------------------------
+//
+// "gash bell"
+// → "gashbell"
+//
+// "one piece"
+// → "onepiece"
+//
+// ============================================================================
+
 export function normalizeCompact(s) {
   return normalizeText(s).replace(/\s+/g, "");
 }
+
+// ============================================================================
+// getAcronym
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Gera siglas automáticas.
+//
+//
+//
+// EXEMPLO
+// ----------------------------------------------------------------------------
+//
+// "attack on titan"
+// → "aot"
+//
+// "jujutsu kaisen"
+// → "jk"
+//
+// ============================================================================
 
 export function getAcronym(s) {
   return normalizeText(s)
@@ -33,6 +241,24 @@ export function getAcronym(s) {
     .map((w) => w[0])
     .join("");
 }
+
+// ============================================================================
+// slugify
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Cria slugs para URLs.
+//
+//
+//
+// EXEMPLO
+// ----------------------------------------------------------------------------
+//
+// "Jujutsu Kaisen"
+// → "jujutsu-kaisen"
+//
+// ============================================================================
 
 export function slugify(s) {
   return String(s || "")
@@ -43,19 +269,74 @@ export function slugify(s) {
     .replace(/(^-|-$)/g, "");
 }
 
+// ============================================================================
+// expandAliases
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Expande aliases da busca.
+//
+//
+//
+// EXEMPLO
+// ----------------------------------------------------------------------------
+//
+// ["jjk", "12"]
+// → ["jujutsu", "kaisen", "12"]
+//
+// ============================================================================
+
 export function expandAliases(tokens, aliases = ALIASES) {
   const out = [];
+
   for (const t of tokens) {
     const repl = aliases[t];
-    if (repl) out.push(...repl.split(" "));
-    else out.push(t);
+
+    if (repl) {
+      out.push(...repl.split(" "));
+    } else {
+      out.push(t);
+    }
   }
+
   return out;
 }
 
+// ============================================================================
+// parseQuery
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Faz parsing inteligente da busca.
+//
+// Separa:
+// - palavras
+// - números
+// - aliases
+//
+//
+//
+// EXEMPLO
+// ----------------------------------------------------------------------------
+//
+// "jjk 12"
+//
+// →
+// {
+//   tokens: ["jujutsu", "kaisen", "12"],
+//   words: ["jujutsu", "kaisen"],
+//   numbers: [12]
+// }
+//
+// ============================================================================
+
 export function parseQuery(q, aliases = ALIASES) {
   const norm = normalizeText(q);
+
   let tokens = norm.split(/\s+/).filter(Boolean);
+
   tokens = expandAliases(tokens, aliases);
 
   const numbers = tokens
@@ -64,14 +345,53 @@ export function parseQuery(q, aliases = ALIASES) {
 
   const words = tokens.filter((t) => !/^\d+$/.test(t));
 
-  return { tokens, words, numbers };
+  return {
+    tokens,
+    words,
+    numbers,
+  };
 }
+
+// ============================================================================
+// productSearchText
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Gera o texto pesquisável de um produto.
+//
+// Centraliza:
+// - título
+// - série
+// - tags
+// - volume
+//
+// ============================================================================
 
 export function productSearchText(p) {
   return normalizeText(
-    `${p.title} ${p.tag ?? ""} ${p.series ?? ""} vol ${p.volume ?? ""}`
+    `
+      ${p.title}
+      ${p.tag ?? ""}
+      ${p.series ?? ""}
+      vol ${p.volume ?? ""}
+    `,
   );
 }
+
+// ============================================================================
+// uniqueSortedAvailableVolumes
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Retorna volumes disponíveis:
+//
+// - únicos
+// - ordenados
+// - apenas com link afiliado
+//
+// ============================================================================
 
 export function uniqueSortedAvailableVolumes(items) {
   const set = new Set();
@@ -91,74 +411,257 @@ export function uniqueSortedAvailableVolumes(items) {
   return Array.from(set).sort((a, b) => a - b);
 }
 
+// ============================================================================
+// computeMissing
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Descobre quais volumes estão faltando.
+//
+//
+//
+// EXEMPLO
+// ----------------------------------------------------------------------------
+//
+// vols = [1,2,4]
+// total = 5
+//
+// → [3,5]
+//
+// ============================================================================
+
 export function computeMissing(vols, total) {
   const have = new Set(vols);
+
   const missing = [];
+
   for (let v = 1; v <= total; v++) {
-    if (!have.has(v)) missing.push(v);
+    if (!have.has(v)) {
+      missing.push(v);
+    }
   }
+
   return missing;
 }
 
-export function pickSeriesFromQuery(query, seriesNames) {
-  const { words } = parseQuery(query);
-  if (!words.length) return null;
+// ============================================================================
+// detectExactSeries
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Detecta intenção EXATA de navegação.
+//
+// Esta função é usada SOMENTE para:
+//
+// ✅ navegar para páginas de coleção
+// ✅ decidir rotas
+// ✅ URLs
+//
+//
+//
+// REGRAS
+// ----------------------------------------------------------------------------
+// Esta função é extremamente rígida.
+//
+// Ela NÃO aceita:
+//
+// ❌ fuzzy
+// ❌ partial
+// ❌ aproximação
+//
+//
+//
+// EXEMPLOS
+// ----------------------------------------------------------------------------
+//
+// "jjk"
+// → coleção
+//
+// "jujutsu kaisen"
+// → coleção
+//
+// "jujutsu"
+// → null
+//
+// "jujutsu 12"
+// → null
+//
+// ============================================================================
 
+export function detectExactSeries(query, seriesNames) {
   const queryNorm = normalizeText(query);
   const queryCompact = normalizeCompact(query);
 
-  console.log("🧠 NORMALIZADO:", queryNorm);
-  console.log("🧠 COMPACTO:", queryCompact);
-  console.log("🧠 WORDS:", words);
+  // 🔥 bloqueia buscas de volume
+  if (/\d/.test(queryNorm)) {
+    return null;
+  }
 
-  let best = { name: null, score: 0 };
-
-  for (const name of seriesNames) {
+  for (const item of seriesNames) {
+    const name = item.name;
     const nameNorm = normalizeText(name);
     const nameCompact = normalizeCompact(name);
     const acronym = getAcronym(name);
 
-      // console.log("------");
-      // console.log("📚 Série:", name);
-      // console.log("👉 nameNorm:", nameNorm);
-      // console.log("👉 nameCompact:", nameCompact);
+    // nome exato
+    if (queryNorm === nameNorm) {
+      return name;
+    }
+
+    // compact exato
+    if (queryCompact === nameCompact) {
+      return name;
+    }
+
+    // sigla exata
+    if (queryCompact === acronym) {
+      return name;
+    }
+
+    // aliases exatos
+    for (const [alias, original] of Object.entries(ALIASES)) {
+      if (original === nameNorm && queryCompact === normalizeCompact(alias)) {
+        return name;
+      }
+    }
+  }
+
+  return null;
+}
+
+// ============================================================================
+// pickSeriesFromQuery
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Busca fuzzy/inteligente.
+//
+// Esta função tenta ADIVINHAR
+// qual série o usuário provavelmente quis dizer.
+//
+//
+//
+// DIFERENÇA PARA detectExactSeries()
+// ----------------------------------------------------------------------------
+//
+// detectExactSeries()
+// → rígida
+//
+// pickSeriesFromQuery()
+// → flexível
+//
+//
+//
+// EXEMPLOS
+// ----------------------------------------------------------------------------
+//
+// "jujutsu"
+// → "Jujutsu Kaisen"
+//
+// "attack"
+// → "Attack on Titan"
+//
+// "gashbell"
+// → "Gash Bell"
+//
+// ============================================================================
+
+export function pickSeriesFromQuery(query, seriesNames) {
+  console.log("================================");
+  console.log("🔎 QUERY ORIGINAL:", query);
+  console.log("📚 SERIES RECEBIDAS:", seriesNames);
+
+  const { words } = parseQuery(query);
+
+  console.log("🧠 WORDS:", words);
+
+  if (!words.length) {
+    console.log("❌ SEM WORDS");
+    return null;
+  }
+
+  const queryNorm = normalizeText(query);
+  const queryCompact = normalizeCompact(query);
+
+  console.log("🧼 QUERY NORMAL:", queryNorm);
+  console.log("🧼 QUERY COMPACT:", queryCompact);
+
+  let best = {
+    name: null,
+    score: 0,
+  };
+
+  for (const item of seriesNames) {
+    const name = item.name;
+
+    console.log("----------------------------");
+    console.log("📖 TESTANDO:", name);
+
+    const nameNorm = normalizeText(name);
+    const nameCompact = normalizeCompact(name);
+    const acronym = getAcronym(name);
+
+    console.log("➡️ NORMAL:", nameNorm);
+    console.log("➡️ COMPACT:", nameCompact);
+    console.log("➡️ ACRONYM:", acronym);
 
     let score = 0;
 
-    // 🔥 match direto (frase completa)
-    if (nameNorm.includes(queryNorm)) score += 5;
+    // match direto
+    if (nameNorm.includes(queryNorm)) {
+      score += 5;
+      console.log("✅ MATCH DIRETO +5");
+    }
 
-    // 🔥 match PERFEITO
+    // match perfeito
     if (nameCompact === queryCompact) {
       score += 100;
+      console.log("✅ MATCH PERFEITO +100");
     }
 
-    // 🔥 match forte (gashbell → gash bell)
+    // match forte
     if (nameCompact.includes(queryCompact)) {
       score += 10;
+      console.log("✅ MATCH FORTE +10");
     }
 
-    // 🔥 match reverso
+    // match reverso
     if (queryCompact.includes(nameCompact)) {
       score += 8;
+      console.log("✅ MATCH REVERSO +8");
     }
 
-    // 🔥 match por palavras (attack)
+    // palavras
     for (const w of words) {
-      if (nameNorm.includes(w)) score += 1;
+      if (nameNorm.includes(w)) {
+        score += 1;
+        console.log(`✅ WORD MATCH "${w}" +1`);
+      }
     }
 
-    // 🔥 match por sigla (AOT)
-    if (acronym === queryCompact) score += 6;
+    // sigla
+    if (acronym === queryCompact) {
+      score += 6;
+      console.log("✅ SIGLA +6");
+    }
+
+    console.log("🏁 SCORE FINAL:", score);
 
     if (score > best.score) {
-      best = { name, score };
-    }
+      best = {
+        name,
+        score,
+      };
 
+      console.log("🏆 NOVO BEST:", best);
+    }
   }
 
-
-  console.log("🏆 RESULTADO FINAL:", best); // ✅ aqui
+  console.log("================================");
+  console.log("🥇 RESULTADO FINAL:", best);
 
   return best.score >= 1 ? best.name : null;
 }

@@ -31,6 +31,7 @@ import PromotionsPage from "./pages/PromotionsPage.jsx";
 import CheapPage from "./pages/CheapPage.jsx";
 import CollectionsPage from "./pages/CollectionsPage.jsx";
 import CollectionPage from "./pages/CollectionPage.jsx";
+import SearchResultsPage from "./pages/SearchResultsPage.jsx";
 import CollectionHero, {
   CollectionsHero,
 } from "./components/CollectionHero.jsx";
@@ -50,6 +51,8 @@ import {
   parseQuery,
   pickSeriesFromQuery,
   productSearchText,
+  detectExactSeries,
+  normalizeText,
   slugify,
 } from "./utils/search";
 import Footer from "./components/Footer";
@@ -228,7 +231,10 @@ function AppShell() {
         ? "cheap"
         : location.pathname === "/colecoes"
           ? "allCollections"
-          : "home";
+          : // 🔥 nova página
+            location.pathname.startsWith("/busca")
+            ? "search"
+            : "home";
 
   const isRailPage = [
     "releases",
@@ -246,6 +252,8 @@ function AppShell() {
   const isPromotionsPage = pageType === "promotions";
 
   const isCheapPage = pageType === "cheap";
+
+  const isSearchPage = pageType === "search";
 
   const isCollectionPage = Boolean(seriesSlug && !volumeId);
 
@@ -380,12 +388,13 @@ function AppShell() {
     if (q === lastAppliedQueryRef.current) return;
     lastAppliedQueryRef.current = q;
 
-    const picked = pickSeriesFromQuery(q, seriesNames);
-    if (!picked) return;
+    const exact = detectExactSeries(q, seriesNames);
+
+    if (!exact) return;
 
     setPage(1);
 
-    navigate(`/${slugify(picked)}${sp.toString() ? `?${sp.toString()}` : ""}`);
+    navigate(`/${slugify(exact)}`);
 
     setTimeout(() => {
       document.getElementById("volumes")?.scrollIntoView({
@@ -409,52 +418,104 @@ function AppShell() {
 
     return products
       .filter((p) => {
-        // 🔥 PRIORIDADE TOTAL PARA SEARCH
+        /**
+         * ==========================================================
+         * CONTEXTO DA PÁGINA
+         * ==========================================================
+         *
+         * Ordem de prioridade:
+         *
+         * 1. Busca encontrou uma série específica
+         * 2. Usuário abriu uma coleção manualmente
+         * 3. Sem contexto → mostra tudo
+         */
+
         if (foundSeries) {
           return p.series === foundSeries;
         }
 
-        // depois fallback
         if (activeSeries) {
           return (p.series || "Outros") === activeSeries;
-        }
-
-        // 🔥 AQUI É A MÁGICA
-        if (foundSeries) {
-          return p.series === foundSeries;
         }
 
         return true;
       })
 
       .filter((p) => {
-        // 🔥 SE JÁ ACHOU A SÉRIE, IGNORA O RESTO
-        if (foundSeries) return true;
+        /**
+         * ==========================================================
+         * BUSCA POR TEXTO / VOLUME
+         * ==========================================================
+         */
 
-        if (!words.length && !numbers.length) return true;
+        // sem termos → não filtra
+        if (!words.length && !numbers.length) {
+          return true;
+        }
 
         const text = productSearchText(p);
 
+        //LOG PARA VERIFICAR PRODUTO E O TEXTO SE DÃO MATCH
+        //console.log({produto: p.title,text,words,});
+
+        /**
+         * ----------------------------------------------------------
+         * NÚMEROS
+         * ----------------------------------------------------------
+         *
+         * Ex:
+         *
+         * "one piece 10"
+         * -> [10]
+         *
+         * "sakamoto 07"
+         * -> [7]
+         */
+
         if (numbers.length) {
-          const v = Number(p.volume);
-          if (!Number.isFinite(v)) return false;
-          if (!numbers.includes(v)) return false;
+          const productNumbers = text.match(/\d+/g)?.map(Number) || [];
+
+          const hasAllNumbers = numbers.every((n) =>
+            productNumbers.includes(Number(n)),
+          );
+
+          if (!hasAllNumbers) {
+            return false;
+          }
         }
 
-        if (words.length) {
-          const okAll = words.every((w) => text.includes(w));
-          if (okAll) return true;
+        /**
+         * ----------------------------------------------------------
+         * PALAVRAS
+         * ----------------------------------------------------------
+         *
+         * Ex:
+         *
+         * "one piece"
+         * -> ["one","piece"]
+         */
 
-          return words.every((w) => {
-            if (w.length <= 2) return true;
-            const parts = text.split(" ");
-            return text.includes(w) || parts.some((tok) => tok.startsWith(w));
+        if (words.length) {
+          const hasAllWords = words.every((w) => {
+            // ignora palavras muito pequenas
+            if (w.length <= 2) {
+              return true;
+            }
+
+            return text.includes(w);
           });
+
+          if (!hasAllWords) {
+            return false;
+          }
         }
 
         return true;
       });
-  }, [products, qParam, activeSeries]);
+  }, [products, qParam, activeSeries, foundSeries]);
+
+  // LOG PARA CONFERIR A BASE DE PRODUTOS FILTRADOS
+  //console.log("📦 BASE FILTERED:", baseFiltered.length, baseFiltered);
 
   const filtered = useMemo(() => {
     const spString = sp.toString();
@@ -878,19 +939,21 @@ function AppShell() {
   // PAGE HELPERS
   // ========================================
 
-  const showHero = !isRailPage && !isCollectionPage;
+  const showHero = !isRailPage && !isCollectionPage && !isSearchPage;
 
-  const showChapterHeader = !isRailPage && !isCollectionPage;
+  const showChapterHeader = !isRailPage && !isCollectionPage && !isSearchPage;
 
   const showCollectionsGrid = pageType === "collections" && !isFiltering;
 
   const showFilteringGrid = isFiltering && pageType !== "collection";
 
-  const showRails = isHomePage && !isFiltering && !isCollectionPage;
+  const showRails =
+    isHomePage && !isFiltering && !isCollectionPage && !isSearchPage;
 
   const showCollectionsPagination = pageType === "home" && totalSeriesPages > 1;
 
-  const forceCompactHeader = pageType !== "home" || isCollectionPage;
+  const forceCompactHeader =
+    pageType !== "home" || isCollectionPage || isSearchPage;
 
   return (
     <div className="container">
@@ -899,19 +962,41 @@ function AppShell() {
         setInputValue={setInputValue}
         onSearch={(override) => {
           const q = typeof override === "string" ? override : inputValue;
+
+          const cleanQuery = String(q || "").trim();
+
+          if (!cleanQuery) return;
+
+          // 🔥 detecta somente obra exata
+          const exactSeries = detectExactSeries(cleanQuery, seriesNames);
+
+          // 🔥 vai para página da obra
+          if (exactSeries) {
+            navigate(`/${slugify(exactSeries)}`);
+
+            return;
+          }
+
+          // 🔥 busca normal → página de busca
           setPage(1);
-          updateSearchParams({ q });
+
+          navigate({
+            pathname: "/busca",
+            search: `?q=${encodeURIComponent(cleanQuery)}`,
+          });
         }}
         scrollToNav={scrollToNav}
         activeSection={activeSection}
         isHeaderCompact={isHeaderCompact || forceCompactHeader}
       />
+
       {showHero && (
         <>
           <HomeHero isHeaderCompact={isHeaderCompact} />
 
           <section className="brandBlock">
             <div className="brandHeader"></div>
+
             <BrandStats />
           </section>
         </>
@@ -929,12 +1014,11 @@ function AppShell() {
               </h1>
             </div>
 
-            <ActiveFiltersBar />
-
             <div className="chapterLine" aria-hidden="true" />
           </div>
         </section>
       )}
+
       {isCollectionPage && (
         <CollectionPage
           activeSeries={activeSeries}
@@ -1047,6 +1131,16 @@ function AppShell() {
         </section>
       )}
 
+      {showFilteringGrid && (
+        <SearchResultsPage
+          products={pagedProducts}
+          hasMore={hasMore}
+          setPage={setPage}
+          openProduct={openProduct}
+          qParam={qParam}
+        />
+      )}
+
       {showScrollTop && (
         <button
           className="scrollTopBtn"
@@ -1086,6 +1180,8 @@ function AppRoutes() {
         <Route path="/promocoes" element={<AppShell isPromotionsPage />} />
 
         <Route path="/saldao" element={<AppShell isCheapPage />} />
+
+        <Route path="/busca" element={<AppShell isSearchPage />} />
 
         <Route path="/" element={<AppShell />} />
 

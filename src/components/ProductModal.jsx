@@ -41,28 +41,6 @@ import { normalizeProduct } from "../utils/normalizeProduct";
 import "../styles/product-modal.css";
 import "../styles/product-modal-mobile.css";
 
-const handleOverlayWheel = (e) => {
-  const scrollContainer = e.target.closest(".modalContent");
-
-  if (!scrollContainer) {
-    e.preventDefault();
-    return;
-  }
-
-  const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
-
-  const goingDown = e.deltaY > 0;
-  const goingUp = e.deltaY < 0;
-
-  const atTop = scrollTop <= 0;
-
-  const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
-
-  if ((goingUp && atTop) || (goingDown && atBottom)) {
-    e.preventDefault();
-  }
-};
-
 export default function ProductModal() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -166,6 +144,14 @@ export default function ProductModal() {
     return () => document.removeEventListener("keydown", onKey);
   }, []);
 
+  useEffect(() => {
+  document.body.classList.add("modalOpen");
+
+  return () => {
+    document.body.classList.remove("modalOpen");
+  };
+}, []);
+
   /* =====================================================
    NAVEGAÇÃO ENTRE VOLUMES
 ===================================================== */
@@ -253,11 +239,7 @@ export default function ProductModal() {
   if (!product) return null;
 
   return (
-    <div
-      className="modalOverlay"
-      onClick={onClose}
-      onWheel={handleOverlayWheel}
-    >
+    <div className="modalOverlay" onClick={onClose}>
       <div
         className={`modal ${isSwitching ? `switching ${switchDirection}` : ""}`}
         onClick={(e) => e.stopPropagation()}
@@ -314,7 +296,7 @@ export default function ProductModal() {
 
         {/* =====================================================
           OBRAS RELACIONADAS
-         ===================================================== */}
+
 
         <section className="relatedWorks">
           <div className="relatedHeader">
@@ -325,8 +307,9 @@ export default function ProductModal() {
             </button>
           </div>
 
-          <div className="relatedRail">{/* cards futuramente */}</div>
+          <div className="relatedRail"></div>
         </section>
+         ===================================================== */}
       </div>
     </div>
   );

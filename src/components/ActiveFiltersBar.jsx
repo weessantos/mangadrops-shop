@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import "../styles/active-filters.css";
 
 function countActive(sp) {
   const q = (sp.get("q") || "").trim();
@@ -102,20 +103,9 @@ export default function ActiveFiltersBar() {
   }, [info]);
 
   const clear = () => {
-    const next = new URLSearchParams(sp);
-
-    next.delete("q");
-    next.delete("sort");
-    next.delete("st");
-    next.delete("rv");
-    next.delete("brand");
-    next.delete("author");
-    next.delete("genre");
-    next.delete("format");
-    next.delete("price");
-    next.delete("discount");
-
-    setSp(next, { replace: true });
+    navigate("/filtros", {
+      replace: true,
+    });
   };
 
   const openFilters = () => {
@@ -125,30 +115,45 @@ export default function ActiveFiltersBar() {
   if (!active) return null;
 
   return (
-    <div className="activeFiltersBar" role="region" aria-label="Filtros ativos">
-      <div className="activeFiltersLeft">
-        <span className="activeFiltersLabel">Filtros ativos</span>
-        <span className="activeFiltersCount">{info.n}</span>
-      </div>
-
-      <div className="activeFiltersRight">
-        <button type="button" className="activeFiltersBtn ghost" onClick={clear}>
-          Limpar
-        </button>
-        <button type="button" className="activeFiltersBtn" onClick={openFilters}>
-          Editar
-        </button>
-      </div>
-
-      {chips.length > 0 && (
-        <div className="activeFiltersChips">
-          {chips.map((chip) => (
-            <span key={chip} className="chip small">
-              {chip}
-            </span>
-          ))}
+    <div className="activeFiltersWrapper">
+      <div
+        className="activeFiltersBar"
+        role="region"
+        aria-label="Filtros ativos"
+      >
+        <div className="activeFiltersLeft">
+          <span className="activeFiltersLabel">Filtros ativos</span>
+          <span className="activeFiltersCount">{info.n}</span>
         </div>
-      )}
+
+        <div className="activeFiltersRight">
+          <button
+            type="button"
+            className="activeFiltersBtn ghost"
+            onClick={clear}
+          >
+            Limpar
+          </button>
+
+          <button
+            type="button"
+            className="activeFiltersBtn"
+            onClick={openFilters}
+          >
+            Editar
+          </button>
+        </div>
+
+        {chips.length > 0 && (
+          <div className="activeFiltersChips">
+            {chips.map((chip) => (
+              <span key={chip} className="chip small">
+                {chip}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

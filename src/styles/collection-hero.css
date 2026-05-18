@@ -25,6 +25,7 @@
 /* desktop hero */
 @media (min-width: 1024px) {
   .collectionHero {
+    margin:-10px -10px 0;
     height: 400px;
     background-position: 70% 35%;
   }

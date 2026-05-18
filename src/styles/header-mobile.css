@@ -1,0 +1,538 @@
+/* =========================================================
+   MOBILE HEADER
+   - Topbar fixa mobile
+   - Busca glassmorphism
+   - Botão menu lateral
+   - Logo compacta
+   - Substitui completamente o header desktop
+   ========================================================= */
+
+@media (max-width: 768px) {
+  /* =========================
+     CONTAINER PRINCIPAL
+     ========================= */
+
+  .heroHeader {
+    position: sticky !important;
+
+    top: 0;
+
+    height: 76px !important;
+
+    min-height: 76px !important;
+
+    width: 100vw;
+
+    margin-top: 0;
+
+    margin-left: calc(50% - 50vw);
+
+    margin-right: calc(50% - 50vw);
+
+    padding: 0 !important;
+
+    border-radius: 0 !important;
+
+    z-index: 5000;
+
+    overflow: hidden;
+
+    background: rgba(10, 10, 15, 0.88);
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.42);
+
+    backdrop-filter: blur(14px);
+
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .heroShade {
+    display: none;
+  }
+
+  .heroContent {
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+
+    max-width: 520px;
+
+    margin: 0 auto !important;
+
+    padding: 10px 16px !important;
+
+    gap: 0 !important;
+  }
+  /* =========================================================
+   MOBILE TOP BAR
+   Header minimalista mobile com menu + logo + busca
+   ========================================================= */
+
+  .mobileTopBar {
+    display: grid;
+
+    grid-template-columns: 52px 1fr 52px;
+
+    align-items: center;
+
+    gap: 12px;
+
+    height: 58px;
+  }
+
+  /* quando busca abre */
+  .mobileTopBar.searchOpen {
+    grid-template-columns: 52px 1fr;
+  }
+
+  /* =========================================================
+   LOGO CENTRAL
+   ========================================================= */
+
+  .mobileBrand {
+    width: 140px;
+
+    height: 58px;
+
+    justify-self: center;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    overflow: hidden;
+
+    min-width: 0;
+
+    padding: 0;
+
+    border: 0;
+
+    background: transparent;
+
+    appearance: none;
+
+    -webkit-appearance: none;
+
+    box-shadow: none;
+
+    outline: none;
+
+    cursor: pointer;
+  }
+
+  .mobileBrand:focus,
+  .mobileBrand:active,
+  .mobileBrand:hover {
+    background: transparent;
+
+    box-shadow: none;
+
+    border: 0;
+
+    outline: none;
+  }
+
+  .mobileBrandLogo {
+    width: auto;
+
+    height: 40px;
+
+    max-width: 100%;
+
+    object-fit: contain;
+
+    display: block;
+
+    background: transparent;
+
+    filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.42));
+  }
+  /* =========================
+     BOTÃO MENU
+     ========================= */
+
+  .mobileMenuBtn {
+    width: 52px;
+    height: 52px;
+
+    border-radius: 18px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.08),
+      rgba(255, 255, 255, 0.03)
+    );
+
+    color: rgba(255, 255, 255, 0.92);
+
+    font-size: 24px;
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow:
+      0 10px 30px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    transition:
+      transform 0.16s ease,
+      background 0.16s ease;
+  }
+
+  .mobileMenuBtn:active {
+    transform: scale(0.96);
+  }
+
+  /* =========================================================
+   BOTÃO DE BUSCA
+   ========================================================= */
+
+  .mobileSearchToggle {
+    width: 52px;
+    height: 52px;
+
+    border-radius: 18px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.08),
+      rgba(255, 255, 255, 0.03)
+    );
+
+    color: rgba(255, 255, 255, 0.95);
+
+    font-size: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow:
+      0 10px 24px rgba(0, 0, 0, 0.34),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+    transition:
+      transform 0.16s ease,
+      background 0.16s ease,
+      box-shadow 0.16s ease;
+  }
+
+  .mobileSearchToggle:active {
+    transform: scale(0.96);
+  }
+
+  /* =========================================================
+   BUSCA INLINE
+   ========================================================= */
+
+  .mobileInlineSearch {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    height: 52px;
+
+    width: 100%;
+
+    padding: 0 10px 0 14px;
+
+    border-radius: 999px;
+
+    background: rgba(10, 10, 16, 0.96);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    box-shadow:
+      0 14px 40px rgba(0, 0, 0, 0.42),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+    transform-origin: right center;
+
+    animation: mobileSearchAppear 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+
+    overflow: hidden;
+  }
+
+  @keyframes mobileSearchAppear {
+    from {
+      opacity: 0;
+
+      transform: scaleX(0.92) translateX(6px);
+
+      filter: blur(4px);
+    }
+
+    to {
+      opacity: 1;
+
+      transform: scaleX(1) translateX(0);
+
+      filter: blur(0);
+    }
+  }
+
+  /* ícone */
+
+  .mobileSearchIcon {
+    flex: 0 0 auto;
+
+    font-size: 16px;
+
+    opacity: 0.7;
+  }
+
+  /* botão buscar */
+
+  .mobileSearchSubmit {
+    height: 38px;
+
+    padding: 0 16px;
+
+    border-radius: 999px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    background: linear-gradient(135deg, #6d28d9, #4f46e5);
+
+    color: white;
+
+    font-size: 14px;
+
+    font-weight: 900;
+
+    cursor: pointer;
+
+    flex: 0 0 auto;
+
+    box-shadow:
+      0 10px 24px rgba(109, 40, 217, 0.28),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+
+  /* botão fechar */
+
+  .mobileSearchClose {
+    width: 38px;
+
+    height: 38px;
+
+    border-radius: 999px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    background: rgba(255, 255, 255, 0.05);
+
+    color: rgba(255, 255, 255, 0.92);
+
+    display: grid;
+
+    place-items: center;
+
+    cursor: pointer;
+
+    flex: 0 0 auto;
+  }
+
+  /* =========================
+     MINI LOGO
+     ========================= */
+
+  .mobileLogoMiniBtn {
+    position: fixed;
+    z-index: 2;
+
+    width: 34px;
+    height: 34px;
+
+    border: 0;
+
+    border-radius: 12px;
+
+    background: transparent;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    flex-shrink: 0;
+
+    padding: 0;
+  }
+
+  /* =========================
+     ÍCONE BUSCA
+     ========================= */
+
+  .mobileSearchIcon {
+    position: relative;
+    z-index: 2;
+
+    font-size: 14px;
+
+    opacity: 0.5;
+
+    flex-shrink: 0;
+  }
+
+  /* =========================
+     INPUT BUSCA
+     ========================= */
+
+  .mobileSearchInput {
+    position: relative;
+    z-index: 2;
+
+    flex: 1;
+
+    min-width: 0;
+
+    border: 0 !important;
+    outline: none !important;
+
+    background: transparent !important;
+
+    color: rgba(255, 255, 255, 0.94);
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    letter-spacing: -0.01em;
+
+    box-shadow: none !important;
+  }
+
+  .mobileSearchInput::placeholder {
+    color: rgba(255, 255, 255, 0.38);
+
+    font-weight: 650;
+  }
+
+  /* =========================
+     BOTÃO BUSCAR
+     ========================= */
+
+  .mobileSearchBtn {
+    position: relative;
+    z-index: 2;
+
+    height: 36px;
+
+    padding: 0 16px;
+
+    border-radius: 14px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    background: linear-gradient(135deg, #6d28d9, #4f46e5);
+
+    color: #fff;
+
+    font-size: 14px;
+
+    font-weight: 900;
+
+    letter-spacing: -0.01em;
+
+    cursor: pointer;
+
+    flex-shrink: 0;
+
+    transition:
+      transform 0.16s ease,
+      filter 0.16s ease,
+      box-shadow 0.16s ease;
+
+    box-shadow:
+      0 10px 24px rgba(79, 70, 229, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+
+  .mobileSearchBtn:active {
+    transform: scale(0.96);
+  }
+
+  /* =========================
+     MOBILE EXTRA SMALL
+     ========================= */
+
+  @media (max-width: 420px) {
+    .mobileSearchBtn {
+      padding: 0 14px;
+
+      font-size: 13px;
+    }
+
+    .mobileSearchInput {
+      font-size: 14px;
+    }
+  }
+
+  /* =========================
+     REMOVE HEADER DESKTOP
+     ========================= */
+
+  .heroTop,
+  .heroPills {
+    display: none;
+  }
+
+  /* =========================
+     COMPAT LEGADO
+     ========================= */
+
+  .mobileLogoBtn {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 999px;
+
+    padding: 0;
+
+    display: grid;
+    place-items: center;
+
+    cursor: pointer;
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .mobileLogo {
+    width: auto;
+
+    object-fit: contain;
+
+    display: block;
+  }
+}

@@ -1,0 +1,269 @@
+/* ==========================================================================
+   ACTIVE FILTERS BAR
+   ========================================================================== */
+
+.activeFiltersBar {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+
+  width: fit-content;
+  max-width: 100%;
+
+  margin: 22px 0;
+  padding: 18px 22px;
+
+  border-radius: 24px;
+
+  background: rgba(16, 16, 18, 0.62);
+
+  backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255, 255, 255, 0.05);
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+/* container que segura a barra */
+
+.activeFiltersWrapper {
+  display: flex;
+  justify-content: flex-end;
+
+  position: relative;
+  z-index: 5;
+}
+
+/* card */
+
+.activeFiltersBar {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+
+  width: auto;
+  min-width: 340px;
+  max-width: 440px;
+
+  padding: 16px 18px;
+
+  border-radius: 22px;
+
+  background: rgba(12, 12, 14, 0.72);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255, 255, 255, 0.05);
+
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+
+  overflow: hidden;
+
+  position: relative;
+  z-index: 2;
+}
+
+/* mobile volta pro normal */
+
+@media (max-width: 768px) {
+  .activeFiltersWrapper {
+    justify-content: stretch;
+  }
+
+  .activeFiltersBar {
+    width: 100%;
+  }
+}
+
+/* chips não forçam largura total */
+
+.activeFiltersChips {
+  width: auto;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* mobile continua ocupando tudo */
+
+@media (max-width: 768px) {
+  .activeFiltersBar {
+    width: 100%;
+    display: flex;
+  }
+
+  .activeFiltersChips {
+    width: 100%;
+  }
+}
+
+/* brilho MUITO discreto */
+
+.activeFiltersBar::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  border-radius: inherit;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.02),
+    transparent 45%
+  );
+
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   LEFT
+   ========================================================================== */
+
+.activeFiltersLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.activeFiltersLabel {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.activeFiltersCount {
+  width: 28px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+
+  background: #ff5a3d;
+
+  color: white;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+/* ==========================================================================
+   BUTTONS
+   ========================================================================== */
+
+.activeFiltersRight {
+  display: flex;
+  gap: 10px;
+
+  margin-left: auto;
+}
+
+.activeFiltersBtn {
+  height: 40px;
+  padding: 0 18px;
+
+  border: none;
+  border-radius: 999px;
+
+  cursor: pointer;
+
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+
+  transition: 0.25s;
+}
+
+/* botão editar */
+
+.activeFiltersBtn:not(.ghost) {
+  background: #ff5a3d;
+
+  box-shadow: 0 0 16px rgba(255, 90, 61, 0.15);
+}
+
+.activeFiltersBtn:not(.ghost):hover {
+  transform: translateY(-2px);
+
+  background: #ff664b;
+}
+
+/* botão limpar */
+
+.activeFiltersBtn.ghost {
+  background: rgba(255, 255, 255, 0.04);
+
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.activeFiltersBtn.ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ==========================================================================
+   CHIPS
+   ========================================================================== */
+
+.activeFiltersChips {
+  width: 100%;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.activeFiltersChips .chip {
+  height: 32px;
+
+  padding: 0 14px;
+
+  display: flex;
+  align-items: center;
+
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.04);
+
+  border: 1px solid rgba(255, 255, 255, 0.05);
+
+  color: #d6d6d6;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.activeFiltersChips .chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+
+  color: white;
+}
+
+/* ==========================================================================
+   MOBILE
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .activeFiltersBar {
+    padding: 16px;
+  }
+
+  .activeFiltersRight {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .activeFiltersBtn {
+    flex: 1;
+  }
+}

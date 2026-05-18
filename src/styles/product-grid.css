@@ -123,3 +123,47 @@
 
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
 }
+
+
+/* =========================
+   🔁 LOAD MORE NOS FILTROS
+   ========================= */
+
+.searchLoadMore{
+  display:flex;
+  justify-content:center;
+  margin:32px 0;
+}
+
+.loadMoreBtn{
+  min-width:220px;
+  padding:14px 24px;
+
+  border:none;
+  border-radius:14px;
+
+  background:linear-gradient(
+    135deg,
+    #ff4343,
+    #ff6a00
+  );
+
+  color:white;
+  cursor:pointer;
+
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+
+  transition:.25s;
+}
+
+.loadMoreBtn:hover{
+  transform:translateY(-2px);
+}
+
+.loadMoreBtn small{
+  opacity:.8;
+  font-size:12px;
+}
+

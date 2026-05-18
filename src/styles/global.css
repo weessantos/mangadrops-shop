@@ -64,7 +64,7 @@ a,
 .container {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 28px 16px 56px;
+  padding: 0px 16px 56px;
 }
 
 .grid {

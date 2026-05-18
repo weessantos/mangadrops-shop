@@ -1,0 +1,288 @@
+/* =========================================================
+   COMPACT HEADER (Desktop)
+   - Header fixo ao rolar página
+   - Navegação compacta
+   - Glassmorphism premium
+   - Exibido apenas desktop/tablet
+   ========================================================= */
+
+@media (min-width: 768px) {
+
+  /* =========================
+     BASE COMPACTA
+     ========================= */
+
+  .heroHeader.isCompact {
+    position: fixed !important;
+
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    min-height: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    border: 0;
+    border-radius: 0 !important;
+
+    overflow: visible;
+
+    z-index: 9999 !important;
+
+    background: rgba(18, 18, 24, 0.42) !important;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+
+    box-shadow:
+      0 10px 30px rgba(0, 0, 0, 0.22),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.04) !important;
+
+    backdrop-filter: blur(18px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(140%) !important;
+  }
+
+  /* brilho/reflexo superior */
+
+  .heroHeader.isCompact::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.02) 38%,
+      rgba(255, 255, 255, 0.01) 100%
+    );
+  }
+
+  /* =========================
+     REMOVE HEADER GRANDE
+     ========================= */
+
+  .heroHeader.isCompact .heroTop,
+  .heroHeader.isCompact .heroPills {
+    display: none !important;
+  }
+
+  .heroHeader.isCompact .heroContent {
+    padding: 6px 16px !important;
+
+    gap: 0 !important;
+
+    min-height: 0 !important;
+  }
+
+  .heroHeader.isCompact .heroShade {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.02)
+    );
+
+    box-shadow:
+      0 18px 50px rgba(0, 0, 0, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  /* =========================
+     BARRA INTERNA
+     ========================= */
+
+  .heroHeader.isCompact .compactHeaderBar {
+    position: relative;
+
+    z-index: 1;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 48px;
+    min-height: 48px;
+
+    margin: 0 !important;
+
+    padding: 0 28px !important;
+
+    box-sizing: border-box;
+
+    display: flex !important;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+  }
+
+  /* =========================
+     LOGO
+     ========================= */
+
+  .compactLogoBtn {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 0;
+
+    background: transparent;
+
+    cursor: pointer;
+  }
+
+  .compactLogo {
+    width: auto;
+
+    height: 40px;
+
+    display: block;
+
+    object-fit: contain;
+  }
+
+  /* =========================
+     NAVEGAÇÃO
+     ========================= */
+
+  .compactNav {
+    flex: 1 1 auto;
+
+    min-width: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    overflow-x: auto;
+
+    scrollbar-width: none;
+  }
+
+  .compactNav::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* =========================
+     BOTÕES
+     ========================= */
+
+  .compactNavBtn,
+  .compactActionBtn {
+    height: 34px;
+    min-height: 34px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 14px;
+
+    border-radius: 999px;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    font: inherit;
+
+    font-size: 0.95rem;
+
+    font-weight: 800;
+
+    line-height: 1;
+
+    transition:
+      transform 0.16s ease,
+      background 0.16s ease,
+      border-color 0.16s ease,
+      box-shadow 0.16s ease;
+  }
+
+  .compactNavBtn:hover,
+  .compactActionBtn:hover {
+    transform: translateY(-1px);
+  }
+
+  /* =========================
+     BOTÃO PADRÃO
+     ========================= */
+
+  .compactNavBtn {
+    color: rgba(255, 255, 255, 0.95);
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    background: rgba(255, 255, 255, 0.06);
+
+    box-shadow: none;
+  }
+
+  /* botão ativo */
+
+  .compactNavBtn.isActive {
+    color: #fff;
+
+    border-color: rgba(255, 255, 255, 0.18);
+
+    background: linear-gradient(
+      135deg,
+      rgba(255, 122, 24, 0.96),
+      rgba(255, 77, 77, 0.96)
+    );
+
+    box-shadow:
+      0 8px 22px rgba(0, 0, 0, 0.18);
+  }
+
+  /* =========================
+     BOTÃO CTA
+     ========================= */
+
+  .compactActionBtn {
+    flex: 0 0 auto;
+
+    color: rgba(255, 255, 255, 0.98);
+
+    border: 1px solid rgba(255, 255, 255, 0.18);
+
+    background: linear-gradient(
+      135deg,
+      rgba(124, 58, 237, 0.92),
+      rgba(59, 130, 246, 0.92)
+    );
+
+    box-shadow: none;
+  }
+
+  /* =========================
+     BASE HEADER
+     ========================= */
+
+  .heroHeader {
+    z-index: 1000;
+  }
+
+  .compactHeaderBar {
+    display: none;
+  }
+}

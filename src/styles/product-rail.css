@@ -315,7 +315,7 @@
 .pageSection {
   position: relative;
   margin: 60px 0 28px;
-  padding: 0;
+  padding: 10px;
   border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: linear-gradient(

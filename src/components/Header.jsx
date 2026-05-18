@@ -3,6 +3,9 @@ import { createPortal } from "react-dom";
 import { track } from "../utils/analytics.js";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/header.css";
+import "../styles/header-mobile.css";
+import "../styles/header-side-menu.css";
+import "../styles/header-compact.css";
 
 const base = import.meta.env.BASE_URL;
 const img = (path) => `${base}assets/${path}`;
@@ -29,6 +32,7 @@ export default function Header({
   };
 
   const [isMobile, setIsMobile] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 768px)");
     const update = () => setIsMobile(!!mq.matches);
@@ -163,7 +167,7 @@ export default function Header({
       "Haikyu 🏐",
       "Kagurabachi 🗡️",
     ],
-    []
+    [],
   );
 
   const chipsRef = useRef(null);
@@ -197,7 +201,11 @@ export default function Header({
   const sideMenuPortal =
     isMobile && menuOpen
       ? createPortal(
-          <div className="sideMenuOverlay" onClick={closeMenu} role="presentation">
+          <div
+            className="sideMenuOverlay"
+            onClick={closeMenu}
+            role="presentation"
+          >
             <aside
               className="sideMenu"
               onClick={(e) => e.stopPropagation()}
@@ -323,9 +331,19 @@ export default function Header({
                     target="_blank"
                     rel="noreferrer"
                     aria-label="TikTok"
-                    onClick={() => track("click_social", { network: "tiktok", placement: "side_menu" })}
+                    onClick={() =>
+                      track("click_social", {
+                        network: "tiktok",
+                        placement: "side_menu",
+                      })
+                    }
                   >
-                    <img className="socialIcon" src={img("tiktok.svg")} alt="" aria-hidden="true" />
+                    <img
+                      className="socialIcon"
+                      src={img("tiktok.svg")}
+                      alt=""
+                      aria-hidden="true"
+                    />
                     TikTok
                   </a>
                   <a
@@ -334,9 +352,19 @@ export default function Header({
                     target="_blank"
                     rel="noreferrer"
                     aria-label="Instagram"
-                    onClick={() => track("click_social", { network: "instagram", placement: "side_menu" })}
+                    onClick={() =>
+                      track("click_social", {
+                        network: "instagram",
+                        placement: "side_menu",
+                      })
+                    }
                   >
-                    <img className="socialIcon" src={img("instagram.svg")} alt="" aria-hidden="true" />
+                    <img
+                      className="socialIcon"
+                      src={img("instagram.svg")}
+                      alt=""
+                      aria-hidden="true"
+                    />
                     Instagram
                   </a>
                   <a
@@ -345,81 +373,124 @@ export default function Header({
                     target="_blank"
                     rel="noreferrer"
                     aria-label="YouTube"
-                    onClick={() => track("click_social", { network: "youtube", placement: "side_menu" })}
+                    onClick={() =>
+                      track("click_social", {
+                        network: "youtube",
+                        placement: "side_menu",
+                      })
+                    }
                   >
-                    <img className="socialIcon" src={img("youtube.svg")} alt="" aria-hidden="true" />
+                    <img
+                      className="socialIcon"
+                      src={img("youtube.svg")}
+                      alt=""
+                      aria-hidden="true"
+                    />
                     YouTube
                   </a>
                 </div>
               </div>
             </aside>
           </div>,
-          document.body
+          document.body,
         )
       : null;
 
   return (
     <>
-      <header className={`heroHeader ${isHeaderCompact && !isMobile ? "isCompact" : ""}`}>
+      <header
+        className={`heroHeader ${isHeaderCompact && !isMobile ? "isCompact" : ""}`}
+      >
         <div className="heroShade" aria-hidden="true" />
 
-        <div className={`heroContent ${isHeaderCompact && !isMobile ? "isCompact" : ""}`}>
+        <div
+          className={`heroContent ${isHeaderCompact && !isMobile ? "isCompact" : ""}`}
+        >
           {isMobile ? (
-            <div className="mobileTopBar">
-              <button
-                className="mobileMenuBtn"
-                onClick={toggleMenu}
-                type="button"
-                aria-label="Abrir menu"
+            <>
+              <div
+                className={`mobileTopBar ${
+                  mobileSearchOpen ? "searchOpen" : ""
+                }`}
               >
-                ☰
-              </button>
-
-              <div className="mobileSearch">
                 <button
-                  className="mobileLogoMiniBtn"
-                  onClick={() => {
-                    track("click_logo", { placement: "header_desktop" });
-                    navigate("/");
-                    setTimeout(() => {
-                      window.scrollTo({ top: 0, behavior: "instant" });
-                    }, 50);
-                  }}
-                  type="button"
-                  aria-label="Voltar ao topo"
-                  title="Voltar ao topo"
+                  className="mobileMenuBtn"
+                  onClick={() => setMenuOpen(true)}
                 >
-                  <img className="mobileSearchLogo" src={img("logo.png")} alt="MangásDrops" />
+                  ☰
                 </button>
 
-                <span className="mobileSearchIcon" aria-hidden="true">
-                  🔎
-                </span>
+                {!mobileSearchOpen ? (
+                  <>
+                    <button
+                      className="mobileBrand"
+                      onClick={() => {
+                        track("click_logo", { placement: "header_desktop" });
+                        navigate("/");
+                        setTimeout(() => {
+                          window.scrollTo({ top: 0, behavior: "instant" });
+                        }, 50);
+                      }}
+                      type="button"
+                      aria-label="Voltar ao topo"
+                    >
+                      <img
+                        src={img("logo.png")}
+                        alt="Mangá Drops"
+                        className="mobileBrandLogo"
+                      />
+                    </button>
 
-                <input
-                  className="mobileSearchInput"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Buscar mangá..."
-                />
+                    <button
+                      className="mobileSearchToggle"
+                      onClick={() => setMobileSearchOpen(true)}
+                    >
+                      🔍
+                    </button>
+                  </>
+                ) : (
+                  <div className="mobileInlineSearch">
+                    <span className="mobileSearchIcon">🔍</span>
 
-                <button
-                  className="mobileSearchBtn"
-                  onClick={() => fireSearch("header_mobile_btn")}
-                  type="button"
-                >
-                  Buscar
-                </button>
+                    <input
+                      type="text"
+                      className="mobileSearchInput"
+                      placeholder="Buscar mangá..."
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      autoFocus
+                    />
+
+                    <button
+                      className="mobileSearchSubmit"
+                      onClick={() => {
+                        fireSearch("header_mobile_btn");
+                        setMobileSearchOpen(false);
+                      }}
+                    >
+                      Buscar
+                    </button>
+
+                    <button
+                      className="mobileSearchClose"
+                      onClick={() => setMobileSearchOpen(false)}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
               </div>
-            </div>
+            </>
           ) : isHeaderCompact ? (
             <div className="compactHeaderBar">
               <button
                 className="compactLogoBtn"
                 onClick={() => {
                   track("click_logo", { placement: "header_desktop" });
+
                   navigate("/");
+
                   setTimeout(() => {
                     window.scrollTo({ top: 0, behavior: "instant" });
                   }, 50);
@@ -427,7 +498,11 @@ export default function Header({
                 type="button"
                 aria-label="Voltar ao topo"
               >
-                <img className="compactLogo" src={img("logo.png")} alt="MangásDrops" />
+                <img
+                  className="compactLogo"
+                  src={img("logo.png")}
+                  alt="MangásDrops"
+                />
               </button>
 
               <nav className="compactNav" aria-label="Seções principais">
@@ -470,7 +545,11 @@ export default function Header({
               </nav>
 
               <div className="compactHeaderActions">
-                <button className="compactActionBtn" type="button" onClick={openFilters}>
+                <button
+                  className="compactActionBtn"
+                  type="button"
+                  onClick={openFilters}
+                >
                   Filtros
                 </button>
               </div>
@@ -485,16 +564,22 @@ export default function Header({
                     navigate("/");
                     setTimeout(() => {
                       window.scrollTo({ top: 0, behavior: "instant" });
-                    }, 50);                  
+                    }, 50);
                   }}
                   type="button"
                   aria-label="Voltar ao topo"
                 >
-                  <img className="heroLogo" src={img("logo.png")} alt="MangásDrops" />
+                  <img
+                    className="heroLogo"
+                    src={img("logo.png")}
+                    alt="MangásDrops"
+                  />
                 </button>
 
                 <div className="heroSearch">
-                  <span className="heroSearchIcon" aria-hidden="true">🔎</span>
+                  <span className="heroSearchIcon" aria-hidden="true">
+                    🔎
+                  </span>
                   <input
                     className="heroSearchInput"
                     value={inputValue}
@@ -519,9 +604,19 @@ export default function Header({
                     rel="noreferrer"
                     aria-label="TikTok"
                     title="TikTok"
-                    onClick={() => track("click_social", { network: "tiktok", placement: "header_desktop" })}
+                    onClick={() =>
+                      track("click_social", {
+                        network: "tiktok",
+                        placement: "header_desktop",
+                      })
+                    }
                   >
-                    <img className="socialIcon" src={img("tiktok.svg")} alt="" aria-hidden="true" />
+                    <img
+                      className="socialIcon"
+                      src={img("tiktok.svg")}
+                      alt=""
+                      aria-hidden="true"
+                    />
                   </a>
                   <a
                     className="socialBtn"
@@ -530,9 +625,19 @@ export default function Header({
                     rel="noreferrer"
                     aria-label="Instagram"
                     title="Instagram"
-                    onClick={() => track("click_social", { network: "instagram", placement: "header_desktop" })}
+                    onClick={() =>
+                      track("click_social", {
+                        network: "instagram",
+                        placement: "header_desktop",
+                      })
+                    }
                   >
-                    <img className="socialIcon" src={img("instagram.svg")} alt="" aria-hidden="true" />
+                    <img
+                      className="socialIcon"
+                      src={img("instagram.svg")}
+                      alt=""
+                      aria-hidden="true"
+                    />
                   </a>
                   <a
                     className="socialBtn"
@@ -541,9 +646,19 @@ export default function Header({
                     rel="noreferrer"
                     aria-label="YouTube"
                     title="YouTube"
-                    onClick={() => track("click_social", { network: "youtube", placement: "header_desktop" })}
+                    onClick={() =>
+                      track("click_social", {
+                        network: "youtube",
+                        placement: "header_desktop",
+                      })
+                    }
                   >
-                    <img className="socialIcon" src={img("youtube.svg")} alt="" aria-hidden="true" />
+                    <img
+                      className="socialIcon"
+                      src={img("youtube.svg")}
+                      alt=""
+                      aria-hidden="true"
+                    />
                   </a>
                 </div>
               </div>
@@ -553,7 +668,9 @@ export default function Header({
                   <button
                     className={`pill pillPrimary ${navIsActive("lancamentos") ? "isActive" : ""}`}
                     style={navButtonStyle("lancamentos")}
-                    aria-current={navIsActive("lancamentos") ? "page" : undefined}
+                    aria-current={
+                      navIsActive("lancamentos") ? "page" : undefined
+                    }
                     onClick={() => jumpToSection("lancamentos")}
                     type="button"
                   >
@@ -587,11 +704,19 @@ export default function Header({
                     Coleções
                   </button>
 
-                  <button className="pill pillCTA" onClick={openRequestForm} type="button">
+                  <button
+                    className="pill pillCTA"
+                    onClick={openRequestForm}
+                    type="button"
+                  >
                     Pedir uma obra
                   </button>
 
-                  <button className="pill pillCTA" type="button" onClick={openFilters}>
+                  <button
+                    className="pill pillCTA"
+                    type="button"
+                    onClick={openFilters}
+                  >
                     Filtros
                   </button>
                 </div>
@@ -608,7 +733,11 @@ export default function Header({
                     </button>
                   )}
 
-                  <div className="pillRowSecondaryWrap" ref={chipsRef} onScroll={updateScrollState}>
+                  <div
+                    className="pillRowSecondaryWrap"
+                    ref={chipsRef}
+                    onScroll={updateScrollState}
+                  >
                     <div className="pillRowSecondary">
                       {obras.map((obra) => (
                         <button

@@ -1,0 +1,313 @@
+/* =========================================================
+   SIDE MENU
+   - Menu lateral mobile
+   - Overlay com blur
+   - Navegação de obras/categorias
+   - Links sociais
+   - Scroll interno independente
+   ========================================================= */
+
+/* =========================
+   OVERLAY
+   ========================= */
+
+.sideMenuOverlay {
+  position: fixed;
+
+  inset: 0;
+
+  width: 100vw;
+  height: 100vh;
+
+  z-index: 2147483647 !important;
+
+  background: rgba(0, 0, 0, 0.62);
+
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+
+/* =========================
+   CONTAINER MENU
+   ========================= */
+
+.sideMenu {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: min(76vw, 280px);
+  max-width: 280px;
+
+  height: 100dvh;
+
+  display: flex;
+  flex-direction: column;
+
+  min-height: 0;
+
+  z-index: 2147483647 !important;
+
+  overflow: hidden;
+
+  padding: 12px;
+
+  padding-bottom: calc(
+    12px + env(safe-area-inset-bottom)
+  );
+
+  color: rgba(255, 255, 255, 0.95);
+
+  background: rgba(15, 15, 20, 0.94);
+
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+
+  box-shadow:
+    18px 0 60px rgba(0, 0, 0, 0.55);
+
+  animation: sideIn 220ms ease;
+}
+
+/* animação entrada */
+
+@keyframes sideIn {
+  from {
+    transform: translateX(-18px);
+
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+
+    opacity: 1;
+  }
+}
+
+/* =========================
+   TOPO MENU
+   ========================= */
+
+.sideMenuTop {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  flex: 0 0 auto;
+
+  gap: 10px;
+
+  padding-bottom: 8px;
+}
+
+.sideMenuTitle {
+  font-size: 18px;
+
+  font-weight: 900;
+
+  letter-spacing: 0.2px;
+}
+
+/* =========================
+   BOTÃO FECHAR
+   ========================= */
+
+.sideMenuClose {
+  width: 38px;
+  height: 38px;
+
+  border-radius: 12px;
+
+  display: grid;
+  place-items: center;
+
+  cursor: pointer;
+
+  font-weight: 900;
+
+  color: rgba(255, 255, 255, 0.95);
+
+  border: 1px solid rgba(255, 255, 255, 0.14);
+
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* =========================
+   DIVISOR
+   ========================= */
+
+.sideMenuDivider {
+  height: 1px;
+
+  margin: 10px 0;
+
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* =========================
+   SEÇÕES
+   ========================= */
+
+.sideMenuSection {
+  display: flex;
+  flex-direction: column;
+
+  flex: 0 0 auto;
+
+  min-height: 0;
+
+  gap: 8px;
+}
+
+/* seção principal cresce */
+
+.sideMenuSectionGrow {
+  flex: 1 1 auto;
+
+  min-height: 0;
+}
+
+.sideMenuSectionTitle {
+  margin-top: 6px;
+
+  font-size: 11px;
+
+  font-weight: 900;
+
+  letter-spacing: 0.6px;
+
+  text-transform: uppercase;
+
+  opacity: 0.75;
+}
+
+/* =========================
+   LISTA SCROLL
+   ========================= */
+
+.sideMenuList {
+  display: flex;
+  flex-direction: column;
+
+  flex: 1 1 auto;
+
+  min-height: 0;
+
+  gap: 6px;
+
+  overflow-y: auto;
+
+  padding-right: 4px;
+
+  -webkit-overflow-scrolling: touch;
+}
+
+/* =========================
+   BOTÕES MENU
+   ========================= */
+
+.sideMenuBtn {
+  width: 100%;
+
+  padding: 9px 10px;
+
+  text-align: left;
+
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  font-size: 14px;
+
+  font-weight: 800;
+
+  color: rgba(255, 255, 255, 0.95);
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  background: rgba(255, 255, 255, 0.06);
+
+  transition:
+    transform 120ms ease,
+    background 120ms ease,
+    border 120ms ease;
+}
+
+.sideMenuBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.sideMenuBtn:active {
+  transform: scale(0.99);
+}
+
+/* botão destaque */
+
+.sideMenuBtnPrimary {
+  font-weight: 950;
+
+  border-color: rgba(139, 92, 246, 0.45);
+
+  background: rgba(139, 92, 246, 0.2);
+}
+
+/* =========================
+   LINKS SOCIAIS
+   ========================= */
+
+.sideMenuSocial {
+  display: flex;
+  flex-direction: column;
+
+  flex: 0 0 auto;
+
+  gap: 8px;
+
+  margin-top: auto;
+}
+
+.sideMenuSocialBtn {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 10px 12px;
+
+  border-radius: 14px;
+
+  text-decoration: none;
+
+  font-weight: 850;
+
+  color: rgba(255, 255, 255, 0.95);
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.sideMenuSocialBtn .socialIcon {
+  width: 18px;
+  height: 18px;
+}
+
+/* =========================
+   SCROLLBAR
+   ========================= */
+
+.sideMenuList::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sideMenuList::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.1);
+}

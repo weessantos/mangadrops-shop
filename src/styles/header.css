@@ -1,65 +1,112 @@
 /* =========================================================
-   HEADER (Mangá Drops)
-   - Desktop: header com wallpaper + busca + sociais + pills
-   - Mobile: topbar fixa (amazon-like) + side menu
+   HEADER BASE (Desktop)
+   - Header principal desktop
+   - Wallpaper/glass background
+   - Busca desktop
+   - Redes sociais
+   - Pills e chips horizontais
    ========================================================= */
 
 /* =========================
-   DESKTOP / BASE
+   CONTAINER PRINCIPAL
    ========================= */
+
+.container {
+  padding-top: 0 !important;
+
+  margin-top: 0 !important;
+}
+
 .heroHeader {
   position: relative;
-  border-radius: 28px;
-  overflow: hidden;
-  margin: 16px auto 18px;
+
   max-width: 1500px;
+
   min-height: 220px;
-  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.45);
+
+  margin: 16px auto 18px;
+
+  overflow: hidden;
+
+  border-radius: 28px;
+
   border: 1px solid rgba(255, 255, 255, 0.1);
+
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.45);
 }
+
+/* camada brilho/sombra */
 
 .heroShade {
   position: absolute;
+
   inset: 0;
+
   border-radius: inherit;
+
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.045),
     rgba(255, 255, 255, 0.02)
   );
+
   box-shadow:
     0 18px 50px rgba(0, 0, 0, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
+/* conteúdo interno */
+
 .heroContent {
   position: relative;
+
   z-index: 2;
-  padding: 18px 18px 16px;
+
   display: flex;
   flex-direction: column;
+
   gap: 14px;
+
+  padding: 18px 18px 16px;
 }
+
+/* =========================
+   TOPO HEADER
+   ========================= */
 
 .heroTop {
   display: grid;
+
   grid-template-columns: auto 1fr auto;
+
   align-items: center;
+
   gap: 14px;
 }
 
+/* =========================
+   LOGO
+   ========================= */
+
 .heroLogoBtn {
-  background: transparent;
-  border: 0;
   padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
   cursor: pointer;
 }
 
 .heroLogo {
-  height: 120px;
   width: auto;
+
+  height: 80px;
+
   display: block;
+
   object-fit: contain;
+
   transition: transform 160ms ease;
 }
 
@@ -67,15 +114,25 @@
   transform: translateY(-1px) scale(1.03);
 }
 
-/* ===== Search (desktop) ===== */
+/* =========================
+   SEARCH DESKTOP
+   ========================= */
+
 .heroSearch {
   display: flex;
+
   align-items: center;
+
   gap: 10px;
+
   padding: 12px;
+
   border-radius: 999px;
+
   border: 1px solid rgba(255, 255, 255, 0.14);
+
   background: rgba(255, 255, 255, 0.1);
+
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
@@ -84,15 +141,24 @@
   opacity: 0.9;
 }
 
+/* input */
+
 .heroSearchInput {
   flex: 1;
+
   min-width: 160px;
   width: 100%;
+
   border: none;
+
   outline: none;
+
   background: transparent;
+
   color: rgba(255, 255, 255, 0.92);
+
   font-size: 14px;
+
   font-weight: 650;
 }
 
@@ -100,153 +166,214 @@
   color: rgba(255, 255, 255, 0.55);
 }
 
+/* botão */
+
 .heroSearchBtn {
   padding: 8px 14px;
+
   border-radius: 999px;
+
+  cursor: pointer;
+
+  color: rgba(255, 255, 255, 0.95);
+
+  font-weight: 800;
+
   border: 1px solid rgba(255, 255, 255, 0.18);
+
   background: linear-gradient(
     135deg,
     rgba(124, 58, 237, 0.75),
     rgba(59, 130, 246, 0.75)
   );
-  color: rgba(255, 255, 255, 0.95);
-  font-weight: 800;
-  cursor: pointer;
+
   transition:
     transform 160ms ease,
     box-shadow 160ms ease,
     filter 160ms ease;
+
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
 
 .heroSearchBtn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+
   filter: brightness(1.05);
+
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
 }
 
-/* ===== Social ===== */
+/* =========================
+   REDES SOCIAIS
+   ========================= */
+
 .heroSocial {
   display: flex;
-  gap: 10px;
+
   align-items: center;
+
+  gap: 10px;
 }
 
 .socialBtn {
   width: 40px;
   height: 40px;
+
   border-radius: 999px;
+
   display: grid;
   place-items: center;
-  background: rgba(255, 255, 255, 0.08);
+
   border: 1px solid rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+
+  background: rgba(255, 255, 255, 0.08);
+
   transition:
     transform 0.15s ease,
     background 0.15s ease,
     border 0.15s ease;
+
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .socialBtn:hover {
   transform: translateY(-1px);
+
   background: rgba(255, 255, 255, 0.12);
+
   border-color: rgba(255, 255, 255, 0.18);
 }
 
 .socialIcon {
   width: 18px;
   height: 18px;
+
   display: block;
 }
 
 /* =========================
-   PILLS (Coleções / Lançamentos / Pedir / Filtros)
-   Use assim:
-   - <button className="pill pillPrimary">Coleções</button>
-   - <button className="pill pillPrimary">Lançamentos</button>
-   - <button className="pill pillCTA">Pedir uma obra</button>
-   - <button className="pill pillCTA">Filtros</button>
+   PILLS / CHIPS
    ========================= */
+
 .heroPills {
   display: flex;
   flex-direction: column;
+
   gap: 12px;
+
   margin-top: 8px;
 }
 
+/* linha principal */
+
 .pillRowMain {
   display: flex;
-  gap: 16px;
+
   flex-wrap: wrap;
+
   align-items: center;
+
+  gap: 16px;
 }
+
+/* container scroller */
 
 .pillRowSecondaryContainer {
   position: relative;
+
   display: flex;
+
   align-items: center;
 }
 
 .pillRowSecondaryWrap {
+  flex: 1;
+
   overflow-x: auto;
   overflow-y: hidden;
-  flex: 1;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
+
   padding: 6px 0;
+
+  scroll-behavior: smooth;
+
+  -webkit-overflow-scrolling: touch;
+
+  scrollbar-width: none;
+
+  -ms-overflow-style: none;
 }
 
 .pillRowSecondaryWrap::-webkit-scrollbar {
   display: none;
 }
-.pillRowSecondaryWrap {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+
+/* linha interna */
 
 .pillRowSecondary {
-  display: flex;
-  gap: 10px;
-  flex-wrap: nowrap;
   width: max-content;
+
+  display: flex;
+
+  flex-wrap: nowrap;
+
+  gap: 10px;
+
   padding-right: 8px;
 }
 
+/* =========================
+   PILLS BASE
+   ========================= */
+
 .pill {
   position: relative;
+
   padding: 8px 14px;
+
   border-radius: 999px;
+
+  cursor: pointer;
+
+  color: rgba(255, 255, 255, 0.95);
+
+  font-size: 14px;
+
+  font-weight: 900;
+
+  letter-spacing: 0.3px;
+
   border: 1px solid rgba(255, 255, 255, 0.15);
+
   background: linear-gradient(
     135deg,
     rgba(255, 255, 255, 0.14),
     rgba(255, 255, 255, 0.06)
   );
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  color: rgba(255, 255, 255, 0.95);
-  font-size: 14px;
-  font-weight: 900;
-  letter-spacing: 0.3px;
-  cursor: pointer;
+
   transition:
     transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
     box-shadow 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
     background 0.25s ease;
+
   box-shadow:
     0 12px 30px rgba(0, 0, 0, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.18);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 .pill:hover {
   transform: translateY(-2px);
+
   background: linear-gradient(
     135deg,
     rgba(255, 255, 255, 0.22),
     rgba(255, 255, 255, 0.1)
   );
+
   box-shadow:
     0 20px 50px rgba(0, 0, 0, 0.45),
     0 0 30px rgba(124, 58, 237, 0.22);
@@ -256,8 +383,11 @@
   transform: scale(0.96);
 }
 
+/* pills principais */
+
 .pill.pillPrimary {
   border-color: rgba(255, 255, 255, 0.18);
+
   background: linear-gradient(
     135deg,
     rgba(239, 68, 68, 0.85),
@@ -265,8 +395,11 @@
   );
 }
 
+/* pills CTA */
+
 .pill.pillCTA {
   border-color: rgba(255, 255, 255, 0.18);
+
   background: linear-gradient(
     135deg,
     rgba(124, 58, 237, 0.82),
@@ -274,76 +407,112 @@
   );
 }
 
-/* chips (linha de obras) */
+/* =========================
+   CHIPS SECUNDÁRIOS
+   ========================= */
+
 .pillChip {
   flex: 0 0 auto;
+
   font-size: 12px;
+
   font-weight: 850;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: none;
+
   opacity: 0.9;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  background: rgba(255, 255, 255, 0.08);
+
+  box-shadow: none;
 }
 
 .pillChip:hover {
   opacity: 1;
+
   transform: translateY(-1px);
+
   background: rgba(255, 255, 255, 0.14);
 }
 
-/* setas do scroller de chips */
+/* =========================
+   SETAS SCROLLER
+   ========================= */
+
 .scrollArrow {
   position: absolute;
+
   z-index: 10;
+
   width: 36px;
   height: 36px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  color: #fff;
-  font-size: 20px;
-  font-weight: 900;
+
   display: flex;
+
   align-items: center;
   justify-content: center;
+
+  border-radius: 50%;
+
   cursor: pointer;
+
+  color: #fff;
+
+  font-size: 20px;
+
+  font-weight: 900;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  background: rgba(0, 0, 0, 0.6);
+
   transition:
     transform 0.2s ease,
     background 0.2s ease;
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .scrollArrow:hover {
-  background: rgba(124, 58, 237, 0.7);
   transform: scale(1.08);
+
+  background: rgba(124, 58, 237, 0.7);
 }
+
 .scrollArrow.left {
   left: -8px;
 }
+
 .scrollArrow.right {
   right: -8px;
 }
 
 /* =========================
-   RESPONSIVO (DESKTOP -> TABLET)
+   RESPONSIVO TABLET
    ========================= */
+
 @media (max-width: 980px) {
   .heroTop {
     grid-template-columns: auto 1fr;
+
     grid-template-areas:
       "logo social"
       "search search";
+
     row-gap: 12px;
   }
 
   .heroLogoBtn {
     grid-area: logo;
   }
+
   .heroSocial {
     grid-area: social;
+
     justify-content: flex-end;
   }
+
   .heroSearch {
     grid-area: search;
   }
@@ -351,651 +520,4 @@
   .heroSearchInput {
     min-width: 0;
   }
-}
-
-/* =========================================================
-   MOBILE: TOPBAR FIXA (wallpaper + shade)
-   ========================================================= */
-@media (max-width: 768px) {
-  :root {
-    --topbar-h: 78px;
-  }
-
-  .heroHeader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-
-    width: 100%;
-    max-width: 100%;
-    margin: 0 !important;
-
-    border-radius: 0 !important;
-    min-height: var(--topbar-h) !important;
-    padding: 0 !important;
-
-    z-index: 5000;
-    overflow: hidden;
-    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.42);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(10, 10, 15, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-
-  .heroShade {
-    display: none;
-  }
-
-  .heroContent {
-    position: relative;
-    z-index: 2;
-    padding: 10px 12px !important;
-    margin: 0 !important;
-    gap: 0 !important;
-  }
-
-  /* conteúdo do site começa abaixo da topbar */
-  .container {
-    padding-top: var(--topbar-h);
-  }
-
-  /* ===== TOPBAR GRID ===== */
-  .mobileTopBar {
-    display: grid;
-    grid-template-columns: 46px 1fr;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-  }
-
-  /* botão menu */
-  .mobileMenuBtn {
-    width: 46px;
-    height: 46px;
-    border-radius: 999px;
-
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(0, 0, 0, 0.34);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-
-    color: rgba(255, 255, 255, 0.92);
-    font-size: 20px;
-    font-weight: 900;
-
-    box-shadow:
-      0 14px 30px rgba(0, 0, 0, 0.45),
-      inset 0 1px 0 rgba(255, 255, 255, 0.06);
-
-    cursor: pointer;
-    display: grid;
-    place-items: center;
-  }
-
-  .mobileMenuBtn:active {
-    transform: scale(0.98);
-  }
-
-  /* ===== SEARCH PILL ===== */
-  .mobileSearch {
-    height: 46px;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    padding: 0 10px;
-    border-radius: 999px;
-    position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-
-    box-shadow:
-      0 16px 46px rgba(0, 0, 0, 0.42),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  }
-
-  .mobileSearch::before {
-    content: "";
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    pointer-events: none;
-    opacity: 0.9;
-    background:
-      radial-gradient(
-        520px 140px at 30% 0%,
-        rgba(142, 142, 142, 0.22),
-        transparent 60%
-      ),
-      radial-gradient(
-        520px 140px at 95% 0%,
-        rgba(45, 45, 45, 0.16),
-        transparent 60%
-      );
-  }
-
-  .mobileLogoMiniBtn {
-    width: 34px;
-    height: 34px;
-    border-radius: 999px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    overflow: hidden;
-
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: transparent; /* 👈 REMOVE o branco */
-  }
-
-  .mobileSearchLogo {
-    height: 130%; /* 👈 zoom controlado */
-    width: auto;
-
-    object-fit: cover;
-    object-position: center;
-
-    display: block;
-  }
-
-  .mobileSearchIcon {
-    font-size: 14px;
-    opacity: 0.78;
-    line-height: 1;
-    flex: 0 0 auto;
-  }
-
-  .mobileSearchInput {
-    flex: 1;
-    min-width: 0;
-    width: 100%;
-
-    background: transparent !important;
-    border: 0 !important;
-    outline: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-
-    color: rgba(255, 255, 255, 0.92);
-    font-size: 15px;
-    font-weight: 850;
-    letter-spacing: 0.2px;
-  }
-
-  .mobileSearchInput::placeholder {
-    color: rgba(255, 255, 255, 0.45);
-    font-weight: 750;
-  }
-
-  /* botão roxo (firme) */
-  .mobileSearchBtn {
-    height: 28px;
-    padding: 0 14px;
-    border-radius: 999px;
-
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: linear-gradient(135deg, #6a20ea, #120121);
-
-    color: rgba(255, 255, 255, 0.96);
-    font-weight: 950;
-    cursor: pointer;
-
-    box-shadow:
-      0 12px 20px rgba(124, 58, 237, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.16);
-
-    flex: 0 0 auto;
-    white-space: nowrap;
-    transform: scale(0.9);
-  }
-
-  .mobileSearchBtn:active {
-    transform: translateY(1px) scale(0.9);
-  }
-
-  /* no mobile, some o header desktop */
-  .heroTop,
-  .heroPills {
-    display: none;
-  }
-
-  /* compat: se seu JSX ainda usa mobileLogoBtn/mobileLogo */
-  .mobileLogoBtn {
-    width: 40px;
-    height: 40px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.06);
-    padding: 0;
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-  }
-
-  .mobileLogo {
-    height: 26px;
-    width: auto;
-    object-fit: contain;
-    display: block;
-  }
-}
-
-/* =========================================================
-   SIDE MENU (Portal)
-   ========================================================= */
-.sideMenuOverlay {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 2147483647 !important;
-  background: rgba(0, 0, 0, 0.62);
-  backdrop-filter: blur(7px);
-  -webkit-backdrop-filter: blur(7px);
-}
-
-.sideMenu {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  width: min(76vw, 280px);
-  max-width: 280px;
-  z-index: 2147483647 !important;
-  min-height: 0;
-
-  background: rgba(15, 15, 20, 0.94);
-  color: rgba(255, 255, 255, 0.95);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 18px 0 60px rgba(0, 0, 0, 0.55);
-  padding: 12px;
-  padding-bottom: calc(12px + env(safe-area-inset-bottom));
-  overflow: hidden;
-  animation: sideIn 220ms ease;
-}
-
-@keyframes sideIn {
-  from {
-    transform: translateX(-18px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-.sideMenuTop {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex: 0 0 auto;
-  gap: 10px;
-  padding-bottom: 8px;
-}
-
-.sideMenuTitle {
-  font-weight: 900;
-  font-size: 18px;
-  letter-spacing: 0.2px;
-}
-
-.sideMenuClose {
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.95);
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  font-weight: 900;
-}
-
-.sideMenuDivider {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.1);
-  margin: 10px 0;
-}
-
-.sideMenuSection {
-  display: flex;
-  flex-direction: column;
-  flex: 0 0 auto;
-  min-height: 0;
-  gap: 8px;
-}
-
-/* seção "Obras" cresce e vira o miolo do menu */
-.sideMenuSectionGrow {
-  flex: 1 1 auto;
-  min-height: 0;
-}
-
-.sideMenuSectionTitle {
-  font-size: 11px;
-  font-weight: 900;
-  opacity: 0.75;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  margin-top: 6px;
-}
-
-.sideMenuList {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding-right: 4px;
-}
-
-.sideMenuBtn {
-  width: 100%;
-  text-align: left;
-  padding: 9px 10px;
-  border-radius: 12px;
-  font-size: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.95);
-  font-weight: 800;
-  cursor: pointer;
-  transition:
-    transform 120ms ease,
-    background 120ms ease,
-    border 120ms ease;
-}
-
-.sideMenuBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.16);
-}
-
-.sideMenuBtn:active {
-  transform: scale(0.99);
-}
-
-/* botão destaque (ex: Filtros) */
-.sideMenuBtnPrimary {
-  border-color: rgba(139, 92, 246, 0.45);
-  background: rgba(139, 92, 246, 0.2);
-  font-weight: 950;
-}
-
-.sideMenuSocial {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex: 0 0 auto;
-  margin-top: auto;
-}
-
-.sideMenuSocialBtn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.95);
-  text-decoration: none;
-  font-weight: 850;
-}
-
-.sideMenuSocialBtn .socialIcon {
-  width: 18px;
-  height: 18px;
-}
-
-/* scrollbar discreta */
-.sideMenuList::-webkit-scrollbar {
-  width: 8px;
-}
-.sideMenuList::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
-}
-
-/* =========================================================
-   HEADER COMPACTO NO SCROLL (somente desktop)
-   ========================================================= */
-.heroHeader {
-  z-index: 1000;
-}
-
-.compactHeaderBar {
-  display: none;
-}
-
-@media (min-width: 769px) {
-  .heroHeader {
-    position: sticky;
-    top: 0;
-  }
-
-  .heroHeader.isCompact {
-    min-height: auto !important;
-    margin: 0 auto 14px !important;
-    border-radius: 0 0 18px 18px;
-    background: rgba(18, 18, 24, 0.84);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.24);
-    overflow: visible;
-  }
-
-  .heroHeader.isCompact .heroShade {
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.045),
-      rgba(255, 255, 255, 0.02)
-    );
-    box-shadow:
-      0 18px 50px rgba(0, 0, 0, 0.18),
-      inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  }
-
-  .heroHeader.isCompact .heroContent {
-    padding: 6px 16px !important;
-    gap: 0 !important;
-    min-height: 0 !important;
-  }
-
-  .heroHeader.isCompact .heroTop,
-  .heroHeader.isCompact .heroPills {
-    display: none !important;
-  }
-
-  .heroHeader.isCompact .compactHeaderBar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    min-height: 42px;
-  }
-
-  .compactLogoBtn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-    flex: 0 0 auto;
-  }
-
-  .compactLogo {
-    width: auto;
-    height: 100px;
-    display: block;
-    object-fit: contain;
-  }
-
-  .compactNav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    flex: 1 1 auto;
-    min-width: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .compactNav::-webkit-scrollbar {
-    display: none;
-  }
-
-  .compactNavBtn,
-  .compactActionBtn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 34px;
-    min-height: 34px;
-    padding: 0 14px;
-    border-radius: 999px;
-    font: inherit;
-    font-size: 0.95rem;
-    font-weight: 800;
-    line-height: 1;
-    white-space: nowrap;
-    cursor: pointer;
-    transition:
-      transform 0.16s ease,
-      background 0.16s ease,
-      border-color 0.16s ease,
-      box-shadow 0.16s ease;
-  }
-
-  .compactNavBtn {
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.06);
-    color: rgba(255, 255, 255, 0.95);
-    box-shadow: none;
-  }
-
-  .compactNavBtn:hover,
-  .compactActionBtn:hover {
-    transform: translateY(-1px);
-  }
-
-  .compactNavBtn.isActive {
-    border-color: rgba(255, 255, 255, 0.18);
-    background: linear-gradient(
-      135deg,
-      rgba(255, 122, 24, 0.96),
-      rgba(255, 77, 77, 0.96)
-    );
-    color: #fff;
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
-  }
-
-  .compactActionBtn {
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    background: linear-gradient(
-      135deg,
-      rgba(124, 58, 237, 0.92),
-      rgba(59, 130, 246, 0.92)
-    );
-    color: rgba(255, 255, 255, 0.98);
-    box-shadow: none;
-    flex: 0 0 auto;
-  }
-}
-
-@media (max-width: 768px) {
-  .heroHeader,
-  .heroHeader.isCompact {
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    max-width: 100%;
-    margin: 0 !important;
-    border-radius: 0 !important;
-  }
-
-  .compactHeaderBar {
-    display: none !important;
-  }
-}
-/* HEADER COMPACTO SOBERANO */
-.heroHeader.isCompact {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-
-  width: 100% !important;
-  max-width: none !important;
-
-  margin: 0 !important;
-  padding: 0 !important;
-
-  border-radius: 0 !important;
-
-  z-index: 9999 !important;
-}
-
-/* barra interna */
-.heroHeader.isCompact .compactHeaderBar {
-  width: 100% !important;
-  max-width: none !important;
-
-  margin: 0 !important;
-
-  padding: 0 28px !important;
-
-  height: 48px;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  box-sizing: border-box;
-}
-
-.heroHeader.isCompact {
-  background: rgba(18, 18, 24, 0.42) !important;
-  backdrop-filter: blur(18px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(140%) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.22),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.04) !important;
-}
-
-.heroHeader.isCompact::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.08) 0%,
-    rgba(255, 255, 255, 0.02) 38%,
-    rgba(255, 255, 255, 0.01) 100%
-  );
-}
-
-.heroHeader.isCompact .compactHeaderBar {
-  position: relative;
-  z-index: 1;
 }
