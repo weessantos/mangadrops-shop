@@ -1,9 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
 import SectionHeader from "./SectionHeader";
-import CollectionHero, {
-  CollectionsHero,
-} from "./CollectionHero.jsx";
+import CollectionHero, { CollectionsHero } from "./CollectionHero.jsx";
 import SeriesCard from "./SeriesCard";
 
 export default function CollectionsRail({
@@ -32,7 +30,7 @@ export default function CollectionsRail({
   return (
     <section
       className="collectionsSection"
-       id={isAllCollectionsPage ? "collectionsFullPage" : "collectionsRail"}
+      id={isAllCollectionsPage ? "collectionsFullPage" : "collectionsRail"}
       ref={collectionsSectionRef}
     >
       {!isAllCollectionsPage && (
@@ -44,18 +42,12 @@ export default function CollectionsRail({
 
       <>
         {isAllCollectionsPage && (
-          <CollectionsHero
-            total={seriesList.length}
-            onBack={clearSeries}
-          />
+          <CollectionsHero total={seriesList.length} onBack={clearSeries} />
         )}
-
         {!isAllCollectionsPage && (
           <div className="collectionsTopbar">
             <div className="collectionsTopbarLeft">
-              <span className="collectionsEyebrow">
-                Catálogo
-              </span>
+              <span className="collectionsEyebrow">Catálogo</span>
 
               <div className="collectionsMeta">
                 Página <strong>{seriesPage}</strong> de{" "}
@@ -81,9 +73,7 @@ export default function CollectionsRail({
                 <button
                   type="button"
                   className="collectionsNavBtn"
-                  onClick={() =>
-                    changeSeriesPage(seriesPage - 1)
-                  }
+                  onClick={() => changeSeriesPage(seriesPage - 1)}
                   disabled={seriesPage === 1}
                 >
                   ‹
@@ -92,12 +82,8 @@ export default function CollectionsRail({
                 <button
                   type="button"
                   className="collectionsNavBtn"
-                  onClick={() =>
-                    changeSeriesPage(seriesPage + 1)
-                  }
-                  disabled={
-                    seriesPage === totalSeriesPages
-                  }
+                  onClick={() => changeSeriesPage(seriesPage + 1)}
+                  disabled={seriesPage === totalSeriesPages}
                 >
                   ›
                 </button>
@@ -124,7 +110,6 @@ export default function CollectionsRail({
             </div>
           ))}
         </div>
-
         {showCollectionsPagination && (
           <div className="collectionsBottomBar">
             <div className="collectionsDots">
@@ -132,33 +117,19 @@ export default function CollectionsRail({
                 <button
                   key={dotPage}
                   className={`collectionsDot ${
-                    dotPage === seriesPage
-                      ? "isActive"
-                      : ""
+                    dotPage === seriesPage ? "isActive" : ""
                   }`}
-                  onClick={() =>
-                    changeSeriesPage(dotPage)
-                  }
+                  onClick={() => changeSeriesPage(dotPage)}
                 />
               ))}
             </div>
 
             <div className="collectionsCounter">
-              Exibindo{" "}
+              Exibindo <strong>{(seriesPage - 1) * seriesPageSize + 1}</strong>–
               <strong>
-                {(seriesPage - 1) *
-                  seriesPageSize +
-                  1}
-              </strong>
-              –
-              <strong>
-                {Math.min(
-                  seriesPage * seriesPageSize,
-                  seriesList.length,
-                )}
+                {Math.min(seriesPage * seriesPageSize, seriesList.length)}
               </strong>{" "}
-              de <strong>{seriesList.length}</strong>{" "}
-              obras
+              de <strong>{seriesList.length}</strong> obras
             </div>
           </div>
         )}

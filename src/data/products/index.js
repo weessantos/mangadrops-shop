@@ -9,11 +9,11 @@ import { supabaseClient } from "../../lib/supabase";
 export async function getProducts(search = "") {
   const { data, error } = await supabaseClient
     .from("series_volumes_view")
-    .select("*")
+    .select("*");
 
   if (error) {
-    console.error(error)
-    return []
+    console.error(error);
+    return [];
   }
 
   const result = data.map((v) => ({
@@ -25,7 +25,7 @@ export async function getProducts(search = "") {
     total_volumes: v.total_volumes,
 
     series: v.series_title, // 🔥 ESSENCIAL
-    volume: v.number,      // 🔥 ESSENCIAL
+    volume: v.number, // 🔥 ESSENCIAL
 
     image: `/assets/${v.prefix}${String(v.number).padStart(2, "0")}.webp`,
 
@@ -38,6 +38,9 @@ export async function getProducts(search = "") {
     coverPrice: v.cover_price,
     discount: Number(v.discount) || 0,
 
+    parent_series_id: v.parent_series_id,
+    content_type: v.content_type,
+
     description: v.description,
     tiktokUrl: v.tiktok,
     addedAt: v.added_at,
@@ -46,13 +49,13 @@ export async function getProducts(search = "") {
       amazon: v.amazon,
       mercadoLivre: v.mercado_livre,
     },
-  }))
+  }));
 
   if (search) {
     return result.filter((p) =>
-      p.title.toLowerCase().includes(search.toLowerCase())
-    )
+      p.title.toLowerCase().includes(search.toLowerCase()),
+    );
   }
 
-  return result
+  return result;
 }

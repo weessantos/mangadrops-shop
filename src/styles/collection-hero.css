@@ -25,7 +25,7 @@
 /* desktop hero */
 @media (min-width: 1024px) {
   .collectionHero {
-    margin:-10px -10px 0;
+    margin: -10px -10px 0;
     height: 400px;
     background-position: 70% 35%;
   }
@@ -202,8 +202,8 @@
   }
 }
 
-    /* 📲 TABLET PEQUENO */
-  @media (min-width: 501px) and (max-width: 650px) {
+/* 📲 TABLET PEQUENO */
+@media (min-width: 501px) and (max-width: 650px) {
   .collectionsGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px; /* pode reduzir um pouco pro mobile */
@@ -211,8 +211,8 @@
   }
 }
 
-  /* 📲 TABLET */
-  @media (min-width: 651px) and (max-width: 1023px) {
+/* 📲 TABLET */
+@media (min-width: 651px) and (max-width: 1023px) {
   .collectionsGrid {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px; /* pode reduzir um pouco pro mobile */

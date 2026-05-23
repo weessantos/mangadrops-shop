@@ -43,6 +43,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
+  padding: 12px;
 
   overflow: visible;
   scroll-snap-type: none;
@@ -100,7 +101,6 @@
   .collectionsTopbarLeft .collectionsMeta {
     display: none;
   }
-  
 }
 
 /* 📱 MOBILE - COLLECTIONS HOME */
@@ -579,6 +579,211 @@ button.badgePill {
   }
 }
 
+/* =========================================================
+   SWITCH ENTRE OBRA E EXTRAS NA COLEÇÃO
+   ========================================================= */
+
+.collectionTabs {
+  display: flex;
+  gap: 10px;
+
+  padding: 10px 10px;
+
+  margin-top: 24px;
+}
+
+.collectionTab {
+  flex: 1;
+
+  padding: 16px 18px;
+
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+
+  cursor: pointer;
+
+  background: linear-gradient(
+    180deg,
+    rgba(15, 15, 18, 0.95),
+    rgba(8, 8, 10, 0.95)
+  );
+
+  backdrop-filter: blur(14px);
+
+  color: white;
+
+  text-align: left;
+
+  font-size: 1.15rem;
+  font-weight: 800;
+
+  letter-spacing: -0.02em;
+
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.12);
+
+  transition: all 0.28s ease;
+
+  overflow: hidden;
+  position: relative;
+}
+
+.collectionTabTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  font-size: 1.15rem;
+  font-weight: 800;
+
+  line-height: 1.1;
+
+  letter-spacing: -0.02em;
+
+  color: #fff;
+
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+}
+
+.collectionTab span {
+  display: block;
+
+  margin-top: 8px;
+
+  opacity: 0.55;
+
+  font-size: 0.88rem;
+
+  font-weight: 500;
+
+  letter-spacing: 0;
+}
+
+.collectionTab:hover {
+  transform: translateY(-2px);
+
+  border-color: rgba(255, 50, 50, 0.2);
+}
+
+/* ativo */
+
+.collectionTab.active {
+  background: linear-gradient(
+    135deg,
+    rgba(25, 0, 0, 0.95),
+    rgba(12, 12, 15, 0.98)
+  );
+
+  border: 1px solid rgba(255, 50, 50, 0.45);
+
+  box-shadow:
+    inset 0 0 30px rgba(255, 0, 0, 0.08),
+    0 0 25px rgba(255, 0, 0, 0.12);
+}
+
+/* linha neon lateral */
+
+.collectionTab.active::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 4px;
+  height: 100%;
+
+  background: linear-gradient(to bottom, #ff3d3d, #ff0000);
+
+  box-shadow: 0 0 18px #ff2d2d;
+}
+
+.collectionTabTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  font-size: 1.35rem;
+  font-weight: 800;
+
+  letter-spacing: -0.02em;
+
+  color: #fff;
+
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+}
+
+.collectionControls {
+  display: flex;
+
+  justify-content: flex-end;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 0 12px;
+
+  margin: 18px 0 22px;
+}
+
+.sortLabel {
+  font-size: 0.9rem;
+
+  color: rgba(255, 255, 255, 0.65);
+
+  font-weight: 600;
+}
+
+.collectionSort {
+  min-width: 180px;
+
+  height: 46px;
+
+  padding: 0 18px;
+
+  border-radius: 999px;
+
+  border: 1px solid rgba(255, 50, 50, 0.15);
+
+  background: linear-gradient(
+    180deg,
+    rgba(15, 15, 18, 0.95),
+    rgba(8, 8, 10, 0.95)
+  );
+
+  color: #fff;
+
+  font-size: 0.95rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.25s;
+}
+
+.collectionSort:hover {
+  border-color: rgba(255, 50, 50, 0.4);
+
+  box-shadow: 0 0 18px rgba(255, 0, 0, 0.12);
+}
+
+/* =========================================================
+   COLLECTIONS DESKTOP PAGINATION / NETFLIX FEEL
+   ========================================================= */
+
+.collectionSort {
+  background: rgba(15, 15, 18, 0.95);
+
+  border: 1px solid rgba(255, 50, 50, 0.15);
+
+  color: white;
+
+  border-radius: 14px;
+
+  padding: 0 14px;
+
+  min-width: 170px;
+}
 /* =========================================================
    COLLECTIONS DESKTOP PAGINATION / NETFLIX FEEL
    ========================================================= */

@@ -682,6 +682,10 @@ async function loadVolumes(prefix) {
       ✏️ Editar Série
     </button>
 
+    <button onclick="openRelatedSeriesModal('${prefix}')">
+      📚 Adicionar Relacionado
+    </button>
+
     <button onclick="saveAllVolumes()">
       💾 Salvar Tudo
     </button>
@@ -772,7 +776,12 @@ async function loadVolumes(prefix) {
 
       <div class="field">
         <label>Adicionado em</label>
-        <input type="datetime-local" step="1" id="date-${prefix}-${v.number}" value="${v.added_at || ""}">
+        <input
+          type="datetime-local"
+          step="1"
+          id="date-${prefix}-${v.number}"
+          value="${v.added_at ? new Date(v.added_at).toISOString().slice(0, 19) : ""}"
+        />
       </div>
       <button class="save-btn" onclick="saveVolume('${prefix}', ${v.number})">💾 Salvar</button>
       <button onclick="deleteVolume('${prefix}', ${v.number})">
@@ -1078,6 +1087,91 @@ async function editSeries(prefix) {
       </div>
     </div>
   `;
+}
+
+// =======================
+// ABRIR MODAL DE EXTRAS
+// =======================
+async function openRelatedSeriesModal(prefix) {
+  const { data: parent } = await supabaseClient
+    .from("series")
+    .select("*")
+    .eq("prefix", prefix)
+    .single();
+
+  const modal = document.getElementById("modal");
+
+  modal.style.display = "flex";
+
+  modal.innerHTML = `
+    <div class="modal-content">
+      <h2>Relacionado de ${parent.title}</h2>
+
+      <input id="r-title" placeholder="Título">
+      <input id="r-prefix" placeholder="Prefix">
+
+      <select id="r-type">
+        <option value="novel">Novel</option>
+        <option value="spin_off">Spin-off</option>
+        <option value="databook">Databook</option>
+        <option value="artbook">Artbook</option>
+      </select>
+
+      <input id="r-format" placeholder="Formato">
+      <input id="r-edition" placeholder="Edition Label">
+      <input id="r-total" type="number" placeholder="Total volumes">
+      <input id="r-cover-price" type="number" step="0.01" placeholder="Preço de capa"/>
+
+      <div style="display:flex; gap:10px;">
+        <button onclick="closeModal()">
+          Cancelar
+        </button>
+
+        <button onclick="createRelatedSeries(${parent.id})">
+          Salvar
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// =======================
+// ADICIONAR RELACIONADO
+// =======================
+
+async function createRelatedSeries(parentId) {
+  const { data: parent } = await supabaseClient
+    .from("series")
+    .select("*")
+    .eq("id", parentId)
+    .single();
+
+  const payload = {
+    title: document.getElementById("r-title").value,
+    prefix: document.getElementById("r-prefix").value,
+
+    subtitle: parent.subtitle,
+    author: parent.author,
+    genre: parent.genre,
+    brand: parent.brand,
+
+    format: document.getElementById("r-format").value,
+    edition_label: document.getElementById("r-edition").value,
+
+    total_volumes: Number(document.getElementById("r-total").value),
+
+    cover_price: Number(document.getElementById("r-cover-price").value) || null,
+
+    content_type: document.getElementById("r-type").value,
+
+    parent_series_id: parentId,
+  };
+
+  await supabaseClient.from("series").insert([payload]);
+
+  closeModal();
+
+  showToast("Relacionado criado 🚀");
 }
 
 // =======================

@@ -17,6 +17,17 @@ function ProductCardBase({
   priority = false,
 }) {
   //console.log("🧪 PRODUCT:", product);
+
+  //Mapeamento do content_type para label legível
+  const contentTypeLabel = {
+    manga: "Mangá",
+    novel: "Novel",
+    databook: "Databook",
+    spin_off: "Spin-off",
+    artbook: "Artbook",
+    box: "Box",
+  };
+
   // 🔗 LINKS
   const mlUrl =
     typeof product?.affiliate?.mercadoLivre === "string"
@@ -162,7 +173,7 @@ function ProductCardBase({
     },
     [product, hasAffiliateLink, placement, onOpen],
   );
-  
+
   const fireBuy = useCallback(
     (store) => {
       track("click_buy", {
@@ -228,7 +239,13 @@ function ProductCardBase({
               <span className="metaDot" aria-hidden="true">
                 •
               </span>
-              <span className="metaVol">Vol. {product.volume}</span>
+              <span className="metaPublisher">{product.format}</span>
+              <span className="metaDot" aria-hidden="true">
+                •
+              </span>
+              <span className="metaType">
+                {contentTypeLabel[product.content_type] || "Mangá"}
+              </span>
             </>
           ) : null}
 

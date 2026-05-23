@@ -171,6 +171,14 @@ export default function ProductContent({ product, onClose, dragOffset }) {
 
   const reviewUrl = getReviewUrl(product);
 
+  const contentTypeLabel = {
+    manga: "Mangá",
+    novel: "Novel",
+    spin_off: "Spin-off",
+    databook: "Databook",
+    artbook: "Artbook",
+  };
+
   const mlUrl =
     typeof product?.affiliate?.mercadoLivre === "string"
       ? product.affiliate.mercadoLivre.trim()
@@ -314,14 +322,15 @@ export default function ProductContent({ product, onClose, dragOffset }) {
                   <span className="badge">{product.brand}</span>
                 )}
 
-                {Number.isFinite(Number(product.volume)) && (
-                  <span className="badge">
-                    Vol. {String(product.volume).padStart(2, "0")}
-                  </span>
-                )}
-
                 {product.format && (
                   <span className="badge subtle">{product.format}</span>
+                )}
+
+                {product.content_type && (
+                  <span className="badge subtle">
+                    {contentTypeLabel[product.content_type] ||
+                      product.content_type}
+                  </span>
                 )}
 
                 {product.genre && (
@@ -492,9 +501,10 @@ export default function ProductContent({ product, onClose, dragOffset }) {
                   <span className="badge">{product.brand}</span>
                 )}
 
-                {Number.isFinite(Number(product.volume)) && (
-                  <span className="badge">
-                    Vol. {String(product.volume).padStart(2, "0")}
+                {product.content_type && (
+                  <span className="badge subtle">
+                    {contentTypeLabel[product.content_type] ||
+                      product.content_type}
                   </span>
                 )}
 

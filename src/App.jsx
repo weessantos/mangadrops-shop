@@ -413,6 +413,14 @@ function AppShell() {
     );
   }, [qParam, seriesNames]);
 
+  const activeSeriesId = useMemo(() => {
+    const main = products.find(
+      (p) => p.series === activeSeries && !p.parent_series_id,
+    );
+
+    return main?.series_id ?? null;
+  }, [products, activeSeries]);
+
   const baseFiltered = useMemo(() => {
     const { words, numbers } = parseQuery(qParam);
 
@@ -435,7 +443,10 @@ function AppShell() {
         }
 
         if (activeSeries) {
-          return (p.series || "Outros") === activeSeries;
+          return (
+            (p.series || "Outros") === activeSeries ||
+            p.parent_series_id === activeSeriesId
+          );
         }
 
         return true;
@@ -598,7 +609,18 @@ function AppShell() {
         return db - da;
       });
     } else {
-      arr.sort((a, b) => Number(a.volume ?? 0) - Number(b.volume ?? 0));
+      arr.sort((a, b) => {
+        // agrupa pela obra primeiro
+        const seriesCompare = (a.series || "").localeCompare(
+          b.series || "",
+          "pt-BR",
+        );
+
+        if (seriesCompare !== 0) return seriesCompare;
+
+        // depois ordena os volumes
+        return Number(a.volume ?? 0) - Number(b.volume ?? 0);
+      });
     }
 
     return arr;

@@ -16,7 +16,7 @@ export function useSeriesList(products, seriesCatalog) {
   const seriesList = useMemo(() => {
     const groups = new Map();
 
-    for (const p of products) {
+    for (const p of products.filter((p) => p.parent_series_id === null)) {
       const key =
         p.series ||
         p.series_title ||
@@ -36,7 +36,7 @@ export function useSeriesList(products, seriesCatalog) {
 
         const totalRaw =
           first?.total_volumes ?? // 🔥 vindo do banco (correto)
-          cat.total_volumes;   // fallback (se tiver)
+          cat.total_volumes; // fallback (se tiver)
 
         const total = Number.isFinite(Number(totalRaw))
           ? Number(totalRaw)
@@ -64,14 +64,9 @@ export function useSeriesList(products, seriesCatalog) {
           slug: slugify(name),
 
           // 🔥 agora usa thumb do banco primeiro
-          thumb:
-            first?.thumb ||
-            cat.thumb ||
-            "/assets/default-series.webp",
+          thumb: first?.thumb || cat.thumb || "/assets/default-series.webp",
 
-          subtitle:
-            cat.subtitle ||
-            "Clique para ver os volumes disponíveis.",
+          subtitle: cat.subtitle || "Clique para ver os volumes disponíveis.",
 
           rangeLabel,
           haveLabel,
@@ -91,7 +86,7 @@ export function useSeriesList(products, seriesCatalog) {
 
   const seriesNames = useMemo(
     () => seriesList.map((s) => s.name),
-    [seriesList]
+    [seriesList],
   );
 
   return { seriesList, seriesBySlug, seriesNames };

@@ -80,9 +80,12 @@ export function createSeriesVolumes({
   addedAtByVolume = {},
   format = "",
   coverPrice = null,
+  parentSeriesId = null,
+  contentType = null,
 }) {
-  const normalizedDefaultCoverPrice =
-  normalizePrice(defaultCoverPrice ?? coverPrice);
+  const normalizedDefaultCoverPrice = normalizePrice(
+    defaultCoverPrice ?? coverPrice,
+  );
 
   return Array.from({ length: end - start + 1 }, (_, i) => {
     const volume = start + i;
@@ -112,6 +115,9 @@ export function createSeriesVolumes({
       genreList: splitMulti(genre),
       format: finalFormat.trim(),
 
+      parent_series_id: parentSeriesId || null,
+      content_type: contentType || null,
+
       image: img(`${prefix}${vv}.${imageExt}`),
 
       affiliate: normalizeAffiliate(affiliateByVolume[volume]),
@@ -120,7 +126,6 @@ export function createSeriesVolumes({
       addedAt: addedAtByVolume[volume] || null,
 
       coverPrice,
-
     };
   });
 }
