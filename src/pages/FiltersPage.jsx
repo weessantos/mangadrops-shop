@@ -40,6 +40,7 @@ import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 
 import "../styles/filters-page.css";
 import { supabaseClient } from "../lib/supabase";
+import Loader from "../components/Loader.jsx";
 
 /* ============================================================================
    HELPERS
@@ -237,22 +238,14 @@ export default function FiltersPage() {
     });
   };
 
-  const close = () => navigate(-1);
+  const close = () => navigate("/");
 
   /* ==========================================================================
      LOADING
   ========================================================================== */
 
   if (loading) {
-    return (
-      <div
-        style={{
-          padding: 24,
-        }}
-      >
-        Carregando...
-      </div>
-    );
+    return <Loader />;
   }
 
   /* ==========================================================================

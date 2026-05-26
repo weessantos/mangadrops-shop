@@ -175,7 +175,7 @@ export function PageHero({
           className="heroBackBtn"
           onClick={onBack}
         >
-          ← Voltar para {title}
+          ← Voltar para Home 🏠"
         </button>
 
         <span className="heroTag">

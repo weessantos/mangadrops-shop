@@ -432,7 +432,7 @@ function AppShell() {
   }, [products, activeSeries]);
 
   const baseFiltered = useMemo(() => {
-    const { words, numbers } = parseQuery(qParam);
+    const { words, numbers, prefix } = parseQuery(qParam);
 
     return products
       .filter((p) => {
@@ -449,7 +449,19 @@ function AppShell() {
          */
 
         if (foundSeries?.length) {
-          return foundSeries.includes(p.series);
+          return foundSeries.some((seriesName) => {
+            // obra principal
+            if (p.series === seriesName) {
+              return true;
+            }
+
+            // filhos (novels, extras etc.)
+            const parent = products.find(
+              (x) => x.series === seriesName && !x.parent_series_id,
+            );
+
+            return parent && p.parent_series_id === parent.series_id;
+          });
         }
 
         if (activeSeries) {
@@ -516,7 +528,9 @@ function AppShell() {
          * -> ["one","piece"]
          */
 
-        if (words.length) {
+        // Se a busca já resolveu por alias,
+        // não exige palavras no texto
+        if (words.length && !prefix) {
           const hasAllWords = words.every((w) => {
             // ignora palavras muito pequenas
             if (w.length <= 2) {

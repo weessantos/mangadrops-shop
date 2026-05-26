@@ -149,11 +149,10 @@ export function useSeriesList(products, seriesCatalog) {
           return {
             name,
 
-            slug: slugify(name),
+            // usado pela busca/aliases
+            prefix: first?.prefix,
 
-            // =========================
-            // Imagem
-            // =========================
+            slug: slugify(name),
 
             thumb:
               first?.thumb ||
@@ -216,7 +215,11 @@ export function useSeriesList(products, seriesCatalog) {
   // ==========================================================================
 
   const seriesNames = useMemo(
-    () => seriesList.map((s) => s.name),
+    () =>
+      seriesList.map((s) => ({
+        name: s.name,
+        prefix: s.prefix,
+      })),
 
     [seriesList],
   );

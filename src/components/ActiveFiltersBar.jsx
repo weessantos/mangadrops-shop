@@ -102,12 +102,6 @@ export default function ActiveFiltersBar() {
     return arr;
   }, [info]);
 
-  const clear = () => {
-    navigate("/filtros", {
-      replace: true,
-    });
-  };
-
   const openFilters = () => {
     navigate(`/filtros${location.search}`);
   };
@@ -129,18 +123,10 @@ export default function ActiveFiltersBar() {
         <div className="activeFiltersRight">
           <button
             type="button"
-            className="activeFiltersBtn ghost"
-            onClick={clear}
-          >
-            Limpar
-          </button>
-
-          <button
-            type="button"
             className="activeFiltersBtn"
             onClick={openFilters}
           >
-            Editar
+            Editar filtros
           </button>
         </div>
 

@@ -6,7 +6,7 @@
 // ----------------------------------------------------------------------------
 // Centraliza dados e adaptação das séries.
 //
-// Ele é responsável por:
+// Responsável por:
 //
 // ✅ Buscar séries no Supabase
 // ✅ Adaptar API → Factory
@@ -14,61 +14,49 @@
 // ✅ Gerar catálogo
 // ✅ Gerar produtos
 //
+// NÃO deve:
 //
-//
-// O QUE ESTE ARQUIVO NÃO DEVE FAZER
-// ----------------------------------------------------------------------------
-//
-// ❌ Não deve renderizar componentes
-// ❌ Não deve acessar DOM
-// ❌ Não deve montar caminhos manualmente
-// ❌ Não deve conter regras visuais
+// ❌ Filtrar busca
+// ❌ Aplicar regras de UI
+// ❌ Renderizar
 //
 // ============================================================================
+
+import { supabaseClient } from "../../lib/supabase";
 
 import { img } from "../../utils/images";
 
 import { createSeries, createSeriesVolumes } from "./series.factory.js";
 
-import { supabaseClient } from "../../lib/supabase";
-
 // ============================================================================
-// API → FACTORY
+// buildSeriesFromAPI
 // ============================================================================
 //
-// RESPONSABILIDADE
-// ----------------------------------------------------------------------------
-// Converte dados vindos da API
-// para o formato utilizado pela factory.
+// Converte API → Factory
 //
 // ============================================================================
 
-function buildSeriesFromAPI(apiData) {
-  const SERIES = {};
+function buildSeriesFromAPI(data = []) {
+  const series = {};
 
-  apiData.forEach((s) => {
+  for (const s of data) {
     // =========================
-    // Cria série uma vez
+    // Cria série apenas uma vez
     // =========================
 
-    if (!SERIES[s.prefix]) {
-      SERIES[s.prefix] = createSeries(s.prefix, {
+    if (!series[s.prefix]) {
+      series[s.prefix] = createSeries(s.prefix, {
         series: s.series_title,
 
         start: 1,
-
         end: s.total_volumes,
 
         brand: s.brand,
-
         author: s.author,
-
         genre: s.genre,
 
         subtitle: s.subtitle,
-
         format: s.format,
-
         editionLabel: s.edition_label,
 
         coverPrice: s.cover_price,
@@ -92,7 +80,7 @@ function buildSeriesFromAPI(apiData) {
     // Volume atual
     // =========================
 
-    const current = SERIES[s.prefix];
+    const current = series[s.prefix];
 
     current.affiliateByVolume[s.number] = {
       amazon: s.amazon?.trim() || null,
@@ -111,19 +99,16 @@ function buildSeriesFromAPI(apiData) {
     if (s.added_at) {
       current.addedAtByVolume[s.number] = s.added_at;
     }
-  });
+  }
 
-  return SERIES;
+  return series;
 }
 
 // ============================================================================
 // getSERIES
 // ============================================================================
 //
-// RESPONSABILIDADE
-// ----------------------------------------------------------------------------
-// Busca dados do Supabase
-// e retorna séries adaptadas.
+// Busca e adapta séries
 //
 // ============================================================================
 
@@ -133,7 +118,7 @@ export async function getSERIES() {
     .select("*");
 
   if (error) {
-    console.error(error);
+    console.error("Erro ao buscar séries:", error);
 
     return {};
   }
@@ -145,38 +130,38 @@ export async function getSERIES() {
 // getProducts
 // ============================================================================
 //
-// RESPONSABILIDADE
-// ----------------------------------------------------------------------------
 // Gera produtos prontos
-// a partir das séries.
 //
 // ============================================================================
 
 export async function getProducts() {
-  const SERIES = await getSERIES();
+  const series = await getSERIES();
 
-  return Object.values(SERIES).flatMap((s) => createSeriesVolumes(s));
+  return Object.values(series).flatMap(createSeriesVolumes);
 }
 
 // ============================================================================
 // getSeriesCatalog
 // ============================================================================
 //
-// RESPONSABILIDADE
-// ----------------------------------------------------------------------------
 // Gera catálogo simplificado
-// para utilização no site.
 //
 // ============================================================================
 
 export async function getSeriesCatalog() {
-  const SERIES = await getSERIES();
+  const series = await getSERIES();
 
   return [
-    ...Object.values(SERIES).map((s) => ({
+    ...Object.values(series).map((s) => ({
       name: s.series,
 
-      totalVolumes: s.end - s.start + 1,
+      // usado para busca/aliases
+      prefix: s.prefix,
+
+      parentPrefix: s.parentPrefix,
+
+      totalVolumes:
+        s.end - s.start + 1,
 
       thumb: s.thumb,
 
@@ -187,10 +172,6 @@ export async function getSeriesCatalog() {
       genre: s.genre,
     })),
 
-    // =========================
-    // Categoria especial
-    // =========================
-
     {
       name: "Outros",
 
@@ -198,7 +179,8 @@ export async function getSeriesCatalog() {
         prefix: "others-series.webp",
       }),
 
-      subtitle: "Outras obras e volumes avulsos.",
+      subtitle:
+        "Outras obras e volumes avulsos.",
     },
   ];
 }

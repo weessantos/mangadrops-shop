@@ -75,8 +75,8 @@ export default function SearchResultsPage({
         subtitle={`Pesquisando por: "${qParam}"`}
         total={products.length}
         background="/search-bg.jpeg"
-        backLabel="← Voltar"
-        onBack={() => navigate(-1)}
+        backLabel="← Voltar para Home 🏠"
+        onBack={() => navigate("/")}
       />
 
       {/* ==========================================================

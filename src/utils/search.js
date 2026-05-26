@@ -114,32 +114,12 @@
 // Definição de aliases oficiais
 // ============================================================================
 
-export const SERIES_ALIASES = {
-  "jujutsu kaisen": ["jjk", "jujutsu"],
-
-  "attack on titan": ["aot", "snk", "shingeki"],
-
-  "one piece": ["op"],
-
-  kagurabachi: ["kgb"],
-
-  dandadan: ["ddd"],
-
-  "sakamoto days": ["skmt"],
-
-  "vinland saga": ["vinland"],
-
-  "gash bell": ["gb", "gashbell"],
-
-  "atelier of witch hat": ["ahw"],
-
-  versus: ["vs"],
-};
+import { SERIES_ALIASES } from "../data/aliases";
 
 export const ALIASES = Object.entries(SERIES_ALIASES).reduce(
-  (acc, [series, aliases]) => {
+  (acc, [prefix, aliases]) => {
     aliases.forEach((alias) => {
-      acc[alias] = series;
+      acc[alias.toLowerCase().trim()] = prefix;
     });
 
     return acc;
@@ -335,13 +315,22 @@ export function expandAliases(tokens, aliases = ALIASES) {
 export function parseQuery(q, aliases = ALIASES) {
   const norm = normalizeText(q);
 
-  let tokens = norm.split(/\s+/).filter(Boolean);
+  const tokens = norm.split(/\s+/).filter(Boolean);
 
-  tokens = expandAliases(tokens, aliases);
+  let detectedPrefix = null;
+
+  for (const token of tokens) {
+    const prefix = aliases[token];
+
+    if (prefix) {
+      detectedPrefix = prefix;
+      break;
+    }
+  }
 
   const numbers = tokens
     .map((t) => (/^\d+$/.test(t) ? Number(t) : null))
-    .filter((n) => Number.isFinite(n));
+    .filter(Number.isFinite);
 
   const words = tokens.filter((t) => !/^\d+$/.test(t));
 
@@ -349,9 +338,9 @@ export function parseQuery(q, aliases = ALIASES) {
     tokens,
     words,
     numbers,
+    prefix: detectedPrefix,
   };
 }
-
 // ============================================================================
 // productSearchText
 // ============================================================================
@@ -570,15 +559,14 @@ export function detectExactSeries(query, seriesNames) {
 // ============================================================================
 
 export function pickSeriesFromQuery(query, seriesNames) {
-  console.log("================================");
-  console.log("🔎 QUERY ORIGINAL:", query);
-  console.log("📚 SERIES RECEBIDAS:", seriesNames);
+  const { words, prefix } = parseQuery(query);
 
-  const { words } = parseQuery(query);
-
-  if (!words.length) return [];
+  if (!words.length && !prefix) {
+    return [];
+  }
 
   const queryNorm = normalizeText(query);
+
   const queryCompact = normalizeCompact(query);
 
   const matches = [];
@@ -587,36 +575,40 @@ export function pickSeriesFromQuery(query, seriesNames) {
     const name = item.name;
 
     const nameNorm = normalizeText(name);
+
     const nameCompact = normalizeCompact(name);
+
     const acronym = getAcronym(name);
 
     let score = 0;
 
-    // match direto
-    if (nameNorm.includes(queryNorm))
-      score += 5;
+    // =========================
+    // ALIAS → PREFIX
+    // =========================
 
-    // match perfeito
-    if (nameCompact === queryCompact)
-      score += 100;
+    const comparePrefix = item.parentPrefix || item.prefix;
 
-    // match forte
-    if (nameCompact.includes(queryCompact))
-      score += 10;
-
-    // match reverso
-    if (queryCompact.includes(nameCompact))
-      score += 8;
-
-    // palavras
-    for (const w of words) {
-      if (nameNorm.includes(w))
-        score += 1;
+    if (prefix && normalizeCompact(comparePrefix) === prefix) {
+      score += 1000;
     }
 
-    // sigla
-    if (acronym === queryCompact)
-      score += 6;
+    // =========================
+    // Busca normal
+    // =========================
+
+    if (nameNorm.includes(queryNorm)) score += 5;
+
+    if (nameCompact === queryCompact) score += 100;
+
+    if (nameCompact.includes(queryCompact)) score += 10;
+
+    if (queryCompact.includes(nameCompact)) score += 8;
+
+    for (const w of words) {
+      if (nameNorm.includes(w)) score += 1;
+    }
+
+    if (acronym === queryCompact) score += 6;
 
     if (score > 0) {
       matches.push({
@@ -627,8 +619,6 @@ export function pickSeriesFromQuery(query, seriesNames) {
   }
 
   matches.sort((a, b) => b.score - a.score);
-
-  console.log("🥇 RESULTADOS:", matches);
 
   return matches.map((m) => m.name);
 }

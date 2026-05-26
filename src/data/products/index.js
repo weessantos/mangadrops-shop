@@ -2,142 +2,71 @@
 // src/data/products/index.js
 // ============================================================================
 //
-// RESPONSABILIDADE DESTE ARQUIVO
+// RESPONSABILIDADE
 // ----------------------------------------------------------------------------
-// Centraliza a obtenção dos produtos do projeto.
 //
-// Ele é responsável por:
-//
-// ✅ Buscar produtos no Supabase
-// ✅ Adaptar API → formato interno
-// ✅ Resolver imagens via util central
-// ✅ Padronizar estrutura dos produtos
+// ✅ Obter produtos
 // ✅ Aplicar filtros simples
+// ✅ Aplicar busca
 //
+// NÃO deve:
 //
-//
-// O QUE ESTE ARQUIVO NÃO DEVE FAZER
-// ----------------------------------------------------------------------------
-//
-// ❌ Não deve usar React
-// ❌ Não deve acessar DOM
-// ❌ Não deve renderizar componentes
-// ❌ Não deve montar caminhos de imagem manualmente
-// ❌ Não deve conter lógica visual
+// ❌ Buscar Supabase
+// ❌ Adaptar API
+// ❌ Montar imagens
 //
 // ============================================================================
 
-import { supabaseClient } from "../../lib/supabase";
-import { img } from "../../utils/images";
+import { getProducts as getRawProducts } from "./series.catalog";
+
+import {
+  normalizeText,
+  parseQuery,
+  productSearchText,
+} from "../../utils/search";
 
 // ============================================================================
-// pad2
-// ============================================================================
-//
-// RESPONSABILIDADE
-// ----------------------------------------------------------------------------
-// Adiciona zero à esquerda.
-//
-// EX:
-//
-// 1 → 01
-// 8 → 08
-// 15 → 15
-//
-// ============================================================================
-
-function pad2(n) {
-  return String(n).padStart(2, "0");
-}
-
-// ============================================================================
-// mapApiProduct
+// filterProducts
 // ============================================================================
 //
 // RESPONSABILIDADE
 // ----------------------------------------------------------------------------
-// Converte o formato retornado pelo Supabase
-// para o formato utilizado internamente pelo site.
+// Filtra produtos por:
 //
-// API
-//
-// {
-//   series_title: "...",
-//   number: 1
-// }
-//
-// ↓
-//
-// PRODUTO
-//
-// {
-//   title: "...",
-//   image: "..."
-// }
+// - texto
+// - aliases
+// - prefix
+// - parent_prefix
 //
 // ============================================================================
 
-function mapApiProduct(v) {
-  const vv = pad2(v.number);
+function filterProducts(products, search = "") {
+  if (!search) {
+    return products;
+  }
 
-  return {
-    id: `${v.prefix}-${vv}`,
+  const normalizedSearch = normalizeText(search);
 
-    prefix: v.prefix,
+  const { prefix } = parseQuery(search);
 
-    title: `${v.series_title} Vol. ${vv}`,
-
-    total_volumes: v.total_volumes,
-
-    // essenciais para busca / filtros
-    series: v.series_title,
-    volume: v.number,
-
+  return products.filter((p) => {
     // =========================
-    // IMAGEM
+    // Busca textual
     // =========================
 
-    image: img({
-      prefix: v.prefix,
-      parentPrefix: v.parent_prefix,
-      file: `${v.prefix}${vv}.webp`,
-    }),
+    const textMatch = productSearchText(p).includes(normalizedSearch);
 
-    thumb: v.thumb,
+    // =========================
+    // Busca por aliases
+    // =========================
 
-    brand: v.brand,
-    author: v.author,
-    genre: v.genre,
-    format: v.format,
+    const prefixMatch =
+      prefix &&
+      (normalizeText(p.prefix) === prefix ||
+        normalizeText(p.parent_prefix) === prefix);
 
-    coverPrice: v.cover_price,
-
-    discount:
-      Number(v.discount) || 0,
-
-    parent_series_id:
-      v.parent_series_id,
-
-    content_type:
-      v.content_type,
-
-    description:
-      v.description,
-
-    tiktokUrl:
-      v.tiktok,
-
-    addedAt:
-      v.added_at,
-
-    affiliate: {
-      amazon:
-        v.amazon,
-
-      mercadoLivre:
-        v.mercado_livre,
-    },
-  };
+    return textMatch || prefixMatch;
+  });
 }
 
 // ============================================================================
@@ -146,50 +75,41 @@ function mapApiProduct(v) {
 //
 // RESPONSABILIDADE
 // ----------------------------------------------------------------------------
-// Busca produtos no banco
-// e retorna uma lista padronizada.
-//
-// EX:
-//
-// const products = await getProducts();
-//
-// const products = await getProducts(
-//   "one piece"
-// );
+// Retorna produtos já filtrados
 //
 // ============================================================================
 
 export async function getProducts(search = "") {
-  const { data, error } =
-    await supabaseClient
-      .from("series_volumes_view")
-      .select("*");
+  console.log("🔎 getProducts:", search);
 
-  if (error) {
-    console.error(
-      "Erro ao buscar produtos:",
-      error,
-    );
+  const products = await getRawProducts();
 
-    return [];
+  function filterProducts(products, search = "") {
+    console.log("🧪 filterProducts:", search);
+
+    if (!search) {
+      return products;
+    }
+
+    const normalizedSearch = normalizeText(search);
+
+    const { prefix } = parseQuery(search);
+
+    console.log("🎯 Prefix:", prefix);
+
+    return products.filter((p) => {
+      const textMatch = productSearchText(p).includes(normalizedSearch);
+
+      const prefixMatch =
+        prefix &&
+        (normalizeText(p.prefix) === prefix ||
+          normalizeText(p.parent_prefix) === prefix);
+
+      if (prefixMatch) {
+        console.log("✅", p.title);
+      }
+
+      return textMatch || prefixMatch;
+    });
   }
-
-  const products =
-    data.map(mapApiProduct);
-
-  // =========================
-  // FILTRO DE BUSCA
-  // =========================
-
-  if (search) {
-    return products.filter((p) =>
-      p.title
-        .toLowerCase()
-        .includes(
-          search.toLowerCase(),
-        ),
-    );
-  }
-
-  return products;
 }
