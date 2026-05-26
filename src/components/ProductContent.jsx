@@ -42,9 +42,15 @@ import { track } from "../utils/analytics.js";
 import { formatPrice } from "../utils/priceLoader";
 import { getDiscountState, toNumber } from "../utils/pricing";
 import { hasReview, getReviewUrl } from "../utils/review";
+import { img } from "../utils/images";
 
-const base = import.meta.env.BASE_URL;
-const img = (path) => `${base}assets/${path}`;
+const ML_ICON = img({
+  prefix: "mercadolivre.svg",
+});
+
+const AMAZON_ICON = img({
+  prefix: "amazon.svg",
+});
 
 function getTikTokEmbedUrl(tiktokUrl) {
   if (!tiktokUrl) return null;
@@ -223,7 +229,7 @@ export default function ProductContent({ product, onClose, dragOffset }) {
             <StoreButton
               href={mlUrl}
               store="Mercado Livre"
-              logo={img("mercadolivre.svg")}
+              logo={ML_ICON}
               alt="Mercado Livre"
               price={mlPrice}
               discount={product.discount}
@@ -243,7 +249,7 @@ export default function ProductContent({ product, onClose, dragOffset }) {
             <StoreButton
               href={amzUrl}
               store="Amazon"
-              logo={img("amazon.svg")}
+              logo={AMAZON_ICON}
               alt="Amazon"
               price={amazonPrice}
               discount={product.discount}

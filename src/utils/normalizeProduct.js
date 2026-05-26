@@ -1,81 +1,162 @@
+// ============================================================================
+// src/utils/normalizeProduct.js
+// ============================================================================
+//
+// RESPONSABILIDADE DESTE ARQUIVO
+// ----------------------------------------------------------------------------
+// Padroniza produtos vindos da API.
+//
+// Ele é responsável por:
+//
+// ✅ Normalizar campos
+// ✅ Garantir tipos seguros
+// ✅ Gerar slugs
+// ✅ Resolver imagens via util central
+// ✅ Gerar URL interna
+//
+//
+//
+// O QUE ESTE ARQUIVO NÃO DEVE FAZER
+// ----------------------------------------------------------------------------
+//
+// ❌ Não deve montar caminhos manualmente
+// ❌ Não deve conhecer assets
+// ❌ Não deve acessar React
+// ❌ Não deve acessar DOM
+//
+// ============================================================================
+
+import { img } from "./images";
+
+// ============================================================================
+// slugify
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Gera slugs amigáveis.
+//
+// EX:
+//
+// "One Piece"
+// → "one-piece"
+//
+// ============================================================================
+
+function slugify(str) {
+  return str
+    ?.toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+// ============================================================================
+// normalizeProduct
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Converte produto bruto vindo da API
+// para o formato utilizado pelo projeto.
+//
+// ============================================================================
+
 export function normalizeProduct(p) {
-  function slugify(str) {
-    return str
-      ?.toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
-  }
+  // =========================
+  // número seguro
+  // =========================
 
-  const base = import.meta.env.BASE_URL;
-
-  // 🔢 número seguro
   const volumeNumber = Number(p.number);
 
-  const paddedNumber =
-    Number.isFinite(volumeNumber)
-      ? String(volumeNumber).padStart(2, "0")
-      : null;
+  const paddedNumber = Number.isFinite(volumeNumber)
+    ? String(volumeNumber).padStart(2, "0")
+    : null;
 
-  // 🖼 imagem do volume
+  // =========================
+  // imagem do volume
+  // =========================
+
   const volumeImage =
     p.prefix && paddedNumber
-      ? `${base}assets/${p.prefix}${paddedNumber}.webp`
+      ? img({
+          prefix: p.prefix,
+
+          parentPrefix: p.parent_prefix,
+
+          file: `${p.prefix}${paddedNumber}.webp`,
+        })
       : null;
 
-  // 🔥 SLUGS
+  // =========================
+  // slugs
+  // =========================
+
   const seriesSlug = slugify(p.series_title);
 
   const volumeSlug =
-    p.prefix && paddedNumber
-      ? `${p.prefix}-${paddedNumber}`
-      : null;
+    p.prefix && paddedNumber ? `${p.prefix}-${paddedNumber}` : null;
 
-  const url =
-    seriesSlug && volumeSlug
-      ? `/${seriesSlug}/${volumeSlug}`
-      : null;
+  const url = seriesSlug && volumeSlug ? `/${seriesSlug}/${volumeSlug}` : null;
 
   return {
     ...p,
 
-    // 🔥 IDENTIDADE
+    // =========================
+    // identidade
+    // =========================
+
     id: volumeSlug || `${p.prefix}-${p.number}` || crypto.randomUUID(),
 
-    // 🔥 TÍTULO
+    // =========================
+    // conteúdo
+    // =========================
+
     title: p.volume_title,
 
-    // 🔥 SÉRIE
     series: p.series_title,
 
-    // 🔥 PREFIX (IMPORTANTE PRA URL)
     prefix: p.prefix,
 
-    // 🔥 VOLUME SEGURO
     volume: Number.isFinite(volumeNumber) ? volumeNumber : null,
 
-    // 🔥 PREÇOS
+    // =========================
+    // preços
+    // =========================
+
     coverPrice: p.cover_price,
+
     best_price: p.best_price,
 
-    // 🔥 IMAGEM
-    image:
-      volumeImage ||
-      (p.thumb ? `${base}${p.thumb}` : null) ||
-      "/placeholder.png",
+    // =========================
+    // imagem
+    // =========================
 
-    // 🔥 LINKS
+    image: volumeImage || p.thumb || "/placeholder.png",
+
+    // =========================
+    // afiliados
+    // =========================
+
     affiliate: {
       amazon: p.amazon,
+
       mercadoLivre: p.mercado_livre,
     },
 
-    // 🔥 PREÇOS LOJAS
+    // =========================
+    // preços externos
+    // =========================
+
     amazonPrice: p.amazon_price,
+
     mlPrice: p.mercado_livre_price,
 
-    // 🔥 OUTROS
+    // =========================
+    // dados extras
+    // =========================
+
     brand: p.brand,
     genre: p.genre,
     format: p.format,
@@ -83,7 +164,10 @@ export function normalizeProduct(p) {
     discount: p.discount,
     addedAt: p.added_at,
 
-    // 🧭 SLUGS E URL (GARANTIDO)
+    // =========================
+    // navegação
+    // =========================
+
     seriesSlug,
     volumeSlug,
     url,

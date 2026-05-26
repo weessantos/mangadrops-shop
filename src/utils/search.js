@@ -576,92 +576,59 @@ export function pickSeriesFromQuery(query, seriesNames) {
 
   const { words } = parseQuery(query);
 
-  console.log("🧠 WORDS:", words);
-
-  if (!words.length) {
-    console.log("❌ SEM WORDS");
-    return null;
-  }
+  if (!words.length) return [];
 
   const queryNorm = normalizeText(query);
   const queryCompact = normalizeCompact(query);
 
-  console.log("🧼 QUERY NORMAL:", queryNorm);
-  console.log("🧼 QUERY COMPACT:", queryCompact);
-
-  let best = {
-    name: null,
-    score: 0,
-  };
+  const matches = [];
 
   for (const item of seriesNames) {
     const name = item.name;
-
-    console.log("----------------------------");
-    console.log("📖 TESTANDO:", name);
 
     const nameNorm = normalizeText(name);
     const nameCompact = normalizeCompact(name);
     const acronym = getAcronym(name);
 
-    console.log("➡️ NORMAL:", nameNorm);
-    console.log("➡️ COMPACT:", nameCompact);
-    console.log("➡️ ACRONYM:", acronym);
-
     let score = 0;
 
     // match direto
-    if (nameNorm.includes(queryNorm)) {
+    if (nameNorm.includes(queryNorm))
       score += 5;
-      console.log("✅ MATCH DIRETO +5");
-    }
 
     // match perfeito
-    if (nameCompact === queryCompact) {
+    if (nameCompact === queryCompact)
       score += 100;
-      console.log("✅ MATCH PERFEITO +100");
-    }
 
     // match forte
-    if (nameCompact.includes(queryCompact)) {
+    if (nameCompact.includes(queryCompact))
       score += 10;
-      console.log("✅ MATCH FORTE +10");
-    }
 
     // match reverso
-    if (queryCompact.includes(nameCompact)) {
+    if (queryCompact.includes(nameCompact))
       score += 8;
-      console.log("✅ MATCH REVERSO +8");
-    }
 
     // palavras
     for (const w of words) {
-      if (nameNorm.includes(w)) {
+      if (nameNorm.includes(w))
         score += 1;
-        console.log(`✅ WORD MATCH "${w}" +1`);
-      }
     }
 
     // sigla
-    if (acronym === queryCompact) {
+    if (acronym === queryCompact)
       score += 6;
-      console.log("✅ SIGLA +6");
-    }
 
-    console.log("🏁 SCORE FINAL:", score);
-
-    if (score > best.score) {
-      best = {
+    if (score > 0) {
+      matches.push({
         name,
         score,
-      };
-
-      console.log("🏆 NOVO BEST:", best);
+      });
     }
   }
 
-  console.log("================================");
-  console.log("🥇 RESULTADO FINAL:", best);
+  matches.sort((a, b) => b.score - a.score);
 
-  return best.score >= 1 ? best.name : null;
+  console.log("🥇 RESULTADOS:", matches);
+
+  return matches.map((m) => m.name);
 }

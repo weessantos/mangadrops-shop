@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 
 import CollectionHero from "../components/CollectionHero";
 import ProductCard from "../components/ProductCard";
+import { sortProducts } from "../utils/sort";
 
 /**
  * ======================================================
@@ -90,39 +91,31 @@ export default function CollectionPage({
 
   const selectedProducts = activeTab === "main" ? mainProducts : extraProducts;
 
+  // // =========================
+  // // DEBUG EXTRAS
+  // // =========================
+
+  // console.log(
+  //   "🧪 PRODUCTS NA COLLECTION",
+  //   selectedProducts.map((p) => ({
+  //     title: p.title,
+
+  //     prefix: p.prefix,
+
+  //     parent_series_id: p.parent_series_id,
+
+  //     parent_prefix: p.parent_prefix,
+
+  //     image: p.image,
+  //   })),
+  // );
+
   // =========================
   // ORDENAÇÃO
   // Ordena TUDO primeiro
   // =========================
 
-  const sortedProducts = [...selectedProducts].sort((a, b) => {
-    switch (sortBy) {
-      case "volumeDesc":
-        return Number(b.volume || 0) - Number(a.volume || 0);
-
-      case "priceAsc":
-        return Number(a.best_price || 99999) - Number(b.best_price || 99999);
-
-      case "priceDesc":
-        return Number(b.best_price || 0) - Number(a.best_price || 0);
-
-      case "recent":
-        return new Date(b.addedAt || 0) - new Date(a.addedAt || 0);
-
-      // padrão:
-      // Episode A Vol01
-      // Episode A Vol02
-      // Novel A Vol01
-      // Novel A Vol02
-
-      case "az":
-      default:
-        return (
-          (a.series || "").localeCompare(b.series || "", "pt-BR") ||
-          Number(a.volume || 0) - Number(b.volume || 0)
-        );
-    }
-  });
+  const sortedProducts = sortProducts(selectedProducts, sortBy);
 
   // =========================
   // PAGINAÇÃO
@@ -135,6 +128,30 @@ export default function CollectionPage({
 
   const hasMore = displayedProducts.length < selectedProducts.length;
 
+  // =========================
+  // PREFIX DA SÉRIE
+  // =========================
+  //
+  // Responsabilidade:
+  // Encontrar o prefix REAL
+  // da coleção atual.
+  //
+  // Sempre usa a obra principal
+  // como referência para o hero.
+  //
+  // Ex:
+  //
+  // Fullmetal Alchemist
+  // → fma
+  //
+  // One Piece + extras
+  // → op
+  //
+  // =========================
+
+  const seriesPrefix =
+    mainProducts[0]?.prefix || extraProducts[0]?.parent_series_id || null;
+
   return (
     <section
       className="collectionsSection"
@@ -142,7 +159,7 @@ export default function CollectionPage({
       ref={collectionsSectionRef}
     >
       <CollectionHero
-        seriesSlug={seriesSlug}
+        seriesSlug={seriesPrefix}
         title={activeSeries}
         total={selectedProducts.length}
         onBack={clearSeries}

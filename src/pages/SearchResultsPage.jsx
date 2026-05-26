@@ -59,6 +59,8 @@ export default function SearchResultsPage({
   setPage,
   openProduct,
   qParam = "",
+  sortBy,
+  setSortBy,
 }) {
   const navigate = useNavigate();
 
@@ -82,6 +84,30 @@ export default function SearchResultsPage({
       ========================================================== */}
 
       <ActiveFiltersBar />
+
+      {/* ==========================================================
+          ORDENAÇÃO
+      ========================================================== */}
+
+      <section className="collectionControls">
+        <span className="sortLabel">Ordenar:</span>
+
+        <select
+          className="collectionSort"
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+        >
+          <option value="az">A → Z</option>
+
+          <option value="volumeDesc">Z → A</option>
+
+          <option value="priceAsc">Menor preço</option>
+
+          <option value="priceDesc">Maior preço</option>
+
+          <option value="recent">Recentes</option>
+        </select>
+      </section>
 
       {/* ==========================================================
           ESTADO VAZIO

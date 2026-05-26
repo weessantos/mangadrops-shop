@@ -1,9 +1,52 @@
+// ============================================================================
+// server/routes/series.routes.js
+// ============================================================================
+//
+// RESPONSABILIDADE DESTE ARQUIVO
+// ----------------------------------------------------------------------------
+// Centraliza endpoints relacionados às séries.
+//
+// Ele é responsável por:
+//
+// ✅ Buscar séries
+// ✅ Buscar volumes
+// ✅ Criar séries
+// ✅ Editar séries
+// ✅ Remover séries
+// ✅ Adaptar respostas SQL
+//
+//
+//
+// O QUE ESTE ARQUIVO NÃO DEVE FAZER
+// ----------------------------------------------------------------------------
+//
+// ❌ Não deve montar caminhos manualmente
+// ❌ Não deve conter lógica visual
+// ❌ Não deve gerar HTML
+// ❌ Não deve conhecer frontend
+//
+// ============================================================================
+
 import express from "express"
 import pool from "../db/database.js"
 
 const router = express.Router()
 
-// 📦 GET /series/full → todas séries + volumes (USO INTERNO)
+// ============================================================================
+// GET /series/full
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Retorna:
+//
+// série + volumes + preços
+//
+// Uso:
+//
+// painel interno
+//
+// ============================================================================
 router.get("/full", async (req, res) => {
   try {
     const result = await pool.query(`
@@ -95,7 +138,19 @@ router.get("/full", async (req, res) => {
   }
 })
 
-// 📦 GET /series → lista leve
+// ============================================================================
+// GET /series
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Retorna lista leve:
+//
+// id
+// prefix
+// thumb
+//
+// ============================================================================
 router.get("/", async (req, res) => {
   const result = await pool.query(`
     SELECT 
@@ -111,7 +166,16 @@ router.get("/", async (req, res) => {
   res.json(result.rows)
 })
 
-// 📦 GET /series/:prefix → série + volumes
+// ============================================================================
+// GET /series/:prefix
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Retorna uma série específica
+// junto dos seus volumes.
+//
+// ============================================================================
 router.get("/:prefix", async (req, res) => {
   const { prefix } = req.params
 
@@ -146,7 +210,15 @@ router.get("/:prefix", async (req, res) => {
   res.json(result.rows[0] || null)
 })
 
-// ✏️ PUT /series/:prefix → editar série
+// ============================================================================
+// PUT /series/:prefix
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Atualiza dados da série.
+//
+// ============================================================================
 router.put("/:prefix", async (req, res) => {
   const { prefix } = req.params
   const {
@@ -190,7 +262,19 @@ router.put("/:prefix", async (req, res) => {
   res.json({ success: true })
 })
 
-// ✏️ POST /series → criar série + volumes
+// ============================================================================
+// POST /series
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Cria:
+//
+// - série
+// - thumb padrão
+// - volumes iniciais
+//
+// ============================================================================
 router.post("/", async (req, res) => {
   const {
     title,
@@ -284,7 +368,18 @@ router.post("/", async (req, res) => {
   }
 })
 
-// 🗑 DELETE /series/:prefix
+// ============================================================================
+// DELETE /series/:prefix
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Remove:
+//
+// - volumes
+// - série
+//
+// ============================================================================
 router.delete("/:prefix", async (req, res) => {
   const { prefix } = req.params
 

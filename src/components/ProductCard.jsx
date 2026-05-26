@@ -4,9 +4,7 @@ import { track } from "../utils/analytics.js";
 import { getDiscountData } from "../utils/priceUtils";
 import { formatPrice } from "../utils/priceLoader";
 import { getDiscountState, toNumber } from "../utils/pricing";
-const base = import.meta.env.BASE_URL;
-const ML_ICON = `${base}assets/mercadolivre.svg`;
-const AMAZON_ICON = `${base}assets/amazon.svg`;
+import { img } from "../utils/images";
 
 function ProductCardBase({
   product,
@@ -27,6 +25,17 @@ function ProductCardBase({
     artbook: "Artbook",
     box: "Box",
   };
+  // ============================================================================
+  // ÍCONES GLOBAIS
+  // ============================================================================
+
+  const ML_ICON = img({
+    prefix: "mercadolivre.svg",
+  });
+
+  const AMAZON_ICON = img({
+    prefix: "amazon.svg",
+  });
 
   // 🔗 LINKS
   const mlUrl =

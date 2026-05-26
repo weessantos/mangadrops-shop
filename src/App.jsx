@@ -39,6 +39,7 @@ import CollectionHero, {
 import { useIsMobile } from "./hooks/useIsMobile";
 import { normalizeProduct } from "./utils/normalizeProduct";
 import { getReleases } from "./utils/getReleases";
+import { sortProducts } from "./utils/sort";
 
 import { supabaseClient } from "./lib/supabase.js";
 import { getSeriesCatalog } from "./data/products/series.catalog.js";
@@ -404,14 +405,23 @@ function AppShell() {
     }, 0);
   }, [qParam, seriesNames, navigate, sp]);
 
+  const [catalogSeries, setCatalogSeries] = useState([]);
+
+  useEffect(() => {
+    async function loadCatalog() {
+      const catalog = await getSeriesCatalog();
+
+      setCatalogSeries(catalog.filter((s) => s.name !== "Outros"));
+    }
+
+    loadCatalog();
+  }, []);
+
   const foundSeries = useMemo(() => {
     if (!qParam) return null;
 
-    return pickSeriesFromQuery(
-      qParam,
-      seriesNames.map((name) => ({ name })),
-    );
-  }, [qParam, seriesNames]);
+    return pickSeriesFromQuery(qParam, catalogSeries);
+  }, [qParam, catalogSeries]);
 
   const activeSeriesId = useMemo(() => {
     const main = products.find(
@@ -438,8 +448,8 @@ function AppShell() {
          * 3. Sem contexto → mostra tudo
          */
 
-        if (foundSeries) {
-          return p.series === foundSeries;
+        if (foundSeries?.length) {
+          return foundSeries.includes(p.series);
         }
 
         if (activeSeries) {
@@ -649,9 +659,18 @@ function AppShell() {
 
   const totalProductsPages = Math.ceil(filtered.length / PRODUCTS_LOAD_SIZE);
 
-  const pagedProducts = filtered.slice(0, page * pageSize);
+  const [sortBy, setSortBy] = useState("az");
 
-  const hasMore = pagedProducts.length < filtered.length;
+  // =========================
+  // ORDENAÇÃO
+  // =========================
+  const sortedProducts = sortProducts(filtered, sortBy);
+
+  // =========================//
+
+  const pagedProducts = sortedProducts.slice(0, page * pageSize);
+
+  const hasMore = pagedProducts.length < sortedProducts.length;
 
   const totalSeriesPages = useMemo(
     () => Math.max(1, Math.ceil(seriesList.length / seriesPageSize)),
@@ -1160,6 +1179,8 @@ function AppShell() {
           setPage={setPage}
           openProduct={openProduct}
           qParam={qParam}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
         />
       )}
 

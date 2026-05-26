@@ -1,80 +1,168 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/home-hero.css";
+import { img } from "../utils/images";
 
-const base = import.meta.env.BASE_URL;
-const img = (path) => `${base}assets/hero-banner/${path}`;
+// ============================================================================
+// HERO BANNERS
+// ============================================================================
+//
+// RESPONSABILIDADE
+// ----------------------------------------------------------------------------
+// Resolve banners utilizados no Hero principal.
+//
+// Estrutura:
+//
+// assets/
+// └── hero-banner/
+//      ├── manga-drops-banner.jpeg
+//      ├── op-banner.jpeg
+//      ├── awh-banner.jpeg
+//      ├── kgb-banner.jpeg
+//      ├── jjk-banner.jpeg
+//      ├── aot-banner.jpeg
+//      └── notion-banner.jpeg
+//
+// ============================================================================
+
+const heroBanner = (file) =>
+  img({
+    prefix: "hero-banner",
+    file,
+  });
 
 export default function HomeHero({ onHeroSearch, isHeaderCompact }) {
   const navigate = useNavigate();
+
   const slides = useMemo(
     () => [
       {
-        src: img("manga-drops-banner.jpeg"),
+        src: heroBanner("manga-drops-banner.jpeg"),
         alt: "Mangá Drops banner",
         position: "center center",
       },
+
       {
-        src: img("op-banner.jpeg"),
+        src: heroBanner("op-banner.jpeg"),
         alt: "One Piece",
         title: "One Piece",
         subtitle: "Já está disponível",
         description: "Vídeos de One Piece em breve no Mangá Drops",
+
         ctaLabel: "Ver One Piece",
-        cta: { type: "series", slug: "one-piece" },
+
+        cta: {
+          type: "series",
+          slug: "one-piece",
+        },
+
         position: "90% center",
       },
+
       {
-        src: img("awh-banner.jpeg"),
+        src: heroBanner("awh-banner.jpeg"),
         alt: "Atelier of Witch Hat",
+
         title: "Atelier of Witch Hat",
+
         subtitle: "Já está disponível.",
+
         description:
           "Atelier of Witch Hat, o mais novo anime de sucesso, só aqui na Mangá Drops",
+
         ctaLabel: "Ver Atelier of Witch Hat",
-        cta: { type: "series", slug: "atelier-of-witch-hat" },
+
+        cta: {
+          type: "series",
+          slug: "atelier-of-witch-hat",
+        },
+
         position: "80% center",
       },
+
       {
-        src: img("kgb-banner.jpeg"),
+        src: heroBanner("kgb-banner.jpeg"),
+
         alt: "Kagurabachi",
+
         title: "Kagurabachi",
+
         subtitle: "Já está disponível",
+
         description: "Anime anunciado, mangá atualizado somente no Mangá Drops",
+
         ctaLabel: "Kagurabachi já disponível",
-        cta: { type: "series", slug: "kagurabachi" },
+
+        cta: {
+          type: "series",
+          slug: "kagurabachi",
+        },
+
         position: "92% center",
       },
+
       {
-        src: img("jjk-banner.jpeg"),
+        src: heroBanner("jjk-banner.jpeg"),
+
         alt: "Jujutsu Kaisen",
+
         title: "Jujutsu Kaisen",
+
         subtitle: "Já está disponível.",
+
         description:
           "Jujutsu Kaisen, completo e atualizado, somente no Mangá Drops",
+
         ctaLabel: "Ver Jujutsu Kaisen",
-        cta: { type: "series", slug: "jujutsu-kaisen" },
+
+        cta: {
+          type: "series",
+          slug: "jujutsu-kaisen",
+        },
+
         position: "82% center",
       },
+
       {
-        src: img("aot-banner.jpeg"),
+        src: heroBanner("aot-banner.jpeg"),
+
         alt: "Attack on Titan",
+
         title: "Attack on Titan",
+
         subtitle: "Já está disponível.",
+
         description:
           "Todos os volumes de Attack on Titan, somente no Mangá Drops",
+
         ctaLabel: "Ver Attack on Titan",
-        cta: { type: "series", slug: "attack-on-titan" },
+
+        cta: {
+          type: "series",
+          slug: "attack-on-titan",
+        },
+
         position: "90% center",
       },
+
       {
-        src: img("notion-banner.jpeg"),
+        src: heroBanner("notion-banner.jpeg"),
+
         alt: "Notion",
+
         title: "Organize sua coleção",
+
         subtitle: "Em breve",
+
         description: "Template para membros.",
+
         ctaLabel: "Entrar na lista",
-        cta: { type: "url", value: "https://forms.gle/hWzYHck2xPsNRcee9" },
+
+        cta: {
+          type: "url",
+          value: "https://forms.gle/hWzYHck2xPsNRcee9",
+        },
+
         position: "85% center",
       },
     ],
