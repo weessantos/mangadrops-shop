@@ -635,13 +635,93 @@ async function loadSeries() {
 
   seriesList.innerHTML = "";
 
-  data.forEach((s) => {
-    const div = document.createElement("div");
-    div.className = "series-item";
-    div.textContent = s.title;
-    div.onclick = () => loadVolumes(s.prefix);
+  // pais = séries sem pai
+  const parents = data.filter((s) => !s.parent_series_id);
 
-    seriesList.appendChild(div);
+  parents.forEach((parent) => {
+    const wrapper = document.createElement("div");
+
+    const parentDiv = document.createElement("div");
+    parentDiv.className = "series-item series-parent";
+
+    parentDiv.innerHTML = `
+  <span class="arrow">▶</span>
+  <span class="series-title">
+    ${parent.title}
+  </span>
+`;
+
+    const arrow = parentDiv.querySelector(".arrow");
+
+    const title = parentDiv.querySelector(".series-title");
+
+    // seta -> apenas abre/fecha filhos
+    arrow.onclick = (e) => {
+      e.stopPropagation();
+
+      const open = childrenContainer.style.display === "block";
+
+      childrenContainer.style.display = open ? "none" : "block";
+
+      arrow.textContent = open ? "▶" : "▼";
+    };
+
+    // nome -> abre somente a série
+    title.onclick = (e) => {
+      e.stopPropagation(); // 🔥 faltava isso
+
+      loadVolumes(parent.prefix);
+    };
+
+    const childrenContainer = document.createElement("div");
+    childrenContainer.className = "children";
+    childrenContainer.style.display = "none";
+
+    // filhos desse pai
+    const children = data.filter((s) => s.parent_series_id === parent.id);
+
+    const icons = {
+      databook: "📚",
+      novel: "📝",
+      spin_off: "📖",
+      artbook: "🎨",
+    };
+
+    children.forEach((child) => {
+      const childDiv = document.createElement("div");
+
+      childDiv.className = "series-item series-child";
+
+      childDiv.innerHTML = `
+        ${icons[child.content_type] || "📘"}
+        ${child.title}
+      `;
+
+      childDiv.onclick = (e) => {
+        e.stopPropagation();
+        loadVolumes(child.prefix);
+      };
+
+      childrenContainer.appendChild(childDiv);
+    });
+
+    parentDiv.onclick = () => {
+      if (children.length === 0) {
+        loadVolumes(parent.prefix);
+        return;
+      }
+
+      const open = childrenContainer.style.display === "block";
+
+      childrenContainer.style.display = open ? "none" : "block";
+
+      parentDiv.querySelector(".arrow").textContent = open ? "▶" : "▼";
+    };
+
+    wrapper.appendChild(parentDiv);
+    wrapper.appendChild(childrenContainer);
+
+    seriesList.appendChild(wrapper);
   });
 }
 
