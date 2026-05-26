@@ -441,14 +441,12 @@
 
 .scrollArrow {
   position: absolute;
-
   z-index: 10;
 
   width: 36px;
   height: 36px;
 
   display: flex;
-
   align-items: center;
   justify-content: center;
 
@@ -458,26 +456,37 @@
 
   color: #fff;
 
-  font-size: 20px;
-
-  font-weight: 900;
-
   border: 1px solid rgba(255, 255, 255, 0.15);
 
   background: rgba(0, 0, 0, 0.6);
 
-  transition:
-    transform 0.2s ease,
-    background 0.2s ease;
-
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    opacity 0.2s ease;
 }
 
-.scrollArrow:hover {
+.scrollArrow svg {
+  width: 18px;
+  height: 18px;
+
+  display: block;
+  flex-shrink: 0;
+}
+
+.scrollArrow:hover:not(.disabled) {
   transform: scale(1.08);
 
   background: rgba(124, 58, 237, 0.7);
+}
+
+.scrollArrow.disabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
 }
 
 .scrollArrow.left {

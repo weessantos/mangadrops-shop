@@ -73,7 +73,7 @@ export default function ProductRail({
             </span>
 
             <Link to={viewAllLink} className="railToggleBtn">
-              Ver todos
+              Mostrar mais →
             </Link>
 
             <div className="railArrows">

@@ -326,15 +326,32 @@ export default function HomeHero({ onHeroSearch, isHeaderCompact }) {
           type="button"
           aria-label="Anterior"
         >
-          ‹
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M15 6L9 12L15 18"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </button>
+
         <button
           className="heroArrowPremium right"
           onClick={next}
           type="button"
           aria-label="Próximo"
         >
-          ›
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M9 6L15 12L9 18"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </button>
 
         <div className="heroDotsPremium" aria-hidden="true">

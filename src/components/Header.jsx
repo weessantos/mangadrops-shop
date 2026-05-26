@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { track } from "../utils/analytics.js";
 import { useLocation, useNavigate } from "react-router-dom";
+import { supabaseClient } from "../lib/supabase";
 import "../styles/header.css";
 import "../styles/header-mobile.css";
 import "../styles/header-side-menu.css";
@@ -150,25 +151,32 @@ export default function Header({
     }
   };
 
-  const obras = useMemo(
-    () => [
-      "One Piece 🏴‍☠️",
-      "Attack on Titan 🧱",
-      "Jujutsu Kaisen 🌀",
-      "Fullmetal Alchemist ⚗️",
-      "My Hero Academia 🦸",
-      "Vinland Saga ⚔️",
-      "Sakamoto Days 🔫",
-      "Bleach 👻",
-      "Shaman King 🔮",
-      "Gash Bell ⚡",
-      "Naruto 🍥",
-      "Dragon Ball 🐉",
-      "Haikyu 🏐",
-      "Kagurabachi 🗡️",
-    ],
-    [],
-  );
+  const [obras, setObras] = useState([]);
+
+  useEffect(() => {
+    async function loadObras() {
+      const { data, error } = await supabaseClient
+        .from("series")
+        .select("title")
+        .is("parent_series_id", null)
+        .neq("title", "Outros");
+
+      if (error) {
+        console.error("Erro ao carregar obras:", error);
+        return;
+      }
+
+      setObras(
+        data
+          ?.map((item) => item.title)
+          .filter(Boolean)
+          .sort(() => Math.random() - 0.5)
+          .slice(0, 25) || [],
+      );
+    }
+
+    loadObras();
+  }, []);
 
   const chipsRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -182,10 +190,17 @@ export default function Header({
   };
 
   useEffect(() => {
-    updateScrollState();
+    const frame = requestAnimationFrame(() => {
+      updateScrollState();
+    });
+
     window.addEventListener("resize", updateScrollState);
-    return () => window.removeEventListener("resize", updateScrollState);
-  }, []);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", updateScrollState);
+    };
+  }, [obras]);
 
   const scrollChips = (direction) => {
     const el = chipsRef.current;
@@ -722,16 +737,23 @@ export default function Header({
                 </div>
 
                 <div className="pillRowSecondaryContainer">
-                  {canScrollLeft && (
-                    <button
-                      className="scrollArrow left"
-                      onClick={() => scrollChips("left")}
-                      type="button"
-                      aria-label="Scroll para a esquerda"
-                    >
-                      ‹
-                    </button>
-                  )}
+                  <button
+                    className={`scrollArrow left ${!canScrollLeft ? "disabled" : ""}`}
+                    onClick={() => scrollChips("left")}
+                    type="button"
+                    disabled={!canScrollLeft}
+                    aria-label="Scroll para a esquerda"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M15 6L9 12L15 18"
+                        stroke="currentColor"
+                        strokeWidth="2.4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
 
                   <div
                     className="pillRowSecondaryWrap"
@@ -752,16 +774,23 @@ export default function Header({
                     </div>
                   </div>
 
-                  {canScrollRight && (
-                    <button
-                      className="scrollArrow right"
-                      onClick={() => scrollChips("right")}
-                      type="button"
-                      aria-label="Scroll para a direita"
-                    >
-                      ›
-                    </button>
-                  )}
+                  <button
+                    className={`scrollArrow right ${!canScrollRight ? "disabled" : ""}`}
+                    onClick={() => scrollChips("right")}
+                    type="button"
+                    disabled={!canScrollRight}
+                    aria-label="Scroll para a direita"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M9 6L15 12L9 18"
+                        stroke="currentColor"
+                        strokeWidth="2.4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
                 </div>
               </div>
             </>

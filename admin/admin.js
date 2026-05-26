@@ -646,6 +646,26 @@ async function loadSeries() {
 }
 
 // =======================
+// CAMINHO DAS IMAGENS
+// =======================
+
+function volumeImg({ prefix, parentPrefix = null, number }) {
+  const safeCurrent = String(prefix || "")
+    .trim()
+    .toLowerCase();
+
+  const safeParent = String(parentPrefix || "")
+    .trim()
+    .toLowerCase();
+
+  const num = String(number).padStart(2, "0");
+
+  const path = safeParent ? `${safeParent}/${safeCurrent}` : safeCurrent;
+
+  return `${window.location.origin}/assets/${path}/${safeCurrent}${num}.webp`;
+}
+
+// =======================
 // 🔥 CARREGAR VOLUMES
 // =======================
 async function loadVolumes(prefix) {
@@ -653,7 +673,12 @@ async function loadVolumes(prefix) {
 
   const { data: series } = await supabaseClient
     .from("series")
-    .select("*")
+    .select(
+      `
+    *,
+    parent:parent_series_id(prefix)
+  `,
+    )
     .eq("prefix", prefix)
     .single();
 
@@ -695,12 +720,22 @@ async function loadVolumes(prefix) {
     </button>
   `;
 
-  volumes.forEach((v) => {
+  for (const v of volumes) {
     const div = document.createElement("div");
     div.className = "card";
 
-    const num = String(v.number).padStart(2, "0");
-    const imgSrc = `/assets/${prefix}${num}.webp`;
+    const imgSrc = volumeImg({
+      prefix: v.prefix,
+      parentPrefix: series.parent?.prefix,
+      number: v.number,
+    });
+
+    console.log("========== IMG DEBUG ==========");
+    console.log("Volume:", v.title);
+    console.log("Prefix volume:", v.prefix);
+    console.log("Parent:", series.parent);
+    console.log("URL gerada:", imgSrc);
+    console.log("===============================");
 
     div.innerHTML = `
       <div class="card-header">
@@ -790,7 +825,7 @@ async function loadVolumes(prefix) {
     `;
 
     volumesDiv.appendChild(div);
-  });
+  }
 }
 
 // =======================
