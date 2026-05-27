@@ -1,85 +1,233 @@
+// ==============================
+// 🚀 SERVIDOR PRINCIPAL DA API
+// ==============================
+//
+// Responsabilidades:
+// - servir rotas do CMS
+// - iniciar scraper Playwright
+// - streaming de logs em tempo real (SSE)
+// - atualização individual de preços
+// - cancelamento do scraper
+//
+
 import { chromium } from "playwright";
 
 import { getAmazonPrice } from "./services/amazonService.js";
 import { getMLPrice } from "./services/mercadoLivreService.js";
+
 import { getPriceWithRetry } from "./src/utils/scraper.js";
-import { runUpdatePrices } from "./scripts/updatePrices.js";
+import { cancelUpdatePrices } from "./scripts/updatePrices.js";
 
 import "dotenv/config";
-import pool from "./src/db/database.js";
+
 import express from "express";
 import cors from "cors";
 
+import pool from "./src/db/database.js";
+
 import seriesRoutes from "./src/api/series.routes.js";
 import volumesRoutes from "./src/api/volumes.routes.js";
+
 import { spawn } from "child_process";
+
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 
-let isRunning = false;
-let progress = {
-  running: false,
-  current: 0,
-  total: 0,
-  logs: []
-};
+// ==============================
+// 🧠 BROWSER GLOBAL
+// ==============================
+//
+// Utilizado para:
+// - atualização individual
+// - evitar abrir Chromium por request
+//
 
 let browser;
 let context;
 
+// ==============================
+// 🔥 PROCESSO GLOBAL DO SCRAPER
+// ==============================
+//
+// Guarda referência do processo:
+//
+// node scripts/updatePrices.js --run
+//
+// Necessário para:
+// - cancelar scraper
+// - controlar SSE
+// - evitar múltiplas execuções
+//
+
+let updateProcess = null;
+
+// ==============================
+// 🚀 INICIALIZA PLAYWRIGHT
+// ==============================
+//
+// Browser persistente utilizado
+// pelas rotas de preço individual.
+//
+
 async function initBrowser() {
-  browser = await chromium.launch({ headless: true });
+  browser = await chromium.launch({
+    headless: true,
+  });
 
   context = await browser.newContext({
     storageState: "./ml-session.json",
+
     userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-    viewport: { width: 1366, height: 768 },
+
+    viewport: {
+      width: 1366,
+      height: 768,
+    },
+
     locale: "pt-BR",
   });
 
   console.log("🧠 Browser do scraper iniciado");
 }
 
+// ==============================
+// ⚙️ MIDDLEWARES
+// ==============================
+
 app.use(cors());
 app.use(express.json());
 
-// rotas
+// ==============================
+// 📚 ROTAS DA API
+// ==============================
+
 app.use("/api/series", seriesRoutes);
 app.use("/api/volumes", volumesRoutes);
 
+// ==============================
+// 📡 STREAM DE LOGS DO SCRAPER
+// ==============================
+//
+// SSE (Server Sent Events)
+//
+// Responsável por:
+// - iniciar scraper
+// - transmitir logs em tempo real
+// - transmitir erros
+// - avisar finalização
+//
 
-//rota para console log em tempo real
 app.get("/api/update-prices-stream", (req, res) => {
+  // headers SSE
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
 
-  const process = spawn("node", ["scripts/updatePrices.js", "--run"]);
+  // evita múltiplos scrapers simultâneos
+  if (updateProcess) {
+    res.write(
+      `data: ${JSON.stringify({
+        type: "error",
+        text: "⚠️ Já existe um update rodando",
+      })}\n\n`,
+    );
 
-  process.stdout.on("data", (data) => {
+    return;
+  }
+
+  // inicia scraper em processo separado
+  updateProcess = spawn("node", ["scripts/updatePrices.js", "--run"]);
+
+  // logs normais
+  updateProcess.stdout.on("data", (data) => {
     const text = data.toString();
 
-    res.write(`data: ${JSON.stringify({ type: "log", text })}\n\n`);
+    res.write(
+      `data: ${JSON.stringify({
+        type: "log",
+        text,
+      })}\n\n`,
+    );
   });
 
-  process.stderr.on("data", (data) => {
+  // logs de erro
+  updateProcess.stderr.on("data", (data) => {
     const text = data.toString();
 
-    res.write(`data: ${JSON.stringify({ type: "error", text })}\n\n`);
+    res.write(
+      `data: ${JSON.stringify({
+        type: "error",
+        text,
+      })}\n\n`,
+    );
   });
 
-  process.on("close", () => {
-    res.write(`data: ${JSON.stringify({ type: "done" })}\n\n`);
+  // finalização
+  updateProcess.on("close", () => {
+    updateProcess = null;
+
+    res.write(
+      `data: ${JSON.stringify({
+        type: "done",
+      })}\n\n`,
+    );
+
     res.end();
+  });
+
+  // cliente fechou conexão
+  req.on("close", () => {
+    console.log("🔌 Cliente SSE desconectado");
   });
 });
 
-// rota para atualizar preço individualmente
+// ==============================
+// 🛑 CANCELAR UPDATE
+// ==============================
+
+app.post("/api/cancel-update", (req, res) => {
+  try {
+    // avisa o scraper
+    cancelUpdatePrices();
+
+    // encerra processo do scraper
+    if (updateProcess) {
+      updateProcess.kill();
+
+      updateProcess = null;
+    }
+
+    console.log("🛑 Update cancelado");
+
+    return res.json({
+      success: true,
+    });
+  } catch (err) {
+    console.error("❌ Erro ao cancelar:", err);
+
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
+});
+
+// ==============================
+// 💰 ATUALIZAÇÃO INDIVIDUAL
+// ==============================
+//
+// Utilizado pelos botões 💲 do CMS.
+//
+
 app.get("/api/price", async (req, res) => {
   const { url, source, id } = req.query;
 
   if (!url || !source || !id) {
-    return res.status(400).json({ error: "Parâmetros obrigatórios" });
+    return res.status(400).json({
+      error: "Parâmetros obrigatórios",
+    });
   }
 
   let page;
@@ -89,9 +237,13 @@ app.get("/api/price", async (req, res) => {
 
     let result;
 
+    // AMAZON
     if (source === "amazon") {
       result = await getPriceWithRetry(getAmazonPrice, page, url, 2);
-    } else if (source === "ml") {
+    }
+
+    // MERCADO LIVRE
+    else if (source === "ml") {
       result = await getPriceWithRetry(getMLPrice, page, url, 2);
     }
 
@@ -99,6 +251,7 @@ app.get("/api/price", async (req, res) => {
 
     await page.close();
 
+    // preço não encontrado
     if (!price) {
       console.log("❌ PREÇO NÃO ENCONTRADO:", {
         url,
@@ -112,7 +265,7 @@ app.get("/api/price", async (req, res) => {
       });
     }
 
-    // 🔥 SALVA NO BANCO
+    // salva no banco
     await pool.query(
       `
       UPDATE volumes
@@ -124,10 +277,13 @@ app.get("/api/price", async (req, res) => {
       [price, id],
     );
 
-    return res.json({ success: true });
+    return res.json({
+      success: true,
+    });
   } catch (err) {
-    console.error("ERRO SCRAPER:", err);
+    console.error("❌ ERRO SCRAPER:", err);
 
+    // garante fechamento da página
     if (page) {
       try {
         await page.close();
@@ -141,87 +297,18 @@ app.get("/api/price", async (req, res) => {
   }
 });
 
-//rota de status
-app.post("/api/update-prices", async (req, res) => {
-  if (isRunning) {
-    return res.status(400).json({
-      success: false,
-      error: "⚠️ Já existe um update rodando"
-    });
-  }
-
-  isRunning = true;
-
-  // 🔥 RESET DO PROGRESSO
-  progress.running = true;
-  progress.current = 0;
-  progress.total = 0;
-  progress.logs = [];
-
-  try {
-    console.log("🚀 Iniciando update geral...");
-
-    await runUpdatePrices(progress); // 🔥 AQUI
-
-    console.log("✅ Finalizado");
-
-    res.json({ success: true });
-
-  } catch (err) {
-    console.error("❌ ERRO UPDATE:", err);
-
-    res.status(500).json({
-      success: false,
-      error: err.message
-    });
-
-  } finally {
-    isRunning = false;
-    progress.running = false; // 🔥 IMPORTANTE
-  }
-});
-
-// rota para atualizar preços em lote
-app.post("/api/update-prices", async (req, res) => {
-  if (isRunning) {
-    return res.status(400).json({
-      success: false,
-      error: "⚠️ Já existe um update rodando"
-    });
-  }
-
-  isRunning = true;
-
-  try {
-    console.log("🚀 Iniciando update geral...");
-
-    await runUpdatePrices(progress);
-
-    console.log("✅ Finalizado");
-
-    res.json({ success: true });
-
-  } catch (err) {
-    console.error("❌ ERRO UPDATE:", err);
-
-    res.status(500).json({
-      success: false,
-      error: err.message
-    });
-
-  } finally {
-    isRunning = false; // 🔥 SEMPRE libera no final
-  }
-});
-
-//imagens
-import path from "path";
-import { fileURLToPath } from "url";
+// ==============================
+// 🖼 ASSETS ESTÁTICOS
+// ==============================
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.use("/assets", express.static(path.join(__dirname, "public/assets")));
+
+// ==============================
+// 🚀 START SERVER
+// ==============================
 
 const PORT = process.env.PORT || 3000;
 

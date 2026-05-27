@@ -23,8 +23,8 @@ export default function SeriesCard({
   const statusClass = lower.includes("completo")
     ? "badgePill good"
     : lower.includes("sem estoque")
-    ? "badgePill warn"
-    : "badgePill";
+      ? "badgePill warn"
+      : "badgePill";
 
   const hasMissing = missingCount > 0;
 
@@ -61,30 +61,32 @@ export default function SeriesCard({
       tabIndex={0}
       aria-label={`${active ? "Fechar" : "Abrir"} ${name}`}
     >
-      <img
-        className="seriesThumb"
-        src={thumb}
-        alt={name}
-        loading="lazy"
-        decoding="async"
-        draggable="false"
-      />
+      <div className="seriesPoster">
+        <img
+          className="seriesThumb"
+          src={thumb}
+          alt={name}
+          loading="lazy"
+          decoding="async"
+          draggable="false"
+        />
 
-      <div className="seriesTopBadges">
-        <span className="badgePill">Coleção</span>
+        <div className="seriesTopBadges">
+          <span className="badgePill">Coleção</span>
 
-        <button
-          type="button"
-          className={statusClass}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (!hasMissing) return;
-            setShowMissing((v) => !v);
-          }}
-          title={hasMissing ? "Ver volumes sem estoque" : "Completo"}
-        >
-          {statusLabel}
-        </button>
+          <button
+            type="button"
+            className={statusClass}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!hasMissing) return;
+              setShowMissing((v) => !v);
+            }}
+            title={hasMissing ? "Ver volumes sem estoque" : "Completo"}
+          >
+            {statusLabel}
+          </button>
+        </div>
       </div>
 
       {showMissing && hasMissing ? (
@@ -114,21 +116,17 @@ export default function SeriesCard({
         </div>
       ) : null}
 
-      <div className="seriesOverlay">
+      <div className="seriesInfo">
         <div className="seriesTitleRow">
           <h3 className="seriesName">{name}</h3>
-          <span
-            className={`seriesChevron ${active ? "open" : ""}`}
-            aria-hidden="true"
-          >
-            ▾
-          </span>
         </div>
 
         <div className="seriesMeta">
           <span className="seriesChip good">{rangeLabel}</span>
           <span className="seriesChip">{haveLabel}</span>
-          {active ? <span className="seriesChip selected">Selecionado</span> : null}
+          {active ? (
+            <span className="seriesChip selected">Selecionado</span>
+          ) : null}
         </div>
       </div>
     </article>

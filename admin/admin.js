@@ -526,14 +526,24 @@ function confirmAction(message) {
 // 🔥 UPDATE GLOBAL DE PREÇOS
 // =======================
 
+let priceUpdateEventSource = null;
+
 function updateAllPrices() {
+  document.getElementById("amazon-logs").innerHTML = "";
+  document.getElementById("ml-logs").innerHTML = "";
+
+  document.getElementById("amazon-progress-bar").style.width = "0%";
+  document.getElementById("ml-progress-bar").style.width = "0%";
+
+  document.getElementById("amazon-progress-text").textContent = "0 / 0";
+  document.getElementById("ml-progress-text").textContent = "0 / 0";
   if (!confirm("🔥 Atualizar TODOS os preços? Isso pode demorar.")) return;
 
   document.getElementById("progress-modal").style.display = "flex";
 
-  const eventSource = new EventSource("/api/update-prices-stream");
+  priceUpdateEventSource = new EventSource("/api/update-prices-stream");
 
-  eventSource.onmessage = (event) => {
+  priceUpdateEventSource.onmessage = (event) => {
     const data = JSON.parse(event.data);
 
     if (data.type === "log") {
@@ -547,13 +557,44 @@ function updateAllPrices() {
 
     if (data.type === "done") {
       appendLog("✅ Finalizado!");
-      eventSource.close();
+      priceUpdateEventSource.close();
 
       setTimeout(() => {
         document.getElementById("progress-modal").style.display = "none";
       }, 1500);
     }
   };
+}
+
+// =======================
+// 🛑 CANCELAMENTO DA BUSCA
+// =======================
+async function cancelPriceUpdate() {
+  const ok = confirm("🛑 Cancelar atualização de preços?");
+
+  if (!ok) return;
+
+  try {
+    await fetch("/api/cancel-update", {
+      method: "POST",
+    });
+
+    appendLog("🛑 Cancelamento solicitado...");
+
+    if (priceUpdateEventSource) {
+      priceUpdateEventSource.close();
+    }
+
+    showToast("Cancelamento solicitado 🛑");
+
+    setTimeout(() => {
+      document.getElementById("progress-modal").style.display = "none";
+    }, 500);
+  } catch (err) {
+    console.error(err);
+
+    showToast("Erro ao cancelar ❌");
+  }
 }
 
 async function pollProgress() {
@@ -590,34 +631,96 @@ async function pollProgress() {
 //APEND DO LOG E CONTADOR DE PROGRESSO
 // ====================================
 function appendLog(text) {
-  const log = document.getElementById("progress-logs");
-
+  let target;
   let color = "#22c55e";
 
-  if (text.includes("❌")) color = "#ef4444";
-  if (text.includes("🔥")) color = "#f97316";
-  if (text.includes("[Amazon]")) color = "#60a5fa";
-  if (text.includes("[ML]")) color = "#facc15";
+  // AMAZON
+  if (text.includes("[Amazon]") || text.includes("Amazon")) {
+    target = document.getElementById("amazon-logs");
+    color = "#60a5fa";
+  }
 
-  log.innerHTML += `<div style="color:${color}">${text}</div>`;
-  log.scrollTop = log.scrollHeight;
+  // ML
+  else if (
+    text.includes("[ML]") ||
+    text.includes("[Mercado Livre]") ||
+    text.includes("Mercado Livre")
+  ) {
+    target = document.getElementById("ml-logs");
+    color = "#facc15";
+  }
+
+  // fallback
+  else {
+    target = document.getElementById("amazon-logs");
+  }
+
+  if (text.includes("❌")) {
+    color = "#ef4444";
+  }
+
+  if (text.includes("🔥")) {
+    color = "#f97316";
+  }
+
+  const line = document.createElement("div");
+
+  line.style.color = color;
+  line.style.marginBottom = "4px";
+  line.textContent = text;
+
+  target.appendChild(line);
+
+  target.scrollTop = target.scrollHeight;
 }
 
 let total = 0;
 let current = 0;
 
 function updateProgressFromLog(text) {
-  // pega padrão [1/153]
+  const amazonStart = text.match(/Iniciando Amazon:\s*(\d+)/);
+
+  if (amazonStart) {
+    const total = parseInt(amazonStart[1]);
+
+    document.getElementById("amazon-progress-text").textContent =
+      `0 / ${total}`;
+
+    return;
+  }
+
+  const mlStart = text.match(/Iniciando Mercado Livre:\s*(\d+)/);
+
+  if (mlStart) {
+    const total = parseInt(mlStart[1]);
+
+    document.getElementById("ml-progress-text").textContent = `0 / ${total}`;
+
+    return;
+  }
+
   const match = text.match(/\[(\d+)\/(\d+)\]/);
 
-  if (match) {
-    current = parseInt(match[1]);
-    total = parseInt(match[2]);
+  if (!match) return;
 
-    const percent = (current / total) * 100;
+  const current = parseInt(match[1]);
+  const total = parseInt(match[2]);
 
-    document.getElementById("progress-bar").style.width = percent + "%";
-    document.getElementById("progress-text").textContent =
+  const percent = (current / total) * 100;
+
+  // AMAZON
+  if (text.includes("Amazon")) {
+    document.getElementById("amazon-progress-bar").style.width = percent + "%";
+
+    document.getElementById("amazon-progress-text").textContent =
+      `${current} / ${total}`;
+  }
+
+  // MERCADO LIVRE
+  if (text.includes("Mercado Livre")) {
+    document.getElementById("ml-progress-bar").style.width = percent + "%";
+
+    document.getElementById("ml-progress-text").textContent =
       `${current} / ${total}`;
   }
 }

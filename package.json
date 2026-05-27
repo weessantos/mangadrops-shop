@@ -10,7 +10,7 @@
     "publish": "node scripts/publish.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
-    "update-prices": "node scripts/updatePrices.js"
+    "update-prices": "node scripts/updatePrices.js --run"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.100.1",

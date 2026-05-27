@@ -18,6 +18,7 @@ src/data/prices.json
 .env
 keys.txt
 pricesExtractor.js
+updatePrices-old.js
 input_ml.json
 sketch.txt
 errors

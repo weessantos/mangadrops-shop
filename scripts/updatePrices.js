@@ -14,6 +14,18 @@ import pool from "../src/db/database.js";
 const RUN_AMAZON = true;
 const RUN_ML = true;
 
+let CANCELLED = false;
+
+// ==============================
+// CANCELAR UPDATE
+// ==============================
+
+export function cancelUpdatePrices() {
+  CANCELLED = true;
+
+  console.log("🛑 Cancelamento solicitado...");
+}
+
 // ==============================
 // PROCESSADOR DE DADOS
 // ==============================
@@ -55,6 +67,12 @@ async function processBatch({ rows, getPrice, field, column, name }) {
   }
 
   for (const row of rows) {
+    if (CANCELLED) {
+      console.log(`🛑 ${name} cancelado`);
+
+      break;
+    }
+    
     index++;
 
     // 🐢 WARMUP (primeiros 5 mais lentos)
@@ -311,47 +329,62 @@ async function processBatch({ rows, getPrice, field, column, name }) {
 // ==============================
 
 export async function runUpdatePrices() {
+  CANCELLED = false;
+
   console.log("🚀 Iniciando scraper escalável...");
+
+  const tasks = [];
 
   // ============================
   // AMAZON
   // ============================
   if (RUN_AMAZON) {
-    const amazonRes = await pool.query(`
-    SELECT id, title, amazon_raw
-    FROM volumes
-    WHERE COALESCE(amazon_raw, '') != ''
-    ORDER BY title ASC
-  `);
+    tasks.push(
+      (async () => {
+        const amazonRes = await pool.query(`
+          SELECT id, title, amazon_raw
+          FROM volumes
+          WHERE COALESCE(amazon_raw, '') != ''
+          ORDER BY title ASC
+        `);
 
-    await processBatch({
-      rows: amazonRes.rows,
-      getPrice: getAmazonPrice,
-      field: "amazon_raw",
-      column: "amazon_price",
-      name: "Amazon",
-    });
+        await processBatch({
+          rows: amazonRes.rows,
+          getPrice: getAmazonPrice,
+          field: "amazon_raw",
+          column: "amazon_price",
+          name: "Amazon",
+        });
+      })(),
+    );
   }
 
   // ============================
   // MERCADO LIVRE
   // ============================
   if (RUN_ML) {
-    const mlRes = await pool.query(`
-    SELECT id, title, mercado_livre_raw
-    FROM volumes
-    WHERE COALESCE(mercado_livre_raw, '') != ''
-    ORDER BY title ASC
-  `);
+    tasks.push(
+      (async () => {
+        const mlRes = await pool.query(`
+          SELECT id, title, mercado_livre_raw
+          FROM volumes
+          WHERE COALESCE(mercado_livre_raw, '') != ''
+          ORDER BY title ASC
+        `);
 
-    await processBatch({
-      rows: mlRes.rows,
-      getPrice: getMLPrice,
-      field: "mercado_livre_raw",
-      column: "mercado_livre_price",
-      name: "Mercado Livre",
-    });
+        await processBatch({
+          rows: mlRes.rows,
+          getPrice: getMLPrice,
+          field: "mercado_livre_raw",
+          column: "mercado_livre_price",
+          name: "Mercado Livre",
+        });
+      })(),
+    );
   }
+
+  // 🔥 roda tudo junto
+  await Promise.all(tasks);
 
   console.log("🎉 Tudo finalizado com sucesso!");
 }

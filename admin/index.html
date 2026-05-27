@@ -78,7 +78,7 @@ ADMIN.HTML
         flex-direction: column;
         gap: 10px;
       }
-      
+
       .arrow {
         cursor: pointer;
         margin-right: 8px;
@@ -470,59 +470,180 @@ ADMIN.HTML
       <div
         style="
           background: #020617;
-          padding: 24px 28px;
-          border-radius: 14px;
-          width: 800px;
-          max-width: 90vw;
+          padding: 24px;
+          border-radius: 18px;
+          width: 1400px;
+          max-width: 96vw;
+          height: 85vh;
           border: 1px solid #1f2937;
           box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
         "
       >
-        <h3 style="margin-top: 0">🔥 Atualizando preços...</h3>
-
-        <!-- barra -->
         <div
           style="
-            background: #1f2937;
-            height: 10px;
-            border-radius: 6px;
-            overflow: hidden;
-            margin-top: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
           "
         >
-          <div
-            id="progress-bar"
+          <h2 style="margin: 0; color: #e5e7eb">🔥 Atualizando preços</h2>
+
+          <button
+            onclick="cancelPriceUpdate()"
             style="
-              height: 100%;
-              width: 0%;
-              background: #22c55e;
-              transition: 0.3s;
+              background: #ef4444;
+              color: white;
+              border: none;
+              padding: 10px 16px;
+              border-radius: 10px;
+              font-weight: 600;
+              cursor: pointer;
+              transition: 0.2s;
             "
-          ></div>
+            onmouseover="this.style.opacity = '0.9'"
+            onmouseout="this.style.opacity = '1'"
+          >
+            🛑 Cancelar
+          </button>
         </div>
 
-        <!-- contador -->
         <div
-          id="progress-text"
-          style="margin-top: 8px; font-size: 13px; color: #9ca3af"
-        >
-          0 / 0
-        </div>
-
-        <!-- logs -->
-        <div
-          id="progress-logs"
           style="
-            margin-top: 12px;
-            max-height: 260px;
-            overflow-y: auto;
-            font-family: monospace;
-            font-size: 13px;
-            color: #22c55e;
-            line-height: 1.6;
-            white-space: pre; /* 🔥 NÃO QUEBRA LINHA */
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            flex: 1;
+            min-height: 0;
           "
-        ></div>
+        >
+          <!-- AMAZON -->
+          <div
+            style="
+              background: #0f172a;
+              border: 1px solid #1e293b;
+              border-radius: 14px;
+              padding: 16px;
+              display: flex;
+              flex-direction: column;
+              overflow: hidden;
+            "
+          >
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+                font-weight: 700;
+                color: #60a5fa;
+              "
+            >
+              <span>🟦 Amazon</span>
+              <span id="amazon-progress-text">0 / 0</span>
+            </div>
+
+            <div
+              style="
+                background: #1e293b;
+                height: 10px;
+                border-radius: 999px;
+                overflow: hidden;
+                margin-bottom: 16px;
+              "
+            >
+              <div
+                id="amazon-progress-bar"
+                style="
+                  height: 100%;
+                  width: 0%;
+                  background: #60a5fa;
+                  transition: width 0.25s ease;
+                "
+              ></div>
+            </div>
+
+            <div
+              id="amazon-logs"
+              style="
+                flex: 1;
+                overflow-y: auto;
+                background: #020617;
+                border-radius: 10px;
+                padding: 12px;
+                font-family: monospace;
+                font-size: 13px;
+                line-height: 1.5;
+                color: #cbd5e1;
+              "
+            ></div>
+          </div>
+
+          <!-- MERCADO LIVRE -->
+          <div
+            style="
+              background: #0f172a;
+              border: 1px solid #1e293b;
+              border-radius: 14px;
+              padding: 16px;
+              display: flex;
+              flex-direction: column;
+              overflow: hidden;
+            "
+          >
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+                font-weight: 700;
+                color: #facc15;
+              "
+            >
+              <span>🟨 Mercado Livre</span>
+              <span id="ml-progress-text">0 / 0</span>
+            </div>
+
+            <div
+              style="
+                background: #1e293b;
+                height: 10px;
+                border-radius: 999px;
+                overflow: hidden;
+                margin-bottom: 16px;
+              "
+            >
+              <div
+                id="ml-progress-bar"
+                style="
+                  height: 100%;
+                  width: 0%;
+                  background: #facc15;
+                  transition: width 0.25s ease;
+                "
+              ></div>
+            </div>
+
+            <div
+              id="ml-logs"
+              style="
+                flex: 1;
+                overflow-y: auto;
+                background: #020617;
+                border-radius: 10px;
+                padding: 12px;
+                font-family: monospace;
+                font-size: 13px;
+                line-height: 1.5;
+                color: #cbd5e1;
+              "
+            ></div>
+          </div>
+        </div>
       </div>
     </div>
   </body>
