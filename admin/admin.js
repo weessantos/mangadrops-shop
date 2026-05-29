@@ -41,6 +41,7 @@ if (window.__cms_loaded) {
   // =======================
   seriesList = document.getElementById("series-list");
   volumesDiv = document.getElementById("volumes");
+  const headerDiv = document.getElementById("series-header");
 
   // =======================
   // EXPORTA GLOBAL (opcional)
@@ -56,7 +57,6 @@ if (window.__cms_loaded) {
 // 🔐 ADMIN
 // =======================
 async function protectAdmin() {
-  document.body.style.display = "flex";
   const {
     data: { session },
   } = await supabaseClient.auth.getSession();
@@ -281,7 +281,6 @@ function hideLoading() {
 
   overlay.style.display = "none";
 }
-
 // =======================
 // NORMALIZAR LINKS AMAZON
 // =======================
@@ -521,7 +520,57 @@ function confirmAction(message) {
     }, 100);
   });
 }
+// =======================
+// NORMALIZAR EM MASSA
+// =======================
 
+function normalizeAllLinks() {
+  let total = 0;
+
+  // AMAZON
+
+  document.querySelectorAll("[id^='amazon-raw-']").forEach((input) => {
+    const original = input.value;
+
+    const normalized = normalizeAmazonUrl(original);
+
+    if (original !== normalized) {
+      input.value = normalized;
+
+      const match = input.id.match(/-(\d+)$/);
+
+      if (match) {
+        changedVolumes.add(parseInt(match[1]));
+      }
+
+      total++;
+    }
+  });
+
+  // MERCADO LIVRE
+
+  document.querySelectorAll("[id^='ml-raw-']").forEach((input) => {
+    const original = input.value;
+
+    const normalized = normalizeMercadoLivreUrl(original);
+
+    if (original !== normalized) {
+      input.value = normalized;
+
+      const match = input.id.match(/-(\d+)$/);
+
+      if (match) {
+        changedVolumes.add(parseInt(match[1]));
+      }
+
+      total++;
+    }
+  });
+
+  updatePendingChanges(changedVolumes.size);
+
+  showToast(`${total} links normalizados ✨`);
+}
 // =======================
 // 🔥 UPDATE GLOBAL DE PREÇOS
 // =======================
@@ -748,11 +797,12 @@ async function loadSeries() {
     parentDiv.className = "series-item series-parent";
 
     parentDiv.innerHTML = `
-  <span class="arrow">▶</span>
-  <span class="series-title">
-    ${parent.title}
-  </span>
-`;
+      <span class="arrow">+</span>
+
+      <span class="series-title">
+        ${parent.title}
+      </span>
+    `;
 
     const arrow = parentDiv.querySelector(".arrow");
 
@@ -766,12 +816,18 @@ async function loadSeries() {
 
       childrenContainer.style.display = open ? "none" : "block";
 
-      arrow.textContent = open ? "▶" : "▼";
+      arrow.textContent = open ? "+" : "−";
     };
 
     // nome -> abre somente a série
     title.onclick = (e) => {
-      e.stopPropagation(); // 🔥 faltava isso
+      e.stopPropagation();
+
+      document
+        .querySelectorAll(".series-item")
+        .forEach((el) => el.classList.remove("active"));
+
+      parentDiv.classList.add("active");
 
       loadVolumes(parent.prefix);
     };
@@ -796,12 +852,24 @@ async function loadSeries() {
       childDiv.className = "series-item series-child";
 
       childDiv.innerHTML = `
-        ${icons[child.content_type] || "📘"}
-        ${child.title}
+        <span class="child-icon">
+          ${icons[child.content_type] || "📘"}
+        </span>
+
+        <span>
+          ${child.title}
+        </span>
       `;
 
       childDiv.onclick = (e) => {
         e.stopPropagation();
+
+        document
+          .querySelectorAll(".series-item")
+          .forEach((el) => el.classList.remove("active"));
+
+        childDiv.classList.add("active");
+
         loadVolumes(child.prefix);
       };
 
@@ -810,7 +878,14 @@ async function loadSeries() {
 
     parentDiv.onclick = () => {
       if (children.length === 0) {
+        document
+          .querySelectorAll(".series-item")
+          .forEach((el) => el.classList.remove("active"));
+
+        parentDiv.classList.add("active");
+
         loadVolumes(parent.prefix);
+
         return;
       }
 
@@ -818,7 +893,7 @@ async function loadSeries() {
 
       childrenContainer.style.display = open ? "none" : "block";
 
-      parentDiv.querySelector(".arrow").textContent = open ? "▶" : "▼";
+      parentDiv.querySelector(".arrow").textContent = open ? "+" : "−";
     };
 
     wrapper.appendChild(parentDiv);
@@ -849,21 +924,381 @@ function volumeImg({ prefix, parentPrefix = null, number }) {
 }
 
 // =======================
+// 🎴 RENDER CARD VOLUME
+// =======================
+
+function renderVolumeCard({ volume, series, prefix }) {
+  const div = document.createElement("div");
+
+  div.className = "card";
+
+  div.id = `vol-${volume.number}`;
+
+  const imgSrc = volumeImg({
+    prefix: volume.prefix,
+    parentPrefix: series.parent?.prefix,
+    number: volume.number,
+  });
+
+  console.log("========== IMG DEBUG ==========");
+  console.log("Volume:", volume.title);
+  console.log("Prefix volume:", volume.prefix);
+  console.log("Parent:", series.parent);
+  console.log("URL gerada:", imgSrc);
+  console.log("===============================");
+
+  div.innerHTML = `
+    <div class="card-header">
+      <div class="title-with-thumb">
+
+        <img 
+          src="${imgSrc}" 
+          class="volume-thumb"
+          onerror="this.style.display='none'"
+        >
+
+        <h3>${volume.title}</h3>
+
+      </div>
+    </div>
+
+    <div class="field">
+
+      <label>Descrição</label>
+
+      <textarea id="desc-${prefix}-${volume.number}">${volume.description || ""}</textarea>
+
+    </div>
+
+    <div class="links-grid">
+
+      <!-- AMAZON AFILIADO -->
+      <div class="field">
+
+        <label class="label-affiliate">
+          💰 Amazon Afiliado
+        </label>
+
+        <div class="input-row">
+
+          <input
+            id="amazon-${prefix}-${volume.number}"
+            value="${volume.amazon || ""}"
+          >
+
+        </div>
+
+      </div>
+
+      <!-- AMAZON RAW -->
+      <div class="field">
+
+        <label class="label-raw">
+          🔗 Amazon Raw
+        </label>
+
+        <div class="input-row">
+
+          <input 
+            id="amazon-raw-${prefix}-${volume.number}" 
+            value="${volume.amazon_raw || ""}"
+          >
+
+          <button
+            class="icon-btn"
+            onclick="normalizeAmazon('${prefix}', ${volume.number})"
+          >
+            ✨
+          </button>
+
+          <button
+            class="icon-btn"
+            onclick="openLink('amazon-raw-${prefix}-${volume.number}')"
+          >
+            🔎
+          </button>
+
+          <button
+            class="icon-btn"
+            onclick="updateAmazonPriceRaw(${volume.id}, '${prefix}', ${volume.number})"
+          >
+            💲
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- MERCADO LIVRE AFILIADO -->
+      <div class="field">
+
+        <label class="label-affiliate">
+          💰 Mercado Livre Afiliado
+        </label>
+
+        <div class="input-row">
+
+          <input 
+            id="ml-${prefix}-${volume.number}" 
+            value="${volume.mercado_livre || ""}"
+          >
+
+        </div>
+
+      </div>
+
+      <!-- MERCADO LIVRE RAW -->
+      <div class="field">
+
+        <label class="label-raw">
+          🔗 Mercado Livre Raw
+        </label>
+
+        <div class="input-row">
+
+          <input 
+            id="ml-raw-${prefix}-${volume.number}" 
+            value="${volume.mercado_livre_raw || ""}"
+          >
+
+          <button
+            class="icon-btn"
+            onclick="normalizeML('${prefix}', ${volume.number})"
+          >
+            ✨
+          </button>
+
+          <button
+            class="icon-btn"
+            onclick="openLink('ml-raw-${prefix}-${volume.number}')"
+          >
+            🔎
+          </button>
+
+          <button
+            class="icon-btn"
+            onclick="updateMLPriceRaw(${volume.id}, '${prefix}', ${volume.number})"
+          >
+            💲
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+    <div class="field">
+
+      <label class="label-tiktok">
+        🎥 TikTok
+      </label>
+
+      <input
+        id="tiktok-${prefix}-${volume.number}"
+        value="${volume.tiktok || ""}"
+      >
+
+    </div>
+
+    <div class="field">
+
+      <label>
+        Adicionado em
+      </label>
+
+      <input
+        type="datetime-local"
+        step="1"
+        id="date-${prefix}-${volume.number}"
+        value="${volume.added_at ? new Date(volume.added_at).toISOString().slice(0, 19) : ""}"
+      />
+
+    </div>
+
+    <div class="card-footer">
+
+      <div class="card-actions">
+
+        <button
+          class="btn btn-danger"
+          onclick="deleteVolume('${prefix}', ${volume.number})"
+        >
+          🗑 Excluir
+        </button>
+
+        <button
+          class="btn btn-primary save-btn"
+          onclick="saveVolume('${prefix}', ${volume.number})"
+        >
+          💾 Salvar
+        </button>
+
+      </div>
+
+    </div>
+  `;
+
+  const originalData = {
+    description: volume.description || "",
+    amazon: volume.amazon || "",
+    amazonRaw: volume.amazon_raw || "",
+    ml: volume.mercado_livre || "",
+    mlRaw: volume.mercado_livre_raw || "",
+    tiktok: volume.tiktok || "",
+    date: volume.added_at
+      ? new Date(volume.added_at).toISOString().slice(0, 19)
+      : "",
+  };
+
+  const checkChanges = () => {
+    const currentData = {
+      description:
+        div.querySelector(`#desc-${prefix}-${volume.number}`)?.value || "",
+
+      amazon:
+        div.querySelector(`#amazon-${prefix}-${volume.number}`)?.value || "",
+
+      amazonRaw:
+        div.querySelector(`#amazon-raw-${prefix}-${volume.number}`)?.value ||
+        "",
+
+      ml: div.querySelector(`#ml-${prefix}-${volume.number}`)?.value || "",
+
+      mlRaw:
+        div.querySelector(`#ml-raw-${prefix}-${volume.number}`)?.value || "",
+
+      tiktok:
+        div.querySelector(`#tiktok-${prefix}-${volume.number}`)?.value || "",
+
+      date: div.querySelector(`#date-${prefix}-${volume.number}`)?.value || "",
+    };
+
+    const changed =
+      JSON.stringify(currentData) !== JSON.stringify(originalData);
+
+    if (changed) {
+      changedVolumes.add(volume.number);
+    } else {
+      changedVolumes.delete(volume.number);
+    }
+
+    updatePendingChanges(changedVolumes.size);
+  };
+
+  div
+    .querySelector(`#desc-${prefix}-${volume.number}`)
+    ?.addEventListener("input", checkChanges);
+
+  div
+    .querySelector(`#amazon-${prefix}-${volume.number}`)
+    ?.addEventListener("input", checkChanges);
+
+  div
+    .querySelector(`#amazon-raw-${prefix}-${volume.number}`)
+    ?.addEventListener("input", checkChanges);
+
+  div
+    .querySelector(`#ml-${prefix}-${volume.number}`)
+    ?.addEventListener("input", checkChanges);
+
+  div
+    .querySelector(`#ml-raw-${prefix}-${volume.number}`)
+    ?.addEventListener("input", checkChanges);
+
+  div
+    .querySelector(`#tiktok-${prefix}-${volume.number}`)
+    ?.addEventListener("input", checkChanges);
+
+  div
+    .querySelector(`#date-${prefix}-${volume.number}`)
+    ?.addEventListener("change", checkChanges);
+
+  return div;
+}
+
+// =======================
 // 🔥 CARREGAR VOLUMES
 // =======================
+let changedVolumes = new Set();
+let currentPrefix = null;
+
+const volumeObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+
+      const volumeNumber = entry.target.id.replace("vol-", "");
+
+      document
+        .querySelectorAll(".volume-nav-item")
+        .forEach((el) => el.classList.remove("active"));
+
+      document
+        .querySelector(`.volume-nav-item[data-vol="${volumeNumber}"]`)
+        ?.classList.add("active");
+    });
+  },
+  {
+    threshold: 0.5,
+  },
+);
+
+function updatePendingChanges(count) {
+  const el = document.getElementById("pending-changes");
+
+  if (el) {
+    el.textContent = count;
+  }
+}
+
+//Nav lateral para navegar entre os volumes
+function renderVolumeNavigator(volumes) {
+  const nav = document.getElementById("volume-nav");
+
+  nav.innerHTML = "";
+
+  for (const v of volumes) {
+    const btn = document.createElement("button");
+
+    btn.className = "volume-nav-item";
+
+    btn.dataset.vol = v.number;
+
+    btn.textContent = String(v.number).padStart(2, "0");
+
+    btn.onclick = () => {
+      document.getElementById(`vol-${v.number}`)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    };
+
+    nav.appendChild(btn);
+  }
+}
+
 async function loadVolumes(prefix) {
+  currentPrefix = prefix;
   volumesDiv.innerHTML = "Carregando...";
+
+  // =======================
+  // BUSCA SÉRIE
+  // =======================
 
   const { data: series } = await supabaseClient
     .from("series")
     .select(
       `
-    *,
-    parent:parent_series_id(prefix)
-  `,
+      *,
+      parent:parent_series_id(prefix)
+    `,
     )
     .eq("prefix", prefix)
     .single();
+
+  // =======================
+  // BUSCA VOLUMES
+  // =======================
 
   const { data: volumes } = await supabaseClient
     .from("volumes")
@@ -871,144 +1306,67 @@ async function loadVolumes(prefix) {
     .eq("prefix", prefix)
     .order("number");
 
-  volumesDiv.innerHTML = `
-    <h1>${series.title}</h1>
-    <button onclick="openCreateVolume('${prefix}')">+ Novo Volume</button>
-  `;
-  volumesDiv.innerHTML = `
-    <h1>${series.title}</h1>
+  document.getElementById("total-volumes").textContent = volumes.length;
 
-    <button onclick="openCreateVolume('${prefix}')">
-      + Novo Volume
-    </button>
+  // =======================
+  // ATUALIZA HEADER FIXO
+  // =======================
 
-    <button onclick="generateMissingVolumes('${prefix}')">
-      ⚡ Gerar volumes faltantes
-    </button>
+  document.getElementById("series-title").textContent = series.title;
 
-    <button onclick="editSeries('${prefix}')">
-      ✏️ Editar Série
-    </button>
+  // =======================
+  // CONFIGURA BOTÕES FIXOS
+  // =======================
 
-    <button onclick="openRelatedSeriesModal('${prefix}')">
-      📚 Adicionar Relacionado
-    </button>
+  document.getElementById("btn-new-volume").onclick = () =>
+    openCreateVolume(prefix);
 
-    <button onclick="saveAllVolumes()">
-      💾 Salvar Tudo
-    </button>
+  document.getElementById("btn-generate").onclick = () =>
+    generateMissingVolumes(prefix);
 
-    <button class="danger" onclick="deleteSeries('${prefix}')">
-      🗑 Deletar Série
-    </button>
-  `;
+  document.getElementById("btn-edit-series").onclick = () => editSeries(prefix);
+
+  document.getElementById("btn-related").onclick = () =>
+    openRelatedSeriesModal(prefix);
+
+  document.getElementById("btn-save-all").onclick = () => saveAllVolumes();
+
+  document.getElementById("btn-bulk-desc").onclick = () =>
+    openBulkDescriptionsModal(prefix);
+
+  document.getElementById("btn-normalize-links").onclick = () =>
+    normalizeAllLinks();
+
+  document.getElementById("btn-delete-series").onclick = () =>
+    deleteSeries(prefix);
+
+  // =======================
+  // LIMPA CONTAINER
+  // =======================
+
+  volumesDiv.innerHTML = "";
+
+  // =======================
+  // RENDERIZA CARDS
+  // =======================
+
+  updatePendingChanges(0);
+
+  changedVolumes.clear();
 
   for (const v of volumes) {
-    const div = document.createElement("div");
-    div.className = "card";
-
-    const imgSrc = volumeImg({
-      prefix: v.prefix,
-      parentPrefix: series.parent?.prefix,
-      number: v.number,
+    const card = renderVolumeCard({
+      volume: v,
+      series,
+      prefix,
     });
 
-    console.log("========== IMG DEBUG ==========");
-    console.log("Volume:", v.title);
-    console.log("Prefix volume:", v.prefix);
-    console.log("Parent:", series.parent);
-    console.log("URL gerada:", imgSrc);
-    console.log("===============================");
+    volumesDiv.appendChild(card);
 
-    div.innerHTML = `
-      <div class="card-header">
-        <div class="title-with-thumb">
-          <img 
-            src="${imgSrc}" 
-            class="volume-thumb"
-            onerror="this.style.display='none'"
-          >
-
-          <h3>${v.title}</h3>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Descrição</label>
-        <textarea id="desc-${prefix}-${v.number}">${v.description || ""}</textarea>
-      </div>
-
-      <div class="field">
-        <div class="field">
-          <label class="label-affiliate">💰 Amazon Afiliado</label>
-
-          <div class="input-row">
-            <input id="amazon-${prefix}-${v.number}" value="${v.amazon || ""}">
-          </div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label class="label-raw">🔗 Amazon Raw</label>
-
-        <div class="input-row">
-          <input 
-            id="amazon-raw-${prefix}-${v.number}" 
-            value="${v.amazon_raw || ""}"
-          >
-
-          <button onclick="normalizeAmazon('${prefix}', ${v.number})">✨</button>
-          <button onclick="openLink('amazon-raw-${prefix}-${v.number}')">🔎</button>
-          <button onclick="updateAmazonPriceRaw(${v.id}, '${prefix}', ${v.number})">💲</button>
-        </div>
-      </div>
-
-      <div class="field">
-        <label class="label-affiliate">💰 Mercado Livre Afiliado</label>
-
-        <input 
-          id="ml-${prefix}-${v.number}" 
-          value="${v.mercado_livre || ""}"
-        >
-      </div>
-
-      <div class="field">
-        <label class="label-raw">🔗 Mercado Livre Raw</label>
-
-        <div class="input-row">
-          <input 
-            id="ml-raw-${prefix}-${v.number}" 
-            value="${v.mercado_livre_raw || ""}"
-          >
-
-          <button onclick="normalizeML('${prefix}', ${v.number})">✨</button>
-          <button onclick="openLink('ml-raw-${prefix}-${v.number}')">🔎</button>
-            <button onclick="updateMLPriceRaw(${v.id}, '${prefix}', ${v.number})">💲</button>
-        </div>
-      </div>
-
-      <div class="field">
-        <label class="label-tiktok">🎥 TikTok</label>
-        <input id="tiktok-${prefix}-${v.number}" value="${v.tiktok || ""}">
-      </div>
-
-      <div class="field">
-        <label>Adicionado em</label>
-        <input
-          type="datetime-local"
-          step="1"
-          id="date-${prefix}-${v.number}"
-          value="${v.added_at ? new Date(v.added_at).toISOString().slice(0, 19) : ""}"
-        />
-      </div>
-      <button class="save-btn" onclick="saveVolume('${prefix}', ${v.number})">💾 Salvar</button>
-      <button onclick="deleteVolume('${prefix}', ${v.number})">
-        🗑
-      </button>
-    `;
-
-    volumesDiv.appendChild(div);
+    volumeObserver.observe(card);
   }
+
+  renderVolumeNavigator(volumes);
 }
 
 // =======================
@@ -1021,38 +1379,112 @@ function openSeriesModal() {
 
   modal.innerHTML = `
     <div class="modal-content">
-      <div class="series-actions">
-        <button class="btn-primary">
-          + Nova Série
-        </button>
 
-        <button class="btn-warning" onclick="updateAllPrices()">
-          🔥 Atualizar Preços
-        </button>
-      </div>
+      <h2>➕ Nova Série</h2>
 
       <input id="m-title" placeholder="Nome da série">
-      <input id="m-prefix" placeholder="Prefix (ex: csm)">
-      <input id="m-subtitle" placeholder="Subtítulo">
-      <input id="m-author" placeholder="Autor">
-      <input id="m-genre" placeholder="Gênero">
-      <input id="m-brand" placeholder="Editora">
-      <input id="m-format" placeholder="Formato">
-      <input id="m-edition" placeholder="Edition Label">
-      <input id="m-price" type="number" placeholder="Preço de capa">
-      <input id="m-total" type="number" placeholder="Total de volumes">
-      <input id="m-thumb" placeholder="/assets/thumb.webp">
 
-      <div style="display:flex; gap:10px; margin-top:10px;">
-        <button onclick="closeModal()">Cancelar</button>
-        <button id="save-btn" onclick="createSeries()">Salvar</button>
+      <input
+        id="m-prefix"
+        placeholder="Prefix (ex: op, mha, csm)"
+      >
+
+      <input id="m-subtitle" placeholder="Subtítulo">
+
+      <input id="m-author" placeholder="Autor">
+
+      <input
+        id="m-genre"
+        list="genre-list"
+        placeholder="Gênero"
+      >
+
+      <datalist id="genre-list">
+        <option value="Shounen">
+        <option value="Seinen">
+        <option value="Shounen/Seinen">
+      </datalist>
+
+      <input
+        id="m-brand"
+        list="brand-list"
+        placeholder="Editora"
+      >
+
+      <datalist id="brand-list">
+        <option value="Panini">
+        <option value="JBC">
+        <option value="NewPOP">
+        <option value="MPEG">
+        <option value="Pipoca & Nanquim">
+      </datalist>
+
+
+      <input
+        id="m-format"
+        list="format-list"
+        placeholder="Formato"
+      >
+
+      <datalist id="format-list">
+        <option value="Padrão">
+        <option value="2 em 1">
+        <option value="3 em 1">
+      </datalist>
+
+      <input
+        id="m-edition"
+        list="edition-list"
+        placeholder="Edition Label"
+      >
+
+      <datalist id="edition-list">
+        <option value="Padrão">
+        <option value="2 em 1">
+        <option value="3 em 1">
+        <option value="Remix">
+        <option value="Deluxe">
+        <option value="Edição Definitiva">
+      </datalist>
+
+      <input
+        id="m-price"
+        type="number"
+        step="0.01"
+        placeholder="Preço de capa"
+      >
+
+      <input
+        id="m-total"
+        type="number"
+        placeholder="Total de volumes"
+      >
+
+      <div class="modal-actions">
+        <button
+          class="btn btn-secondary"
+          onclick="closeModal()"
+        >
+          Cancelar
+        </button>
+
+        <button
+          class="btn btn-primary save-btn"
+          onclick="createSeries()"
+        >
+          Salvar
+        </button>
       </div>
+
     </div>
   `;
 }
 
 function closeModal() {
-  document.getElementById("modal").style.display = "none";
+  const modal = document.getElementById("modal");
+
+  modal.style.display = "none";
+  modal.innerHTML = "";
 }
 
 // =======================
@@ -1078,7 +1510,7 @@ async function createSeries() {
   const edition_label = document.getElementById("m-edition").value;
   const cover_price = Number(document.getElementById("m-price").value || 0);
   const total_volumes = Number(document.getElementById("m-total").value || 0);
-  const thumb = document.getElementById("m-thumb").value;
+  const thumb = `/assets/${prefix}/${prefix}-series.webp`;
 
   if (!title || !prefix) {
     showToast("Título e prefix são obrigatórios ⚠️");
@@ -1295,13 +1727,15 @@ async function editSeries(prefix) {
       <input id="e-edition" value="${data.edition_label || ""}" placeholder="Edition Label">
       <input id="e-price" type="number" value="${data.cover_price || 0}" placeholder="Preço">
       <input id="e-total" type="number" value="${data.total_volumes || 0}" placeholder="Total Volumes">
-      <input id="e-thumb" value="${data.thumb || ""}" placeholder="Thumb">
 
       <div style="display:flex; gap:10px; margin-top:10px;">
         <button onclick="closeModal()">Cancelar</button>
-        <button onclick="updateSeries('${prefix}', ${data.total_volumes || 0})">
-          Salvar
-        </button>
+      <button
+        id="save-btn"
+        onclick="updateSeries('${prefix}', ${data.total_volumes || 0})"
+      >
+        Salvar
+      </button>
       </div>
     </div>
   `;
@@ -1323,32 +1757,203 @@ async function openRelatedSeriesModal(prefix) {
 
   modal.innerHTML = `
     <div class="modal-content">
-      <h2>Relacionado de ${parent.title}</h2>
 
-      <input id="r-title" placeholder="Título">
-      <input id="r-prefix" placeholder="Prefix">
+      <h2>📚 Relacionado de ${parent.title}</h2>
 
-      <select id="r-type">
-        <option value="novel">Novel</option>
-        <option value="spin_off">Spin-off</option>
-        <option value="databook">Databook</option>
-        <option value="artbook">Artbook</option>
-      </select>
+      <input
+        id="r-title"
+        placeholder="Título"
+      >
 
-      <input id="r-format" placeholder="Formato">
-      <input id="r-edition" placeholder="Edition Label">
-      <input id="r-total" type="number" placeholder="Total volumes">
-      <input id="r-cover-price" type="number" step="0.01" placeholder="Preço de capa"/>
+      <input
+        id="r-prefix"
+        placeholder="Prefix (ex: dd-novel)"
+      >
 
-      <div style="display:flex; gap:10px;">
-        <button onclick="closeModal()">
+      <input
+        id="r-type"
+        list="related-type-list"
+        placeholder="Tipo"
+      >
+
+      <datalist id="related-type-list">
+        <option value="novel">
+        <option value="spin_off">
+        <option value="databook">
+        <option value="artbook">
+      </datalist>
+
+      <input
+        id="r-format"
+        list="related-format-list"
+        placeholder="Formato"
+      >
+
+      <datalist id="related-format-list">
+        <option value="Padrão">
+        <option value="2 em 1">
+        <option value="3 em 1">
+      </datalist>
+
+      <input
+        id="r-edition"
+        list="related-edition-list"
+        placeholder="Edition Label"
+      >
+
+      <datalist id="related-edition-list">
+        <option value="Novel">
+        <option value="Spin-off">
+        <option value="Databook">
+        <option value="Artbook">
+      </datalist>
+
+      <input
+        id="r-total"
+        type="number"
+        placeholder="Total de volumes"
+      >
+
+      <input
+        id="r-cover-price"
+        type="number"
+        step="0.01"
+        placeholder="Preço de capa"
+      >
+
+      <div class="modal-actions">
+
+        <button
+          class="btn btn-secondary"
+          onclick="closeModal()"
+        >
           Cancelar
         </button>
 
-        <button onclick="createRelatedSeries(${parent.id})">
+        <button
+          class="btn btn-primary save-btn"
+          onclick="createRelatedSeries(${parent.id})"
+        >
           Salvar
         </button>
+
       </div>
+
+    </div>
+  `;
+}
+
+// =======================
+// ✏️ EDITAR RELACIONADO
+// =======================
+async function editRelatedSeries(id) {
+  const { data, error } = await supabaseClient
+    .from("series")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  const modal = document.getElementById("modal");
+
+  modal.style.display = "flex";
+
+  modal.innerHTML = `
+    <div class="modal-content">
+
+      <h2>📚 Editar Relacionado</h2>
+
+      <input
+        id="r-title"
+        value="${data.title || ""}"
+        placeholder="Título"
+      >
+
+      <input
+        id="r-prefix"
+        value="${data.prefix || ""}"
+        placeholder="Prefix"
+      >
+
+      <input
+        id="r-type"
+        list="related-type-list"
+        value="${data.content_type || ""}"
+        placeholder="Tipo"
+      >
+
+      <datalist id="related-type-list">
+        <option value="novel">
+        <option value="spin_off">
+        <option value="databook">
+        <option value="artbook">
+      </datalist>
+
+      <input
+        id="r-format"
+        list="related-format-list"
+        value="${data.format || ""}"
+        placeholder="Formato"
+      >
+
+      <datalist id="related-format-list">
+        <option value="Padrão">
+        <option value="2 em 1">
+        <option value="3 em 1">
+      </datalist>
+
+      <input
+        id="r-edition"
+        list="related-edition-list"
+        value="${data.edition_label || ""}"
+        placeholder="Edition Label"
+      >
+
+      <datalist id="related-edition-list">
+        <option value="Padrão">
+        <option value="Remix">
+        <option value="Deluxe">
+        <option value="Edição Definitiva">
+      </datalist>
+
+      <input
+        id="r-price"
+        type="number"
+        step="0.01"
+        value="${data.cover_price || 0}"
+        placeholder="Preço de capa"
+      >
+
+      <input
+        id="r-total"
+        type="number"
+        value="${data.total_volumes || 0}"
+        placeholder="Total de volumes"
+      >
+
+      <div class="modal-actions">
+
+        <button
+          class="btn btn-secondary"
+          onclick="closeModal()"
+        >
+          Cancelar
+        </button>
+
+        <button
+          id="save-btn"
+          class="btn btn-primary"
+          onclick="updateRelatedSeries(${data.id})"
+        >
+          Salvar
+        </button>
+
+      </div>
+
     </div>
   `;
 }
@@ -1393,7 +1998,7 @@ async function createRelatedSeries(parentId) {
 }
 
 // =======================
-// FUNÇÃO DE UPDATE
+// 💾 UPDATE DE SÉRIE
 // =======================
 async function updateSeries(prefix, oldTotal) {
   if (!(await requireAuth())) {
@@ -1410,9 +2015,9 @@ async function updateSeries(prefix, oldTotal) {
   const edition_label = document.getElementById("e-edition").value;
   const cover_price = Number(document.getElementById("e-price").value || 0);
   const total_volumes = Number(document.getElementById("e-total").value || 0);
-  const thumb = document.getElementById("e-thumb").value;
 
   const btn = document.getElementById("save-btn");
+  console.log("BTN:", btn);
   btn.disabled = true;
   btn.textContent = "Salvando...";
 
@@ -1429,7 +2034,6 @@ async function updateSeries(prefix, oldTotal) {
         edition_label,
         cover_price,
         total_volumes,
-        thumb,
       })
       .eq("prefix", prefix);
 
@@ -1459,6 +2063,56 @@ async function updateSeries(prefix, oldTotal) {
     } else {
       showToast("Erro ao atualizar ❌");
     }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Salvar";
+  }
+}
+
+// =======================
+// 💾 UPDATE RELACIONADO
+// =======================
+async function updateRelatedSeries(id) {
+  const title = document.getElementById("r-title").value;
+  const prefix = document.getElementById("r-prefix").value;
+  const content_type = document.getElementById("r-type").value;
+  const format = document.getElementById("r-format").value;
+  const edition_label = document.getElementById("r-edition").value;
+  const cover_price = Number(
+    document.getElementById("r-price").value || 0
+  );
+  const total_volumes = Number(
+    document.getElementById("r-total").value || 0
+  );
+
+  const btn = document.getElementById("save-btn");
+
+  btn.disabled = true;
+  btn.textContent = "Salvando...";
+
+  try {
+    const { error } = await supabaseClient
+      .from("series")
+      .update({
+        title,
+        prefix,
+        content_type,
+        format,
+        edition_label,
+        cover_price,
+        total_volumes,
+      })
+      .eq("id", id);
+
+    if (error) throw error;
+
+    showToast("Relacionado atualizado ✨");
+
+    closeModal();
+    loadSeries();
+  } catch (err) {
+    console.error(err);
+    showToast("Erro ao atualizar ❌");
   } finally {
     btn.disabled = false;
     btn.textContent = "Salvar";
@@ -1505,25 +2159,98 @@ async function openCreateVolume(prefix) {
 }
 
 // =======================
+// 💾 DESCRIÇÃO EM MASSA
+// =======================
+
+function openBulkDescriptionsModal(prefix) {
+  const modal = document.getElementById("modal");
+
+  modal.style.display = "flex";
+
+  modal.innerHTML = `
+    <div class="modal-content">
+      <h2>✨ Preencher descrições em massa</h2>
+
+      <textarea
+        id="bulk-descriptions"
+        placeholder="Cole todas as descrições aqui..."
+        style="
+          width:100%;
+          height:300px;
+          background:#020617;
+          color:white;
+          padding:12px;
+          border-radius:8px;
+          border:1px solid #334155;
+          resize:vertical;
+        "
+      ></textarea>
+
+      <div style="display:flex; gap:10px; margin-top:15px;">
+        <button onclick="closeModal()">
+          Cancelar
+        </button>
+
+        <button onclick="applyBulkDescriptions('${prefix}')">
+          Aplicar
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function applyBulkDescriptions(prefix) {
+  const textarea = document.getElementById("bulk-descriptions");
+
+  if (!textarea.value.trim()) {
+    showToast("Cole as descrições ⚠️");
+    return;
+  }
+
+  const lines = textarea.value
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean);
+
+  let applied = 0;
+
+  lines.forEach((line) => {
+    // pega "Vol. 01"
+    const match = line.match(/Vol\.?\s*(\d+)/i);
+
+    if (!match) return;
+
+    const volume = parseInt(match[1], 10);
+
+    const target = document.getElementById(`desc-${prefix}-${volume}`);
+
+    if (!target) return;
+
+    target.value = line;
+
+    applied++;
+  });
+
+  closeModal();
+
+  showToast(`✨ ${applied} descrições aplicadas`);
+}
+
+// =======================
 // 💾 SALVAR TUDO
 // =======================
 async function saveAllVolumes() {
-  const buttons = document.querySelectorAll(".save-btn");
+  if (changedVolumes.size === 0) {
+    showToast("Nenhuma alteração pendente 👍");
+    return;
+  }
 
-  showToast("Salvando tudo... ⏳");
+  showToast(`Salvando ${changedVolumes.size} volumes... ⏳`);
 
   const promises = [];
 
-  for (const btn of buttons) {
-    const onclick = btn.getAttribute("onclick");
-    const match = onclick?.match(/saveVolume\('(.+)',\s*(\d+)\)/);
-
-    if (!match) continue;
-
-    const prefix = match[1];
-    const number = parseInt(match[2]);
-
-    promises.push(saveVolume(prefix, number));
+  for (const volumeNumber of changedVolumes) {
+    promises.push(saveVolume(currentPrefix, volumeNumber));
   }
 
   await Promise.all(promises);
