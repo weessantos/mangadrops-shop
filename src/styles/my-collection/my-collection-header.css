@@ -1,0 +1,407 @@
+/* =====================================
+   HEADER DA COLEÇÃO
+   ===================================== */
+
+.collectionHeader {
+  position: sticky;
+
+  top: 0;
+
+  z-index: 9999;
+
+  margin-bottom: -58px;
+
+  background: rgba(18, 18, 24, 0.42);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  backdrop-filter: blur(18px) saturate(140%);
+
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+
+.collectionHeaderBar {
+  display: grid;
+
+  grid-template-columns: 220px 1fr 220px;
+
+  align-items: center;
+
+  padding: 0 32px;
+
+  height: 60px;
+}
+
+/* =====================================
+   LOGO
+   ===================================== */
+
+.collectionLogoBtn {
+  flex: 0 0 auto;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: start;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  cursor: pointer;
+}
+
+.collectionLogo {
+  width: 40px;
+
+  height: 40px;
+
+  object-fit: contain;
+
+  display: block;
+
+  transition: transform 0.2s ease;
+}
+
+.collectionLogoBtn:hover .collectionLogo {
+  transform: scale(1.05);
+}
+
+/* =====================================
+   NAVEGAÇÃO
+   ===================================== */
+
+.collectionNav {
+  flex: 1;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+.collectionNavBtn {
+  height: 34px;
+
+  padding: 0 24px;
+
+  border-radius: 999px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  background: rgba(255, 255, 255, 0.06);
+
+  color: rgba(255, 255, 255, 0.95);
+
+  font-size: 0.95rem;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.collectionNavBtn:hover {
+  transform: translateY(-1px);
+
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.collectionCollectionBtn {
+  height: 34px;
+
+  padding: 0 28px;
+
+  border: none;
+
+  border-radius: 999px;
+
+  color: white;
+
+  font-size: 0.95rem;
+
+  font-weight: 900;
+
+  cursor: default;
+
+  background: linear-gradient(
+    135deg,
+    rgba(124, 58, 237, 0.75),
+    rgba(59, 130, 246, 0.75)
+  );
+
+  box-shadow:
+    0 10px 30px rgba(124, 58, 237, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.compactNavBtn {
+  height: 34px;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1;
+  transition:
+    transform 0.16s ease,
+    background 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+
+  color: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: none;
+}
+
+/* =====================================
+   AÇÕES
+   ===================================== */
+
+.collectionActions {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  gap: 10px;
+}
+
+.collectionActionBtn {
+  height: 44px;
+
+  padding: 0 20px;
+
+  border-radius: 999px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  background: rgba(255, 255, 255, 0.05);
+
+  color: white;
+
+  font-size: 0.95rem;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.collectionActionBtn:hover {
+  transform: translateY(-1px);
+
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* =====================================
+my-collection-header - TABLET
+===================================== */
+
+@media (min-width: 769px) and  (max-width: 1024px) {
+  .collectionHeaderBar {
+    grid-template-columns: 60px 1fr auto;
+    padding: 0 16px;
+    gap: 12px;
+  }
+
+  .collectionNav {
+    gap: 8px;
+  }
+
+  .collectionNavBtn,
+  .collectionCollectionBtn,
+  .compactNavBtn {
+    padding: 0 16px;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  .collectionActionBtn {
+    padding: 0 14px;
+    font-size: 0.85rem;
+  }
+}
+
+/* =====================================
+my-collection-header - TABLET PEQUENO
+===================================== */
+
+@media (min-width: 601px) and  (max-width: 768px) {
+  .collectionHeaderBar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 0 12px;
+  }
+
+  .collectionNav {
+    flex: 1;
+
+    display: flex;
+    gap: 8px;
+
+    overflow-x: auto;
+
+    scrollbar-width: none;
+  }
+
+  .collectionNav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .collectionNav {
+    gap: 6px;
+  }
+
+  .collectionNavBtn,
+  .collectionCollectionBtn,
+  .compactNavBtn {
+    height: 30px;
+
+    padding: 0 12px;
+
+    font-size: 0.8rem;
+  }
+
+  .collectionActionBtn {
+    height: 30px;
+
+    padding: 0 12px;
+
+    font-size: 0.8rem;
+  }
+
+  .collectionLogo {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+/* ==========================
+   my-collection-header - MOBILE
+========================== */
+
+.mobileHeaderNav {
+  display: none;
+}
+
+@media (max-width: 1000px) {
+  .collectionHeaderBar {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    height: 60px;
+
+    padding: 0 12px;
+  }
+
+  .collectionLogoBtn {
+    margin: 0;
+  }
+
+  /* Esconde navegação desktop */
+  .collectionNav,
+  .collectionActions {
+    display: none;
+  }
+
+  /* Navegação mobile */
+  .mobileHeaderNav {
+    flex: 1;
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    align-items: center;
+  }
+
+  .mobileHeaderMain {
+    position: absolute;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+  }
+
+  .logoutBtn {
+    margin-left: auto;
+  }
+
+  .mobileHeaderBtn {
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 999px;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    background: rgba(255, 255, 255, 0.06);
+
+    color: rgba(255, 255, 255, 0.9);
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+  }
+
+  .mobileHeaderBtn:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .mobileHeaderBtn.active {
+    color: white;
+
+    border: none;
+
+    background: linear-gradient(
+      135deg,
+      rgba(124, 58, 237, 0.75),
+      rgba(59, 130, 246, 0.75)
+    );
+
+    box-shadow:
+      0 10px 30px rgba(124, 58, 237, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+
+  .collectionLogoBtn {
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  .collectionLogo {
+    width: 40px;
+    height: 40px;
+  }
+}

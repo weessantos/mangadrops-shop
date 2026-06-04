@@ -1,0 +1,1020 @@
+/* ==========================================
+   OVERLAY
+========================================== */
+
+.rank-modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 100000;
+}
+
+/* ==========================================
+   MODAL
+========================================== */
+
+.rank-modal {
+  width: 1100px;
+  max-width: 95vw;
+
+  background: #0f0f10;
+
+  border-radius: 24px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  padding: 32px;
+}
+
+/* ==========================================
+   GRID
+========================================== */
+
+.rank-modal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 20px;
+}
+
+/* ==========================================
+   PERFIL
+========================================== */
+.profile-card {
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 560px;
+}
+
+.profile-avatar {
+  width: 140px;
+  height: 140px;
+
+  border-radius: 50%;
+  object-fit: cover;
+
+  margin-bottom: 20px;
+
+  border: 3px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.45);
+}
+
+.profile-card h3 {
+  margin: 0;
+
+  color: white;
+
+  font-size: 28px;
+  font-weight: 800;
+
+  line-height: 1.2;
+}
+
+.profile-badges {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.profile-level,
+.profile-loyalty {
+  margin-top: 12px;
+
+  padding: 8px 16px;
+
+  border-radius: 999px;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  transition: all 0.2s ease;
+}
+
+.profile-level {
+  background: rgba(255, 204, 0, 0.08);
+
+  border: 1px solid rgba(255, 204, 0, 0.25);
+
+  color: #ffcc00;
+
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.12);
+}
+
+.profile-loyalty {
+  background: rgba(180, 100, 255, 0.08);
+
+  border: 1px solid rgba(180, 100, 255, 0.25);
+
+  color: #b975ff;
+
+  box-shadow: 0 0 10px rgba(180, 100, 255, 0.12);
+
+  cursor: pointer;
+}
+
+.profile-loyalty:hover {
+  transform: translateY(-2px);
+
+  background: rgba(180, 100, 255, 0.15);
+
+  border-color: rgba(180, 100, 255, 0.45);
+}
+
+.loyalty-wrapper {
+  position: relative;
+}
+
+.loyalty-tooltip {
+  position: absolute;
+
+  top: calc(100% + 10px);
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  width: 280px;
+
+  padding: 18px;
+
+  border-radius: 18px;
+
+  background: rgba(15, 15, 18, 0.98);
+
+  border: 1px solid rgba(180, 100, 255, 0.35);
+
+  backdrop-filter: blur(12px);
+
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.55),
+    0 0 20px rgba(180, 100, 255, 0.15);
+
+  z-index: 999;
+}
+
+.loyalty-tooltip::before {
+  content: "";
+
+  position: absolute;
+
+  top: -6px;
+
+  left: 50%;
+
+  transform: translateX(-50%) rotate(45deg);
+
+  width: 12px;
+  height: 12px;
+
+  background: rgba(15, 15, 18, 0.98);
+
+  border-left: 1px solid rgba(180, 100, 255, 0.35);
+  border-top: 1px solid rgba(180, 100, 255, 0.35);
+}
+
+.loyalty-tooltip-title {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  color: #c879ff;
+
+  font-size: 20px;
+
+  font-weight: 800;
+
+  text-align: center;
+
+  margin-bottom: 14px;
+}
+
+.loyalty-tooltip-icon {
+  width: 20px;
+
+  height: 20px;
+
+  object-fit: contain;
+}
+
+.loyalty-tooltip-current,
+.loyalty-tooltip-next {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 4px;
+}
+
+.loyalty-tooltip-label {
+  font-size: 11px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 1.2px;
+
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.loyalty-tooltip-level,
+.loyalty-tooltip-next-level {
+  font-size: 18px;
+
+  font-weight: 800;
+
+  color: #c879ff;
+}
+
+.loyalty-tooltip-divider {
+  height: 1px;
+
+  margin: 14px 0;
+
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(200, 121, 255, 0.3),
+    transparent
+  );
+}
+
+.loyalty-tooltip-message {
+  text-align: center;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+
+  margin-top: 4px;
+
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.loyalty-tooltip-footer {
+  text-align: center;
+
+  font-size: 12px;
+
+  line-height: 1.5;
+
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.rank-avatar-edit {
+  position: absolute;
+
+  right: -5px;
+  bottom: 20px;
+
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+
+  cursor: pointer;
+
+  transition: transform 0.2s ease;
+}
+
+.rank-avatar-edit img {
+  width: 20px;
+  height: 20px;
+
+  object-fit: contain;
+}
+
+.rank-avatar-wrapper:hover .rank-avatar-edit {
+  opacity: 1;
+}
+
+.rank-avatar-edit:hover {
+  transform: scale(1.1);
+}
+
+.rank-avatar-wrapper {
+  position: relative;
+
+  width: fit-content;
+
+  margin: 0 auto;
+}
+
+.rank-avatar-wrapper:hover .rank-avatar-edit {
+  transform: scale(1.05);
+}
+
+/* ==========================================
+  PERFIL STATS
+========================================== */
+.profile-stats {
+  width: 100%;
+
+  margin-top: 24px;
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 12px;
+}
+
+.profile-stats strong {
+  position: relative;
+
+  font-size: 36px;
+  font-weight: 800;
+
+  line-height: 1;
+}
+
+.profile-stats span {
+  color: rgba(255, 255, 255, 0.6);
+
+  font-size: 12px;
+}
+
+.profile-stat-item {
+  position: relative;
+
+  padding: 14px;
+
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.04);
+
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 6px;
+
+  overflow: hidden;
+}
+
+.profile-stat-icon {
+  width: 50px;
+  height: 50px;
+
+  object-fit: contain;
+
+  opacity: 0.9;
+}
+
+.profile-stat-item strong {
+  font-size: 30px;
+  font-weight: 800;
+
+  color: white;
+
+  line-height: 1;
+}
+
+.profile-stat-item span {
+  font-size: 13px;
+
+  color: rgba(255, 255, 255, 0.65);
+
+  margin-top: 6px;
+}
+
+.profile-stat-item:hover strong::before,
+.profile-stat-item:hover strong::after {
+  width: 32px;
+
+  transition: 0.1s ease;
+}
+
+/* STATS - VOLUMES  */
+.stat-volumes {
+  border-color: rgba(255, 98, 59, 0.25);
+}
+
+.stat-volumes strong {
+  color: #ff623b;
+}
+
+.stat-volumes strong::before,
+.stat-volumes strong::after {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+
+  width: 26px;
+  height: 2px;
+  opacity: 0.6;
+
+  background: linear-gradient(90deg, transparent, #ff623b, transparent);
+
+  box-shadow:
+    0 0 8px rgba(255, 98, 59, 0.7),
+    0 0 16px rgba(255, 98, 59, 0.35);
+}
+
+.stat-volumes strong::before {
+  right: calc(100% + 12px);
+}
+
+.stat-volumes strong::after {
+  left: calc(100% + 12px);
+}
+
+/* STATS - COMPLETED */
+.stat-completed {
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+.stat-completed strong {
+  color: #60a5fa;
+}
+
+.stat-completed strong::before,
+.stat-completed strong::after {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+
+  width: 26px;
+  height: 2px;
+
+  opacity: 0.6;
+
+  background: linear-gradient(90deg, transparent, #60a5fa, transparent);
+
+  box-shadow:
+    0 0 8px rgba(96, 165, 250, 0.7),
+    0 0 16px rgba(96, 165, 250, 0.35);
+}
+
+.stat-completed strong::before {
+  right: calc(100% + 12px);
+}
+
+.stat-completed strong::after {
+  left: calc(100% + 12px);
+}
+
+/* STATS  - COLLECTING */
+.stat-collecting {
+  border-color: rgba(168, 85, 247, 0.25);
+}
+
+.stat-collecting strong {
+  color: #c084fc;
+}
+
+.stat-collecting strong::before,
+.stat-collecting strong::after {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+
+  width: 26px;
+  height: 2px;
+
+  opacity: 0.6;
+
+  background: linear-gradient(90deg, transparent, #c084fc, transparent);
+
+  box-shadow:
+    0 0 8px rgba(192, 132, 252, 0.7),
+    0 0 16px rgba(192, 132, 252, 0.35);
+}
+
+.stat-collecting strong::before {
+  right: calc(100% + 12px);
+}
+
+.stat-collecting strong::after {
+  left: calc(100% + 12px);
+}
+
+/* STATS - MEDALS */
+.stat-medals {
+  border-color: rgba(250, 204, 21, 0.25);
+}
+
+.stat-medals strong {
+  color: #facc15;
+}
+
+.stat-medals strong::before,
+.stat-medals strong::after {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+
+  width: 26px;
+  height: 2px;
+
+  opacity: 0.6;
+
+  background: linear-gradient(90deg, transparent, #facc15, transparent);
+
+  box-shadow:
+    0 0 8px rgba(250, 204, 21, 0.7),
+    0 0 16px rgba(250, 204, 21, 0.35);
+}
+
+.stat-medals strong::before {
+  right: calc(100% + 12px);
+}
+
+.stat-medals strong::after {
+  left: calc(100% + 12px);
+}
+
+/* ==========================================
+   NEXT RANK
+========================================== */
+.next-rank-container {
+  margin-top: 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  width: 100%;
+}
+
+.next-rank-label {
+  color: rgba(255, 255, 255, 0.5);
+
+  font-size: 12px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.next-rank-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 12px;
+}
+
+.next-rank-title {
+  color: white;
+
+  font-size: 18px;
+  font-weight: 700;
+
+  text-align: center;
+}
+
+.next-rank-remaining {
+  margin-top: 8px;
+
+  color: rgba(255, 255, 255, 0.65);
+
+  font-size: 13px;
+}
+
+.next-rank-content strong {
+  color: white;
+
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.next-rank-content small {
+  color: rgba(255, 255, 255, 0.6);
+
+  font-size: 13px;
+}
+
+/* ==========================================
+   MAX RANK
+========================================== */
+
+.rank-max {
+  margin-top: 24px;
+
+  padding: 16px;
+
+  border-radius: 14px;
+
+  background: rgba(255, 204, 0, 0.08);
+
+  border: 1px solid rgba(255, 204, 0, 0.2);
+
+  color: #ffcc00;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  text-align: center;
+}
+
+/* ==========================================
+   CARD
+========================================== */
+
+.rank-card {
+  background: rgba(255, 255, 255, 0.03);
+
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  border-radius: 18px;
+
+  padding: 28px;
+
+  display: flex;
+  flex-direction: column;
+
+  text-align: center;
+}
+
+.rank-card-main {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+
+  width: 100%;
+
+  gap: 15px;
+}
+
+.rank-next-section {
+  width: 100%;
+
+  margin-top: 28px;
+  padding-top: 22px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.rank-card-section-title {
+  color: rgba(255, 255, 255, 0.5);
+
+  font-size: 12px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 1px;
+
+  margin-bottom: 12px;
+}
+
+/* ==========================================
+   BADGES
+========================================== */
+
+.rank-card-badge {
+  width: 140px;
+  height: 140px;
+
+  object-fit: contain;
+
+  margin-bottom: 20px;
+}
+
+.rank-card-badge.investment {
+  width: 140px;
+  height: 140px;
+}
+
+/* ==========================================
+   TITLES
+========================================== */
+
+.rank-card h3 {
+  margin: 0;
+
+  font-size: 24px;
+  font-weight: 800;
+
+  line-height: 1.2;
+}
+
+.rank-card-description {
+  margin-top: 16px;
+
+  min-height: 64px;
+
+  color: rgba(255, 255, 255, 0.7);
+
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ==========================================
+   STATS
+========================================== */
+
+.rank-card-stat {
+  margin-top: auto;
+
+  padding: 12px 16px;
+
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.05);
+
+  color: white;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* ==========================================
+   NEXT RANK
+========================================== */
+
+.rank-next-info {
+  margin-top: 24px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rank-next-info strong {
+  color: white;
+  font-size: 20px;
+}
+
+.rank-next-info span {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.rank-progress-bar {
+  width: 100%;
+
+  height: 12px;
+
+  margin-top: 24px;
+
+  border-radius: 999px;
+
+  overflow: hidden;
+
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.rank-progress-fill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--rank-color),
+    color-mix(in srgb, var(--rank-color) 75%, white)
+  );
+
+  box-shadow:
+    0 0 10px color-mix(in srgb, var(--rank-color) 50%, transparent),
+    0 0 20px color-mix(in srgb, var(--rank-color) 25%, transparent);
+}
+
+.rank-progress-percentage {
+  margin-top: 12px;
+
+  color: white;
+
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.rank-next-rank {
+  margin-top: auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rank-next-rank strong {
+  color: white;
+  font-size: 20px;
+}
+
+.rank-next-rank small {
+  color: rgba(255, 255, 255, 0.55);
+
+  font-size: 13px;
+}
+
+/* ==========================================
+   MAX RANK
+========================================== */
+
+.rank-max {
+  margin-top: auto;
+
+  padding: 16px;
+
+  border-radius: 14px;
+
+  background: rgba(255, 204, 0, 0.08);
+
+  border: 1px solid rgba(255, 204, 0, 0.2);
+
+  color: #ffcc00;
+
+  font-weight: 700;
+}
+
+/* ==========================================
+   BUTTON
+========================================== */
+
+.rank-modal-close {
+  width: 100%;
+
+  height: 52px;
+
+  margin-top: 24px;
+
+  border: none;
+
+  border-radius: 14px;
+
+  background: #ff5b2e;
+
+  color: white;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.rank-modal-close:hover {
+  opacity: 0.9;
+}
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 900px) {
+  .rank-modal-overlay {
+    padding: 0;
+  }
+
+  .rank-modal {
+    width: 100vw;
+    height: 100vh;
+
+    max-width: none;
+
+    border-radius: 0;
+
+    padding: 16px;
+
+    overflow-y: auto;
+  }
+
+  .rank-modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .profile-card {
+    min-height: auto;
+    grid-column: 1 / -1;
+  }
+
+  .rank-card {
+    padding: 18px 12px;
+
+    min-height: auto;
+  }
+
+  .rank-card-section-title {
+    margin-bottom: 8px;
+
+    font-size: 11px;
+  }
+
+  .rank-card-badge,
+  .rank-card-badge.investment {
+    width: 90px;
+    height: 90px;
+
+    margin-bottom: 10px;
+  }
+
+  .rank-card h3 {
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+
+  .rank-card-description {
+    display: none;
+  }
+
+  .rank-progress-bar {
+    margin-top: 18px;
+    height: 10px;
+  }
+
+  .rank-progress-percentage {
+    margin-top: 10px;
+
+    font-size: 1.6rem;
+  }
+
+  .rank-next-section {
+    margin-top: 12px;
+    padding-top: 12px;
+    gap: 4px;
+  }
+
+  .next-rank-label {
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    padding: 0 0 10px 0;
+  }
+
+  .next-rank-title,
+  .next-rank-content strong {
+    font-size: 0.9rem;
+    line-height: 1.2;
+  }
+
+  .next-rank-remaining,
+  .next-rank-content small {
+    font-size: 0.72rem;
+    line-height: 1.3;
+  }
+
+  .rank-modal-close {
+    position: sticky;
+    bottom: 0;
+
+    margin-top: 20px;
+  }
+
+  /* Perfil */
+
+  .profile-avatar {
+    width: 90px;
+    height: 90px;
+
+    margin-bottom: 14px;
+  }
+
+  .profile-card h3 {
+    font-size: 1.5rem;
+  }
+
+  .profile-level,
+  .profile-loyalty {
+    font-size: 0.8rem;
+  }
+
+  .profile-stats {
+    gap: 8px;
+  }
+
+  .profile-stat-item {
+    padding: 12px;
+  }
+
+  .profile-stat-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .profile-stat-item strong {
+    font-size: 1.8rem;
+  }
+
+  .profile-stat-item span {
+    font-size: 0.75rem;
+  }
+}

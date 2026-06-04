@@ -11,6 +11,7 @@ import {
 import "./styles/global.css";
 
 import Loader from "./components/Loader.jsx";
+import GlobalToast from "./components/common/GlobalToast";
 import Header from "./components/Header.jsx";
 import HomeHero from "./components/HomeHero.jsx";
 import SeriesCard from "./components/SeriesCard.jsx";
@@ -35,6 +36,12 @@ import SearchResultsPage from "./pages/SearchResultsPage.jsx";
 import CollectionHero, {
   CollectionsHero,
 } from "./components/CollectionHero.jsx";
+
+import LoginPage from "./pages/my-auth/MyLoginPage.jsx";
+import RegisterPage from "./pages/my-auth/MyRegisterPage.jsx";
+import ResetPasswordPage from "./pages/my-auth/MyResetPasswordPage.jsx";
+import NewPasswordPage from "./pages/my-auth/MyNewPasswordPage.jsx";
+import MyCollectionPage from "./pages/my-collection/MyCollectionPage.jsx";
 
 import { useIsMobile } from "./hooks/useIsMobile";
 import { normalizeProduct } from "./utils/normalizeProduct";
@@ -151,7 +158,7 @@ function AppShell() {
   const [inputValue, setInputValue] = useState("");
   const [activeSeries, setActiveSeries] = useState(null);
   const [isHeaderCompact, setIsHeaderCompact] = useState(false);
-  const [activeSection, setActiveSection] = useState("colecoes");
+  const [activeSection, setActiveSection] = useState(null);
   const [shouldScrollToVolumes, setShouldScrollToVolumes] = useState(false);
 
   // 🔹 Refs
@@ -965,7 +972,7 @@ function AppShell() {
         { key: "colecoes", ids: ["collections"] },
       ];
 
-      let current = "colecoes";
+      let current = null;
       for (const section of sections) {
         const el = section.ids
           .map((id) => document.getElementById(id))
@@ -1246,8 +1253,18 @@ function AppRoutes() {
 
         {/* 🔥 página REAL */}
         <Route path="/:seriesSlug/:volumeId" element={<AppShell />} />
-      </Routes>
 
+        {/* Rotas para parte de coleção de usuário (login, registro, minha coleção) */}
+        <Route path="/auth/login" element={<LoginPage />} />
+
+        <Route path="/auth/registrar" element={<RegisterPage />} />
+
+        <Route path="/auth/esqueci-senha" element={<ResetPasswordPage />} />
+
+        <Route path="/auth/redefinir-senha" element={<NewPasswordPage />} />
+
+        <Route path="/minha-colecao" element={<MyCollectionPage />} />
+      </Routes>
       {/* 🔥 modal SOMENTE quando veio da home */}
       {volumeId && (
         <Routes>
@@ -1260,5 +1277,10 @@ function AppRoutes() {
 
 //App é o componente raiz da aplicação, responsável por renderizar o AppRoutes, que por sua vez gerencia as rotas e a exibição do modal de produto. Ele também pode conter outros elementos comuns a todas as páginas, como o Header e o Footer.
 export default function App() {
-  return <AppRoutes />;
+  return (
+    <>
+      <AppRoutes />
+      <GlobalToast />
+    </>
+  );
 }

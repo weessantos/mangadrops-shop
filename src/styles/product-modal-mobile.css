@@ -2,7 +2,13 @@
   --mobile-header-h: 76px;
   --mobile-footer-gap: 120px;
 }
+@media (max-width: 900px) {
+  .detailsCard {
+    min-height: 150px;
+    max-height: 200px;
 
+  }
+}
 /* =========================================================
    MOBILE
    ========================================================= */

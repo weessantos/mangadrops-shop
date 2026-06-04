@@ -70,13 +70,13 @@ export default function Header({
 
   useEffect(() => {
     if (!menuOpen) return;
+
     const prevBodyOverflow = document.body.style.overflow;
-    const prevHtmlOverflow = document.documentElement.style.overflow;
+
     document.body.style.overflow = "hidden";
-    document.documentElement.style.overflow = "hidden";
+
     return () => {
       document.body.style.overflow = prevBodyOverflow || "";
-      document.documentElement.style.overflow = prevHtmlOverflow || "";
     };
   }, [menuOpen]);
 
@@ -213,6 +213,20 @@ export default function Header({
     setTimeout(updateScrollState, 350);
   };
 
+  async function handleCollectionClick() {
+    const {
+      data: { user },
+    } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+      navigate("/auth/login");
+
+      return;
+    }
+
+    navigate("/minha-colecao");
+  }
+
   const sideMenuPortal =
     isMobile && menuOpen
       ? createPortal(
@@ -243,6 +257,13 @@ export default function Header({
 
               <div className="sideMenuSection">
                 <div className="sideMenuSectionTitle">Atalhos</div>
+                <button
+                  className="sideMenuBtn sideMenuCollectionBtn"
+                  onClick={handleCollectionClick}
+                  type="button"
+                >
+                  Minha Coleção
+                </button>
                 <button
                   className={`sideMenuBtn ${navIsActive("lancamentos") ? "isActive" : ""}`}
                   style={navButtonStyle("lancamentos")}
@@ -522,6 +543,13 @@ export default function Header({
 
               <nav className="compactNav" aria-label="Seções principais">
                 <button
+                  className="compactCollectionBtn"
+                  onClick={handleCollectionClick}
+                  type="button"
+                >
+                  Minha Coleção
+                </button>
+                <button
                   className={`compactNavBtn ${navIsActive("lancamentos") ? "isActive" : ""}`}
                   style={navButtonStyle("lancamentos")}
                   aria-current={navIsActive("lancamentos") ? "page" : undefined}
@@ -681,6 +709,13 @@ export default function Header({
               <div className="heroPills">
                 <div className="pillRowMain">
                   <button
+                    className="pill pillCollectionArea"
+                    onClick={handleCollectionClick}
+                    type="button"
+                  >
+                    Minha Coleção
+                  </button>
+                  <button
                     className={`pill pillPrimary ${navIsActive("lancamentos") ? "isActive" : ""}`}
                     style={navButtonStyle("lancamentos")}
                     aria-current={
@@ -720,7 +755,7 @@ export default function Header({
                   </button>
 
                   <button
-                    className="pill pillCTA"
+                    className="pill pillPrimary"
                     onClick={openRequestForm}
                     type="button"
                   >
@@ -728,7 +763,7 @@ export default function Header({
                   </button>
 
                   <button
-                    className="pill pillCTA"
+                    className="pill pillPrimary"
                     type="button"
                     onClick={openFilters}
                   >

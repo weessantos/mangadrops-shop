@@ -20,11 +20,13 @@
     "cros": "^1.1.0",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "lucide-react": "^1.17.0",
     "pg": "^8.20.0",
     "playwright": "^1.58.2",
     "puppeteer": "^24.40.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-hot-toast": "^2.6.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.13.0",
     "sharp": "^0.34.5"

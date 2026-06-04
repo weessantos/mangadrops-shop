@@ -85,7 +85,6 @@ export async function getProducts(search = "") {
   const products = await getRawProducts();
 
   function filterProducts(products, search = "") {
-    console.log("🧪 filterProducts:", search);
 
     if (!search) {
       return products;

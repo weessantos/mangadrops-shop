@@ -1,0 +1,352 @@
+/**
+ * ==========================================================
+ * MINHA COLEÇÃO
+ * ==========================================================
+ *
+ * RESPONSABILIDADES:
+ *
+ * - Carregar todas as coleções do catálogo.
+ * - Carregar a coleção do usuário.
+ * - Agrupar os volumes por coleção.
+ * - Calcular progresso.
+ * - Calcular status visual da coleção.
+ * - Abrir e fechar o modal da coleção.
+ *
+ * STATUS POSSÍVEIS:
+ *
+ * empty
+ * Nenhum volume marcado.
+ *
+ * wishlist
+ * Possui volumes desejados mas nenhum comprado.
+ *
+ * collecting
+ * Possui pelo menos um volume comprado.
+ *
+ * complete
+ * Todos os volumes da coleção foram comprados.
+ *
+ * ==========================================================
+ */
+import { useEffect, useState } from "react";
+
+import { useSearchParams } from "react-router-dom";
+
+import { logout } from "../../hooks/my-collection-hooks/auth";
+
+import CollectorRankModal from "../../components/my-collection/MyCollectorRankModal";
+
+import MyCollectionModal from "../../components/my-collection/MyCollectionModal";
+
+import MyCollectionHeader from "../../components/my-collection/MyCollectionHeader";
+
+import MyCollectionFooter from "../../components/my-collection/MyCollectionFooter";
+
+import AvatarModal from "../../components/my-collection/MyProfileModal";
+
+import { useCollectionStats } from "../../hooks/my-collection-hooks/useCollectionStats";
+
+import Loader from "../../components/Loader";
+import "../../styles/my-collection/my-collection-page.css";
+
+export default function MyCollectionPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
+
+  const [rankModalOpen, setRankModalOpen] = useState(false);
+
+  const collectionId = searchParams.get("collection");
+
+  const {
+    loading,
+    series,
+    userName,
+    avatarUrl,
+    bannerUrl,
+    totalOwnedVolumes,
+    totalSpent,
+    completedCollections,
+    collectingCollections,
+    collectorLevel,
+    loyaltyLevel,
+    loyaltyEnabled,
+    loyaltyLoginDays,
+    totalMedals,
+    collectorRank,
+    investmentRank,
+    memberSince,
+    filter,
+    setFilter,
+    sortBy,
+    setSortBy,
+    reload,
+  } = useCollectionStats();
+
+  async function handleLogout() {
+    try {
+      await logout();
+
+      window.location.href = "/";
+    } catch (error) {
+      console.error(error);
+
+      showWarning("Erro ao sair da conta.");
+    }
+  }
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  return (
+    <>
+      {" "}
+      {/* Header */}
+      <MyCollectionHeader
+        onLogout={handleLogout}
+        onEditProfile={() => setProfileModalOpen(true)}
+        onOpenAchievements={() => setRankModalOpen(true)}
+      />
+      <div className="collection-page">
+        {/* ======================================
+      PERFIL DO COLECIONADOR
+      ====================================== */}
+        <section className="collection-profile">
+          {/* Banner */}
+          <div className="collection-banner">
+            <img src={bannerUrl} alt="Banner" />
+          </div>
+
+          {/* Avatar */}
+          <div className="collection-avatar-wrapper">
+            <div className="avatar-container">
+              <img
+                src={avatarUrl}
+                alt={userName}
+                className="profile-avatar"
+                onClick={() => setRankModalOpen(true)}
+              />
+
+              <button
+                className="avatar-edit-btn"
+                onClick={() => setProfileModalOpen(true)}
+                title="Editar perfil"
+              >
+                <img
+                  src="/assets/my-collection/icons/editar-perfil.png"
+                  alt="Editar perfil"
+                />
+              </button>
+            </div>
+          </div>
+          {/* Informações */}
+          <div className="collection-profile-info">
+            <div className="profile-header">
+              <h1>{userName}</h1>
+            </div>
+
+            <div
+              className="collector-badge-showcase"
+              title={collectorRank.title}
+            >
+              <img
+                onClick={() => setRankModalOpen(true)}
+                src={collectorRank.badge}
+                alt={collectorRank.title}
+                className="collector-main-badge"
+              />
+            </div>
+          </div>
+        </section>
+        {/* ======================================
+    HEADER
+====================================== */}
+        <div className="collection-header">
+          <div className="collection-header-info">
+            <span className="collection-header-label">BIBLIOTECA ARCANA</span>
+
+            <h2>Minha Coleção</h2>
+          </div>
+        </div>
+
+        {/* ======================================
+    FILTROS
+====================================== */}
+        <div className="collection-toolbar">
+          <div className="collection-filters">
+            <button
+              className={filter === "all" ? "active" : ""}
+              onClick={() => setFilter("all")}
+            >
+              📚 Todas
+            </button>
+
+            <button
+              className={filter === "owned" ? "active" : ""}
+              onClick={() => setFilter("owned")}
+            >
+              ✅ Compradas
+            </button>
+
+            <button
+              className={filter === "wishlist" ? "active" : ""}
+              onClick={() => setFilter("wishlist")}
+            >
+              ⭐ Wishlist
+            </button>
+
+            <button
+              className={filter === "active" ? "active" : ""}
+              onClick={() => setFilter("active")}
+            >
+              🔥 Ativas
+            </button>
+          </div>
+
+          <div className="collection-sort">
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+              <option value="title-asc">A-Z</option>
+
+              <option value="title-desc">Z-A</option>
+
+              <option value="volumes-desc">Maior obra</option>
+
+              <option value="progress-desc">Mais completas</option>
+            </select>
+          </div>
+        </div>
+        {/* ======================================
+      GRID DE COLEÇÕES
+      ====================================== */}
+        <div className="collection-grid">
+          {series.map((serie) => (
+            <div
+              key={serie.series_id}
+              className="series-card"
+              onClick={() =>
+                setSearchParams({
+                  collection: serie.series_id,
+                })
+              }
+            >
+              <img
+                src={serie.thumb}
+                alt={serie.title}
+                className="series-thumb"
+              />
+              <div className="series-content">
+                <h2>{serie.title}</h2>
+
+                {serie.status === "complete-plus" && (
+                  <div className="collection-status complete-plus">
+                    ★ Completa+
+                  </div>
+                )}
+
+                {serie.status === "complete" && (
+                  <div className="collection-status complete">✓ Completa</div>
+                )}
+
+                {serie.status === "collecting" && (
+                  <div className="collection-status collecting">Comprando</div>
+                )}
+
+                {serie.status === "wishlist" && (
+                  <div className="collection-status wishlist">Wishlist</div>
+                )}
+
+                <div className="series-progress-group">
+                  <div className="series-progress-header">
+                    <span>📚 Principal</span>
+
+                    <span>
+                      {serie.main_owned} / {serie.main_total}
+                    </span>
+                  </div>
+
+                  <div className="progress-bar">
+                    <div
+                      className={`progress-fill ${serie.status}`}
+                      style={{
+                        width: `${serie.mainPercentage}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {serie.extra_total > 0 && (
+                  <div className="series-progress-group extras">
+                    <div className="series-progress-header">
+                      <span>⭐ Extras</span>
+
+                      <span>
+                        {serie.extra_owned} / {serie.extra_total}
+                      </span>
+                    </div>
+
+                    <div className="progress-bar extra-progress-bar">
+                      <div
+                        className="progress-fill extra-progress-fill"
+                        style={{
+                          width: `${
+                            serie.extra_total > 0
+                              ? Math.round(
+                                  (serie.extra_owned / serie.extra_total) * 100,
+                                )
+                              : 0
+                          }%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <MyCollectionFooter />
+      {collectionId && (
+        <MyCollectionModal
+          collectionId={collectionId}
+          onClose={() => {
+            setSearchParams({});
+            reload();
+          }}
+        />
+      )}
+      {profileModalOpen && (
+        <AvatarModal
+          onClose={() => setProfileModalOpen(false)}
+          onSaved={() => {
+            reload();
+            setProfileModalOpen(false);
+          }}
+          collectorRank={collectorRank}
+          investmentRank={investmentRank}
+        />
+      )}
+      {rankModalOpen && (
+        <CollectorRankModal
+          userName={userName}
+          avatarUrl={avatarUrl}
+          collectorLevel={collectorLevel}
+          loyaltyLevel={loyaltyLevel}
+          loyaltyEnabled={loyaltyEnabled}
+          loyaltyLoginDays={loyaltyLoginDays}
+          memberSince={memberSince}
+          totalVolumes={totalOwnedVolumes}
+          completedCollections={completedCollections}
+          collectingCollections={collectingCollections}
+          totalMedals={totalMedals}
+          collectorRank={collectorRank}
+          investmentRank={investmentRank}
+          totalSpent={totalSpent}
+          onClose={() => setRankModalOpen(false)}
+          onEditProfile={() => setProfileModalOpen(true)}
+        />
+      )}
+    </>
+  );
+}

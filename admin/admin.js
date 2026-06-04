@@ -677,7 +677,7 @@ async function pollProgress() {
 }
 
 // ====================================
-//APEND DO LOG E CONTADOR DE PROGRESSO
+// APEND DO LOG E CONTADOR DE PROGRESSO
 // ====================================
 function appendLog(text) {
   let target;
@@ -1469,11 +1469,12 @@ function openSeriesModal() {
         </button>
 
         <button
+          id="save-btn"
           class="btn btn-primary save-btn"
           onclick="createSeries()"
         >
           Salvar
-        </button>
+</button>
       </div>
 
     </div>
@@ -1514,6 +1515,10 @@ async function createSeries() {
 
   if (!title || !prefix) {
     showToast("Título e prefix são obrigatórios ⚠️");
+
+    btn.disabled = false;
+    btn.textContent = "Salvar";
+
     return;
   }
 
@@ -2078,12 +2083,8 @@ async function updateRelatedSeries(id) {
   const content_type = document.getElementById("r-type").value;
   const format = document.getElementById("r-format").value;
   const edition_label = document.getElementById("r-edition").value;
-  const cover_price = Number(
-    document.getElementById("r-price").value || 0
-  );
-  const total_volumes = Number(
-    document.getElementById("r-total").value || 0
-  );
+  const cover_price = Number(document.getElementById("r-price").value || 0);
+  const total_volumes = Number(document.getElementById("r-total").value || 0);
 
   const btn = document.getElementById("save-btn");
 
@@ -2227,6 +2228,8 @@ function applyBulkDescriptions(prefix) {
     if (!target) return;
 
     target.value = line;
+
+    target.dispatchEvent(new Event("input", { bubbles: true }));
 
     applied++;
   });
