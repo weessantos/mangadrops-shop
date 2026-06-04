@@ -197,10 +197,10 @@ export default function MyCollectionPage() {
             </button>
 
             <button
-              className={filter === "active" ? "active" : ""}
-              onClick={() => setFilter("active")}
+              className={filter === "missing" ? "active" : ""}
+              onClick={() => setFilter("missing")}
             >
-              🔥 Ativas
+              ❌ Não possuo
             </button>
           </div>
 

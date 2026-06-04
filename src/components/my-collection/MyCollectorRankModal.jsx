@@ -54,6 +54,38 @@ export default function CollectorRankModal({
     nextRankMessage = `Necessário Fidelidade ${collectorRank.nextRankLoyalty}`;
   }
 
+  const missingInvestment = Math.max(
+    0,
+    (investmentRank.nextRankValue || 0) - totalSpent,
+  );
+
+  const missingInvestmentLoyalty = Math.max(
+    0,
+    (investmentRank.nextRankLoyalty || 0) - loyaltyLevel,
+  );
+
+  let nextInvestmentMessage = "";
+
+  if (missingInvestment > 0 && missingInvestmentLoyalty > 0) {
+    nextInvestmentMessage = `Faltam R$ ${missingInvestment.toLocaleString(
+      "pt-BR",
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      },
+    )} e Fidelidade ${investmentRank.nextRankLoyalty}`;
+  } else if (missingInvestment > 0) {
+    nextInvestmentMessage = `Faltam R$ ${missingInvestment.toLocaleString(
+      "pt-BR",
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      },
+    )}`;
+  } else if (missingInvestmentLoyalty > 0) {
+    nextInvestmentMessage = `Necessário Fidelidade ${investmentRank.nextRankLoyalty}`;
+  }
+
   const nextLoyaltyLevel = Math.min(8, loyaltyLevel + 1);
 
   let loyaltyMessage = "";
@@ -84,6 +116,8 @@ export default function CollectorRankModal({
     : 0;
 
   useLockBodyScroll();
+
+  console.log(investmentRank);
 
   return (
     <div className="rank-modal-overlay" onClick={onClose}>
@@ -349,12 +383,7 @@ export default function CollectorRankModal({
                   </strong>
 
                   <small className="next-rank-remaining">
-                    +R${" "}
-                    {remainingInvestment.toLocaleString("pt-BR", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}{" "}
-                    para subir de rank
+                    {nextInvestmentMessage}
                   </small>
                 </div>
               </div>

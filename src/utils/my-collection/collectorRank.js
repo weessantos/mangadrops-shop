@@ -209,7 +209,7 @@ export function getCollectorRank(totalVolumes, loyaltyLevel, isAdmin = false) {
 // INVESTMENT RANK
 // ==========================================
 
-export function getInvestmentRank(totalSpent) {
+export function getInvestmentRank(totalSpent, loyaltyLevel) {
   const ranks = [
     {
       rank: "APOIADOR",
@@ -219,8 +219,10 @@ export function getInvestmentRank(totalSpent) {
       badge: "/assets/my-collection/icons/badges/coins/coin01.png",
       color: "#9ca3af",
       requiredValue: 0,
+      requiredLoyalty: 0,
       nextRankTitle: "Patrono",
       nextRankValue: 100,
+      nextRankLoyalty: 2,
     },
 
     {
@@ -231,8 +233,10 @@ export function getInvestmentRank(totalSpent) {
       badge: "/assets/my-collection/icons/badges/coins/coin02.png",
       color: "#94a3b8",
       requiredValue: 100,
+      requiredLoyalty: 2,
       nextRankTitle: "Colecionador Dedicado",
       nextRankValue: 250,
+      nextRankLoyalty: 2,
     },
 
     {
@@ -243,8 +247,10 @@ export function getInvestmentRank(totalSpent) {
       badge: "/assets/my-collection/icons/badges/coins/coin03.png",
       color: "#14b8a6",
       requiredValue: 250,
+      requiredLoyalty: 2,
       nextRankTitle: "Curador",
       nextRankValue: 500,
+      nextRankLoyalty: 3,
     },
 
     {
@@ -255,8 +261,10 @@ export function getInvestmentRank(totalSpent) {
       badge: "/assets/my-collection/icons/badges/coins/coin04.png",
       color: "#22c55e",
       requiredValue: 500,
+      requiredLoyalty: 3,
       nextRankTitle: "Guardião",
       nextRankValue: 1000,
+      nextRankLoyalty: 3,
     },
 
     {
@@ -267,8 +275,10 @@ export function getInvestmentRank(totalSpent) {
       badge: "/assets/my-collection/icons/badges/coins/coin05.png",
       color: "#3b82f6",
       requiredValue: 1000,
+      requiredLoyalty: 3,
       nextRankTitle: "Arquivista",
       nextRankValue: 1500,
+      nextRankLoyalty: 4,
     },
 
     {
@@ -279,8 +289,10 @@ export function getInvestmentRank(totalSpent) {
       badge: "/assets/my-collection/icons/badges/coins/coin06.png",
       color: "#8b5cf6",
       requiredValue: 1500,
+      requiredLoyalty: 4,
       nextRankTitle: "Grande Curador",
       nextRankValue: 2500,
+      nextRankLoyalty: 4,
     },
 
     {
@@ -291,8 +303,10 @@ export function getInvestmentRank(totalSpent) {
       badge: "/assets/my-collection/icons/badges/coins/coin07.png",
       color: "#a855f7",
       requiredValue: 2500,
+      requiredLoyalty: 4,
       nextRankTitle: "Grande Mecenas",
       nextRankValue: 4000,
+      nextRankLoyalty: 5,
     },
 
     {
@@ -303,8 +317,10 @@ export function getInvestmentRank(totalSpent) {
       badge: "/assets/my-collection/icons/badges/coins/coin08.png",
       color: "#f97316",
       requiredValue: 4000,
+      requiredLoyalty: 5,
       nextRankTitle: "Lorde da Biblioteca",
       nextRankValue: 5000,
+      nextRankLoyalty: 6,
     },
 
     {
@@ -315,8 +331,10 @@ export function getInvestmentRank(totalSpent) {
       badge: "/assets/my-collection/icons/badges/coins/coin09.png",
       color: "#fb923c",
       requiredValue: 5000,
+      requiredLoyalty: 6,
       nextRankTitle: "Magnata do Acervo",
       nextRankValue: 7500,
+      nextRankLoyalty: 7,
     },
 
     {
@@ -327,8 +345,10 @@ export function getInvestmentRank(totalSpent) {
       badge: "/assets/my-collection/icons/badges/coins/coin10.png",
       color: "#facc15",
       requiredValue: 7500,
+      requiredLoyalty: 7,
       nextRankTitle: "Conservador Imperial",
       nextRankValue: 10000,
+      nextRankLoyalty: 8,
     },
 
     {
@@ -339,8 +359,10 @@ export function getInvestmentRank(totalSpent) {
       badge: "/assets/my-collection/icons/badges/coins/coin11.png",
       color: "#fde047",
       requiredValue: 10000,
+      requiredLoyalty: 8,
       nextRankTitle: "Patrono Supremo",
       nextRankValue: 15000,
+      nextRankLoyalty: 8,
     },
 
     {
@@ -351,8 +373,10 @@ export function getInvestmentRank(totalSpent) {
       badge: "/assets/my-collection/icons/badges/coins/coin12.png",
       color: "#fef08a",
       requiredValue: 15000,
+      requiredLoyalty: 8,
       nextRankTitle: "Imperador das Coleções",
       nextRankValue: 25000,
+      nextRankLoyalty: 8,
     },
 
     {
@@ -363,17 +387,35 @@ export function getInvestmentRank(totalSpent) {
       badge: "/assets/my-collection/icons/badges/coins/coin13.png",
       color: "#baf1fd",
       requiredValue: 25000,
+      requiredLoyalty: 8,
       nextRankTitle: null,
       nextRankValue: null,
+      nextRankLoyalty: null,
     },
   ];
+
+  const currentRank = [...ranks]
+    .reverse()
+    .find(
+      (rank) =>
+        totalSpent >= rank.requiredValue &&
+        loyaltyLevel >= rank.requiredLoyalty,
+    );
 
   return {
     type: "investment",
     category: "Elo de Investimento",
+
     maxTitle: "💎 Imperador das Coleções",
 
-    ...[...ranks].reverse().find((rank) => totalSpent >= rank.requiredValue),
+    nextRankBadge: currentRank.nextRankTitle
+      ? ranks.find((r) => r.title === currentRank.nextRankTitle)?.badge
+      : null,
+
+    nextRankRequiredValue: currentRank.nextRankValue,
+    nextRankRequiredLoyalty: currentRank.nextRankLoyalty,
+
+    ...currentRank,
   };
 }
 

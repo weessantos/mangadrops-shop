@@ -395,3 +395,31 @@
 
   border-radius: 999px;
 }
+
+/* ==========================================
+   MEDIA DO GRID MOBILE
+========================================== */
+
+@media (min-width: 430px) and (max-width: 600px) {
+  .avatar-grid {
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(100px, 1fr)
+    );
+
+    gap: 15px;
+  }
+}
+
+@media (max-width: 429px) {
+  .avatar-grid {
+    display: grid;
+
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(90px, 1fr)
+    );
+
+    gap: 20px;
+  }
+}

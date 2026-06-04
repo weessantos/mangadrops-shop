@@ -74,7 +74,7 @@ select {
 
   grid-template-columns: 300px 1fr;
 
-  height: 100vh;
+  height: 100dvh;
 }
 
 /* ====================================================== */

@@ -355,6 +355,8 @@
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
 
   cursor: pointer;
+  
+  -webkit-tap-highlight-color: transparent;
 }
 
 .collection-profile-info {
@@ -403,6 +405,7 @@
   object-fit: contain;
 
   transition: all 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .collector-badge-showcase:hover .collector-main-badge {

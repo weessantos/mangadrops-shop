@@ -314,7 +314,10 @@ export function useCollectionStats() {
       isAdmin,
     );
 
-    const investmentRankValue = getInvestmentRank(totalSpentValue);
+    const investmentRankValue = getInvestmentRank(
+      totalSpentValue,
+      calculatedLoyaltyLevel,
+    );
 
     setCollectorRank(collectorRankValue);
 
@@ -375,9 +378,9 @@ export function useCollectionStats() {
         filtered = filtered.filter((serie) => serie.wishlist > 0);
         break;
 
-      case "active":
+      case "missing":
         filtered = filtered.filter(
-          (serie) => serie.owned > 0 || serie.wishlist > 0,
+          (serie) => serie.owned === 0 && serie.wishlist === 0,
         );
         break;
 

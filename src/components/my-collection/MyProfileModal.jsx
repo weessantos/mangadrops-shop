@@ -34,6 +34,7 @@ export default function AvatarModal({
   collectorRank,
   investmentRank,
 }) {
+  
   const unlockedAvatars = getUnlockedAvatars(
     collectorRank.levelValue,
     collectorRank.rank === "ARCANISTA_SUPREMO",
