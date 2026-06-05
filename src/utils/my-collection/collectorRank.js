@@ -41,7 +41,7 @@ export function getCollectorRank(totalVolumes, loyaltyLevel, isAdmin = false) {
     {
       rank: "APRENDIZ",
       title: "Aprendiz",
-      levelValue: 1,
+      levelValue: 0,
       description: "Toda grande coleção começa com o primeiro volume.",
       badge: "/assets/my-collection/icons/badges/badges_raw/badge_raw01.png",
       color: "#ffb87d",
@@ -55,7 +55,7 @@ export function getCollectorRank(totalVolumes, loyaltyLevel, isAdmin = false) {
     {
       rank: "LEITOR",
       title: "Leitor",
-      levelValue: 2,
+      levelValue: 1,
       description: "Os primeiros tomos já ocupam espaço na sua biblioteca.",
       badge: "/assets/my-collection/icons/badges/badges_raw/badge_raw02.png",
       color: "#7a7a7a",
@@ -69,7 +69,7 @@ export function getCollectorRank(totalVolumes, loyaltyLevel, isAdmin = false) {
     {
       rank: "COLECIONADOR",
       title: "Colecionador",
-      levelValue: 3,
+      levelValue: 2,
       description: "Sua estante começa a ganhar forma e personalidade própria.",
       badge: "/assets/my-collection/icons/badges/badges_raw/badge_raw03.png",
       color: "#ba7b33",
@@ -83,7 +83,7 @@ export function getCollectorRank(totalVolumes, loyaltyLevel, isAdmin = false) {
     {
       rank: "CURADOR",
       title: "Curador",
-      levelValue: 4,
+      levelValue: 3,
       description:
         "Cada obra em sua coleção foi escolhida com critério e dedicação.",
       badge: "/assets/my-collection/icons/badges/badges_raw/badge_raw04.png",
@@ -98,7 +98,7 @@ export function getCollectorRank(totalVolumes, loyaltyLevel, isAdmin = false) {
     {
       rank: "ARQUIVISTA",
       title: "Arquivista",
-      levelValue: 5,
+      levelValue: 4,
       description:
         "Seu acervo já merece ser catalogado entre as grandes coleções.",
       badge: "/assets/my-collection/icons/badges/badges_raw/badge_raw05.png",
@@ -113,7 +113,7 @@ export function getCollectorRank(totalVolumes, loyaltyLevel, isAdmin = false) {
     {
       rank: "BIBLIOTECARIO_ARCANO",
       title: "Bibliotecário Arcano",
-      levelValue: 6,
+      levelValue: 5,
       description:
         "Conhecedor dos segredos escondidos entre os tomos e das obras mais raras.",
       badge: "/assets/my-collection/icons/badges/badges_raw/badge_raw06.png",
@@ -128,7 +128,7 @@ export function getCollectorRank(totalVolumes, loyaltyLevel, isAdmin = false) {
     {
       rank: "MESTRE_DA_ESTANTE",
       title: "Mestre da Estante",
-      levelValue: 7,
+      levelValue: 6,
       description: "Sua biblioteca já inspira outros colecionadores.",
       badge: "/assets/my-collection/icons/badges/badges_raw/badge_raw07.png",
       color: "#3a43ed",
@@ -142,7 +142,7 @@ export function getCollectorRank(totalVolumes, loyaltyLevel, isAdmin = false) {
     {
       rank: "GUARDIAO_DOS_TOMOS",
       title: "Guardião dos Tomos",
-      levelValue: 8,
+      levelValue: 7,
       description: "Protege e preserva uma coleção lendária.",
       badge: "/assets/my-collection/icons/badges/badges_raw/badge_raw08.png",
       color: "#8f33d1",
@@ -161,7 +161,7 @@ export function getCollectorRank(totalVolumes, loyaltyLevel, isAdmin = false) {
 
       rank: "ARCANISTA_SUPREMO",
       title: "Arcanista Supremo",
-      levelValue: 50,
+      levelValue: 10,
 
       description: "A mais alta autoridade da Biblioteca Arcana.",
 
@@ -214,7 +214,7 @@ export function getInvestmentRank(totalSpent, loyaltyLevel) {
     {
       rank: "APOIADOR",
       title: "Apoiador",
-      levelValue: 1,
+      levelValue: 0,
       description: "Primeiros passos na construção do acervo.",
       badge: "/assets/my-collection/icons/badges/coins/coin01.png",
       color: "#9ca3af",
@@ -228,7 +228,7 @@ export function getInvestmentRank(totalSpent, loyaltyLevel) {
     {
       rank: "PATRONO",
       title: "Patrono",
-      levelValue: 2,
+      levelValue: 1,
       description: "Seu investimento começa a dar forma à coleção.",
       badge: "/assets/my-collection/icons/badges/coins/coin02.png",
       color: "#94a3b8",
@@ -242,7 +242,7 @@ export function getInvestmentRank(totalSpent, loyaltyLevel) {
     {
       rank: "COLECIONADOR_DEDICADO",
       title: "Colecionador Dedicado",
-      levelValue: 3,
+      levelValue: 2,
       description: "A biblioteca cresce volume após volume.",
       badge: "/assets/my-collection/icons/badges/coins/coin03.png",
       color: "#14b8a6",
@@ -256,7 +256,7 @@ export function getInvestmentRank(totalSpent, loyaltyLevel) {
     {
       rank: "CURADOR",
       title: "Curador",
-      levelValue: 4,
+      levelValue: 3,
       description: "Uma coleção organizada começa a surgir.",
       badge: "/assets/my-collection/icons/badges/coins/coin04.png",
       color: "#22c55e",
@@ -270,7 +270,7 @@ export function getInvestmentRank(totalSpent, loyaltyLevel) {
     {
       rank: "GUARDIAO",
       title: "Guardião",
-      levelValue: 5,
+      levelValue: 4,
       description: "Seu acervo já merece reconhecimento.",
       badge: "/assets/my-collection/icons/badges/coins/coin05.png",
       color: "#3b82f6",
@@ -284,7 +284,7 @@ export function getInvestmentRank(totalSpent, loyaltyLevel) {
     {
       rank: "ARQUIVISTA",
       title: "Arquivista",
-      levelValue: 6,
+      levelValue: 5,
       description: "O conhecimento acumulado ganha valor.",
       badge: "/assets/my-collection/icons/badges/coins/coin06.png",
       color: "#8b5cf6",
@@ -298,7 +298,7 @@ export function getInvestmentRank(totalSpent, loyaltyLevel) {
     {
       rank: "GRANDE_CURADOR",
       title: "Grande Curador",
-      levelValue: 7,
+      levelValue: 6,
       description: "Uma coleção respeitável toma forma.",
       badge: "/assets/my-collection/icons/badges/coins/coin07.png",
       color: "#a855f7",
@@ -312,7 +312,7 @@ export function getInvestmentRank(totalSpent, loyaltyLevel) {
     {
       rank: "GRANDE_MECENAS",
       title: "Grande Mecenas",
-      levelValue: 8,
+      levelValue: 7,
       description: "Seu apoio ao hobby é notável.",
       badge: "/assets/my-collection/icons/badges/coins/coin08.png",
       color: "#f97316",
@@ -326,7 +326,7 @@ export function getInvestmentRank(totalSpent, loyaltyLevel) {
     {
       rank: "LORDE_DA_BIBLIOTECA",
       title: "Lorde da Biblioteca",
-      levelValue: 9,
+      levelValue: 8,
       description: "Poucos colecionadores chegam tão longe.",
       badge: "/assets/my-collection/icons/badges/coins/coin09.png",
       color: "#fb923c",
@@ -340,7 +340,7 @@ export function getInvestmentRank(totalSpent, loyaltyLevel) {
     {
       rank: "MAGNATA_DO_ACERVO",
       title: "Magnata do Acervo",
-      levelValue: 10,
+      levelValue: 9,
       description: "Seu acervo impressiona qualquer visitante.",
       badge: "/assets/my-collection/icons/badges/coins/coin10.png",
       color: "#facc15",
@@ -354,7 +354,7 @@ export function getInvestmentRank(totalSpent, loyaltyLevel) {
     {
       rank: "CONSERVADOR_IMPERIAL",
       title: "Conservador Imperial",
-      levelValue: 11,
+      levelValue: 10,
       description: "Uma coleção digna de exposição.",
       badge: "/assets/my-collection/icons/badges/coins/coin11.png",
       color: "#fde047",
@@ -368,7 +368,7 @@ export function getInvestmentRank(totalSpent, loyaltyLevel) {
     {
       rank: "PATRONO_SUPREMO",
       title: "Patrono Supremo",
-      levelValue: 12,
+      levelValue: 11,
       description: "Seu legado como colecionador é evidente.",
       badge: "/assets/my-collection/icons/badges/coins/coin12.png",
       color: "#fef08a",
@@ -382,7 +382,7 @@ export function getInvestmentRank(totalSpent, loyaltyLevel) {
     {
       rank: "IMPERADOR_DAS_COLECOES",
       title: "Imperador das Coleções",
-      levelValue: 13,
+      levelValue: 12,
       description: "O mais alto nível de dedicação ao hobby.",
       badge: "/assets/my-collection/icons/badges/coins/coin13.png",
       color: "#baf1fd",

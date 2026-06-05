@@ -57,6 +57,8 @@ export function useCollectionStats() {
 
   const [totalOwnedVolumes, setTotalOwnedVolumes] = useState(0);
 
+  const [totalExtras, setTotalExtras] = useState(0);
+
   const [totalSpent, setTotalSpent] = useState(0);
 
   const [completedCollections, setCompletedCollections] = useState(0);
@@ -270,7 +272,13 @@ export function useCollectionStats() {
       0,
     );
 
+    const totalExtrasValue = collections.reduce(
+      (sum, serie) => sum + serie.extra_owned,
+      0,
+    );
+
     setTotalOwnedVolumes(totalOwnedValue);
+    setTotalExtras(totalExtrasValue);
 
     // ==========================================
     // COLEÇÕES
@@ -424,11 +432,13 @@ export function useCollectionStats() {
 
     bannerUrl,
 
+    memberSince,
     loyaltyLevel,
     loyaltyEnabled,
     loyaltyLoginDays,
 
     totalOwnedVolumes,
+    totalExtras,
 
     completedCollections,
 

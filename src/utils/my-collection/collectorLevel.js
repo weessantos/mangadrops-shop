@@ -6,13 +6,13 @@ export function getCollectorLevel({
   investmentRank,
 }) {
   const volumeLevel =
-    Math.floor(totalOwnedVolumes / 5);
+    Math.floor(totalOwnedVolumes / 10);
 
   const collectionLevel =
-    completedCollections * 5;
+    completedCollections * 1;
 
   const collectionPlusLevel =
-    completedPlusCollections * 10;
+    completedPlusCollections * 1;
 
   const collectorRankLevel =
     collectorRank?.levelValue || 0;
@@ -21,6 +21,7 @@ export function getCollectorLevel({
     investmentRank?.levelValue || 0;
 
   const totalLevel =
+    1 +
     volumeLevel +
     collectionLevel +
     collectionPlusLevel +

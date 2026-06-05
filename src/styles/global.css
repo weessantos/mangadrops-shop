@@ -16,11 +16,9 @@
   box-sizing: border-box;
 }
 
-h2, h3 {
-  font-family: "Russo One", sans-serif;
-  font-weight: 400;
-}
-
+h1,
+h2,
+h3,
 button {
   font-family: "Russo One", sans-serif;
 }
@@ -35,6 +33,7 @@ body {
   height: 100%;
   margin: 0;
   font-family:
+    "Poppins",
     ui-sans-serif,
     system-ui,
     -apple-system,

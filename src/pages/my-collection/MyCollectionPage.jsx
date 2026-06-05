@@ -32,7 +32,7 @@ import { useEffect, useState } from "react";
 
 import { useSearchParams } from "react-router-dom";
 
-import { logout } from "../../hooks/my-collection-hooks/auth";
+import { useLogout } from "../../hooks/my-collection-hooks/useLogout";
 
 import CollectorRankModal from "../../components/my-collection/MyCollectorRankModal";
 
@@ -83,17 +83,7 @@ export default function MyCollectionPage() {
     reload,
   } = useCollectionStats();
 
-  async function handleLogout() {
-    try {
-      await logout();
-
-      window.location.href = "/";
-    } catch (error) {
-      console.error(error);
-
-      showWarning("Erro ao sair da conta.");
-    }
-  }
+  const handleLogout = useLogout();
 
   if (loading) {
     return <Loader />;
@@ -103,11 +93,7 @@ export default function MyCollectionPage() {
     <>
       {" "}
       {/* Header */}
-      <MyCollectionHeader
-        onLogout={handleLogout}
-        onEditProfile={() => setProfileModalOpen(true)}
-        onOpenAchievements={() => setRankModalOpen(true)}
-      />
+      <MyCollectionHeader onLogout={handleLogout} currentPage="collection" />
       <div className="collection-page">
         {/* ======================================
       PERFIL DO COLECIONADOR

@@ -42,6 +42,7 @@ import RegisterPage from "./pages/my-auth/MyRegisterPage.jsx";
 import ResetPasswordPage from "./pages/my-auth/MyResetPasswordPage.jsx";
 import NewPasswordPage from "./pages/my-auth/MyNewPasswordPage.jsx";
 import MyCollectionPage from "./pages/my-collection/MyCollectionPage.jsx";
+import MyCollectionAchievements from "./pages/my-collection/MyCollectionAchievements.jsx";
 
 import { useIsMobile } from "./hooks/useIsMobile";
 import { normalizeProduct } from "./utils/normalizeProduct";
@@ -1264,6 +1265,8 @@ function AppRoutes() {
         <Route path="/auth/redefinir-senha" element={<NewPasswordPage />} />
 
         <Route path="/minha-colecao" element={<MyCollectionPage />} />
+
+        <Route path="/minhas-conquistas" element={<MyCollectionAchievements />} />
       </Routes>
       {/* 🔥 modal SOMENTE quando veio da home */}
       {volumeId && (

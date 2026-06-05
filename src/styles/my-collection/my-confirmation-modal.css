@@ -1,0 +1,85 @@
+/* ========================================
+   MY CONFIRMATION MODAL
+======================================== */
+
+.confirmationModalOverlay {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+
+  z-index: 999999;
+}
+
+.confirmationModal {
+  width: min(420px, 90vw);
+
+  padding: 28px;
+
+  border-radius: 24px;
+
+  background: #141414;
+
+  border: 1px solid rgba(255,255,255,.08);
+
+  text-align: center;
+}
+
+.confirmationModal h2 {
+  margin-bottom: 12px;
+}
+
+.confirmationModal p {
+  color: rgba(255,255,255,.7);
+
+  margin-bottom: 24px;
+}
+
+.confirmationModalActions {
+  display: flex;
+
+  gap: 12px;
+}
+
+.confirmationModalActions button {
+  flex: 1;
+}
+
+.confirmationCancelBtn {
+  height: 42px;
+
+  border-radius: 12px;
+
+  border: 1px solid rgba(255,255,255,.12);
+
+  background: rgba(255,255,255,.05);
+
+  color: white;
+
+  cursor: pointer;
+}
+
+.confirmationConfirmBtn {
+  height: 42px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  color: white;
+
+  cursor: pointer;
+
+  background: linear-gradient(
+    135deg,
+    rgba(239,68,68,.9),
+    rgba(220,38,38,.9)
+  );
+}

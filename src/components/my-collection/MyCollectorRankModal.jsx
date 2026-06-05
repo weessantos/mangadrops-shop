@@ -117,8 +117,6 @@ export default function CollectorRankModal({
 
   useLockBodyScroll();
 
-  console.log(investmentRank);
-
   return (
     <div className="rank-modal-overlay" onClick={onClose}>
       <div className="rank-modal" onClick={(e) => e.stopPropagation()}>
@@ -250,14 +248,14 @@ export default function CollectorRankModal({
 
               <div className="profile-stat-item stat-medals">
                 <img
-                  src="/assets/my-collection/icons/stats/medals.png"
+                  src="/assets/my-collection/icons/stats/trophy.png"
                   alt="Medalhas"
                   className="profile-stat-icon"
                 />
 
                 <strong>{totalMedals}</strong>
 
-                <span>Medalhas</span>
+                <span>Conquistas</span>
               </div>
             </div>
           </div>
