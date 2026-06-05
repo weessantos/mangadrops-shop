@@ -47,7 +47,7 @@
 }
 
 /* CONTEÚDO */
-.heroOverlay {
+.MDHeroOverlay {
   position: relative;
   z-index: 2;
 
@@ -159,7 +159,7 @@
     height: 250px;
   }
 
-  .heroOverlay {
+  .MDHeroOverlay {
     padding: 20px;
   }
 
@@ -178,7 +178,7 @@
   }
 }
 
-.heroOverlay {
+.MDHeroOverlay {
   padding: 36px;
   padding-top: 70px; /* 👈 espaço pro botão respirar */
 }

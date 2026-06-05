@@ -57,7 +57,7 @@ export default function CollectionHero({
         })`,
       }}
     >
-      <div className="heroOverlay">
+      <div className="MDHeroOverlay">
         <button
           className="heroBackBtn"
           onClick={onBack}
@@ -110,7 +110,7 @@ export function CollectionsHero({
         })`,
       }}
     >
-      <div className="heroOverlay">
+      <div className="MDHeroOverlay">
         <button
           className="heroBackBtn"
           onClick={onBack}
@@ -170,7 +170,7 @@ export function PageHero({
         })`,
       }}
     >
-      <div className="heroOverlay">
+      <div className="MDHeroOverlay">
         <button
           className="heroBackBtn"
           onClick={onBack}
