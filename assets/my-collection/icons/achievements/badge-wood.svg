@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="badgeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8B5A3C" />
+      <stop offset="100%" stop-color="#5C3A21" />
+    </linearGradient>
+
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.25"></feDropShadow>
+    </filter>
+  </defs>
+
+  <!-- Anel Externo -->
+  <circle cx="64" cy="64" r="58" fill="url(#badgeGradient)" filter="url(#shadow)"></circle>
+
+  <!-- Anel Médio -->
+  <circle cx="64" cy="64" r="50" fill="#4A2F1B"></circle>
+
+  <!-- Anel Interno -->
+  <circle cx="64" cy="64" r="44" fill="#2F1D12"></circle>
+
+  <!-- Brilho Superior -->
+  <ellipse cx="50" cy="38" rx="22" ry="10" fill="#FFFFFF" opacity="0.08"></ellipse>
+
+  <!-- Centro Vazio -->
+  <circle cx="64" cy="64" r="32" fill="transparent"></circle>
+</svg>
