@@ -20,7 +20,7 @@
  *
  * ==========================================================
  */
-
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../../lib/supabase";
 import {
@@ -28,11 +28,21 @@ import {
   getInvestmentRank,
 } from "../../utils/my-collection/collectorRank";
 
+import {
+  calculateVolumeAchievements,
+  calculateCollectionAchievements,
+  calculateExtraAchievements,
+  calculateLevelAchievements,
+  calculateLoyaltyAchievements,
+} from "../../utils/my-collection/achievementCalculator";
+
 import { getCollectorLevel } from "../../utils/my-collection/collectorLevel";
 
 import { registerDailyLogin, getLoyaltyLevel } from "./loyalty.js";
 
 export function useCollectionStats() {
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true);
 
   const [allSeries, setAllSeries] = useState([]);
@@ -69,7 +79,7 @@ export function useCollectionStats() {
 
   const [collectorLevel, setCollectorLevel] = useState(1);
 
-  const [totalMedals, setTotalMedals] = useState(0);
+  const [totalAchievements, setTotalAchievements] = useState(0);
 
   const [collectorRank, setCollectorRank] = useState(null);
 
@@ -88,276 +98,319 @@ export function useCollectionStats() {
   }, [filter, sortBy, allSeries]);
 
   async function loadCollection() {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const {
-      data: { user },
-    } = await supabaseClient.auth.getUser();
+      const {
+        data: { user },
+      } = await supabaseClient.auth.getUser();
 
-    //Contabiliza o login do usuário
+      // Não logado
+      if (!user) {
+        navigate("/auth/login");
+        return;
+      }
 
-    await registerDailyLogin(user.id, user.created_at);
+      // ==========================================
+      // LOGIN DIÁRIO
+      // ==========================================
 
-    const { data: loyalty } = await supabaseClient
-      .from("user_loyalty")
-      .select("*")
-      .eq("user_id", user.id)
-      .maybeSingle();
+      try {
+        await registerDailyLogin(user.id, user.created_at);
+      } catch (error) {
+        console.error("Erro ao registrar login diário:", error);
+      }
 
-    const calculatedLoyaltyLevel = getLoyaltyLevel(loyalty);
+      const { data: loyalty } = await supabaseClient
+        .from("user_loyalty")
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
 
-    setLoyaltyLevel(calculatedLoyaltyLevel);
-    setLoyaltyEnabled(loyalty?.loyalty_enabled ?? false);
-    setLoyaltyLoginDays(loyalty?.loyalty_login_days ?? 0);
+      const calculatedLoyaltyLevel = getLoyaltyLevel(loyalty);
 
-    const { data: profile } = await supabaseClient
-      .from("user_profiles")
-      .select("*")
-      .eq("id", user.id)
-      .single();
+      setLoyaltyLevel(calculatedLoyaltyLevel);
+      setLoyaltyEnabled(loyalty?.loyalty_enabled ?? false);
+      setLoyaltyLoginDays(loyalty?.loyalty_login_days ?? 0);
 
-    setUserName(profile?.display_name || user?.email || "Colecionador");
+      // ==========================================
+      // PERFIL
+      // ==========================================
 
-    setAvatarUrl(profile?.avatar_url || "");
+      const { data: profile } = await supabaseClient
+        .from("user_profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
 
-    setBannerUrl(profile?.banner_url || "");
+      setUserName(profile?.display_name || user?.email || "Colecionador");
 
-    setMemberSince(formatMemberSince(profile?.created_at));
+      setAvatarUrl(profile?.avatar_url || "");
+      setBannerUrl(profile?.banner_url || "");
 
-    const isAdmin = user?.email === "wees1597@gmail.com";
+      setMemberSince(formatMemberSince(profile?.created_at));
 
-    const { data: catalog, error: catalogError } = await supabaseClient
-      .from("collection_catalog")
-      .select("*");
+      const isAdmin = user.email === "wees1597@gmail.com";
 
-    if (catalogError) {
-      console.error(catalogError);
-      setLoading(false);
-      return;
-    }
+      // ==========================================
+      // CATÁLOGO
+      // ==========================================
 
-    const { data: userCollection, error: collectionError } =
-      await supabaseClient
-        .from("user_collection")
-        .select(
-          `
-      volume_id,
-      status,
-      purchase_price
-    `,
-        )
-        .eq("user_id", user.id);
+      const { data: catalog, error: catalogError } = await supabaseClient
+        .from("collection_catalog")
+        .select("*");
 
-    if (collectionError) {
-      console.error(collectionError);
-      return;
-    }
+      if (catalogError) {
+        throw catalogError;
+      }
 
-    const statusMap = new Map(
-      userCollection.map((item) => [item.volume_id, item.status]),
-    );
+      // ==========================================
+      // COLEÇÃO DO USUÁRIO
+      // ==========================================
 
-    const grouped = Object.values(
-      catalog.reduce((acc, item) => {
-        const groupId = item.collection_group_id;
+      const { data: userCollection, error: collectionError } =
+        await supabaseClient
+          .from("user_collection")
+          .select(
+            `
+          volume_id,
+          status,
+          purchase_price
+        `,
+          )
+          .eq("user_id", user.id);
 
-        if (!acc[groupId]) {
-          acc[groupId] = {
-            series_id: groupId,
+      if (collectionError) {
+        throw collectionError;
+      }
 
-            title: item.collection_title,
-            thumb: item.thumb,
+      const statusMap = new Map(
+        userCollection.map((item) => [item.volume_id, item.status]),
+      );
 
-            total_volumes: 0,
-            owned: 0,
-            wishlist: 0,
+      const grouped = Object.values(
+        catalog.reduce((acc, item) => {
+          const groupId = item.collection_group_id;
 
-            main_total: 0,
-            main_owned: 0,
+          if (!acc[groupId]) {
+            acc[groupId] = {
+              series_id: groupId,
 
-            extra_total: 0,
-            extra_owned: 0,
-          };
-        }
+              title: item.collection_title,
+              thumb: item.thumb,
 
-        if (!acc[groupId].thumb && item.thumb) {
-          acc[groupId].thumb = item.thumb;
-        }
+              total_volumes: 0,
+              owned: 0,
+              wishlist: 0,
 
-        const isMainSeries = item.series_id === item.collection_group_id;
+              main_total: 0,
+              main_owned: 0,
 
-        acc[groupId].total_volumes++;
+              extra_total: 0,
+              extra_owned: 0,
+            };
+          }
 
-        if (isMainSeries) {
-          acc[groupId].main_total++;
-        } else {
-          acc[groupId].extra_total++;
-        }
+          if (!acc[groupId].thumb && item.thumb) {
+            acc[groupId].thumb = item.thumb;
+          }
 
-        const status = statusMap.get(item.id);
+          const isMainSeries = item.series_id === item.collection_group_id;
 
-        if (status === "owned") {
-          acc[groupId].owned++;
+          acc[groupId].total_volumes++;
 
           if (isMainSeries) {
-            acc[groupId].main_owned++;
+            acc[groupId].main_total++;
           } else {
-            acc[groupId].extra_owned++;
+            acc[groupId].extra_total++;
           }
-        }
 
-        if (status === "wishlist") {
-          acc[groupId].wishlist++;
-        }
+          const status = statusMap.get(item.id);
 
-        return acc;
-      }, {}),
-    );
+          if (status === "owned") {
+            acc[groupId].owned++;
 
-    const collections = grouped
-      .sort((a, b) => a.title.localeCompare(b.title))
-      .map((serie) => {
-        const percentage =
-          serie.total_volumes > 0
-            ? Math.min(
-                100,
-                Math.round((serie.owned / serie.total_volumes) * 100),
-              )
-            : 0;
+            if (isMainSeries) {
+              acc[groupId].main_owned++;
+            } else {
+              acc[groupId].extra_owned++;
+            }
+          }
 
-        const mainPercentage =
-          serie.main_total > 0
-            ? Math.round((serie.main_owned / serie.main_total) * 100)
-            : 0;
+          if (status === "wishlist") {
+            acc[groupId].wishlist++;
+          }
 
-        const mainComplete =
-          serie.main_total > 0 && serie.main_owned === serie.main_total;
+          return acc;
+        }, {}),
+      );
 
-        const completePlus =
-          serie.total_volumes > 0 && serie.owned === serie.total_volumes;
+      const collections = grouped
+        .sort((a, b) => a.title.localeCompare(b.title))
+        .map((serie) => {
+          const percentage =
+            serie.total_volumes > 0
+              ? Math.min(
+                  100,
+                  Math.round((serie.owned / serie.total_volumes) * 100),
+                )
+              : 0;
 
-        let status = "empty";
+          const mainPercentage =
+            serie.main_total > 0
+              ? Math.round((serie.main_owned / serie.main_total) * 100)
+              : 0;
 
-        if (completePlus) {
-          status = "complete-plus";
-        } else if (mainComplete) {
-          status = "complete";
-        } else if (serie.owned > 0) {
-          status = "collecting";
-        } else if (serie.wishlist > 0) {
-          status = "wishlist";
-        }
+          const mainComplete =
+            serie.main_total > 0 && serie.main_owned === serie.main_total;
 
-        return {
-          ...serie,
+          const completePlus =
+            serie.total_volumes > 0 && serie.owned === serie.total_volumes;
 
-          percentage,
-          mainPercentage,
+          let status = "empty";
 
-          mainComplete,
-          completePlus,
+          if (completePlus) {
+            status = "complete-plus";
+          } else if (mainComplete) {
+            status = "complete";
+          } else if (serie.owned > 0) {
+            status = "collecting";
+          } else if (serie.wishlist > 0) {
+            status = "wishlist";
+          }
 
-          status,
-        };
+          return {
+            ...serie,
+
+            percentage,
+            mainPercentage,
+
+            mainComplete,
+            completePlus,
+
+            status,
+          };
+        });
+
+      setAllSeries(collections);
+
+      // ==========================================
+      // VOLUMES
+      // ==========================================
+
+      const totalOwnedValue = collections.reduce(
+        (sum, serie) => sum + serie.owned,
+        0,
+      );
+
+      const totalExtrasValue = collections.reduce(
+        (sum, serie) => sum + serie.extra_owned,
+        0,
+      );
+
+      setTotalOwnedVolumes(totalOwnedValue);
+      setTotalExtras(totalExtrasValue);
+
+      // ==========================================
+      // COLEÇÕES
+      // ==========================================
+
+      const completedCollectionsValue = collections.filter((collection) =>
+        ["complete", "complete-plus"].includes(collection.status),
+      ).length;
+
+      const completedPlusCollectionsValue = collections.filter(
+        (collection) => collection.status === "complete-plus",
+      ).length;
+
+      const collectingCollectionsValue = collections.filter(
+        (collection) => collection.status === "collecting",
+      ).length;
+
+      setCompletedCollections(completedCollectionsValue);
+      setCompletedPlusCollections(completedPlusCollectionsValue);
+
+      setCollectingCollections(collectingCollectionsValue);
+
+      // ==========================================
+      // INVESTIMENTO
+      // ==========================================
+
+      const totalSpentValue = userCollection.reduce(
+        (sum, item) => sum + (Number(item.purchase_price) || 0),
+        0,
+      );
+
+      setTotalSpent(totalSpentValue);
+
+      // ==========================================
+      // RANKS
+      // ==========================================
+
+      const collectorRankValue = getCollectorRank(
+        totalOwnedValue,
+        calculatedLoyaltyLevel,
+        isAdmin,
+      );
+
+      const investmentRankValue = getInvestmentRank(
+        totalSpentValue,
+        calculatedLoyaltyLevel,
+      );
+
+      setCollectorRank(collectorRankValue);
+
+      setInvestmentRank(investmentRankValue);
+
+      // ==========================================
+      // LEVEL
+      // ==========================================
+
+      const collectorLevelValue = getCollectorLevel({
+        totalOwnedVolumes: totalOwnedValue,
+
+        completedCollections: completedCollectionsValue,
+
+        completedPlusCollections: completedPlusCollectionsValue,
+
+        collectorRank: collectorRankValue,
+
+        investmentRank: investmentRankValue,
       });
 
-    setAllSeries(collections);
+      setCollectorLevel(collectorLevelValue);
 
-    // ==========================================
-    // VOLUMES
-    // ==========================================
+      // ==========================================
+      // CONQUISTAS
+      // ==========================================
 
-    const totalOwnedValue = collections.reduce(
-      (sum, serie) => sum + serie.owned,
-      0,
-    );
+      const volumeAchievements = calculateVolumeAchievements(totalOwnedValue);
 
-    const totalExtrasValue = collections.reduce(
-      (sum, serie) => sum + serie.extra_owned,
-      0,
-    );
+      const collectionAchievements = calculateCollectionAchievements(
+        completedCollectionsValue,
+      );
 
-    setTotalOwnedVolumes(totalOwnedValue);
-    setTotalExtras(totalExtrasValue);
+      const extraAchievements = calculateExtraAchievements(totalExtrasValue);
 
-    // ==========================================
-    // COLEÇÕES
-    // ==========================================
+      const levelAchievements = calculateLevelAchievements(collectorLevelValue);
 
-    const completedCollectionsValue = collections.filter((collection) =>
-      ["complete", "complete-plus"].includes(collection.status),
-    ).length;
+      const loyaltyAchievements = calculateLoyaltyAchievements(
+        calculatedLoyaltyLevel,
+        profile?.created_at,
+      );
 
-    const completedPlusCollectionsValue = collections.filter(
-      (collection) => collection.status === "complete-plus",
-    ).length;
-
-    const collectingCollectionsValue = collections.filter(
-      (collection) => collection.status === "collecting",
-    ).length;
-
-    setCompletedCollections(completedCollectionsValue);
-    setCompletedPlusCollections(completedPlusCollectionsValue);
-
-    setCollectingCollections(collectingCollectionsValue);
-
-    // ==========================================
-    // INVESTIMENTO
-    // ==========================================
-
-    const totalSpentValue = userCollection.reduce(
-      (sum, item) => sum + (Number(item.purchase_price) || 0),
-      0,
-    );
-
-    setTotalSpent(totalSpentValue);
-
-    // ==========================================
-    // RANKS
-    // ==========================================
-
-    const collectorRankValue = getCollectorRank(
-      totalOwnedValue,
-      calculatedLoyaltyLevel,
-      isAdmin,
-    );
-
-    const investmentRankValue = getInvestmentRank(
-      totalSpentValue,
-      calculatedLoyaltyLevel,
-    );
-
-    setCollectorRank(collectorRankValue);
-
-    setInvestmentRank(investmentRankValue);
-
-    // ==========================================
-    // LEVEL
-    // ==========================================
-
-    const collectorLevelValue = getCollectorLevel({
-      totalOwnedVolumes: totalOwnedValue,
-
-      completedCollections: completedCollectionsValue,
-
-      completedPlusCollections: completedPlusCollectionsValue,
-
-      collectorRank: collectorRankValue,
-
-      investmentRank: investmentRankValue,
-    });
-
-    setCollectorLevel(collectorLevelValue);
-
-    // ==========================================
-    // MEDALHAS
-    // ==========================================
-
-    setTotalMedals(0);
-
-    // ==========================================
-
-    setLoading(false);
+      setTotalAchievements(
+        volumeAchievements.unlockedCount +
+          collectionAchievements.unlockedCount +
+          extraAchievements.unlockedCount +
+          levelAchievements.unlockedCount +
+          loyaltyAchievements.unlockedCount,
+      );
+    } catch (error) {
+      console.error("Erro ao carregar coleção:", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   function formatMemberSince(dateString) {
@@ -390,6 +443,14 @@ export function useCollectionStats() {
         filtered = filtered.filter(
           (serie) => serie.owned === 0 && serie.wishlist === 0,
         );
+        break;
+
+      case "complete":
+        filtered = filtered.filter((serie) => serie.status === "complete");
+        break;
+
+      case "complete-plus":
+        filtered = filtered.filter((serie) => serie.status === "complete-plus");
         break;
 
       default:
@@ -446,7 +507,7 @@ export function useCollectionStats() {
 
     collectorLevel,
 
-    totalMedals,
+    totalAchievements,
 
     collectorRank,
 

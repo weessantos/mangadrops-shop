@@ -511,16 +511,22 @@
 }
 
 /* STATS - MEDALS */
-.stat-medals {
+.stat-achievements {
   border-color: rgba(250, 204, 21, 0.25);
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-.stat-medals strong {
+.stat-achievements:hover {
+  transform: translateY(-2px);
+}
+
+.stat-achievements strong {
   color: #facc15;
 }
 
-.stat-medals strong::before,
-.stat-medals strong::after {
+.stat-achievements strong::before,
+.stat-achievements strong::after {
   content: "";
 
   position: absolute;
@@ -538,11 +544,11 @@
     0 0 16px rgba(250, 204, 21, 0.35);
 }
 
-.stat-medals strong::before {
+.stat-achievements strong::before {
   right: calc(100% + 12px);
 }
 
-.stat-medals strong::after {
+.stat-achievements strong::after {
   left: calc(100% + 12px);
 }
 

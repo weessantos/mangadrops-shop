@@ -310,6 +310,10 @@ export default function MyCollectionAchievements() {
                       achievement.data.currentProgress.rarity,
                     )?.toUpperCase() || "INICIANTE"}
                   </strong>
+
+                  <small>
+                    {achievement.data.currentProgress.title.split(" • ")?.[0]}
+                  </small>
                 </div>
 
                 {!achievement.data.completed && (
@@ -321,16 +325,11 @@ export default function MyCollectionAchievements() {
                         achievement.data.next.rarity,
                       ).toUpperCase()}
                     </strong>
+
+                    <small>{achievement.data.next.title.split(" • ")[0]}</small>
                   </div>
                 )}
               </div>
-
-              <div className="cardRequirement">
-                {!achievement.data.completed
-                  ? achievement.data.next.title
-                  : achievement.data.currentProgress.title}
-              </div>
-
               <div className="cardProgress">
                 <div className="progressBar">
                   <div
@@ -455,22 +454,22 @@ export default function MyCollectionAchievements() {
                     !unlocked &&
                     tier.rarity === selectedAchievement.data.next?.rarity;
 
+                  const [title, requirement] = tier.title.split(" • ");
+
                   return (
                     <div
                       key={tier.rarity}
                       className={`
-    achievementTier
-    ${unlocked ? "unlocked" : "locked"}
-    ${current ? "current" : ""}
-  `}
+                        achievementTier
+                        ${unlocked ? "unlocked" : "locked"}
+                        ${current ? "current" : ""}
+                      `}
                     >
                       {!unlocked && !next ? (
                         <>
                           <div className="tierHiddenLock">🔒</div>
 
-                          <div className="tierHiddenTitle">
-                            Conquista Oculta
-                          </div>
+                          <div className="tierHiddenTitle">?????</div>
                         </>
                       ) : (
                         <>
@@ -503,8 +502,13 @@ export default function MyCollectionAchievements() {
                           <div className="tierRarity">
                             {getRarityTitle(tier.rarity)}
                           </div>
+                          <div className="tierTitle">
+                            <div className="tierName">{title}</div>
 
-                          <div className="tierTitle"> {tier.title}</div>
+                            <div className="tierDivider" />
+
+                            <div className="tierRequirement">{requirement}</div>
+                          </div>
                         </>
                       )}
                     </div>

@@ -45,47 +45,47 @@ export const VOLUME_ACHIEVEMENTS = [
   },
   {
     rarity: "bronze",
-    title: "25 Volumes",
+    title: "Primeira Estante • 25 Volumes",
     requirement: 25,
   },
   {
     rarity: "silver",
-    title: "50 Volumes",
+    title: "Coleção em Crescimento • 50 Volumes",
     requirement: 50,
   },
   {
     rarity: "gold",
-    title: "100 Volumes",
+    title: "Biblioteca Pessoal • 100 Volumes",
     requirement: 100,
   },
   {
     rarity: "platinum",
-    title: "200 Volumes",
+    title: "Colecionador Dedicado • 200 Volumes",
     requirement: 200,
   },
   {
     rarity: "emerald",
-    title: "300 Volumes",
+    title: "Guardião dos Mangás • 300 Volumes",
     requirement: 300,
   },
   {
     rarity: "diamond",
-    title: "500 Volumes",
+    title: "Mestre da Coleção • 500 Volumes",
     requirement: 500,
   },
   {
     rarity: "epic",
-    title: "750 Volumes",
+    title: "Lenda das Estantes • 750 Volumes",
     requirement: 750,
   },
   {
     rarity: "mythic",
-    title: "1000 Volumes",
+    title: "Mil Histórias • 1000 Volumes",
     requirement: 1000,
   },
   {
     rarity: "ultimate",
-    title: "1250 Volumes",
+    title: "Biblioteca Arcana • 1250 Volumes",
     requirement: 1250,
   },
 ];
@@ -98,47 +98,47 @@ export const COLLECTION_ACHIEVEMENTS = [
   },
   {
     rarity: "bronze",
-    title: "Primeira Coleção",
+    title: "Primeira Saga • 1 Coleção",
     requirement: 1,
   },
   {
     rarity: "silver",
-    title: "3 Coleções",
+    title: "Caçador de Histórias • 3 Coleções",
     requirement: 3,
   },
   {
     rarity: "gold",
-    title: "5 Coleções",
+    title: "Biblioteca em Expansão • 5 Coleções",
     requirement: 5,
   },
   {
     rarity: "platinum",
-    title: "10 Coleções",
+    title: "Mestre das Estantes • 10 Coleções",
     requirement: 10,
   },
   {
     rarity: "emerald",
-    title: "20 Coleções",
+    title: "Guardião das Obras • 20 Coleções",
     requirement: 20,
   },
   {
     rarity: "diamond",
-    title: "30 Coleções",
+    title: "Arquivista Lendário • 30 Coleções",
     requirement: 30,
   },
   {
     rarity: "epic",
-    title: "50 Coleções",
+    title: "Senhor das Coleções • 50 Coleções",
     requirement: 50,
   },
   {
     rarity: "mythic",
-    title: "70 Coleções",
+    title: "Lenda dos Mangás • 70 Coleções",
     requirement: 70,
   },
   {
     rarity: "ultimate",
-    title: "100 Coleções",
+    title: "Biblioteca Infinita • 100 Coleções",
     requirement: 100,
   },
 ];
@@ -146,52 +146,52 @@ export const COLLECTION_ACHIEVEMENTS = [
 export const EXTRA_ACHIEVEMENTS = [
   {
     rarity: "wood",
-    title: "Expandindo o universo",
+    title: "Expandindo o Universo",
     requirement: 0,
   },
   {
     rarity: "bronze",
-    title: "Primeiro Extra",
+    title: "Primeira Relíquia • 1 Extra",
     requirement: 1,
   },
   {
     rarity: "silver",
-    title: "5 Extras",
+    title: "Caçador de Extras • 5 Extras",
     requirement: 5,
   },
   {
     rarity: "gold",
-    title: "10 Extras",
+    title: "Tesouros da Coleção • 10 Extras",
     requirement: 10,
   },
   {
     rarity: "platinum",
-    title: "20 Extras",
+    title: "Guardião das Relíquias • 20 Extras",
     requirement: 20,
   },
   {
     rarity: "emerald",
-    title: "30 Extras",
+    title: "Arquivo Especial • 30 Extras",
     requirement: 30,
   },
   {
     rarity: "diamond",
-    title: "40 Extras",
+    title: "Colecionador de Raridades • 40 Extras",
     requirement: 40,
   },
   {
     rarity: "epic",
-    title: "60 Extras",
+    title: "Mestre dos Extras • 60 Extras",
     requirement: 60,
   },
   {
     rarity: "mythic",
-    title: "80 Extras",
+    title: "Curador de Relíquias • 80 Extras",
     requirement: 80,
   },
   {
     rarity: "ultimate",
-    title: "100 Extras",
+    title: "Tesouro Arcano • 100 Extras",
     requirement: 100,
   },
 ];
@@ -204,47 +204,47 @@ export const LEVEL_ACHIEVEMENTS = [
   },
   {
     rarity: "bronze",
-    title: "Nível 3",
+    title: "Aprendiz • Nível 3",
     requirement: 2,
   },
   {
     rarity: "silver",
-    title: "Nível 5",
+    title: "Aventureiro • Nível 5",
     requirement: 5,
   },
   {
     rarity: "gold",
-    title: "Nível 10",
+    title: "Especialista • Nível 10",
     requirement: 10,
   },
   {
     rarity: "platinum",
-    title: "Nível 20",
+    title: "Veterano • Nível 20",
     requirement: 20,
   },
   {
     rarity: "emerald",
-    title: "Nível 35",
+    title: "Mestre Colecionador • Nível 35",
     requirement: 35,
   },
   {
     rarity: "diamond",
-    title: "Nível 60",
+    title: "Grande Mestre • Nível 60",
     requirement: 60,
   },
   {
     rarity: "epic",
-    title: "Nível 80",
+    title: "Lenda Viva • Nível 80",
     requirement: 80,
   },
   {
     rarity: "mythic",
-    title: "Nível 100",
+    title: "Arquimestre • Nível 100",
     requirement: 100,
   },
   {
     rarity: "ultimate",
-    title: "Nível 120",
+    title: "Colecionador Supremo • Nível 120",
     requirement: 120,
   },
 ];
@@ -252,47 +252,47 @@ export const LEVEL_ACHIEVEMENTS = [
 export const LOYALTY_ACHIEVEMENTS = [
   {
     rarity: "wood",
-    title: "Ganhando confiança",
+    title: "Ganhando Confiança",
     requirement: 0,
   },
   {
     rarity: "bronze",
-    title: "Nível 1",
+    title: "Visitante Frequente • Nível 1",
     requirement: 1,
   },
   {
     rarity: "silver",
-    title: "Nível 2",
+    title: "Colecionador Fiel • Nível 2",
     requirement: 2,
   },
   {
     rarity: "gold",
-    title: "Nível 3",
+    title: "Membro Dedicado • Nível 3",
     requirement: 3,
   },
   {
     rarity: "platinum",
-    title: "Nível 4",
+    title: "Aliado da Biblioteca • Nível 4",
     requirement: 4,
   },
   {
     rarity: "emerald",
-    title: "Nível 5",
+    title: "Guardião da Comunidade • Nível 5",
     requirement: 5,
   },
   {
     rarity: "diamond",
-    title: "Nível 6",
+    title: "Veterano do Drops • Nível 6",
     requirement: 6,
   },
   {
     rarity: "epic",
-    title: "Nível 7",
+    title: "Lenda da Biblioteca • Nível 7",
     requirement: 7,
   },
   {
     rarity: "mythic",
-    title: "Nível 8",
+    title: "Símbolo da Comunidade • Nível 8",
     requirement: 8,
   },
   {

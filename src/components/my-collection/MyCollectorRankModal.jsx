@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { getRankProgress } from "../../utils/my-collection/collectorRank";
 import "../../styles/my-collection/my-collector-rank-modal.css";
@@ -19,7 +20,7 @@ export default function CollectorRankModal({
   completedCollections,
   collectingCollections,
 
-  totalMedals,
+  totalAchievements,
 
   collectorRank,
   investmentRank,
@@ -29,6 +30,7 @@ export default function CollectorRankModal({
   onClose,
   onEditProfile,
 }) {
+  const navigate = useNavigate();
   const progress = getRankProgress(totalVolumes, collectorRank);
 
   const isMaxCollectorRank = !collectorRank.nextRankTitle;
@@ -246,14 +248,20 @@ export default function CollectorRankModal({
                 <span>Em andamento</span>
               </div>
 
-              <div className="profile-stat-item stat-medals">
+              <div
+                className="profile-stat-item stat-achievements"
+                onClick={() => {
+                  onClose();
+                  navigate("/minhas-conquistas");
+                }}
+              >
                 <img
                   src="/assets/my-collection/icons/stats/trophy.png"
-                  alt="Medalhas"
+                  alt="Conquistas"
                   className="profile-stat-icon"
                 />
 
-                <strong>{totalMedals}</strong>
+                <strong>{totalAchievements}</strong>
 
                 <span>Conquistas</span>
               </div>

@@ -44,6 +44,8 @@ export function calculateCategory(value, achievements) {
 
     unlockedCount: Math.max(0, unlocked.length - 1),
 
+    totalCount: achievements.length - 1,
+
     completed: !next,
   };
 }
@@ -104,6 +106,8 @@ export function calculateLoyaltyAchievements(loyaltyLevel, memberSince) {
 
       unlockedCount: LOYALTY_ACHIEVEMENTS.length - 1,
 
+      totalCount: LOYALTY_ACHIEVEMENTS.length - 1,
+
       completed: true,
     };
   }
@@ -114,3 +118,6 @@ export function calculateLoyaltyAchievements(loyaltyLevel, memberSince) {
 
   return calculateCategory(loyaltyLevel, loyaltyAchievements);
 }
+
+//CONQUISTA: Total de conquistas
+

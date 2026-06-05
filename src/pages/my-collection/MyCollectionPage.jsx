@@ -72,7 +72,7 @@ export default function MyCollectionPage() {
     loyaltyLevel,
     loyaltyEnabled,
     loyaltyLoginDays,
-    totalMedals,
+    totalAchievements,
     collectorRank,
     investmentRank,
     memberSince,
@@ -101,18 +101,20 @@ export default function MyCollectionPage() {
         <section className="collection-profile">
           {/* Banner */}
           <div className="collection-banner">
-            <img src={bannerUrl} alt="Banner" />
+            {bannerUrl && <img src={bannerUrl} alt="Banner" />}
           </div>
 
           {/* Avatar */}
           <div className="collection-avatar-wrapper">
             <div className="avatar-container">
-              <img
-                src={avatarUrl}
-                alt={userName}
-                className="profile-avatar"
-                onClick={() => setRankModalOpen(true)}
-              />
+              {avatarUrl && (
+                <img
+                  src={avatarUrl}
+                  alt={userName}
+                  className="profile-avatar"
+                  onClick={() => setRankModalOpen(true)}
+                />
+              )}
 
               <button
                 className="avatar-edit-btn"
@@ -134,14 +136,16 @@ export default function MyCollectionPage() {
 
             <div
               className="collector-badge-showcase"
-              title={collectorRank.title}
+              title={collectorRank?.title || ""}
             >
-              <img
-                onClick={() => setRankModalOpen(true)}
-                src={collectorRank.badge}
-                alt={collectorRank.title}
-                className="collector-main-badge"
-              />
+              {collectorRank && (
+                <img
+                  onClick={() => setRankModalOpen(true)}
+                  src={collectorRank.badge}
+                  alt={collectorRank.title}
+                  className="collector-main-badge"
+                />
+              )}
             </div>
           </div>
         </section>
@@ -162,6 +166,7 @@ export default function MyCollectionPage() {
         <div className="collection-toolbar">
           <div className="collection-filters">
             <button
+              title="Exibe todas as obras do catálogo."
               className={filter === "all" ? "active" : ""}
               onClick={() => setFilter("all")}
             >
@@ -169,6 +174,7 @@ export default function MyCollectionPage() {
             </button>
 
             <button
+              title="Obras com pelo menos um volume comprado."
               className={filter === "owned" ? "active" : ""}
               onClick={() => setFilter("owned")}
             >
@@ -176,6 +182,23 @@ export default function MyCollectionPage() {
             </button>
 
             <button
+              title="Obras com a série principal concluída."
+              className={filter === "complete" ? "active" : ""}
+              onClick={() => setFilter("complete")}
+            >
+              ✓ Completas
+            </button>
+
+            <button
+              title="Obras 100% concluídas, incluindo todos os extras."
+              className={filter === "complete-plus" ? "active" : ""}
+              onClick={() => setFilter("complete-plus")}
+            >
+              ★ Completas+
+            </button>
+
+            <button
+              title="Volumes que você deseja adquirir."
               className={filter === "wishlist" ? "active" : ""}
               onClick={() => setFilter("wishlist")}
             >
@@ -183,6 +206,7 @@ export default function MyCollectionPage() {
             </button>
 
             <button
+              title="Obras que ainda não possuem volumes comprados nem desejados."
               className={filter === "missing" ? "active" : ""}
               onClick={() => setFilter("missing")}
             >
@@ -325,7 +349,7 @@ export default function MyCollectionPage() {
           totalVolumes={totalOwnedVolumes}
           completedCollections={completedCollections}
           collectingCollections={collectingCollections}
-          totalMedals={totalMedals}
+          totalAchievements={totalAchievements}
           collectorRank={collectorRank}
           investmentRank={investmentRank}
           totalSpent={totalSpent}
