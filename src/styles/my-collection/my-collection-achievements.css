@@ -56,6 +56,7 @@
 
 .heroOverlay {
   position: relative;
+  flex-direction: column;
   z-index: 2;
 
   width: 100%;
@@ -90,8 +91,8 @@
 }
 
 .heroAvatar {
-  width: 120px;
-  height: 120px;
+  width: 160px;
+  height: 160px;
 
   border-radius: 50%;
 

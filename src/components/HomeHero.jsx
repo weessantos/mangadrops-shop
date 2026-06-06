@@ -47,7 +47,7 @@ export default function HomeHero({ onHeroSearch, isHeaderCompact }) {
         alt: "One Piece",
         title: "One Piece",
         subtitle: "Já está disponível",
-        description: "Vídeos de One Piece em breve no Mangá Drops",
+        description: "Vídeos de One Piece já disponíveis no Mangá Drops",
 
         ctaLabel: "Ver One Piece",
 
