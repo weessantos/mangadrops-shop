@@ -47,6 +47,7 @@ import {
   EXTRA_ACHIEVEMENTS,
   LEVEL_ACHIEVEMENTS,
   LOYALTY_ACHIEVEMENTS,
+  getRarityColor,
 } from "../../utils/my-collection/achievementData.js";
 
 import Loader from "../../components/Loader.jsx";
@@ -305,7 +306,13 @@ export default function MyCollectionAchievements() {
                 <div>
                   <span>Atual</span>
 
-                  <strong>
+                  <strong
+                    style={{
+                      color: getRarityColor(
+                        achievement.data.currentProgress.rarity,
+                      ),
+                    }}
+                  >
                     {getRarityTitle(
                       achievement.data.currentProgress.rarity,
                     )?.toUpperCase() || "INICIANTE"}
@@ -320,7 +327,11 @@ export default function MyCollectionAchievements() {
                   <div>
                     <span>Próxima</span>
 
-                    <strong>
+                    <strong
+                      style={{
+                        color: getRarityColor(achievement.data.next.rarity),
+                      }}
+                    >
                       {getRarityTitle(
                         achievement.data.next.rarity,
                       ).toUpperCase()}

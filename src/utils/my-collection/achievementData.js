@@ -37,6 +37,23 @@
  * ============================================================
  */
 
+export const RARITY_COLORS = {
+  wood: "#38220c",
+  bronze: "#CD7F32",
+  silver: "#D1D5DB",
+  gold: "#FACC15",
+  platinum: "#6ee5bf",
+  emerald: "#1ca44e",
+  diamond: "#38BDF8",
+  epic: "#A855F7",
+  mythic: "#971515",
+  ultimate: "#FF4D94",
+};
+
+export function getRarityColor(rarity) {
+  return RARITY_COLORS[rarity] || "#FFFFFF";
+}
+
 export const VOLUME_ACHIEVEMENTS = [
   {
     rarity: "wood",
