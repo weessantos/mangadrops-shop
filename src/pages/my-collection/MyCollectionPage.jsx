@@ -178,7 +178,7 @@ export default function MyCollectionPage() {
               className={filter === "owned" ? "active" : ""}
               onClick={() => setFilter("owned")}
             >
-              ✅ Compradas
+              📦 Compradas
             </button>
 
             <button
@@ -186,7 +186,7 @@ export default function MyCollectionPage() {
               className={filter === "complete" ? "active" : ""}
               onClick={() => setFilter("complete")}
             >
-              ✓ Completas
+              🏆 Completas
             </button>
 
             <button
@@ -194,7 +194,7 @@ export default function MyCollectionPage() {
               className={filter === "complete-plus" ? "active" : ""}
               onClick={() => setFilter("complete-plus")}
             >
-              ★ Completas+
+              💎 Completas+
             </button>
 
             <button
