@@ -163,7 +163,7 @@ export function getCollectorRank(totalVolumes, loyaltyLevel, isAdmin = false) {
       title: "Arcanista Supremo",
       levelValue: 10,
 
-      description: "A mais alta autoridade da Biblioteca Arcana.",
+      description: "A mais alta autoridade do Acervo.",
 
       badge: "/assets/my-collection/icons/badges/badges_raw/badge_raw09.png",
 
@@ -176,7 +176,7 @@ export function getCollectorRank(totalVolumes, loyaltyLevel, isAdmin = false) {
       nextRankValue: null,
       nextRankLoyalty: null,
 
-      maxTitle: "👑 Fundador da Biblioteca Arcana",
+      maxTitle: "👑 Fundador do Acervo",
     };
   }
 
@@ -192,7 +192,7 @@ export function getCollectorRank(totalVolumes, loyaltyLevel, isAdmin = false) {
     type: "collector",
     category: "Rank de Colecionador",
 
-    maxTitle: "👑 Fundador da Biblioteca Arcana",
+    maxTitle: "👑 Fundador do Acervo",
 
     nextRankBadge: currentRank.nextRankTitle
       ? ranks.find((r) => r.title === currentRank.nextRankTitle)?.badge

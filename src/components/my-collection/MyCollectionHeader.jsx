@@ -20,7 +20,7 @@ export default function MyCollectionHeader({
           <button className="collectionLogoBtn" onClick={() => navigate("/")}>
             <img
               src="/assets/logo.png"
-              alt="Mangás Drops"
+              alt="Mangá Drops"
               className="collectionLogo"
             />
           </button>
@@ -28,7 +28,7 @@ export default function MyCollectionHeader({
           {/* Desktop / Tablet */}
           <nav className="collectionNav">
             <button className="collectionNavBtn" onClick={() => navigate("/")}>
-              Mangás Drops
+              Mangá Drops
             </button>
 
             <button
@@ -38,7 +38,7 @@ export default function MyCollectionHeader({
               type="button"
               onClick={() => navigate("/minha-colecao")}
             >
-              Minha Coleção
+              Mangá Drops Acervo
             </button>
           </nav>
 
@@ -66,7 +66,7 @@ export default function MyCollectionHeader({
               <button
                 className="mobileHeaderBtn"
                 onClick={() => navigate("/")}
-                title="Mangás Drops"
+                title="Mangá Drops"
               >
                 <Home size={18} />
               </button>
@@ -76,7 +76,7 @@ export default function MyCollectionHeader({
                   currentPage === "collection" ? "active" : ""
                 }`}
                 onClick={() => navigate("/minha-colecao")}
-                title="Minha Coleção"
+                title="Mangá Drops Acervo"
               >
                 <BookOpen size={18} />
               </button>

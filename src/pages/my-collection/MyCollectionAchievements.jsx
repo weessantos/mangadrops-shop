@@ -392,7 +392,7 @@ export default function MyCollectionAchievements() {
 
             <div className="specialContent">
               Conquistas exclusivas de eventos, apoiadores, campanhas e futuras
-              funcionalidades do Mangás Drops.
+              funcionalidades do Mangá Drops.
             </div>
           </article>
         </section>
@@ -530,7 +530,7 @@ export default function MyCollectionAchievements() {
           </div>
         )}
         <footer className="achievementsFooter">
-          Complete desafios e desbloqueie todas as badges do Mangás Drops.
+          Complete desafios e desbloqueie todas as badges do Mangá Drops Acervo.
         </footer>
       </main>
     </>

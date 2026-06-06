@@ -262,7 +262,7 @@ export default function Header({
                   onClick={handleCollectionClick}
                   type="button"
                 >
-                  Minha Coleção
+                  Mangá Drops Acervo
                 </button>
                 <button
                   className={`sideMenuBtn ${navIsActive("lancamentos") ? "isActive" : ""}`}
@@ -547,7 +547,7 @@ export default function Header({
                   onClick={handleCollectionClick}
                   type="button"
                 >
-                  Minha Coleção
+                  Mangá Drops Acervo
                 </button>
                 <button
                   className={`compactNavBtn ${navIsActive("lancamentos") ? "isActive" : ""}`}
@@ -713,7 +713,7 @@ export default function Header({
                     onClick={handleCollectionClick}
                     type="button"
                   >
-                    Minha Coleção
+                    Mangá Drops Acervo
                   </button>
                   <button
                     className={`pill pillPrimary ${navIsActive("lancamentos") ? "isActive" : ""}`}

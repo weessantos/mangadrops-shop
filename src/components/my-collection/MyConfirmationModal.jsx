@@ -4,7 +4,7 @@
  * ============================================================
  *
  * Modal genérico utilizado pelas funcionalidades da
- * Minha Coleção.
+ * Mangá Drops Acervo.
  *
  * Casos de uso:
  *

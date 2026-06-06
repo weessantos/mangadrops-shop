@@ -4,7 +4,7 @@
  * ============================================================
  *
  * Arquivo responsável por centralizar todas as conquistas
- * oficiais do Mangás Drops.
+ * oficiais do Mangá Drops.
  *
  * Cada categoria contém os marcos de progressão associados
  * às raridades:
@@ -102,7 +102,7 @@ export const VOLUME_ACHIEVEMENTS = [
   },
   {
     rarity: "ultimate",
-    title: "Biblioteca Arcana • 1250 Volumes",
+    title: "Acervo Lendário • 1250 Volumes",
     requirement: 1250,
   },
 ];

@@ -1,6 +1,6 @@
 /**
  * ==========================================================
- * MINHA COLEÇÃO
+ * Mangá Drops Acervo
  * ==========================================================
  *
  * RESPONSABILIDADES:
@@ -154,9 +154,9 @@ export default function MyCollectionPage() {
 ====================================== */}
         <div className="collection-header">
           <div className="collection-header-info">
-            <span className="collection-header-label">BIBLIOTECA ARCANA</span>
+            <span className="collection-header-label">MANGÁ DROPS ACERVO</span>
 
-            <h2>Minha Coleção</h2>
+            <h2>Mangá Drops Acervo</h2>
           </div>
         </div>
 
