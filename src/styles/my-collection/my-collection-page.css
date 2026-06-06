@@ -53,7 +53,8 @@
 }
 
 .series-card {
-  background: rgba(15, 15, 15, 0.92);
+  position: relative;
+  background: rgba(15, 15, 15, 0.82);
 
   border: 1px solid rgba(255, 255, 255, 0.08);
 
@@ -78,10 +79,18 @@
   height: 340px;
   object-fit: cover;
   display: block;
+
+  mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
+
+  -webkit-mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
 }
 
 .series-content {
-  padding: 18px;
+  padding: 0 18px 18px 18px;
+}
+
+.series-content h2 {
+  min-height: 40px;
 }
 
 .collection-page h2 {
@@ -146,6 +155,7 @@
   font-weight: 700;
 
   margin-bottom: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
 }
 
 .collection-status.complete {
@@ -154,11 +164,7 @@
 }
 
 .collection-status.complete-plus {
-  background: linear-gradient(
-    135deg,
-    #f59e0b,
-    #fbbf24
-  );
+  background: linear-gradient(135deg, #f59e0b, #fbbf24);
 
   color: #111;
 }
@@ -171,6 +177,11 @@
 .collection-status.wishlist {
   background: #f59e0b;
   color: white;
+}
+
+.collection-status.missing {
+  background: rgba(148, 163, 184, 0.15);
+  color: #cbd5e1;
 }
 
 /* ==========================
@@ -202,11 +213,7 @@
 }
 
 .extra-progress-fill {
-  background: linear-gradient(
-    90deg,
-    #f59e0b,
-    #fbbf24
-  );
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
 }
 
 /* ==========================
@@ -218,7 +225,7 @@
 }
 
 .series-progress-header span:last-child {
-  color: rgba(255,255,255,.9);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .collection-loading {
@@ -231,25 +238,37 @@
 ========================================== */
 
 .collection-profile {
-  margin-bottom: 40px;
+  position: relative;
 
   width: 100vw;
 
   margin-left: calc(50% - 50vw);
-
   margin-right: calc(50% - 50vw);
+
+  margin-bottom: 30px;
 }
 
+/* ==========================================
+   BANNER
+========================================== */
+
 .collection-banner {
+  position: relative;
+
   width: 100%;
-
-  height: 550px;
-
-  border-radius: 0;
+  height: 600px;
 
   overflow: hidden;
+}
 
-  position: relative;
+.collection-banner img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: center 20%;
+
+  display: block;
 }
 
 .collection-banner::after {
@@ -258,72 +277,87 @@
   position: absolute;
   inset: 0;
 
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.1) 0%,
-    rgba(0, 0, 0, 0.35) 45%,
-    rgba(0, 0, 0, 0.95) 100%
-  );
+  background:
+    /* esquerda */
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.52) 0%,
+      rgba(0, 0, 0, 0.35) 25%,
+      transparent 45%
+    ),
+    /* baixo */
+    linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.95) 0%,
+        rgba(0, 0, 0, 0.6) 25%,
+        rgba(0, 0, 0, 0.2) 55%,
+        transparent 100%
+      );
 }
 
-.collection-banner img {
-  width: 100%;
-  height: 100%;
+/* ==========================================
+   HERO CONTENT
+========================================== */
 
-  object-fit: cover;
-  display: block;
-}
+.hero-content {
+  position: absolute;
 
-.collection-avatar-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  left: 32px;
+  bottom: 60px;
 
-  margin-top: -120px;
-
-  position: relative;
   z-index: 10;
-}
 
-.profile-header {
   display: flex;
-
   align-items: center;
 
-  justify-content: center;
-
-  gap: 12px;
-
-  margin-bottom: 12px;
+  gap: 32px;
 }
 
-.profile-header h1 {
-  margin: 0;
-}
+/* ==========================================
+   AVATAR
+========================================== */
 
 .avatar-container {
   position: relative;
 
-  width: fit-content;
+  flex-shrink: 0;
+}
 
-  margin: 0 auto;
+.profile-avatar {
+  width: 190px;
+  height: 190px;
+  margin: 0;
+
+  border-radius: 50%;
+
+  object-fit: cover;
+
+  border: 4px solid rgba(255, 255, 255, 0.12);
+
+  background: #1a1a1a;
+
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+
+  cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
 }
 
 .avatar-edit-btn {
   position: absolute;
 
-  right: -5px;
-  bottom: 25px;
+  right: -6px;
+  bottom: 4px;
 
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
 
   border: none;
   background: transparent;
 
   cursor: pointer;
 
-  opacity: 0.8;
+  opacity: 0.85;
 
   transition: all 0.2s ease;
 }
@@ -340,129 +374,129 @@
   object-fit: contain;
 }
 
-.profile-avatar {
-  width: 160px;
-  height: 160px;
-
-  border-radius: 50%;
-
-  object-fit: cover;
-
-  border: 6px solid #111;
-
-  background: #1a1a1a;
-
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
-
-  cursor: pointer;
-  
-  -webkit-tap-highlight-color: transparent;
-}
+/* ==========================================
+   INFORMAÇÕES
+========================================== */
 
 .collection-profile-info {
+  display: flex;
+  flex-direction: column;
+
+  align-items: flex-start;
+
   text-align: center;
-
-  margin-top: 28px;
 }
 
-.collection-profile-info h1 {
+/* Nível */
+
+.profile-level-tag {
+  margin: 0 0 8px 10px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Nome */
+
+.profile-header {
+  margin-left: 10px;
+}
+
+.profile-header h1 {
+  margin: 0;
+
   font-family: "Russo One", sans-serif;
 
-  font-size: 58px;
+  font-size: 40px;
 
-  line-height: 1;
+  line-height: 0.9;
 
-  margin-bottom: 12px;
+  letter-spacing: -0.04em;
+
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
 }
 
-.section-title,
-.collection-section-title {
-  font-family: "Russo One", sans-serif;
-
-  letter-spacing: -0.02em;
-}
+/* Badge */
 
 .collector-badge-showcase {
   display: flex;
 
-  justify-content: center;
-
   align-items: center;
 
-  margin: 18px 0 14px;
+  gap: 12px;
 
+  margin: 14px 0 14px 0;
+}
+
+.collector-rank-title {
+  font-family: "Russo One", sans-serif;
+
+  font-size: 1.2rem;
+
+  letter-spacing: 0.02em;
+
+  color: rgba(255, 255, 255, 0.92);
+
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
 }
 
 .collector-badge-showcase img {
   cursor: pointer;
 }
 
-
 .collector-main-badge {
-  width: 88px;
-  height: 88px;
+  width: 80px;
+  height: 80px;
 
   object-fit: contain;
 
-  transition: all 0.25s ease;
-  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.25s ease;
 }
 
 .collector-badge-showcase:hover .collector-main-badge {
-  transform: translateY(-4px) scale(1.08);
+  transform: translateY(-4px);
 }
 
-.collector-member-since {
-  margin-top: 10px;
+/* Estatísticas */
 
-  color: rgba(255, 255, 255, 0.65);
-
-  font-size: 14px;
-
-  font-weight: 500;
+.MDAProfile-stats {
+  margin: 18px 0 0 10px;
 }
 
-.profile-stat {
+.profile-summary {
   display: flex;
 
   align-items: center;
 
-  gap: 18px;
-
-  min-width: 180px;
+  gap: 24px;
 }
 
-.profile-stat-content strong {
+.summary-item {
+  display: flex;
+
+  align-items: baseline;
+
+  gap: 6px;
+}
+
+.summary-item strong {
   font-family: "Russo One", sans-serif;
 
-  font-size: 40px;
+  font-size: 1.4rem;
 
   line-height: 1;
+
+  color: #fff;
 }
 
-.profile-stat-content span {
-  color: rgba(255, 255, 255, 0.75);
-
-  font-size: 15px;
+.summary-item span {
+  font-size: 1rem;
 
   font-weight: 600;
-}
 
-.profile-stat:not(:last-child) {
-  border-right: none;
-  padding-right: 0;
-}
-
-.profile-stat span {
-  display: block;
-
-  margin-top: 4px;
-
-  font-family: "Poppins", sans-serif;
-
-  font-size: 13px;
-
-  color: #aaa;
+  color: rgba(255, 255, 255, 0.65);
 }
 
 /* ==========================================
@@ -489,7 +523,7 @@
 
 .collection-filters {
   display: flex;
-
+  flex-wrap: wrap;
   gap: 12px;
 }
 
@@ -596,21 +630,12 @@ my-collection-pages - TABLET
 ========================================== */
 
 @media (max-width: 1024px) and (min-width: 769px) {
-  .collection-page {
-    padding: 0 20px 24px;
-  }
-
   .collection-banner {
-    height: 320px;
+    height: 450px;
   }
 
   .collection-avatar-wrapper {
     margin-top: -90px;
-  }
-
-  .profile-avatar {
-    width: 130px;
-    height: 130px;
   }
 
   .collection-profile-info h1 {
@@ -628,36 +653,57 @@ my-collection-pages - TABLET
 ========================================== */
 
 @media (max-width: 768px) and (min-width: 601px) {
-  .collection-page {
-    padding: 0 12px 20px;
-  }
-
   .collection-banner {
-    height: 320px;
+    height: 500px;
   }
 
-  .collection-avatar-wrapper {
-    margin-top: -60px;
+  .hero-content {
+    left: 50%;
+    bottom: 40px;
+
+    transform: translateX(-50%);
+
+    width: calc(100% - 40px);
+
+    flex-direction: column;
+
+    gap: 12px;
+
+    text-align: center;
   }
 
   .profile-avatar {
-    width: 110px;
-    height: 110px;
-    border-width: 4px;
-  }
-
-  .collection-profile-info {
-    margin-top: 16px;
+    width: 120px;
+    height: 120px;
   }
 
   .collection-profile-info h1 {
-    font-size: 2.5rem;
-    line-height: 0.95;
+    font-size: 2rem;
+  }
+
+  .collector-badge-showcase {
+    justify-content: center;
+
+    gap: 10px;
   }
 
   .collector-main-badge {
-    width: 72px;
-    height: 72px;
+    width: 60px;
+    height: 60px;
+  }
+
+  .profile-summary {
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    font-size: 0.95rem;
+  }
+
+  .collection-profile-info {
+    align-items: center;
   }
 
   .collection-filters {
@@ -669,16 +715,6 @@ my-collection-pages - TABLET
 
   .collection-filters::-webkit-scrollbar {
     display: none;
-  }
-
-  .collection-filters button {
-    flex-shrink: 1;
-
-    height: 38px;
-
-    padding: 0 10px;
-
-    font-size: 0.8rem;
   }
 
   .collection-sort select {
@@ -709,37 +745,85 @@ my-collection-pages - MOBILE
 ===================================== */
 
 @media (max-width: 600px) {
-  .collection-filters {
+  .collection-banner {
+    height: 500px;
+  }
+
+  /* Escurecer banner no mobile */
+  .collection-banner::after {
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.25) 0%,
+      rgba(0, 0, 0, 0.45) 45%,
+      rgba(0, 0, 0, 0.9) 100%
+    );
+  }
+
+  .hero-content {
+    left: 50%;
+    bottom: 40px;
+
+    transform: translateX(-50%);
+
+    width: calc(100% - 40px);
+
+    flex-direction: column;
+
+    gap: 12px;
+
+    text-align: center;
+  }
+
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+  }
+
+  .collection-profile-info h1 {
+    font-size: 2rem;
+  }
+
+  .collector-badge-showcase {
+    justify-content: center;
+
+    gap: 10px;
+  }
+
+  .collector-main-badge {
+    width: 60px;
+    height: 60px;
+  }
+
+  .profile-summary {
+    justify-content: center;
+
     flex-wrap: wrap;
+
+    gap: 14px;
+  }
+
+  .summary-item strong {
+    font-size: 1.2rem;
+
+    line-height: 1;
+
+    color: #fff;
+  }
+
+  .summary-item span {
+    font-size: 0.8rem;
+
+    font-weight: 600;
+
+    color: rgba(255, 255, 255, 0.65);
+  }
+
+  .collection-profile-info {
+    align-items: center;
   }
 
   .collection-filters button {
     flex: 1 1 calc(50% - 6px);
-  }
-
-  .edit-profile-btn {
-    display: none !important;
-  }
-
-  .collection-banner {
-    height: 260px !important;
-  }
-
-  .collection-avatar-wrapper {
-    margin-top: -70px;
-  }
-
-  .profile-avatar {
-    width: 140px;
-    height: 140px;
-  }
-
-  .collection-profile-info h1 {
-    font-size: 3rem;
-
-    line-height: 0.9;
-
-    margin-bottom: 8px;
   }
 
   .collection-page .collection-grid {
@@ -777,8 +861,16 @@ LAYOUT MINI - FIX
 /* ===============
 BANNER ULTRAWIDE
 ==================*/
-@media (min-width: 1800px) {
+@media (min-width: 1600px) {
   .collection-banner {
-    height: 650px;
+    height: 750px;
   }
 }
+
+.collection-banner img {
+  object-position: center 30%;
+}
+/* ===============
+BANNER ULTRAWIDE
+==================*/
+

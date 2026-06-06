@@ -26,6 +26,7 @@
 
 import "../styles/collection-hero.css";
 import { img } from "../utils/images";
+import useImageFallback from "../hooks/useImageFallback";
 
 // ============================================================================
 // HERO DA COLEÇÃO
@@ -44,17 +45,22 @@ export default function CollectionHero({
   total,
   onBack,
 }) {
+  const heroBanner = useImageFallback(
+    img({
+      prefix: seriesSlug,
+      file: `${seriesSlug}.jpeg`,
+    }),
+    img({
+      prefix: "default-banner.jpeg",
+    }),
+  );
+
   return (
     <section
       id="collection-hero"
       className="collectionHero"
       style={{
-        backgroundImage: `url(${
-          img({
-            prefix: seriesSlug,
-            file: `${seriesSlug}.jpeg`,
-          })
-        })`,
+        backgroundImage: `url(${heroBanner})`,
       }}
     >
       <div className="MDHeroOverlay">

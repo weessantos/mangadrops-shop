@@ -238,7 +238,7 @@ function ProductCardBase({
       </div>
 
       <div className="content">
-        <h3 className="title">{product.title}</h3>
+        <h3 className="productTitle">{product.title}</h3>
 
         <div className="metaText">
           <span className="metaPublisher">{product.brand}</span>
@@ -257,6 +257,8 @@ function ProductCardBase({
               </span>
             </>
           ) : null}
+
+          <span className="metaBreak" />
 
           <span className={`metaStock ${isAvailable ? "good" : "danger"}`}>
             {availabilityText}

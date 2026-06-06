@@ -34,13 +34,15 @@ export default function AvatarModal({
   collectorRank,
   investmentRank,
 }) {
-  
   const unlockedAvatars = getUnlockedAvatars(
     collectorRank.levelValue,
     collectorRank.rank === "ARCANISTA_SUPREMO",
   );
 
-  const unlockedBanners = getUnlockedBanners(investmentRank.levelValue);
+  const unlockedBanners = getUnlockedBanners(
+    investmentRank.levelValue,
+    collectorRank.rank === "ARCANISTA_SUPREMO",
+  );
 
   const [activeTab, setActiveTab] = useState("avatar");
 
@@ -82,7 +84,8 @@ export default function AvatarModal({
         </div>
 
         <p className="avatar-modal-subtitle">
-          Colecione volumes, evolua seus ranks e desbloqueie novas personalizações.
+          Colecione volumes, evolua seus ranks e desbloqueie novas
+          personalizações.
         </p>
 
         <div className="profile-tabs">

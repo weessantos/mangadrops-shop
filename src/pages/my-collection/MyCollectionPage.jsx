@@ -99,13 +99,11 @@ export default function MyCollectionPage() {
       PERFIL DO COLECIONADOR
       ====================================== */}
         <section className="collection-profile">
-          {/* Banner */}
           <div className="collection-banner">
             {bannerUrl && <img src={bannerUrl} alt="Banner" />}
           </div>
 
-          {/* Avatar */}
-          <div className="collection-avatar-wrapper">
+          <div className="hero-content">
             <div className="avatar-container">
               {avatarUrl && (
                 <img
@@ -127,25 +125,50 @@ export default function MyCollectionPage() {
                 />
               </button>
             </div>
-          </div>
-          {/* Informações */}
-          <div className="collection-profile-info">
-            <div className="profile-header">
-              <h1>{userName}</h1>
-            </div>
 
-            <div
-              className="collector-badge-showcase"
-              title={collectorRank?.title || ""}
-            >
-              {collectorRank && (
-                <img
-                  onClick={() => setRankModalOpen(true)}
-                  src={collectorRank.badge}
-                  alt={collectorRank.title}
-                  className="collector-main-badge"
-                />
-              )}
+            <div className="collection-profile-info">
+              <div className="profile-level-tag">Nível {collectorLevel}</div>
+
+              <div className="profile-header">
+                <h1>{userName}</h1>
+              </div>
+
+              <div
+                className="collector-badge-showcase"
+                title={collectorRank?.title || ""}
+              >
+                {collectorRank && (
+                  <>
+                    <img
+                      onClick={() => setRankModalOpen(true)}
+                      src={collectorRank.badge}
+                      alt={collectorRank.title}
+                      className="collector-main-badge"
+                    />
+                    <span className="collector-rank-title">
+                      {collectorRank.title}
+                    </span>
+                  </>
+                )}
+              </div>
+              <div className="MDAProfile-stats">
+                <div className="profile-summary">
+                  <div className="summary-item">
+                    <strong>{totalOwnedVolumes}</strong>
+                    <span>Volumes</span>
+                  </div>
+
+                  <div className="summary-item">
+                    <strong>{completedCollections}</strong>
+                    <span>Completas</span>
+                  </div>
+
+                  <div className="summary-item">
+                    <strong>{totalAchievements}</strong>
+                    <span>Conquistas</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -156,7 +179,7 @@ export default function MyCollectionPage() {
           <div className="collection-header-info">
             <span className="collection-header-label">MANGÁ DROPS ACERVO</span>
 
-            <h2>Mangá Drops Acervo</h2>
+            <h2>Minha coleção</h2>
           </div>
         </div>
 
@@ -266,6 +289,9 @@ export default function MyCollectionPage() {
                   <div className="collection-status wishlist">Wishlist</div>
                 )}
 
+                {serie.status === "missing" && (
+                  <div className="collection-status missing">Não Possuo</div>
+                )}
                 <div className="series-progress-group">
                   <div className="series-progress-header">
                     <span>📚 Principal</span>

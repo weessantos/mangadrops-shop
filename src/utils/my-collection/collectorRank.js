@@ -444,7 +444,10 @@ export function getUnlockedAvatars(rankLevel, isAdmin = false) {
 // ==========================================
 // BANNER RANK UNLOCKED
 // ==========================================
-export function getUnlockedBanners(level) {
+export function getUnlockedBanners(level, isAdmin = false) {
+  if (isAdmin) {
+    return 50;
+  }
   const limits = {
     1: 10,
     2: 12,
@@ -457,8 +460,7 @@ export function getUnlockedBanners(level) {
     9: 33,
     10: 37,
     11: 41,
-    12: 45,
-    13: 50,
+    12: 45
   };
 
   return limits[level] || 10;

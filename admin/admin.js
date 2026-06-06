@@ -2141,7 +2141,7 @@ async function openCreateVolume(prefix) {
 
   const { data: series } = await supabaseClient
     .from("series")
-    .select("title")
+    .select("id, title")
     .eq("prefix", prefix)
     .single();
 
@@ -2152,10 +2152,12 @@ async function openCreateVolume(prefix) {
       prefix: prefix,
       title,
       number: next,
+      series_id: series.id,
       added_at: new Date().toISOString().split("T")[0],
     },
   ]);
 
+  console.log(series);
   loadVolumes(prefix);
 }
 

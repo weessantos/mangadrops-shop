@@ -204,7 +204,7 @@ export default function CollectorRankModal({
 
                     <div className="loyalty-tooltip-footer">
                       A constância é o caminho para os maiores títulos da
-                      Biblioteca Arcana.
+                      Mangá Drops Acervo.
                     </div>
                   </div>
                 )}

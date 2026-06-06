@@ -267,7 +267,7 @@ export function useCollectionStats() {
           const completePlus =
             serie.total_volumes > 0 && serie.owned === serie.total_volumes;
 
-          let status = "empty";
+          let status = "missing";
 
           if (completePlus) {
             status = "complete-plus";
@@ -356,6 +356,7 @@ export function useCollectionStats() {
       const investmentRankValue = getInvestmentRank(
         totalSpentValue,
         calculatedLoyaltyLevel,
+        isAdmin,
       );
 
       setCollectorRank(collectorRankValue);
@@ -441,8 +442,7 @@ export function useCollectionStats() {
 
       case "missing":
         filtered = filtered.filter(
-          (serie) => serie.owned === 0 && serie.wishlist === 0,
-        );
+          (serie) => serie.owned === 0);
         break;
 
       case "complete":
