@@ -470,6 +470,8 @@ export default function MyCollectionAchievements() {
                   return (
                     <div
                       key={tier.rarity}
+                      data-achievement={selectedAchievement.key}
+                      data-rarity={tier.rarity}
                       className={`
                         achievementTier
                         ${unlocked ? "unlocked" : "locked"}

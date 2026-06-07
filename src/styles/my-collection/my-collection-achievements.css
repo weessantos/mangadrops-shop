@@ -260,16 +260,20 @@
   height: 100px;
 }
 
-.cardBadge[data-achievement="collections"] .badgeIcon {
+.cardBadge[data-achievement="collections"] .badgeIcon,
+.achievementTier[data-achievement="collections"] .badgeIcon {
   transform: translate(-50%, -60%);
 }
 
 .cardBadge[data-achievement="level"] .badgeIcon,
-.cardBadge[data-achievement="volumes"] .badgeIcon {
+.cardBadge[data-achievement="volumes"] .badgeIcon,
+.achievementTier[data-achievement="level"] .badgeIcon,
+.achievementTier[data-achievement="volumes"] .badgeIcon {
   transform: translate(-50%, -55%);
 }
 
-.cardBadge[data-achievement="loyalty"] .badgeIcon {
+.cardBadge[data-achievement="loyalty"] .badgeIcon,
+.achievementTier[data-achievement="loyalty"] .badgeIcon {
   transform: translate(-50%, -55%);
 }
 
