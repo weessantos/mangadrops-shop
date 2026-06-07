@@ -13,7 +13,7 @@ export const SERIES_ALIASES = {
 
   ddd: ["ddd", "dandadan", "momo", "okarun"],
 
-  dmsl: ["dmsl", "demonslayer", "kimetsu", "kimetsu no yaiba", "tanjiro"],
+  dsy: ["dsy", "demonslayer", "kimetsu", "kimetsu no yaiba", "tanjiro"],
 
   dtnt: ["dtnt", "deathnote", "kira", "ryuk"],
 
@@ -43,7 +43,50 @@ export const SERIES_ALIASES = {
 
   wws: ["wws", "wistoria"],
 
-  ror: ["ror", "snv", "record of ragnarok", "shuumatsu", "shuumatsu no valkyrie"],
+  ror: [
+    "ror",
+    "snv",
+    "record of ragnarok",
+    "shuumatsu",
+    "shuumatsu no valkyrie",
+  ],
 
-  sl: ["sl", "solo", "sololeveling", "jinwoo"],
+  sl: ["sl", "sololeveling", "jinwoo"],
+
+  blck: ["blck", "bluelock", "isagi", "bachira"],
+
+  hxh: ["hxh", "hunterxhunter", "gon", "killua", "kurapika"],
+
+  drstn: ["drstn", "drstone", "senku"],
+
+  blch: ["blch", "bleach", "ichigo", "rukia"],
+
+  tkg: ["tkg", "tokyoghoul", "kaneki"],
+
+  mha: ["mha", "myheroacademia", "deku", "bakugo", "allmight"],
+
+  "mha-illegals": ["mha-illegals", "vigilante", "vigilantes"],
+
+  nrt: ["nrt", "naruto", "sasuke", "kakashi"],
+
+  dbz: ["dbz", "dragonball", "goku", "vegeta"],
+
+  dbsp: ["dbsp", "dragonballsuper", "beerus", "whis"],
+
+  tkgre: ["tkgre", "tokyoghoulre", "kaneki"],
+
+  ippo: ["ippo", "hajimenoippo", "makunouchi", "makunouchi ippo"],
+
+  bnpp: ["bnpp", "punpun", "boanoitepunpun", "oyasumi punpun"],
+
+  fpnc: ["fpnc", "firepunch", "agni"],
+
+  vhkmr: [
+    "vhkmr",
+    "hikaru",
+    "overaoemquehikarumorreu",
+    "hikaru ga shinda natsu",
+  ],
+
+  brsk: ["brsk", "berserk", "guts", "griffith", "casca"],
 };

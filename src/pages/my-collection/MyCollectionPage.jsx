@@ -28,7 +28,7 @@
  *
  * ==========================================================
  */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import { useSearchParams } from "react-router-dom";
 
@@ -58,6 +58,10 @@ export default function MyCollectionPage() {
 
   const collectionId = searchParams.get("collection");
 
+  const [visibleCount, setVisibleCount] = useState(20);
+
+  const loadMoreRef = useRef(null);
+
   const {
     loading,
     series,
@@ -83,7 +87,43 @@ export default function MyCollectionPage() {
     reload,
   } = useCollectionStats();
 
+  const visibleSeries = series.slice(0, visibleCount);
+
   const handleLogout = useLogout();
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisibleCount((prev) => Math.min(prev + 20, series.length));
+        }
+      },
+      {
+        rootMargin: "300px",
+      },
+    );
+
+    const current = loadMoreRef.current;
+
+    if (current) {
+      observer.observe(current);
+    }
+
+    return () => {
+      if (current) {
+        observer.unobserve(current);
+      }
+    };
+  }, [series.length]);
+
+  useEffect(() => {
+    setVisibleCount(20);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "instant",
+    });
+  }, [filter, sortBy]);
 
   if (loading) {
     return <Loader />;
@@ -253,7 +293,7 @@ export default function MyCollectionPage() {
       GRID DE COLEÇÕES
       ====================================== */}
         <div className="collection-grid">
-          {series.map((serie) => (
+          {visibleSeries.map((serie) => (
             <div
               key={serie.series_id}
               className="series-card"
@@ -267,6 +307,7 @@ export default function MyCollectionPage() {
                 src={serie.thumb}
                 alt={serie.title}
                 className="series-thumb"
+                loading="lazy"
               />
               <div className="series-content">
                 <h2>{serie.title}</h2>
@@ -341,6 +382,7 @@ export default function MyCollectionPage() {
             </div>
           ))}
         </div>
+        {visibleCount < series.length && <div ref={loadMoreRef} />}
       </div>
       <MyCollectionFooter />
       {collectionId && (
