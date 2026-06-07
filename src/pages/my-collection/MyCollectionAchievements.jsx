@@ -186,8 +186,6 @@ export default function MyCollectionAchievements() {
         >
           <div className="heroOverlay">
             <div className="heroContainer">
-              <h1>Conquistas</h1>
-
               <div className="heroProfile">
                 <img
                   src={

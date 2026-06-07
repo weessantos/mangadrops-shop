@@ -122,6 +122,9 @@ export default function CollectorRankModal({
   return (
     <div className="rank-modal-overlay" onClick={onClose}>
       <div className="rank-modal" onClick={(e) => e.stopPropagation()}>
+        <button className="rank-modal-close" onClick={onClose}>
+          ✕
+        </button>
         <div className="rank-modal-grid">
           {/* ==========================================
             PERFIL
@@ -203,8 +206,8 @@ export default function CollectorRankModal({
                     <div className="loyalty-tooltip-divider" />
 
                     <div className="loyalty-tooltip-footer">
-                      A constância é o caminho para os maiores títulos da
-                      Mangá Drops Acervo.
+                      A constância é o caminho para os maiores títulos da Mangá
+                      Drops Acervo.
                     </div>
                   </div>
                 )}
@@ -396,10 +399,6 @@ export default function CollectorRankModal({
             )}
           </div>
         </div>
-
-        <button className="rank-modal-close" onClick={onClose}>
-          Fechar
-        </button>
       </div>
     </div>
   );

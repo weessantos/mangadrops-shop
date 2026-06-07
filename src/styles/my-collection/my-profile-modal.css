@@ -78,37 +78,35 @@
 }
 
 .avatar-modal-close {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
 
   display: flex;
-
   align-items: center;
-
   justify-content: center;
 
-  background: transparent;
+  background: rgba(255, 255, 255, 0.06);
 
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.06);
 
-  color: white;
+  border-radius: 12px;
 
-  font-size: 24px;
+  color: rgba(255, 255, 255, 0.8);
+
+  font-size: 1.1rem;
+  line-height: 1;
 
   cursor: pointer;
 
-  border-radius: 50%;
-
-  transition: 0.2s ease;
+  transition: all 0.2s ease;
 }
 
-.avatar-modal-close:hover {
-  background: rgba(
-    255,
-    255,
-    255,
-    0.06
-  );
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+
+  color: #fff;
+
+  transform: scale(1.05);
 }
 
 .avatar-modal-subtitle {
@@ -311,9 +309,12 @@
 
   font-size: 32px;
 
+  border-radius: 18px;
+
   background: rgba(0, 0, 0, 0.45);
 
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(4px);
+  
 }
 
 /* ==========================================

@@ -528,6 +528,10 @@
   gap: 12px;
 }
 
+.mobileFilterSelect {
+  display: none;
+}
+
 .collection-filters button {
   position: relative;
 
@@ -578,7 +582,8 @@
     0 0 20px rgba(239, 68, 68, 0.2);
 }
 
-.collection-sort select {
+.collection-sort select,
+.mobileFilterSelect select {
   background: rgba(20, 20, 20, 0.95);
 
   color: #fff;
@@ -591,7 +596,7 @@
 
   cursor: pointer;
 
-  min-width: 180px;
+  width: 100%;
 }
 
 .collection-sort select:focus {
@@ -823,8 +828,19 @@ my-collection-pages - MOBILE
     align-items: center;
   }
 
-  .collection-filters button {
-    flex: 1 1 calc(50% - 6px);
+  .desktopFilters {
+    display: none;
+  }
+
+  .mobileFilterSelect {
+    display: block;
+    width: clamp(120px, 40dvw, 100%);
+  }
+
+  .collection-toolbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
   }
 
   .collection-page .collection-grid {
@@ -874,4 +890,3 @@ BANNER ULTRAWIDE
 /* ===============
 BANNER ULTRAWIDE
 ==================*/
-

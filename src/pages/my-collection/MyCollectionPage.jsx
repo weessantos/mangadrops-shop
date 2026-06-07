@@ -227,7 +227,8 @@ export default function MyCollectionPage() {
     FILTROS
 ====================================== */}
         <div className="collection-toolbar">
-          <div className="collection-filters">
+          {/* Desktop */}
+          <div className="collection-filters desktopFilters">
             <button
               title="Exibe todas as obras do catálogo."
               className={filter === "all" ? "active" : ""}
@@ -275,6 +276,17 @@ export default function MyCollectionPage() {
             >
               ❌ Não possuo
             </button>
+          </div>
+          {/* Mobile */}
+          <div className="mobileFilterSelect">
+            <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+              <option value="all">📚 Todas</option>
+              <option value="owned">📦 Compradas</option>
+              <option value="complete">🏆 Completas</option>
+              <option value="complete-plus">💎 Completas+</option>
+              <option value="wishlist">⭐ Wishlist</option>
+              <option value="missing">❌ Não possuo</option>
+            </select>
           </div>
 
           <div className="collection-sort">
