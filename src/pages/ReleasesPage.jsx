@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useMemo, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductGrid from "../components/ProductGrid";
@@ -47,59 +48,69 @@ export default function ReleasesPage({ products = [], onOpenProduct }) {
   }, [page]);
 
   return (
-    <section className="pageSection" ref={topRef}>
-      <PageHero
-        title="Lançamentos 🔥"
-        subtitle="Atualizado com lançamentos e reposições recentes."
-        total={releases.length}
-        background="releases-bg.jpeg"
-        onBack={() => navigate("/")}
-      />
+    <>
+      <Helmet>
+        <title>Lançamentos de Mangás | Mangá Drops</title>
 
-      <ProductGrid
-        title="Lançamentos 🔥"
-        subtitle="Atualizado com lançamentos e reposições recentes."
-        items={paginatedReleases}
-        onOpen={onOpenProduct}
-      />
+        <meta
+          name="description"
+          content="Confira os lançamentos mais recentes de mangás e acompanhe as novidades das principais editoras."
+        />
+      </Helmet>
+      <section className="pageSection" ref={topRef}>
+        <PageHero
+          title="Lançamentos 🔥"
+          subtitle="Atualizado com lançamentos e reposições recentes."
+          total={releases.length}
+          background="releases-bg.jpeg"
+          onBack={() => navigate("/")}
+        />
 
-      <div className="pagination">
-        <button
-          className="paginationArrow"
-          onClick={() => setPage((p) => p - 1)}
-          disabled={page === 1}
-        >
-          <svg viewBox="0 0 24 24" fill="none">
-            <path
-              d="M15 6L9 12L15 18"
-              stroke="currentColor"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
+        <ProductGrid
+          title="Lançamentos 🔥"
+          subtitle="Atualizado com lançamentos e reposições recentes."
+          items={paginatedReleases}
+          onOpen={onOpenProduct}
+        />
 
-        <span>
-          Página {page} de {totalPages}
-        </span>
+        <div className="pagination">
+          <button
+            className="paginationArrow"
+            onClick={() => setPage((p) => p - 1)}
+            disabled={page === 1}
+          >
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M15 6L9 12L15 18"
+                stroke="currentColor"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
 
-        <button
-          className="paginationArrow"
-          onClick={() => setPage((p) => p + 1)}
-          disabled={page === totalPages}
-        >
-          <svg viewBox="0 0 24 24" fill="none">
-            <path
-              d="M9 6L15 12L9 18"
-              stroke="currentColor"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-      </div>
-    </section>
+          <span>
+            Página {page} de {totalPages}
+          </span>
+
+          <button
+            className="paginationArrow"
+            onClick={() => setPage((p) => p + 1)}
+            disabled={page === totalPages}
+          >
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M9 6L15 12L9 18"
+                stroke="currentColor"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+      </section>
+    </>
   );
 }

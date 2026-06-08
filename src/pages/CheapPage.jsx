@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useMemo, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductGrid from "../components/ProductGrid";
@@ -47,59 +48,69 @@ export default function CheapPage({ products = [], onOpenProduct }) {
   }, [page]);
 
   return (
-    <section className="pageSection" ref={topRef}>
-      <PageHero
-        title="Saldão 🪙"
-        subtitle="Mangás abaixo de R$30 para economizar."
-        total={cheapProducts.length}
-        background="cheap-bg.jpeg"
-        onBack={() => navigate("/")}
-      />
+    <>
+      <Helmet>
+        <title>Saldão de Mangás | Mangá Drops</title>
 
-      <ProductGrid
-        title="Saldão 🪙"
-        subtitle="Mangás abaixo de R$30 para economizar."
-        items={paginatedCheapProducts}
-        onOpen={onOpenProduct}
-      />
+        <meta
+          name="description"
+          content="Mangás com grandes descontos e oportunidades para completar sua coleção gastando menos."
+        />
+      </Helmet>
+      <section className="pageSection" ref={topRef}>
+        <PageHero
+          title="Saldão 🪙"
+          subtitle="Mangás abaixo de R$30 para economizar."
+          total={cheapProducts.length}
+          background="cheap-bg.jpeg"
+          onBack={() => navigate("/")}
+        />
 
-      <div className="pagination">
-        <button
-          className="paginationArrow"
-          onClick={() => setPage((p) => p - 1)}
-          disabled={page === 1}
-        >
-          <svg viewBox="0 0 24 24" fill="none">
-            <path
-              d="M15 6L9 12L15 18"
-              stroke="currentColor"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
+        <ProductGrid
+          title="Saldão 🪙"
+          subtitle="Mangás abaixo de R$30 para economizar."
+          items={paginatedCheapProducts}
+          onOpen={onOpenProduct}
+        />
 
-        <span>
-          Página {page} de {totalPages}
-        </span>
+        <div className="pagination">
+          <button
+            className="paginationArrow"
+            onClick={() => setPage((p) => p - 1)}
+            disabled={page === 1}
+          >
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M15 6L9 12L15 18"
+                stroke="currentColor"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
 
-        <button
-          className="paginationArrow"
-          onClick={() => setPage((p) => p + 1)}
-          disabled={page === totalPages}
-        >
-          <svg viewBox="0 0 24 24" fill="none">
-            <path
-              d="M9 6L15 12L9 18"
-              stroke="currentColor"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-      </div>
-    </section>
+          <span>
+            Página {page} de {totalPages}
+          </span>
+
+          <button
+            className="paginationArrow"
+            onClick={() => setPage((p) => p + 1)}
+            disabled={page === totalPages}
+          >
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M9 6L15 12L9 18"
+                stroke="currentColor"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+      </section>
+    </>
   );
 }

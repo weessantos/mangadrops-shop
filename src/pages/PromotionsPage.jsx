@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useMemo, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductGrid from "../components/ProductGrid";
@@ -47,59 +48,69 @@ export default function PromotionsPage({ products = [], onOpenProduct }) {
   }, [page]);
 
   return (
-    <section className="pageSection" ref={topRef}>
-      <PageHero
-        title="Promoções 💸"
-        subtitle="Mangás com 40% OFF ou mais."
-        total={promotions.length}
-        background="promotions-bg.jpeg"
-        onBack={() => navigate("/")}
-      />
+    <>
+      <Helmet>
+        <title>Promoções de Mangás | Mangá Drops</title>
 
-      <ProductGrid
-        title="Promoções 💸"
-        subtitle="Mangás com desconto e oportunidades."
-        items={paginatedPromotions}
-        onOpen={onOpenProduct}
-      />
+        <meta
+          name="description"
+          content="Encontre ofertas e promoções atualizadas em mangás de diversas editoras."
+        />
+      </Helmet>
+      <section className="pageSection" ref={topRef}>
+        <PageHero
+          title="Promoções 💸"
+          subtitle="Mangás com 40% OFF ou mais."
+          total={promotions.length}
+          background="promotions-bg.jpeg"
+          onBack={() => navigate("/")}
+        />
 
-      <div className="pagination">
-        <button
-          className="paginationArrow"
-          onClick={() => setPage((p) => p - 1)}
-          disabled={page === 1}
-        >
-          <svg viewBox="0 0 24 24" fill="none">
-            <path
-              d="M15 6L9 12L15 18"
-              stroke="currentColor"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
+        <ProductGrid
+          title="Promoções 💸"
+          subtitle="Mangás com desconto e oportunidades."
+          items={paginatedPromotions}
+          onOpen={onOpenProduct}
+        />
 
-        <span>
-          Página {page} de {totalPages}
-        </span>
+        <div className="pagination">
+          <button
+            className="paginationArrow"
+            onClick={() => setPage((p) => p - 1)}
+            disabled={page === 1}
+          >
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M15 6L9 12L15 18"
+                stroke="currentColor"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
 
-        <button
-          className="paginationArrow"
-          onClick={() => setPage((p) => p + 1)}
-          disabled={page === totalPages}
-        >
-          <svg viewBox="0 0 24 24" fill="none">
-            <path
-              d="M9 6L15 12L9 18"
-              stroke="currentColor"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-      </div>
-    </section>
+          <span>
+            Página {page} de {totalPages}
+          </span>
+
+          <button
+            className="paginationArrow"
+            onClick={() => setPage((p) => p + 1)}
+            disabled={page === totalPages}
+          >
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M9 6L15 12L9 18"
+                stroke="currentColor"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+      </section>
+    </>
   );
 }

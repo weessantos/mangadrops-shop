@@ -1023,7 +1023,7 @@ function AppShell() {
   return (
     <>
       <Helmet>
-        <title>Mangá Drops | Mangás em promoção, lançamentos e coleção de mangás</title>
+        <title>Mangá Drops | Mangás em promoção, lançamentos e coleções de mangás</title>
 
         <meta
           name="description"
