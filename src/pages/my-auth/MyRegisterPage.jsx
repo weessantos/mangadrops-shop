@@ -19,7 +19,7 @@
  *
  * ==========================================================
  */
-
+import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabaseClient } from "../../lib/supabase";
@@ -94,84 +94,98 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="login-page">
-      <div className="login-overlay" />
+    <>
+      <Helmet>
+        <title>Criar Conta | Mangá Drops Acervo</title>
 
-      <div className="login-card">
-        <img src="/assets/logo.png" alt="Mangá Drops" className="login-logo" />
+        <meta
+          name="description"
+          content="Crie sua conta gratuita no Mangá Drops Acervo para organizar sua coleção de mangás, acompanhar volumes, conquistas e séries completas."
+        />
+      </Helmet>
+      <div className="login-page">
+        <div className="login-overlay" />
 
-        <h2>Criar Conta</h2>
-
-        <p className="login-subtitle">
-          Comece sua jornada de colecionador e acompanhe cada volume da sua
-          coleção.
-        </p>
-
-        <form onSubmit={handleRegister} className="login-form">
-          <input
-            type="text"
-            placeholder="Nome"
-            value={firstName}
-            onChange={(e) => setFirstName(formatName(e.target.value))}
-            maxLength={20}
+        <div className="login-card">
+          <img
+            src="/assets/logo.png"
+            alt="Mangá Drops"
+            className="login-logo"
           />
 
-          <input
-            type="text"
-            placeholder="Sobrenome"
-            value={lastName}
-            onChange={(e) => setLastName(formatName(e.target.value))}
-            maxLength={20}
-          />
+          <h2>Criar Conta</h2>
 
-          <input
-            type="email"
-            placeholder="Seu email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <p className="login-subtitle">
+            Comece sua jornada de colecionador e acompanhe cada volume da sua
+            coleção.
+          </p>
 
-          <input
-            type="password"
-            placeholder="Sua senha"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <form onSubmit={handleRegister} className="login-form">
+            <input
+              type="text"
+              placeholder="Nome"
+              value={firstName}
+              onChange={(e) => setFirstName(formatName(e.target.value))}
+              maxLength={20}
+            />
 
-          <input
-            type="password"
-            placeholder="Confirmar senha"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
+            <input
+              type="text"
+              placeholder="Sobrenome"
+              value={lastName}
+              onChange={(e) => setLastName(formatName(e.target.value))}
+              maxLength={20}
+            />
 
-          <button type="submit" className="login-btn">
-            Criar Conta
+            <input
+              type="email"
+              placeholder="Seu email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <input
+              type="password"
+              placeholder="Sua senha"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+            <input
+              type="password"
+              placeholder="Confirmar senha"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+
+            <button type="submit" className="login-btn">
+              Criar Conta
+            </button>
+          </form>
+
+          <div className="login-divider">
+            <span>ou</span>
+          </div>
+
+          <button
+            type="button"
+            className="register-btn"
+            onClick={() => navigate("/auth/login")}
+          >
+            Já possuo conta
           </button>
-        </form>
 
-        <div className="login-divider">
-          <span>ou</span>
+          <button
+            type="button"
+            className="back-home-btn"
+            onClick={() => (window.location.href = "/")}
+          >
+            ← Voltar para o site
+          </button>
+
+          <p className="login-footer">Sua coleção. Sua jornada.</p>
         </div>
-
-        <button
-          type="button"
-          className="register-btn"
-          onClick={() => navigate("/auth/login")}
-        >
-          Já possuo conta
-        </button>
-
-        <button
-          type="button"
-          className="back-home-btn"
-          onClick={() => (window.location.href = "/")}
-        >
-          ← Voltar para o site
-        </button>
-
-        <p className="login-footer">Sua coleção. Sua jornada.</p>
       </div>
-    </div>
+    </>
   );
 }

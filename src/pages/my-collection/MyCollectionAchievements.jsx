@@ -33,6 +33,8 @@
  *
  * ============================================================
  */
+import { Helmet } from "react-helmet-async";
+
 import { useState } from "react";
 
 import {
@@ -174,6 +176,14 @@ export default function MyCollectionAchievements() {
 
   return (
     <>
+      <Helmet>
+        <title>Minhas Conquistas | Mangá Drops Acervo</title>
+
+        <meta
+          name="description"
+          content="Veja suas conquistas, raridades, progresso e marcos alcançados no Mangá Drops Acervo."
+        />
+      </Helmet>
       <MyCollectionHeader onLogout={handleLogout} currentPage="achievements" />
 
       <main className="achievementsPage">

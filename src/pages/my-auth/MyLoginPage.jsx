@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import { supabaseClient } from "../../lib/supabase";
 import { useNavigate } from "react-router-dom";
@@ -52,68 +53,82 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="login-page">
-      <div className="login-overlay" />
+    <>
+      <Helmet>
+        <title>Entrar | Mangá Drops Acervo</title>
 
-      <div className="login-card">
-        <img src="/assets/logo.png" alt="Mangá Drops" className="login-logo" />
+        <meta
+          name="description"
+          content="Acesse sua coleção de mangás e acompanhe seu progresso no Mangá Drops Acervo."
+        />
+      </Helmet>
+      <div className="login-page">
+        <div className="login-overlay" />
 
-        <h1>Bem-vindo</h1>
-
-        <p className="login-subtitle">
-          Organize sua coleção, acompanhe seus volumes e evolua seu rank de
-          colecionador.
-        </p>
-
-        <form onSubmit={handleLogin} className="login-form">
-          <input
-            type="email"
-            placeholder="Seu email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+        <div className="login-card">
+          <img
+            src="/assets/logo.png"
+            alt="Mangá Drops"
+            className="login-logo"
           />
 
-          <input
-            type="password"
-            placeholder="Sua senha"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <h1>Bem-vindo</h1>
+
+          <p className="login-subtitle">
+            Organize sua coleção, acompanhe seus volumes e evolua seu rank de
+            colecionador.
+          </p>
+
+          <form onSubmit={handleLogin} className="login-form">
+            <input
+              type="email"
+              placeholder="Seu email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <input
+              type="password"
+              placeholder="Sua senha"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              className="forgot-password-btn"
+              onClick={() => navigate("/auth/esqueci-senha")}
+            >
+              Esqueci minha senha
+            </button>
+
+            <button type="submit" className="login-btn">
+              Entrar
+            </button>
+          </form>
+
+          <div className="login-divider">
+            <span>ou</span>
+          </div>
+
           <button
             type="button"
-            className="forgot-password-btn"
-            onClick={() => navigate("/auth/esqueci-senha")}
+            className="register-btn"
+            onClick={() => (window.location.href = "/auth/registrar")}
           >
-            Esqueci minha senha
+            Criar Conta
           </button>
 
-          <button type="submit" className="login-btn">
-            Entrar
+          <button
+            type="button"
+            className="back-home-btn"
+            onClick={() => (window.location.href = "/")}
+          >
+            ← Voltar para o site
           </button>
-        </form>
 
-        <div className="login-divider">
-          <span>ou</span>
+          <p className="login-footer">Sua coleção. Sua jornada.</p>
         </div>
-
-        <button
-          type="button"
-          className="register-btn"
-          onClick={() => (window.location.href = "/auth/registrar")}
-        >
-          Criar Conta
-        </button>
-
-        <button
-          type="button"
-          className="back-home-btn"
-          onClick={() => (window.location.href = "/")}
-        >
-          ← Voltar para o site
-        </button>
-
-        <p className="login-footer">Sua coleção. Sua jornada.</p>
       </div>
-    </div>
+    </>
   );
 }

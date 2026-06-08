@@ -1,3 +1,5 @@
+import { Helmet } from "react-helmet-async";
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Routes,
@@ -1019,205 +1021,216 @@ function AppShell() {
     pageType !== "home" || isCollectionPage || isSearchPage;
 
   return (
-    <div className="container">
-      <Header
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-        onSearch={(override) => {
-          const q = typeof override === "string" ? override : inputValue;
+    <>
+      <Helmet>
+        <title>Mangá Drops | Mangás em promoção, lançamentos e coleção de mangás</title>
 
-          const cleanQuery = String(q || "").trim();
+        <meta
+          name="description"
+          content="Encontre mangás em promoção, acompanhe lançamentos e organize sua coleção de mangás no Mangá Drops"
+        />
+      </Helmet>
 
-          if (!cleanQuery) return;
+      <div className="container">
+        <Header
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+          onSearch={(override) => {
+            const q = typeof override === "string" ? override : inputValue;
 
-          // 🔥 detecta somente obra exata
-          const exactSeries = detectExactSeries(cleanQuery, seriesNames);
+            const cleanQuery = String(q || "").trim();
 
-          // 🔥 vai para página da obra
-          if (exactSeries) {
-            navigate(`/${slugify(exactSeries)}`);
+            if (!cleanQuery) return;
 
-            return;
-          }
+            // 🔥 detecta somente obra exata
+            const exactSeries = detectExactSeries(cleanQuery, seriesNames);
 
-          // 🔥 busca normal → página de busca
-          setPage(1);
+            // 🔥 vai para página da obra
+            if (exactSeries) {
+              navigate(`/${slugify(exactSeries)}`);
 
-          navigate({
-            pathname: "/busca",
-            search: `?q=${encodeURIComponent(cleanQuery)}`,
-          });
-        }}
-        scrollToNav={scrollToNav}
-        activeSection={activeSection}
-        isHeaderCompact={isHeaderCompact || forceCompactHeader}
-      />
+              return;
+            }
 
-      {showHero && (
-        <>
-          <HomeHero isHeaderCompact={isHeaderCompact} />
+            // 🔥 busca normal → página de busca
+            setPage(1);
 
-          <section className="brandBlock">
-            <div className="brandHeader"></div>
+            navigate({
+              pathname: "/busca",
+              search: `?q=${encodeURIComponent(cleanQuery)}`,
+            });
+          }}
+          scrollToNav={scrollToNav}
+          activeSection={activeSection}
+          isHeaderCompact={isHeaderCompact || forceCompactHeader}
+        />
 
-            <BrandStats />
+        {showHero && (
+          <>
+            <HomeHero isHeaderCompact={isHeaderCompact} />
+
+            <section className="brandBlock">
+              <div className="brandHeader"></div>
+
+              <BrandStats />
+            </section>
+          </>
+        )}
+        {showChapterHeader && (
+          <section id="home" className="chapterBlock">
+            <div className="chapterHeader">
+              <div className="chapterTop">
+                <h1 className="chapterTitle">{pageContent.title}</h1>
+                <p className="chapterDesc">{pageContent.desc}</p>
+
+                {/* SEO escondido */}
+                <h1 className="seoTitle">
+                  Mangás à Venda | One Piece, Jujutsu Kaisen e mais
+                </h1>
+              </div>
+
+              <div className="chapterLine" aria-hidden="true" />
+            </div>
           </section>
-        </>
-      )}
-      {showChapterHeader && (
-        <section id="home" className="chapterBlock">
-          <div className="chapterHeader">
-            <div className="chapterTop">
-              <h1 className="chapterTitle">{pageContent.title}</h1>
-              <p className="chapterDesc">{pageContent.desc}</p>
+        )}
 
-              {/* SEO escondido */}
-              <h1 className="seoTitle">
-                Mangás à Venda | One Piece, Jujutsu Kaisen e mais
-              </h1>
+        {isCollectionPage && (
+          <CollectionPage
+            activeSeries={activeSeries}
+            filtered={filtered}
+            pagedProducts={pagedProducts}
+            pageSize={pageSize}
+            hasMore={hasMore}
+            setPage={setPage}
+            openProduct={openProduct}
+            clearSeries={clearSeries}
+            collectionsSectionRef={collectionsSectionRef}
+          />
+        )}
+
+        {pageType === "releases" && (
+          <ReleasesPage products={products} onOpenProduct={openProduct} />
+        )}
+        {pageType === "promotions" && (
+          <PromotionsPage products={products} onOpenProduct={openProduct} />
+        )}
+        {pageType === "cheap" && (
+          <CheapPage products={products} onOpenProduct={openProduct} />
+        )}
+        {pageType === "allCollections" && (
+          <CollectionsPage
+            products={products}
+            seriesCatalog={seriesCatalog}
+            activeSeries={activeSeries}
+            collectionsSectionRef={collectionsSectionRef}
+            openSeries={openSeries}
+            clearSeries={clearSeries}
+            changeSeriesPage={changeSeriesPage}
+          />
+        )}
+
+        {showRails && (
+          <section className="railBlock">
+            <div id="lancamentos">
+              <LaunchRail
+                id="lancamentos"
+                title="Lançamentos 🔥"
+                subtitle="Mangás adicionados recentemente e últimas reposições."
+                titleClassName="sectionTitle"
+                subtitleClassName="sectionSubtitle"
+                products={products}
+                limit={40}
+                initialVisible={20}
+                onOpenProduct={openProduct}
+              />
             </div>
 
-            <div className="chapterLine" aria-hidden="true" />
-          </div>
-        </section>
-      )}
+            <div className="sectionBreak" aria-hidden="true">
+              <span className="sectionBreakLine" />
+            </div>
 
-      {isCollectionPage && (
-        <CollectionPage
-          activeSeries={activeSeries}
-          filtered={filtered}
-          pagedProducts={pagedProducts}
-          pageSize={pageSize}
-          hasMore={hasMore}
-          setPage={setPage}
-          openProduct={openProduct}
-          clearSeries={clearSeries}
-          collectionsSectionRef={collectionsSectionRef}
-        />
-      )}
+            <div id="promotions">
+              <PromoRail
+                id="promotions"
+                title="Promoções 💸"
+                subtitle="Mangás com 40% OFF ou mais."
+                titleClassName="sectionTitle"
+                subtitleClassName="sectionSubtitle"
+                products={products}
+                limit={40}
+                onOpenProduct={openProduct}
+              />
+            </div>
 
-      {pageType === "releases" && (
-        <ReleasesPage products={products} onOpenProduct={openProduct} />
-      )}
-      {pageType === "promotions" && (
-        <PromotionsPage products={products} onOpenProduct={openProduct} />
-      )}
-      {pageType === "cheap" && (
-        <CheapPage products={products} onOpenProduct={openProduct} />
-      )}
-      {pageType === "allCollections" && (
-        <CollectionsPage
-          products={products}
-          seriesCatalog={seriesCatalog}
-          activeSeries={activeSeries}
-          collectionsSectionRef={collectionsSectionRef}
-          openSeries={openSeries}
-          clearSeries={clearSeries}
-          changeSeriesPage={changeSeriesPage}
-        />
-      )}
+            <div className="sectionBreak" aria-hidden="true">
+              <span className="sectionBreakLine" />
+            </div>
 
-      {showRails && (
-        <section className="railBlock">
-          <div id="lancamentos">
-            <LaunchRail
-              id="lancamentos"
-              title="Lançamentos 🔥"
-              subtitle="Mangás adicionados recentemente e últimas reposições."
-              titleClassName="sectionTitle"
-              subtitleClassName="sectionSubtitle"
-              products={products}
-              limit={40}
-              initialVisible={20}
-              onOpenProduct={openProduct}
-            />
-          </div>
+            <div id="deals">
+              <CheapRail
+                id="deals"
+                title="Saldão 🪙"
+                subtitle="Mangás por até R$30."
+                titleClassName="sectionTitle"
+                subtitleClassName="sectionSubtitle"
+                products={products}
+                limit={40}
+                onOpenProduct={openProduct}
+              />
+            </div>
 
-          <div className="sectionBreak" aria-hidden="true">
-            <span className="sectionBreakLine" />
-          </div>
+            <div className="sectionBreak" aria-hidden="true">
+              <span className="sectionBreakLine" />
+            </div>
 
-          <div id="promotions">
-            <PromoRail
-              id="promotions"
-              title="Promoções 💸"
-              subtitle="Mangás com 40% OFF ou mais."
-              titleClassName="sectionTitle"
-              subtitleClassName="sectionSubtitle"
-              products={products}
-              limit={40}
-              onOpenProduct={openProduct}
-            />
-          </div>
+            <div id="collections">
+              <CollectionsRail
+                seriesList={seriesList}
+                seriesToRender={seriesToRender}
+                seriesPage={seriesPage}
+                totalSeriesPages={totalSeriesPages}
+                seriesPageDots={seriesPageDots}
+                seriesPageSize={seriesPageSize}
+                activeSeries={activeSeries}
+                showCollectionsPagination={showCollectionsPagination}
+                collectionsSectionRef={collectionsSectionRef}
+                openSeries={openSeries}
+                clearSeries={clearSeries}
+                changeSeriesPage={changeSeriesPage}
+              />
+            </div>
 
-          <div className="sectionBreak" aria-hidden="true">
-            <span className="sectionBreakLine" />
-          </div>
+            <div className="sectionBreak" aria-hidden="true">
+              <span className="sectionBreakLine" />
+            </div>
+          </section>
+        )}
 
-          <div id="deals">
-            <CheapRail
-              id="deals"
-              title="Saldão 🪙"
-              subtitle="Mangás por até R$30."
-              titleClassName="sectionTitle"
-              subtitleClassName="sectionSubtitle"
-              products={products}
-              limit={40}
-              onOpenProduct={openProduct}
-            />
-          </div>
+        {showFilteringGrid && (
+          <SearchResultsPage
+            products={pagedProducts}
+            hasMore={hasMore}
+            setPage={setPage}
+            openProduct={openProduct}
+            qParam={qParam}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+          />
+        )}
 
-          <div className="sectionBreak" aria-hidden="true">
-            <span className="sectionBreakLine" />
-          </div>
-
-          <div id="collections">
-            <CollectionsRail
-              seriesList={seriesList}
-              seriesToRender={seriesToRender}
-              seriesPage={seriesPage}
-              totalSeriesPages={totalSeriesPages}
-              seriesPageDots={seriesPageDots}
-              seriesPageSize={seriesPageSize}
-              activeSeries={activeSeries}
-              showCollectionsPagination={showCollectionsPagination}
-              collectionsSectionRef={collectionsSectionRef}
-              openSeries={openSeries}
-              clearSeries={clearSeries}
-              changeSeriesPage={changeSeriesPage}
-            />
-          </div>
-
-          <div className="sectionBreak" aria-hidden="true">
-            <span className="sectionBreakLine" />
-          </div>
-        </section>
-      )}
-
-      {showFilteringGrid && (
-        <SearchResultsPage
-          products={pagedProducts}
-          hasMore={hasMore}
-          setPage={setPage}
-          openProduct={openProduct}
-          qParam={qParam}
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-        />
-      )}
-
-      {showScrollTop && (
-        <button
-          className="scrollTopBtn"
-          onClick={scrollToTop}
-          aria-label="Voltar ao topo"
-          title="Voltar ao topo"
-        >
-          ↑
-        </button>
-      )}
-      <Footer scrollToNav={scrollToNav} />
-    </div>
+        {showScrollTop && (
+          <button
+            className="scrollTopBtn"
+            onClick={scrollToTop}
+            aria-label="Voltar ao topo"
+            title="Voltar ao topo"
+          >
+            ↑
+          </button>
+        )}
+        <Footer scrollToNav={scrollToNav} />
+      </div>
+    </>
   );
 }
 
@@ -1266,7 +1279,10 @@ function AppRoutes() {
 
         <Route path="/minha-colecao" element={<MyCollectionPage />} />
 
-        <Route path="/minhas-conquistas" element={<MyCollectionAchievements />} />
+        <Route
+          path="/minhas-conquistas"
+          element={<MyCollectionAchievements />}
+        />
       </Routes>
       {/* 🔥 modal SOMENTE quando veio da home */}
       {volumeId && (

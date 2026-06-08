@@ -28,6 +28,9 @@
  *
  * ==========================================================
  */
+
+import { Helmet } from "react-helmet-async";
+
 import { useEffect, useState, useRef } from "react";
 
 import { useSearchParams } from "react-router-dom";
@@ -131,7 +134,14 @@ export default function MyCollectionPage() {
 
   return (
     <>
-      {" "}
+      <Helmet>
+        <title>Mangá Drops Acervo | Organize sua coleção de mangás</title>
+
+        <meta
+          name="description"
+          content="Controle volumes, acompanhe séries completas, wishlist, conquistas e estatísticas da sua coleção de mangás."
+        />
+      </Helmet>{" "}
       {/* Header */}
       <MyCollectionHeader onLogout={handleLogout} currentPage="collection" />
       <div className="collection-page">
