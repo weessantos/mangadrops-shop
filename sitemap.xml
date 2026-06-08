@@ -11,7 +11,27 @@
   </url>
 
   <url>
+    <loc>https://mangasdrops.online/auth/registrar</loc>
+  </url>
+
+  <url>
     <loc>https://mangasdrops.online/minha-colecao</loc>
+  </url>
+
+  <url>
+    <loc>https://mangasdrops.online/lancamentos</loc>
+  </url>
+
+  <url>
+    <loc>https://mangasdrops.online/promocoes</loc>
+  </url>
+
+  <url>
+    <loc>https://mangasdrops.online/saldao</loc>
+  </url>
+
+  <url>
+    <loc>https://mangasdrops.online/colecoes</loc>
   </url>
 
 </urlset>
