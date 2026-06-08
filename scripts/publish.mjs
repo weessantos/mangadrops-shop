@@ -23,10 +23,13 @@ try {
 🚀 Código enviado para a main!
 
 Fluxo final:
-• código enviado
-• GitHub Actions atualizará preços
-• GitHub Actions fará o build
-• GitHub Actions publicará o site
+• código enviado para o GitHub
+• Vercel detectará o push automaticamente
+• Vercel fará o build
+• Vercel publicará o site
+• domínio atualizado automaticamente
+
+🌐 https://www.mangasdrops.online
 `);
 } catch {
   console.error("\n❌ Falhou. Veja o erro acima.");
