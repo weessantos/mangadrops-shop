@@ -49,19 +49,6 @@
       }
     </script>
 
-    <!-- ✅ GitHub Pages SPA fallback (NÃO MEXER) -->
-    <script>
-      (function () {
-        const params = new URLSearchParams(location.search);
-        const p = params.get("__gh_path__");
-        if (p) {
-          params.delete("__gh_path__");
-          const clean = params.toString();
-          history.replaceState(null, "", p + (clean ? "?" + clean : ""));
-        }
-      })();
-    </script>
-
     <!-- ✅ Google Analytics (apenas 1 script externo) -->
     <script
       async
