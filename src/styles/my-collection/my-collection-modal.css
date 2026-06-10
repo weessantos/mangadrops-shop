@@ -102,6 +102,10 @@
   display: block;
 }
 
+.favoriteWorkBadge {
+  display: none;
+}
+
 .my-collection-info h2 {
   color: white;
 
@@ -203,6 +207,10 @@
   background: rgba(139, 92, 246, 0.3);
 
   color: white;
+}
+
+.mobileFavoriteCollectionButton{
+  display: none;
 }
 
 /* ===================================
@@ -578,8 +586,47 @@
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+.footerActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
 .footer-progress {
   flex: 1;
+}
+
+.mobileFavoriteCollectionButton,
+.favoriteCollectionButton {
+  flex-shrink: 0;
+
+  height: 42px;
+  padding: 0 16px;
+
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  background: rgba(255, 255, 255, 0.04);
+
+  color: #fff;
+
+  font-weight: 600;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.mobileFavoriteCollectionButton:hover,
+.favoriteCollectionButton:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.mobileFavoriteCollectionButton.active,
+.favoriteCollectionButton.active {
+  background: rgba(255, 193, 7, 0.15);
+  border-color: rgba(255, 193, 7, 0.4);
+  color: #ffd54f;
 }
 
 .footer-progress-header {
@@ -755,7 +802,7 @@
      TABLET - FOOTER
   ===================== */
 
-  .my-collection-modal-footer {
+  .footer-stat {
     display: none;
   }
 }
@@ -765,6 +812,10 @@
 =================================== */
 
 @media (max-width: 600px) {
+  .mobileFavoriteCollectionButton{
+    display: block;
+  }
+
   .my-collection-modal-header {
     height: 0;
     padding: 0;
@@ -832,6 +883,36 @@
     flex-shrink: 0;
   }
 
+  .seriesTitleRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin: 10px 0 25px 0;
+  }
+
+  .seriesTitleRow h3 {
+    margin: 0;
+  }
+
+  .favoriteWorkBadge {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 4px 10px;
+
+    border-radius: 999px;
+
+    font-size: 0.75rem;
+    font-weight: 600;
+
+    color: #ffd54f;
+
+    background: rgba(255, 193, 7, 0.12);
+
+    border: 1px solid rgba(255, 193, 7, 0.25);
+  }
+
   .my-collection-info {
     flex: 1;
 
@@ -840,7 +921,7 @@
 
   .my-collection-info h2 {
     padding-right: 35px;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
 
     line-height: 1;
 

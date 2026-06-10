@@ -2,29 +2,29 @@ import "../styles/loader.css";
 import { useEffect, useState } from "react";
 
 const messages = [
-  "A magia começa a surgir...",
-  "Novas histórias ganham vida...",
-  "Um mundo se abre diante de você...",
-  "Pequenos mistérios aparecem...",
-  "A jornada está prestes a começar...",
+  "Organizando sua coleção...",
+  "Preparando sua biblioteca...",
+  "Abrindo novos capítulos...",
+  "Reunindo grandes histórias...",
+  "Atualizando sua estante...",
 
-  "Algo especial está se formando...",
-  "As páginas começam a brilhar...",
-  "Um novo universo se revela...",
-  "A imaginação desperta...",
-  "Caminhos inesperados aparecem...",
+  "Carregando seus volumes...",
+  "Explorando novos universos...",
+  "Preparando suas conquistas...",
+  "Separando edições especiais...",
+  "Tudo pronto para a próxima leitura...",
 
-  "A aventura chama por você...",
-  "Histórias aguardam seu olhar...",
-  "Um toque de magia no ar...",
-  "Tudo começa a se encaixar...",
-  "Novos destinos se aproximam...",
+  "Histórias incríveis estão chegando...",
+  "Seu acervo está ganhando vida...",
+  "Descobrindo novos mundos...",
+  "Conectando colecionadores...",
+  "Mais um capítulo começa agora...",
 
-  "A curiosidade guia o caminho...",
-  "O próximo capítulo te espera...",
-  "Descobertas estão por vir...",
-  "Um instante antes da magia...",
-  "Prepare-se para explorar..."
+  "Organizando cada detalhe...",
+  "Construindo sua jornada...",
+  "Preparando algo especial...",
+  "A biblioteca está se abrindo...",
+  "Quase tudo pronto..."
 ];
 
 function shuffleArray(array) {
@@ -53,22 +53,21 @@ export default function Loader() {
     return () => clearInterval(interval);
   }, [shuffled]);
 
-  return (
-    <div className="loader-container">
-      <div className="loader-content">
-        <video className="loader-video" autoPlay loop muted playsInline>
-          <source src="/loader.mp4" type="video/mp4" />
-        </video>
+return (
+  <div className="loader-container">
+    <div className="loader-content">
+      <video className="loader-video" autoPlay loop muted playsInline>
+        <source src="/loader.mp4" type="video/mp4" />
+      </video>
 
-        <p className="loader-text">
-          {shuffled[index]}
-          <span className="dots-video">
-            <video autoPlay loop muted playsInline>
-              <source src="/dog-loader.mp4" type="video/mp4" />
-            </video>
-          </span>
-        </p>
+      <div className="loader-info">
+        <p className="loader-text">{shuffled[index]}</p>
+
+        <div className="loader-progress">
+          <div className="loader-progress-bar"></div>
+        </div>
       </div>
     </div>
-  );
+  </div>
+);
 }

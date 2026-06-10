@@ -28,6 +28,9 @@ export default function MyCollectionModal({ collectionId, onClose }) {
   const [startVolume, setStartVolume] = useState(1);
   const [endVolume, setEndVolume] = useState(1);
 
+  const [favoriteWorkId, setFavoriteWorkId] = useState(null);
+  const [savingFavorite, setSavingFavorite] = useState(false);
+
   useLockBodyScroll();
 
   useEffect(() => {
@@ -38,6 +41,14 @@ export default function MyCollectionModal({ collectionId, onClose }) {
     const {
       data: { user },
     } = await supabaseClient.auth.getUser();
+
+    const { data: preferences } = await supabaseClient
+      .from("user_profile_preferences")
+      .select("favorite_work_id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    setFavoriteWorkId(preferences?.favorite_work_id || null);
 
     const { data, error } = await supabaseClient
       .from("collection_catalog")
@@ -140,6 +151,8 @@ export default function MyCollectionModal({ collectionId, onClose }) {
     }, {}),
   );
 
+  const isFavoriteWork = Number(favoriteWorkId) === Number(collectionId);
+
   function formatCurrency(value) {
     return value.toLocaleString("pt-BR", {
       style: "currency",
@@ -216,6 +229,37 @@ export default function MyCollectionModal({ collectionId, onClose }) {
     showSuccess(
       `${selectedVolumes.length} volumes adicionados à coleção com sucesso!`,
     );
+  }
+
+  async function handleFavoriteCollection() {
+    try {
+      setSavingFavorite(true);
+
+      const {
+        data: { user },
+      } = await supabaseClient.auth.getUser();
+
+      const { error } = await supabaseClient
+        .from("user_profile_preferences")
+        .upsert({
+          user_id: user.id,
+          favorite_work_id: collectionId,
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      setFavoriteWorkId(collectionId);
+
+      showSuccess("Obra favorita atualizada!");
+    } catch (error) {
+      console.error(error);
+
+      showError("Não foi possível salvar sua obra favorita.");
+    } finally {
+      setSavingFavorite(false);
+    }
   }
 
   return (
@@ -316,7 +360,18 @@ export default function MyCollectionModal({ collectionId, onClose }) {
                   key={group.seriesTitle}
                   className="collection-series-group"
                 >
-                  <h3>{group.seriesTitle}</h3>
+                  <div className="seriesTitleRow">
+                    <h3>{group.seriesTitle}</h3>
+
+                    <button
+                      className={`mobileFavoriteCollectionButton ${
+                        isFavoriteWork ? "active" : ""
+                      }`}
+                      onClick={handleFavoriteCollection}
+                    >
+                      {isFavoriteWork ? "⭐ Favorita" : "☆ Favoritar"}
+                    </button>
+                  </div>
                   <div
                     className={`${
                       group.isExtra
@@ -377,24 +432,34 @@ export default function MyCollectionModal({ collectionId, onClose }) {
               <strong>{groupedVolumes.length}</strong>
               <span> Obras relacionadas</span>
             </div>
+            <div className="footerActions">
+              <div className="footer-progress">
+                <div className="footer-progress-header">
+                  <span>
+                    {ownedVolumes} / {totalVolumes} volumes
+                  </span>
 
-            <div className="footer-progress">
-              <div className="footer-progress-header">
-                <span>
-                  {ownedVolumes} / {totalVolumes} volumes
-                </span>
+                  <strong>{percentage}%</strong>
+                </div>
 
-                <strong>{percentage}%</strong>
+                <div className="footer-progress-bar">
+                  <div
+                    className="footer-progress-fill"
+                    style={{
+                      width: `${percentage}%`,
+                    }}
+                  />
+                </div>
               </div>
 
-              <div className="footer-progress-bar">
-                <div
-                  className="footer-progress-fill"
-                  style={{
-                    width: `${percentage}%`,
-                  }}
-                />
-              </div>
+              <button
+                className={`favoriteCollectionButton ${
+                  isFavoriteWork ? "active" : ""
+                }`}
+                onClick={handleFavoriteCollection}
+              >
+                {isFavoriteWork ? "⭐ Favorita" : "☆ Favoritar"}
+              </button>
             </div>
           </div>
         </div>

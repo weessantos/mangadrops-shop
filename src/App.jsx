@@ -45,6 +45,7 @@ import ResetPasswordPage from "./pages/my-auth/MyResetPasswordPage.jsx";
 import NewPasswordPage from "./pages/my-auth/MyNewPasswordPage.jsx";
 import MyCollectionPage from "./pages/my-collection/MyCollectionPage.jsx";
 import MyCollectionAchievements from "./pages/my-collection/MyCollectionAchievements.jsx";
+import MyPublicProfile from "./pages/my-collection/MyPublicProfile";
 
 import { useIsMobile } from "./hooks/useIsMobile";
 import { normalizeProduct } from "./utils/normalizeProduct";
@@ -1023,7 +1024,9 @@ function AppShell() {
   return (
     <>
       <Helmet>
-        <title>Mangá Drops | Mangás em promoção, lançamentos e coleções de mangás</title>
+        <title>
+          Mangá Drops | Mangás em promoção, lançamentos e coleções de mangás
+        </title>
 
         <meta
           name="description"
@@ -1242,7 +1245,9 @@ function AppRoutes() {
 
   const backgroundLocation = state?.backgroundLocation;
 
-  const productMatch = matchPath("/:seriesSlug/:volumeId", location.pathname);
+  const productMatch = location.pathname.startsWith("/u/")
+    ? null
+    : matchPath("/:seriesSlug/:volumeId", location.pathname);
 
   const volumeId = productMatch?.params?.volumeId;
 
@@ -1283,6 +1288,8 @@ function AppRoutes() {
           path="/minhas-conquistas"
           element={<MyCollectionAchievements />}
         />
+
+        <Route path="/u/:username" element={<MyPublicProfile />} />
       </Routes>
       {/* 🔥 modal SOMENTE quando veio da home */}
       {volumeId && (

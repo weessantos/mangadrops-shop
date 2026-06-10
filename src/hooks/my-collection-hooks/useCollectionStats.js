@@ -53,7 +53,11 @@ export function useCollectionStats() {
 
   const [sortBy, setSortBy] = useState("title-asc");
 
+  // Nome de display
   const [userName, setUserName] = useState("Colecionador");
+
+  // Nick único
+  const [username, setUsername] = useState("");
 
   const [avatarUrl, setAvatarUrl] = useState("");
 
@@ -70,6 +74,8 @@ export function useCollectionStats() {
   const [totalExtras, setTotalExtras] = useState(0);
 
   const [totalSpent, setTotalSpent] = useState(0);
+
+  const [distinctWorks, setDistinctWorks] = useState(0);
 
   const [completedCollections, setCompletedCollections] = useState(0);
 
@@ -143,14 +149,36 @@ export function useCollectionStats() {
         .eq("id", user.id)
         .single();
 
+      // ==========================================
+      // GARANTE PREFERÊNCIAS
+      // ==========================================
+
+      const { data: preferences } = await supabaseClient
+        .from("user_profile_preferences")
+        .select("user_id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (!preferences) {
+        await supabaseClient.from("user_profile_preferences").insert({
+          user_id: user.id,
+          profile_public: false,
+          show_collection_value: false,
+        });
+      }
+
+      //Display name
       setUserName(profile?.display_name || user?.email || "Colecionador");
+
+      //Nick único
+      setUsername(profile?.username || "");
 
       setAvatarUrl(profile?.avatar_url || "");
       setBannerUrl(profile?.banner_url || "");
 
       setMemberSince(formatMemberSince(profile?.created_at));
 
-      const isAdmin = user.email === "wees1597@gmail.com";
+      const isAdmin = profile.is_admin;
 
       // ==========================================
       // CATÁLOGO
@@ -255,7 +283,6 @@ export function useCollectionStats() {
                   Math.round((serie.owned / serie.total_volumes) * 100),
                 )
               : 0;
-
           const mainPercentage =
             serie.main_total > 0
               ? Math.round((serie.main_owned / serie.main_total) * 100)
@@ -293,6 +320,12 @@ export function useCollectionStats() {
         });
 
       setAllSeries(collections);
+
+      const ownedSeriesCount = collections.filter(
+        (collection) => collection.owned > 0,
+      ).length;
+
+      setDistinctWorks(ownedSeriesCount);
 
       // ==========================================
       // VOLUMES
@@ -441,8 +474,7 @@ export function useCollectionStats() {
         break;
 
       case "missing":
-        filtered = filtered.filter(
-          (serie) => serie.owned === 0);
+        filtered = filtered.filter((serie) => serie.owned === 0);
         break;
 
       case "complete":
@@ -488,6 +520,7 @@ export function useCollectionStats() {
     series,
 
     userName,
+    username,
 
     avatarUrl,
 
@@ -500,6 +533,8 @@ export function useCollectionStats() {
 
     totalOwnedVolumes,
     totalExtras,
+
+    distinctWorks,
 
     completedCollections,
 

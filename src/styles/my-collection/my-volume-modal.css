@@ -267,6 +267,18 @@
   border-color: #ff5b2e;
 }
 
+.saveActions {
+  margin-top: auto;
+  display: flex;
+  gap: 12px;
+}
+
+.saveActions button {
+  flex: 1;
+}
+
+.favoriteVolumeButton,
+.rareVolumeButton,
 .save-button {
   height: 52px;
 
@@ -276,13 +288,44 @@
 
   cursor: pointer;
 
-  font-size: 16px;
+  font-size: 0.8rem;
   font-weight: 700;
 
-  background: #ff5b2e;
-  color: white;
-
   margin-top: auto;
+
+  transition: all 0.2s ease;
+
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.favoriteVolumeButton:hover,
+.rareVolumeButton:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.favoriteVolumeButton.active {
+  background: rgba(255, 193, 7, 0.15);
+  border-color: rgba(255, 193, 7, 0.4);
+  color: #ffd54f;
+}
+
+.rareVolumeButton.active {
+  background: rgba(0, 200, 255, 0.15);
+  border: 1px solid rgba(0, 200, 255, 0.35);
+  color: #7dd3fc;
+}
+
+.save-button {
+  background: #ff5b2e;
+}
+
+.save-button:hover {
+  background: #ff6a42;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 6px 18px rgba(255, 91, 46, 0.25);
 }
 
 /* ==========================================
@@ -353,26 +396,32 @@
   }
 
   .my-volume-modal-header {
+    display: flex;
+    align-items: flex-start;
     padding: 16px 20px;
     height: auto;
     min-height: 60px;
   }
 
   .my-volume-modal-header h2 {
-    font-size: 15px;
+    font-size: 1.2rem;
     line-height: 1.3;
-    margin: 0;
+    margin: 10px 0 0 0;
 
-    max-width: 180px;
+    min-width: 190px;
+    max-width: 220px;
   }
 
   .my_volume-modal-header-left {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-end;
     gap: 8px;
   }
 
   .view-volume-btn {
-    padding: 0 8px;
-    font-size: 13px;
+    font-size: 0.8rem;
+    padding: 0;
   }
 
   .my-volume-modal-close {
@@ -388,7 +437,7 @@
   }
 
   .volume-nav-btn {
-    top: 25%;
+    top: 30%;
   }
 
   .my-volume-cover-wrapper {
@@ -439,5 +488,16 @@
   .save-button {
     margin-top: 8px;
     height: 50px;
+  }
+}
+
+/* EXTRA SMALL */
+@media (max-width: 400px) {
+  .my-volume-modal-overlay {
+    padding: 12px;
+  }
+
+  .volume-nav-btn {
+    top: 40%;
   }
 }

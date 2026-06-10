@@ -75,7 +75,7 @@ function ProductPage() {
     return (
       <div
         style={{
-          minHeight: "100vh",
+          minHeight: "100dvh",
           background: "#111",
           color: "#fff",
           display: "flex",
@@ -92,7 +92,7 @@ function ProductPage() {
     return (
       <div
         style={{
-          minHeight: "100vh",
+          minHeight: "100dvh",
           background: "#111",
           color: "#fff",
           display: "flex",

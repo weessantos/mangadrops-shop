@@ -47,15 +47,23 @@ import MyCollectionFooter from "../../components/my-collection/MyCollectionFoote
 
 import AvatarModal from "../../components/my-collection/MyProfileModal";
 
+import MyEditPublicProfileModal from "../../components/my-collection/MyEditPublicProfileModal";
+
+import MyUsernameSetupModal from "../../components/my-collection/MyUsernameSetupModal";
+
 import { useCollectionStats } from "../../hooks/my-collection-hooks/useCollectionStats";
 
 import Loader from "../../components/Loader";
 import "../../styles/my-collection/my-collection-page.css";
 
 export default function MyCollectionPage() {
+  const [usernameModalOpen, setUsernameModalOpen] = useState(false);
+
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [profileModalOpen, setProfileModalOpen] = useState(false);
+
+  const [publicProfileModalOpen, setPublicProfileModalOpen] = useState(false);
 
   const [rankModalOpen, setRankModalOpen] = useState(false);
 
@@ -69,6 +77,7 @@ export default function MyCollectionPage() {
     loading,
     series,
     userName,
+    username,
     avatarUrl,
     bannerUrl,
     totalOwnedVolumes,
@@ -127,6 +136,15 @@ export default function MyCollectionPage() {
       behavior: "instant",
     });
   }, [filter, sortBy]);
+
+  console.log("USERNAME:", username);
+
+  useEffect(() => {
+    if (!loading && !username) {
+      console.log("ABRIR MODAL");
+      setUsernameModalOpen(true);
+    }
+  }, [loading, username]);
 
   if (loading) {
     return <Loader />;
@@ -231,6 +249,13 @@ export default function MyCollectionPage() {
 
             <h2>Minha coleção</h2>
           </div>
+
+          <button
+            className="public-profile-badge"
+            onClick={() => setPublicProfileModalOpen(true)}
+          >
+            🌐 Perfil Público
+          </button>
         </div>
 
         {/* ======================================
@@ -445,6 +470,20 @@ export default function MyCollectionPage() {
           totalSpent={totalSpent}
           onClose={() => setRankModalOpen(false)}
           onEditProfile={() => setProfileModalOpen(true)}
+        />
+      )}
+      {publicProfileModalOpen && (
+        <MyEditPublicProfileModal
+          onClose={() => setPublicProfileModalOpen(false)}
+          username={username}
+        />
+      )}
+      {usernameModalOpen && (
+        <MyUsernameSetupModal
+          onSaved={() => {
+            reload();
+            setUsernameModalOpen(false);
+          }}
         />
       )}
     </>

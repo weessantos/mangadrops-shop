@@ -32,6 +32,9 @@ export default function MyVolumeModal({
 
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
 
+  const [favoriteVolumeId, setFavoriteVolumeId] = useState(null);
+  const [rareVolumeId, setRareVolumeId] = useState(null);
+
   const currentIndex = volumes.findIndex((v) => v.id === volume.id);
 
   const navigate = useNavigate();
@@ -71,6 +74,15 @@ export default function MyVolumeModal({
       data: { user },
     } = await supabaseClient.auth.getUser();
 
+    const { data: preferences } = await supabaseClient
+      .from("user_profile_preferences")
+      .select("favorite_volume_id, rarest_volume_id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    setFavoriteVolumeId(preferences?.favorite_volume_id || null);
+    setRareVolumeId(preferences?.rarest_volume_id || null);
+
     const { data, error } = await supabaseClient
       .from("user_collection")
       .select("*")
@@ -109,6 +121,10 @@ export default function MyVolumeModal({
     setDate(data.purchase_date || new Date().toISOString().split("T")[0]);
   }
 
+  const isFavoriteVolume = Number(favoriteVolumeId) === Number(volume.id);
+
+  const isRareVolume = Number(rareVolumeId) === Number(volume.id);
+
   // ==========================================
   // NAVEGAÇÃO ENTRE VOLUMES
   // ==========================================
@@ -127,7 +143,59 @@ export default function MyVolumeModal({
   }
 
   // ==========================================
-  // SALVAR
+  // SALVAR FAVORITO
+  // ==========================================
+  async function handleFavoriteVolume() {
+    const {
+      data: { user },
+    } = await supabaseClient.auth.getUser();
+
+    const { error } = await supabaseClient
+      .from("user_profile_preferences")
+      .upsert({
+        user_id: user.id,
+        favorite_volume_id: volume.id,
+      });
+
+    if (error) {
+      console.error(error);
+      showError("Erro ao salvar volume favorito.");
+      return;
+    }
+
+    setFavoriteVolumeId(volume.id);
+
+    showSuccess("Volume favorito atualizado!");
+  }
+
+  // ==========================================
+  // SALVAR RARIDADE
+  // ==========================================
+  async function handleRareVolume() {
+    const {
+      data: { user },
+    } = await supabaseClient.auth.getUser();
+
+    const { error } = await supabaseClient
+      .from("user_profile_preferences")
+      .upsert({
+        user_id: user.id,
+        rarest_volume_id: volume.id,
+      });
+
+    if (error) {
+      console.error(error);
+      showError("Erro ao salvar volume raro.");
+      return;
+    }
+
+    setRareVolumeId(volume.id);
+
+    showSuccess("Volume mais raro atualizado!");
+  }
+
+  // ==========================================
+  // SALVAR COMPRA
   // ==========================================
 
   async function handleSave() {
@@ -358,9 +426,33 @@ export default function MyVolumeModal({
               </>
             )}
 
-            <button className="save-button" onClick={handleSave}>
-              Salvar
-            </button>
+            <div className="saveActions">
+              {status === "owned" && (
+                <>
+                  <button
+                    className={`favoriteVolumeButton ${
+                      isFavoriteVolume ? "active" : ""
+                    }`}
+                    onClick={handleFavoriteVolume}
+                  >
+                    {isFavoriteVolume ? "⭐ Favorito" : "☆ Favoritar"}
+                  </button>
+
+                  <button
+                    className={`rareVolumeButton ${
+                      isRareVolume ? "active" : ""
+                    }`}
+                    onClick={handleRareVolume}
+                  >
+                    {isRareVolume ? "💎 Mais Raro" : "◇ Raridade"}
+                  </button>
+                </>
+              )}
+
+              <button className="save-button" onClick={handleSave}>
+                Salvar
+              </button>
+            </div>
           </div>
         </div>
       </div>

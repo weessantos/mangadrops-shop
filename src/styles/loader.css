@@ -92,6 +92,30 @@
   100% { opacity: 0.4; transform: translateY(2px); }
 }
 
+@keyframes loadingFlow {
+  0% {
+    left: -35%;
+  }
+
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes fadeMessage {
+  0% {
+    opacity: .6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: .6;
+  }
+}
+
 /* ================= DOTS ================= */
 .dots::after {
   content: "";
@@ -104,19 +128,48 @@
   66% { content: ".."; }
   100% { content: "..."; }
 }
+/* ================= BARRA ================= */
 
-/* ================= VÍDEO (CACHORRO) ================= */
-.dots-video {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.loader-info {
+  width: min(320px, 90vw);
 }
 
-.dots-video video {
-  width: 36px;
-  height: 36px;
-  object-fit: contain;
-  display: block;
+.loader-info {
+  backdrop-filter: blur(10px);
+  background: rgba(0,0,0,.18);
+  padding: 18px;
+}
 
-  transform: translateY(-3px); /* 🔥 AJUSTE FINAL */
+.loader-text {
+  text-align: center;
+  font-size: 0.95rem;
+  color: rgba(255,255,255,.9);
+  margin-bottom: 14px;
+  animation: fadeMessage 2.5s ease-in-out infinite;
+}
+
+.loader-progress {
+  width: 100%;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+  position: relative;
+}
+
+.loader-progress-bar {
+  position: absolute;
+  top: 0;
+  left: -35%;
+  width: 35%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.85),
+    transparent
+  );
+
+  animation: loadingFlow 1.8s ease-in-out infinite;
 }

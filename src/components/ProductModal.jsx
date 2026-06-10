@@ -145,12 +145,12 @@ export default function ProductModal() {
   }, []);
 
   useEffect(() => {
-  document.body.classList.add("modalOpen");
+    document.body.classList.add("modalOpen");
 
-  return () => {
-    document.body.classList.remove("modalOpen");
-  };
-}, []);
+    return () => {
+      document.body.classList.remove("modalOpen");
+    };
+  }, []);
 
   /* =====================================================
    NAVEGAÇÃO ENTRE VOLUMES

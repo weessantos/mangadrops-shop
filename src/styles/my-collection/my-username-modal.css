@@ -1,0 +1,188 @@
+/* =====================================
+   USERNAME MODAL
+===================================== */
+
+.usernameModalOverlay {
+  position: fixed;
+
+  inset: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(0, 0, 0, 0.85);
+
+  backdrop-filter: blur(8px);
+
+  z-index: 999999;
+}
+
+.usernameModal {
+  width: 520px;
+
+  max-width: 92vw;
+
+  background: #111;
+
+  border-radius: 24px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  padding: 28px;
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(124, 58, 237, 0.12);
+}
+
+.usernameModalHeader h2 {
+  margin: 0 0 12px;
+
+  color: #fff;
+
+  font-family: "Russo One", sans-serif;
+
+  font-size: 2rem;
+
+  font-weight: 400;
+}
+
+.usernameModalHeader p {
+  margin: 0;
+
+  color: rgba(255, 255, 255, 0.65);
+
+  line-height: 1.6;
+}
+
+.usernameInputWrapper {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  margin-top: 24px;
+
+  padding: 0 18px;
+
+  height: 58px;
+
+  border-radius: 16px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.usernameInputWrapper span {
+  color: #ef4444;
+
+  font-size: 1.2rem;
+
+  font-weight: 800;
+}
+
+.usernameInputWrapper input {
+  flex: 1;
+
+  background: transparent;
+
+  border: none;
+
+  outline: none;
+
+  color: white;
+
+  font-size: 1rem;
+
+  font-weight: 600;
+}
+
+.usernameInputWrapper input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.usernamePreview {
+  margin-top: 18px;
+
+  color: #8b8b8b;
+
+  font-size: 0.95rem;
+
+  word-break: break-all;
+}
+
+.usernameRules {
+  margin-top: 14px;
+
+  color: rgba(255, 255, 255, 0.55);
+
+  font-size: 0.9rem;
+
+  line-height: 1.6;
+}
+
+.usernameSaveBtn {
+  width: 100%;
+
+  height: 52px;
+
+  margin-top: 24px;
+
+  border: none;
+
+  border-radius: 16px;
+
+  cursor: pointer;
+
+  color: white;
+
+  font-size: 1rem;
+
+  font-weight: 800;
+
+  background: linear-gradient(
+    135deg,
+    rgba(124, 58, 237, 0.95),
+    rgba(59, 130, 246, 0.95)
+  );
+
+  transition: all 0.2s ease;
+}
+
+.usernameSaveBtn:hover {
+  transform: translateY(-1px);
+}
+
+.usernameSaveBtn:disabled {
+  opacity: 0.7;
+
+  cursor: wait;
+
+  transform: none;
+}
+
+/* =====================================
+   MOBILE
+===================================== */
+
+@media (max-width: 600px) {
+  .usernameModal {
+    padding: 22px;
+  }
+
+  .usernameModalHeader h2 {
+    font-size: 1.6rem;
+  }
+
+  .usernameInputWrapper {
+    height: 54px;
+  }
+
+  .usernameSaveBtn {
+    height: 48px;
+  }
+}

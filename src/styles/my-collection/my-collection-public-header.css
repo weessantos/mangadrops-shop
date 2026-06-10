@@ -1,0 +1,173 @@
+/* =====================================
+   PUBLIC HEADER
+===================================== */
+
+.publicHeader {
+  position: sticky;
+
+  top: 0;
+
+  z-index: 9999;
+
+  margin-bottom: -60px;
+
+  background: rgba(18, 18, 24, 0.42);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  backdrop-filter: blur(18px) saturate(140%);
+
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+
+.publicHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.publicHeaderBar {
+  max-width: 1400px;
+
+  margin: 0 auto;
+
+  height: 60px;
+
+  padding: 0 32px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+}
+
+/* =====================================
+   LOGO
+===================================== */
+
+.publicLogoBtn {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  cursor: pointer;
+}
+
+.publicLogo {
+  width: 40px;
+
+  height: 40px;
+
+  object-fit: contain;
+
+  display: block;
+
+  transition: transform 0.2s ease;
+}
+
+.publicLogoBtn:hover .publicLogo {
+  transform: scale(1.05);
+}
+
+/* =====================================
+   BOTÃO
+===================================== */
+
+.publicActionBtn {
+  height: 34px;
+
+  padding: 0 18px;
+
+  border-radius: 999px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  background: rgba(255, 255, 255, 0.06);
+
+  color: rgba(255, 255, 255, 0.95);
+
+  font-size: 0.95rem;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.publicActionBtn:hover {
+  transform: translateY(-1px);
+
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.publicShareBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  height: 34px;
+
+  padding: 0 16px;
+
+  border-radius: 999px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  background: rgba(255, 255, 255, 0.04);
+
+  color: rgba(255, 255, 255, 0.95);
+
+  font-size: 0.9rem;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.publicShareBtn:hover {
+  transform: translateY(-1px);
+
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 600px) {
+  .publicHeaderBar {
+    padding: 0 12px;
+  }
+
+  .publicLogo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .publicActionBtn {
+    height: 34px;
+
+    padding: 0 12px;
+
+    font-size: 0.8rem;
+  }
+
+  .publicShareBtn span {
+    display: none;
+  }
+
+  .publicShareBtn {
+    width: 34px;
+    padding: 0;
+
+    justify-content: center;
+  }
+}

@@ -1,0 +1,809 @@
+/* ==========================================
+   HEADER PUBLIC 
+========================================== */
+
+.publicProfile {
+  min-height: 100dvh;
+}
+
+.publicProfileHeader {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.publicProfileBanner {
+  width: 100%;
+  position: relative;
+  height: 520px;
+  overflow: hidden;
+}
+
+.publicProfileBanner::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  background:
+    /* esquerda */
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.52) 0%,
+      rgba(0, 0, 0, 0.35) 25%,
+      transparent 45%
+    ),
+    /* baixo */
+    linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.95) 0%,
+        rgba(0, 0, 0, 0.6) 25%,
+        rgba(0, 0, 0, 0.2) 55%,
+        transparent 100%
+      );
+}
+
+.publicProfileBanner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.publicProfileCard {
+  background: rgba(0, 0, 0, 0.95);
+  border-top: none;
+  border-radius: 0 0 20px 20px;
+  padding: 0 32px 32px;
+}
+
+.profileIdentity {
+  display: flex;
+  gap: 32px;
+  align-items: flex-end;
+
+  margin-top: -70px;
+  position: relative;
+  z-index: 2;
+}
+
+.profileAvatar {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  border: 1px solid #f4f4f4;
+}
+
+.profileAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profileNameRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.profileNameRow h1 {
+  margin: 0;
+  font-size: 2.5rem;
+}
+
+.profileLevel {
+  padding: 8px 14px;
+  border-radius: 999px;
+
+  background: rgba(198, 40, 40, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.profileUsername {
+  margin-top: 8px;
+  color: #d44343;
+  font-size: 1.25rem;
+}
+
+.profileMemberSince {
+  margin-top: 12px;
+  opacity: 0.75;
+}
+
+.profileRanks {
+  display: flex;
+  height: 100%;
+  grid-template-columns: repeat(2, 1fr);
+  margin-left: 20px;
+}
+
+.rankCard {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+
+  padding: 0;
+  margin: 0;
+
+  background: transparent;
+  border: none;
+}
+
+.rankText {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+  padding: 20px 0 0 0;
+}
+
+.rankLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+
+  opacity: 0.55;
+
+  margin-bottom: 10px;
+}
+
+.rankContent {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.rankBadge.collector {
+  width: 100px;
+  height: 105px;
+  flex-shrink: 0;
+}
+
+.rankBadge.collector.aprendiz,
+.rankBadge.collector.leitor {
+  transform: translateY(-18px);
+}
+
+.rankBadge.collector.colecionador,
+.rankBadge.collector.curador,
+.rankBadge.collector.arquivista {
+  transform: translateY(-15px);
+}
+
+.rankBadge.collector.bibliotecario-arcano,
+.rankBadge.collector.mestre-da-estante,
+.rankBadge.collector.guardiao-dos-tomos, 
+.rankBadge.collector.arcanista-supremo {
+  transform: translateY(-8px);
+}
+
+.rankBadge.investment {
+  width: 85px;
+  height: 85px;
+  flex-shrink: 0;
+}
+
+/*.rankBadge.investment.apoiador,
+.rankBadge.investment.patrono,
+.rankBadge.investment.colecionador-dedicado,
+.rankBadge.investment.curador, 
+.rankBadge.investment.guardiao,
+.rankBadge.investment.arquivista,
+.rankBadge.investment.magnata-do-acervo,
+.rankBadge.investment.conservador-imperial,
+.rankBadge.investment.patrono-supremo,
+.rankBadge.investment.imperador-das-colecoes  */
+
+.rankBadge.investment.grande-curador,
+.rankBadge.investment.grande-mecenas,
+.rankBadge.investment.lorde-da-biblioteca{
+  transform: translateY(4px);
+}
+
+.rankTitle {
+  width: 180px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.rankSubtext {
+  margin-top: 4px;
+
+  font-size: 0.95rem;
+
+  opacity: 0.65;
+}
+
+.profileStats {
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+
+  gap: 16px;
+
+  margin-top: 24px;
+}
+
+.profileBadges {
+  display: flex;
+  gap: 10px;
+}
+
+.profileLevel {
+  padding: 8px 14px;
+
+  border-radius: 999px;
+
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.profileLevel {
+  background: rgba(198, 40, 40, 0.15);
+
+  border: 1px solid rgba(198, 40, 40, 0.5);
+}
+
+.statCard {
+  background: rgba(255, 255, 255, 0.03);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  padding: 15px;
+
+  min-height: 50px;
+  max-height: 120px;
+
+  border-radius: 18px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.statValue {
+  display: block;
+  font-family: "Russo One", sans-serif;
+  font-size: clamp(1.5rem, 2vw, 2.2rem);
+  font-weight: 600;
+}
+
+.statLabel {
+  display: block;
+  font-family: "Russo One", sans-serif;
+  font-size: clamp(0.8rem, 1vw, 0.95rem);
+  margin-top: 8px;
+  opacity: 0.7;
+}
+
+/* ==========================================
+   HEADER PUBLIC - TABLET GRANDE
+========================================== */
+@media (min-width: 901px) and (max-width: 1400px) {
+  .profileIdentity {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .profileRanks {
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+
+    gap: 48px;
+
+    margin-top: 18px;
+  }
+
+  .profileInfo {
+    min-width: 320px;
+  }
+
+  .profileStats {
+    grid-template-columns: repeat(6, minmax(90px, 1fr));
+    gap: 8px;
+    padding: 0 100px 0 100px;
+  }
+
+  .statCard {
+    max-width: unset;
+  }
+}
+
+/* ==========================================
+   HEADER PUBLIC - TABLET PEQUENO
+========================================== */
+@media (max-width: 900px) {
+  .publicProfileContainer {
+    padding: 20px;
+  }
+
+  .publicProfileBanner {
+    height: 380px;
+  }
+
+  .profileIdentity {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    gap: 24px;
+  }
+
+  .profileAvatar {
+    position: static;
+    transform: none;
+    margin: 0 auto;
+  }
+
+  .profileInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .profileNameRow {
+    justify-content: center;
+    flex-wrap: wrap;
+
+    gap: 12px;
+  }
+
+  .profileNameRow h1 {
+    font-size: 2.5rem;
+  }
+
+  .profileMeta {
+    align-items: center;
+  }
+
+  .profileRanks {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 28px;
+
+    margin: 20px 0 20px 0;
+  }
+
+  .rankCard {
+    width: 100%;
+    max-width: 420px;
+
+    justify-content: center;
+  }
+
+  .rankContent {
+    justify-content: center;
+  }
+
+  .profileStats {
+    gap: 8px;
+
+    padding: 0 30px 0 30px;
+  }
+
+  .statCard {
+    min-height: 110px;
+  }
+}
+
+/* ==========================================
+   HEADER PUBLIC - MOBILE
+========================================== */
+
+@media (max-width: 600px) {
+  .publicProfileBanner {
+    height: 300px;
+  }
+
+  .profileNameRow h1 {
+    font-size: 2rem;
+  }
+
+  .profileStats {
+    grid-template-columns: repeat(3, minmax(100px, 1fr));
+    gap: 5px;
+    padding: 0;
+  }
+
+  .statCard {
+    padding-left: 10px;
+  }
+}
+
+/* ==========================================
+   HIGHLIGHTS
+========================================== */
+
+.profileHighlights {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 42px;
+}
+
+.highlightWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.highlightHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-left: 4px;
+}
+
+.highlightHeader h3 {
+  min-height: 80px;
+  font-size: clamp(1.1rem, 1.4vw, 1.6rem);
+  font-weight: 800;
+  text-align: center;
+  line-height: 1.1;
+  color: white;
+  margin: 0;
+}
+
+.highlightCard {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  transition: transform 0.25s ease;
+}
+
+.highlightCard:hover {
+  transform: translateY(-4px);
+}
+
+.highlightCard img {
+  height: clamp(220px, 20dvw, 420px);
+
+  width: auto;
+
+  display: block;
+
+  border-radius: 18px;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.highlightCard:hover img {
+  transform: scale(1.02);
+}
+
+.favoriteWorkCard img {
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.12);
+}
+
+.favoriteVolumeCard img {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.12);
+}
+
+.rareVolumeCard img {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.12);
+}
+
+.highlightLabel {
+  min-height: 60px;
+  width: fit-content;
+
+  padding: 0 14px 0 14px;
+
+  border-radius: 999px;
+
+  font-size: 0.72rem;
+
+  font-weight: 700;
+
+  letter-spacing: 0.12em;
+
+  text-transform: uppercase;
+
+  text-align: center;
+}
+
+.favoriteWorkCard + .highlightLabel,
+.favoriteWorkCard .highlightLabel {
+  background: rgba(255, 215, 0, 0.12);
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  color: #ffd84d;
+}
+
+.favoriteVolumeCard .highlightLabel {
+  background: rgba(168, 85, 247, 0.12);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  color: #c084fc;
+}
+
+.rareVolumeCard .highlightLabel {
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  color: #60a5fa;
+}
+
+/* ==========================================
+   HIGHLIGHTS - TABLET GRANDE
+========================================== */
+@media (min-width: 901px) and (max-width: 1400px) {
+  .profileHighlights {
+    padding: 0 100px 0 100px;
+  }
+}
+
+/* ==========================================
+   HIGHLIGHTS - TABLET PEQUENO
+========================================== */
+
+@media (min-width: 601px) and (max-width: 900px) {
+  .profileHighlights {
+    gap: 0 5px 0 5px;
+  }
+
+  .highlightHeader h3 {
+    min-height: 50px;
+  }
+}
+
+/* ==========================================
+   HIGHLIGHTS - MOBILE
+========================================== */
+
+@media (max-width: 600px) {
+  .profileHighlights {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .highlightLabel {
+    min-height: unset;
+    margin-bottom: 10px;
+  }
+
+  .highlightHeader,
+  .highlightHeader h3 {
+    min-height: 45px;
+    padding: 0;
+  }
+
+  .highlightCard {
+    margin-bottom: 30px;
+  }
+}
+
+/* ==========================================
+   GRID PRINCIPAL
+========================================== */
+.public-series-section {
+  width: 100%;
+  max-width: 1600px;
+  padding: 0 32px 32px;
+
+  margin: 48px auto 0;
+}
+
+.public-series-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 24px;
+}
+
+.public-series-header h2 {
+  margin: 0;
+
+  font-size: clamp(1.3rem, 1.7vw, 1.6rem);
+  font-weight: 800;
+}
+
+.public-series-header span {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.public-series-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.public-series-card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  overflow: hidden;
+
+  border-radius: 20px;
+
+  background: rgba(255, 255, 255, 0.03);
+
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.public-series-card:hover {
+  transform: translateY(-4px);
+
+  border-color: rgba(255, 255, 255, 0.15);
+
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+}
+
+.public-series-cover-wrapper {
+  position: relative;
+
+  height: 240px;
+
+  overflow: hidden;
+}
+
+.public-series-cover {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  display: block;
+
+  transition: transform 0.35s ease;
+}
+
+.public-series-card:hover .public-series-cover {
+  transform: scale(1.05);
+}
+
+.public-series-content {
+  display: flex;
+  flex-direction: column;
+
+  padding: 16px;
+
+  flex: 1;
+}
+
+.public-series-title {
+  min-height: 43px;
+  margin: 0 0 10px;
+
+  font-size: 1rem;
+  font-weight: 700;
+
+  line-height: 1.3;
+}
+
+.public-series-main {
+  font-size: 0.95rem;
+
+  color: rgba(255, 255, 255, 0.85);
+
+  margin-bottom: 6px;
+}
+
+.public-series-extras {
+  font-size: 0.85rem;
+
+  color: #f5c542;
+
+  margin-bottom: 12px;
+}
+
+.public-series-progress {
+  margin-top: auto;
+
+  height: 8px;
+
+  border-radius: 999px;
+
+  overflow: hidden;
+
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.public-series-progress-fill {
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: linear-gradient(90deg, #ff4d6d, #ff7b54);
+
+  transition: width 0.4s ease;
+}
+
+.public-series-progress-fill.collecting {
+  background: #3b82f6;
+}
+
+.public-series-progress-fill.complete {
+  background: #22c55e;
+}
+
+.public-series-progress-fill.complete-plus {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+/* ==========================================
+   GRID PRINCIPAL - TABLET GRANDE
+========================================== */
+@media (min-width: 901px) and (max-width: 1400px) {
+  .public-series-section {
+    padding: 0 100px 40px 100px;
+  }
+}
+/* ==========================================
+   GRID PRINCIPAL - TABLET PEQUENO
+========================================== */
+@media (min-width: 601px) and (max-width: 900px) {
+  .public-series-section {
+    padding: 0 30px 30px 30px;
+  }
+
+  .public-series-grid {
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 14px;
+  }
+
+  .public-series-content {
+    padding: 12px;
+  }
+
+  .public-series-title {
+    font-size: 0.9rem;
+  }
+
+  .public-series-main,
+  .public-series-extras {
+    font-size: 0.8rem;
+  }
+}
+
+/* ==========================================
+   GRID PRINCIPAL - MOBILE
+========================================== */
+@media (max-width: 600px) {
+  .public-series-grid {
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 14px;
+  }
+
+  .public-series-content {
+    padding: 12px;
+  }
+
+  .public-series-title {
+    font-size: 0.9rem;
+  }
+
+  .public-series-main,
+  .public-series-extras {
+    font-size: 0.7rem;
+  }
+}
+
+/* GRID PRINCIPAL - MOBILE FIX */
+@media (max-width: 450px) {
+  .public-series-cover-wrapper {
+    height: 180px;
+  }
+}
