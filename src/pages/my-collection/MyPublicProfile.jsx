@@ -77,7 +77,7 @@ export default function MyPublicProfile() {
 
           <meta
             property="og:url"
-            content={`https://mangadrops.com/u/${username}`}
+            content={`https://mangadrops.online/u/${username}`}
           />
 
           {avatarUrl && <meta property="og:image" content={avatarUrl} />}
