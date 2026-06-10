@@ -49,6 +49,8 @@ export default function MyPublicProfile() {
 
   const hasHighlights = favoriteWork || favoriteVolume || rarestVolume;
 
+  const pageTitle = `${userName} (@${username}) | Mangá Drops Acervo`;
+
   if (loading) {
     return <Loader />;
   }
@@ -77,12 +79,11 @@ export default function MyPublicProfile() {
     );
   }
 
+
   return (
     <>
       <Helmet>
-        <title>
-          {userName} (@{username}) | Mangá Drops Acervo
-        </title>
+        <title>{pageTitle}</title>
 
         <meta
           name="description"
