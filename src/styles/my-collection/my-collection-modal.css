@@ -18,7 +18,7 @@
   width: 1600px;
   max-width: 95dvw;
 
-  height: 92dvh;
+  max-height: 92dvh;
 
   background: #0b0b0d;
 

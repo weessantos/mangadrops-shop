@@ -269,7 +269,7 @@ export default function MyCollectionModal({ collectionId, onClose }) {
           className="my-collection-modal"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="my-collection-modal-header">
+          <div className="my-collection-modal-header tablet-scale-strong ">
             <h2 className="my-collection-modal-title">📚 Coleção</h2>
 
             <button className="my-collection-modal-close" onClick={onClose}>
@@ -277,8 +277,8 @@ export default function MyCollectionModal({ collectionId, onClose }) {
             </button>
           </div>
 
-          <div className="my-collection-content">
-            <aside className="my-collection-sidebar">
+          <div className="my-collection-content tablet-scale-strong ">
+            <aside className="my-collection-sidebar tablet-scale-strong ">
               <div className="collection-sidebar-top">
                 <img
                   src={mainSeries.thumb}
@@ -422,7 +422,7 @@ export default function MyCollectionModal({ collectionId, onClose }) {
             </section>
           </div>
 
-          <div className="my-collection-modal-footer">
+          <div className="my-collection-modal-footer tablet-scale-strong ">
             <div className="footer-stat">
               <strong>{totalVolumes}</strong>
               <span> Volumes na coleção</span>

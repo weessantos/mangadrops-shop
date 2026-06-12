@@ -137,11 +137,8 @@ export default function MyCollectionPage() {
     });
   }, [filter, sortBy]);
 
-  console.log("USERNAME:", username);
-
   useEffect(() => {
     if (!loading && !username) {
-      console.log("ABRIR MODAL");
       setUsernameModalOpen(true);
     }
   }, [loading, username]);
@@ -261,7 +258,7 @@ export default function MyCollectionPage() {
         {/* ======================================
     FILTROS
 ====================================== */}
-        <div className="collection-toolbar">
+        <div className="collection-toolbar tablet-scale">
           {/* Desktop */}
           <div className="collection-filters desktopFilters">
             <button
@@ -339,7 +336,7 @@ export default function MyCollectionPage() {
         {/* ======================================
       GRID DE COLEÇÕES
       ====================================== */}
-        <div className="collection-grid">
+        <div className="collection-grid tablet-scale-strong ">
           {visibleSeries.map((serie) => (
             <div
               key={serie.series_id}

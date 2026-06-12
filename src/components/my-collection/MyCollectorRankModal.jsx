@@ -121,7 +121,7 @@ export default function CollectorRankModal({
 
   return (
     <div className="rank-modal-overlay" onClick={onClose}>
-      <div className="rank-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="rank-modal tablet-scale" onClick={(e) => e.stopPropagation()}>
         <button className="rank-modal-close" onClick={onClose}>
           ✕
         </button>

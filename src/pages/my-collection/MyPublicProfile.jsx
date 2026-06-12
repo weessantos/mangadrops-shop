@@ -116,7 +116,7 @@ export default function MyPublicProfile() {
           {bannerUrl && <img src={bannerUrl} alt="" />}
         </div>
         <div className="publicProfileHeader">
-          <div className="publicProfileCard">
+          <div className="publicProfileCard tablet-scale">
             <div className="profileIdentity">
               <div className="profileAvatar">
                 {avatarUrl && <img src={avatarUrl} alt="" />}
@@ -271,7 +271,7 @@ export default function MyPublicProfile() {
             )}
           </div>
         </div>
-        <section className="public-series-section">
+        <section className="public-series-section tablet-scale">
           <div className="public-series-header">
             <h2>Coleções ({series.length})</h2>
           </div>

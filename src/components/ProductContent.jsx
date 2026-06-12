@@ -286,7 +286,7 @@ export default function ProductContent({ product, onClose, dragOffset }) {
         "--cover-image": `url(${product?.image || ""})`,
       }}
     >
-      <div className="modalBody">
+      <div className="modalBody tablet-scale-strong">
         <div className="modalLeft">
           <div className="modalCover desktopCover">
             <img

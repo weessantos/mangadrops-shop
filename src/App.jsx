@@ -1034,7 +1034,7 @@ function AppShell() {
         />
       </Helmet>
 
-      <div className="container">
+      <div className="container tablet-scale-strong">
         <Header
           inputValue={inputValue}
           setInputValue={setInputValue}

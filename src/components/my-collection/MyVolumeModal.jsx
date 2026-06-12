@@ -273,7 +273,7 @@ export default function MyVolumeModal({
   return (
     <div className="my-volume-modal-overlay" onClick={onClose}>
       <div
-        className={`my-volume-modal ${
+        className={`my-volume-modal tablet-scale-strong ${
           status === "owned"
             ? "owned"
             : status === "wishlist"

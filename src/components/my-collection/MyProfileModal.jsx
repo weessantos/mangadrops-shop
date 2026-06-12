@@ -74,7 +74,7 @@ export default function AvatarModal({
 
   return (
     <div className="avatar-modal-overlay" onClick={onClose}>
-      <div className="avatar-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="avatar-modal tablet-scale" onClick={(e) => e.stopPropagation()}>
         <div className="avatar-modal-header">
           <h2>Editar Perfil</h2>
 

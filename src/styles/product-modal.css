@@ -36,7 +36,7 @@
   position: relative;
 
   width: min(1180px, 100%);
-  max-height: 92vh;
+  max-height: 92dvh;
 
   display: flex;
   flex-direction: column;
@@ -190,7 +190,7 @@ body.modalOpen {
   overflow-y: auto;
   overflow-x: hidden;
 
-  max-height: calc(92vh - 78px);
+  max-height: calc(92dvh - 78px);
 
   overscroll-behavior: contain;
 

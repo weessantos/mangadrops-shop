@@ -275,7 +275,7 @@ export default function MyCollectionAchievements() {
         </section>
 
         {/* CARDS */}
-        <section className="categoriesGrid">
+        <section className="categoriesGrid tablet-scale-strong ">
           {achievementCards.map((achievement) => (
             <article
               key={achievement.key}
@@ -410,10 +410,10 @@ export default function MyCollectionAchievements() {
             onClick={() => setSelectedAchievement(null)}
           >
             <div
-              className="achievementModal"
+              className="achievementModal tablet-scale-strong "
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="achievementModalHeader">
+              <div className="achievementModalHeader tablet-scale-strong ">
                 <div className="achievementBadge large">
                   <img
                     className="badgeFrame"
@@ -460,7 +460,7 @@ export default function MyCollectionAchievements() {
                 ✕
               </button>
 
-              <div className="achievementTreeGrid">
+              <div className="achievementTreeGrid tablet-scale-strong ">
                 {achievementTree.map((tier) => {
                   const unlocked =
                     selectedAchievement.data.value >= tier.requirement;
