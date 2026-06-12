@@ -14,7 +14,7 @@ export default function BrandStats() {
 
   return (
     <section
-      className={`brandStatsHero ${isExpanded ? "isExpanded" : ""}`}
+      className={`brandStatsHero tablet-scale-strong ${isExpanded ? "isExpanded" : ""}`}
       aria-label="Redes sociais do Mangá Drops"
     >
       <div className="brandStatsContent">

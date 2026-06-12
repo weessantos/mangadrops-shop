@@ -196,6 +196,7 @@ export default function MyCollectionPage() {
 
               <div className="profile-header">
                 <h1>{userName}</h1>
+                <p className="profile-username">@{username}</p>
               </div>
 
               <div
@@ -440,6 +441,7 @@ export default function MyCollectionPage() {
       )}
       {profileModalOpen && (
         <AvatarModal
+          username={username}
           onClose={() => setProfileModalOpen(false)}
           onSaved={() => {
             reload();

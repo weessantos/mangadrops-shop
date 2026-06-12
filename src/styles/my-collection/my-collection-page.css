@@ -429,6 +429,18 @@
   text-align: center;
 }
 
+.profile-username {
+  display: flex;
+  margin: 6px 0 0 0;
+
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  color: rgba(255, 255, 255, 0.65);
+
+  opacity: 0.9;
+}
+
 /* Nível */
 
 .profile-level-tag {
@@ -729,6 +741,10 @@ my-collection-pages - TABLET
     font-size: 2rem;
   }
 
+  .profile-username {
+    justify-content: center;
+  }
+
   .collector-badge-showcase {
     justify-content: center;
 
@@ -831,6 +847,10 @@ my-collection-pages - MOBILE
     font-size: 2rem;
   }
 
+  .profile-username {
+    justify-content: center;
+  }
+
   .collector-badge-showcase {
     justify-content: center;
 
@@ -924,7 +944,7 @@ LAYOUT MINI - FIX
     margin-bottom: 5px;
   }
 
-  .public-profile-badge{
+  .public-profile-badge {
     font-size: 0.65rem;
   }
 }

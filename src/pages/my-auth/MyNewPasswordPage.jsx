@@ -51,7 +51,7 @@ export default function NewPasswordPage() {
     <div className="login-page">
       <div className="login-overlay" />
 
-      <div className="login-card">
+      <div className="login-card  tablet-scale-strong">
         <img
           src="/assets/logo.png"
           alt="Mangá Drops"

@@ -4,7 +4,8 @@ import { useLockBodyScroll } from "../../hooks/my-collection-hooks/useLockBodySc
 import {
   updateAvatar,
   updateBanner,
-} from "../../hooks/my-collection-hooks/profileImages";
+  updateUsername,
+} from "../../hooks/my-collection-hooks/profileUpdates";
 
 import { showError, showSuccess, showWarning } from "../../utils/alertFeedback";
 
@@ -30,6 +31,7 @@ const banners = Array.from(
 export default function AvatarModal({
   onClose,
   onSaved,
+  username,
 
   collectorRank,
   investmentRank,
@@ -43,6 +45,8 @@ export default function AvatarModal({
     investmentRank.levelValue,
     collectorRank.rank === "ARCANISTA_SUPREMO",
   );
+
+  const [newUsername, setNewUsername] = useState(username || "");
 
   const [activeTab, setActiveTab] = useState("avatar");
 
@@ -72,9 +76,53 @@ export default function AvatarModal({
     }
   }
 
+  async function handleChangeUsername() {
+    const usernameFormatted = newUsername.trim().toLowerCase();
+
+    if (!usernameFormatted) {
+      showWarning("Informe um nome de usuário.");
+      return;
+    }
+
+    if (usernameFormatted.length < 3) {
+      showWarning("O username deve possuir pelo menos 3 caracteres.");
+      return;
+    }
+
+    if (usernameFormatted.length > 20) {
+      showWarning("O username deve possuir no máximo 20 caracteres.");
+      return;
+    }
+
+    if (!/^[a-z0-9_]+$/.test(usernameFormatted)) {
+      showWarning("Use apenas letras minúsculas, números e underline (_).");
+      return;
+    }
+
+    if (usernameFormatted === username) {
+      showWarning("Você já está usando esse username.");
+      return;
+    }
+
+    try {
+      await updateUsername(usernameFormatted);
+
+      showSuccess("Username atualizado com sucesso!");
+
+      onSaved();
+    } catch (error) {
+      console.error(error);
+
+      showError(error?.message || "Erro ao atualizar username.");
+    }
+  }
+
   return (
     <div className="avatar-modal-overlay" onClick={onClose}>
-      <div className="avatar-modal tablet-scale" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="avatar-modal tablet-scale"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="avatar-modal-header">
           <h2>Editar Perfil</h2>
 
@@ -101,6 +149,13 @@ export default function AvatarModal({
             onClick={() => setActiveTab("banner")}
           >
             Banner
+          </button>
+
+          <button
+            className={activeTab === "username" ? "active" : ""}
+            onClick={() => setActiveTab("username")}
+          >
+            Mudar nome
           </button>
         </div>
 
@@ -158,6 +213,44 @@ export default function AvatarModal({
               </div>
             </div>
           </>
+        )}
+        {activeTab === "username" && (
+          <div className="username-content">
+            <h3>Nome de usuário</h3>
+
+            <p className="username-description">
+              Username atual: <strong>@{username || "não definido"}</strong>
+            </p>
+
+            <p className="username-description">
+              Este é o endereço público da sua coleção.
+            </p>
+
+            <div className="username-preview">
+              mangasdrops.online/u/{newUsername || "seu_nome"}
+            </div>
+
+            <div className="username-form">
+              <input
+                type="text"
+                value={newUsername}
+                onChange={(e) =>
+                  setNewUsername(
+                    e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ""),
+                  )
+                }
+                placeholder="Digite seu username"
+                maxLength={20}
+              />
+
+              <button
+                className="save-username-btn"
+                onClick={handleChangeUsername}
+              >
+                Salvar
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>

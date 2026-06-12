@@ -110,7 +110,7 @@ export default function CollectionsRail({
           </div>
         )}
 
-        <div className="seriesRail">
+        <div className="seriesRail ">
           {seriesToRender.map((s) => (
             <div className="railItem" key={s.name}>
               <SeriesCard

@@ -1034,7 +1034,7 @@ function AppShell() {
         />
       </Helmet>
 
-      <div className="container tablet-scale-strong">
+      <div className="container">
         <Header
           inputValue={inputValue}
           setInputValue={setInputValue}
@@ -1133,7 +1133,7 @@ function AppShell() {
         )}
 
         {showRails && (
-          <section className="railBlock">
+          <section className="railBlock  tablet-scale-strong">
             <div id="lancamentos">
               <LaunchRail
                 id="lancamentos"
