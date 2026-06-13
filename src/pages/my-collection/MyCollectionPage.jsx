@@ -442,6 +442,8 @@ export default function MyCollectionPage() {
       {profileModalOpen && (
         <AvatarModal
           username={username}
+          avatarUrl={avatarUrl}
+          bannerUrl={bannerUrl}
           onClose={() => setProfileModalOpen(false)}
           onSaved={() => {
             reload();

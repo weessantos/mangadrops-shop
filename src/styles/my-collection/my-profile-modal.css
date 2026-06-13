@@ -23,11 +23,12 @@
 .avatar-modal {
   width: 950px;
 
-  max-width: 95vw;
+  max-width: 95dvw;
 
-  max-height: 90vh;
+  max-height: 95dvh;
 
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 
   background: #111;
 
@@ -47,7 +48,7 @@
 
   overflow-y: auto;
 
-  padding-right: 8px;
+  padding: 10px 8px 10px 8px;
 }
 
 .avatar-modal-header {
@@ -155,6 +156,32 @@
   font-weight: 600;
 
   margin-bottom: 24px;
+}
+
+.usernameRulesBox {
+  margin-top: 16px;
+
+  padding: 16px;
+
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.04);
+
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.usernameRulesBox p {
+  margin: 0;
+
+  color: #bdbdbd;
+
+  font-size: 0.9rem;
+
+  line-height: 1.8;
+}
+
+.usernameRulesBox p + p {
+  margin-top: 4px;
 }
 
 .username-form input {
@@ -642,6 +669,14 @@
   backdrop-filter: blur(4px);
 }
 
+.avatar-option.selected {
+  border-color: #ef4444;
+
+  box-shadow:
+    0 0 0 1px #ef4444,
+    0 0 20px rgba(239, 68, 68, 0.35);
+}
+
 /* ==========================================
    BANNERS
 ========================================== */
@@ -650,7 +685,7 @@
 
   overflow-y: auto;
 
-  padding-right: 8px;
+  padding: 10px 8px 10px 8px;
 }
 
 .banner-grid {
@@ -696,6 +731,133 @@
   object-position: center 30%;
 }
 
+.banner-option.selected {
+  border-color: #ef4444;
+
+  box-shadow:
+    0 0 0 1px #ef4444,
+    0 0 20px rgba(239, 68, 68, 0.35);
+}
+
+/* ==========================================
+   PROFILE-PREVIEW AND SAVE
+========================================== */
+
+.profile-preview {
+  position: relative;
+
+  height: 180px;
+
+  margin-bottom: 24px;
+
+  border-radius: 20px;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  background: #111;
+}
+
+.profile-preview-banner {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  display: block;
+}
+
+.profile-preview-avatar {
+  position: absolute;
+
+  bottom: 16px;
+  left: 24px;
+
+  width: 120px;
+  height: 120px;
+
+  border-radius: 50%;
+
+  border: 4px solid #111;
+
+  object-fit: cover;
+
+  background: #111;
+}
+
+.profile-preview-name {
+  position: absolute;
+
+  left: 150px;
+  bottom: 35px;
+
+  padding: 10px 16px;
+
+  border-radius: 14px;
+
+  background: rgba(0, 0, 0, 0.35);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  color: #fff;
+
+  font-size: clamp(0.6rem, 1.4vw, 1.1rem);
+  font-weight: 700;
+
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.floating-save-bar {
+  position: fixed;
+
+  right: 24px;
+  bottom: 10px;
+
+  z-index: 100001;
+}
+
+.save-profile-btn {
+  min-width: 150px;
+  height: 56px;
+
+  padding: 0 24px;
+
+  border: none;
+  border-radius: 16px;
+
+  background: #ef4444;
+  color: #fff;
+
+  font-size: 0.95rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+
+  box-shadow:
+    0 10px 30px rgba(239, 68, 68, 0.35),
+    0 0 20px rgba(239, 68, 68, 0.2);
+}
+
+.save-profile-btn:hover {
+  transform: translateY(-2px);
+
+  background: #dc2626;
+}
+
+.save-profile-btn:disabled {
+  opacity: 0.7;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
 /* ==========================================
    SCROLL
 ========================================== */
@@ -726,6 +888,48 @@
 /* ==========================================
    MEDIA DO GRID MOBILE
 ========================================== */
+@media (max-width: 600px) {
+  .avatar-modal {
+    max-height: 90dvh;
+    overflow-y: auto;
+  }
+
+  .username-content {
+    padding: 10px 8px 10px 8px;
+  }
+
+  .username-content h3 {
+    font-size: 1.8rem;
+  }
+
+  .username-description {
+    font-size: 0.8rem;
+  }
+
+  .username-preview {
+    font-size: 0.9rem;
+  }
+
+  .usernameRulesBox {
+    font-size: 0.7rem;
+  }
+
+  .usernameRulesBox p {
+    font-size: 0.7rem;
+  }
+
+  .usernameExamples {
+    font-size: 0.7rem;
+  }
+
+  .username-form input {
+    font-size: 0.9rem;
+  }
+
+  .save-username-btn {
+    font-size: 0.9rem;
+  }
+}
 
 @media (min-width: 430px) and (max-width: 600px) {
   .avatar-grid {

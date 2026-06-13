@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLockBodyScroll } from "../../hooks/my-collection-hooks/useLockBodyScroll";
+import { useLoadingButton } from "../../hooks/useLoadingButton";
 
 import {
   updateAvatar,
@@ -32,7 +33,8 @@ export default function AvatarModal({
   onClose,
   onSaved,
   username,
-
+  avatarUrl,
+  bannerUrl,
   collectorRank,
   investmentRank,
 }) {
@@ -50,29 +52,69 @@ export default function AvatarModal({
 
   const [activeTab, setActiveTab] = useState("avatar");
 
+  const [selectedAvatar, setSelectedAvatar] = useState(avatarUrl);
+
+  const [selectedBanner, setSelectedBanner] = useState(bannerUrl);
+
+  const avatarLoading = useLoadingButton();
+
+  const bannerLoading = useLoadingButton();
+
+  const usernameLoading = useLoadingButton();
+
   useLockBodyScroll();
 
-  async function handleSelectAvatar(avatarUrl) {
+  function handleSelectAvatar(avatarUrl) {
+    setSelectedAvatar(avatarUrl);
+  }
+
+  function handleSelectBanner(bannerUrl) {
+    setSelectedBanner(bannerUrl);
+  }
+
+  async function handleSaveAvatar() {
+    if (selectedAvatar === avatarUrl) {
+      showWarning("Você já está usando este avatar.");
+      return;
+    }
+
     try {
-      await updateAvatar(avatarUrl);
+      avatarLoading.start();
+
+      await updateAvatar(selectedAvatar);
+
+      showSuccess("Avatar atualizado com sucesso!");
 
       onSaved();
     } catch (error) {
       console.error(error);
 
-      showWarning("Erro ao atualizar avatar.");
+      showError("Erro ao atualizar avatar.");
+    } finally {
+      avatarLoading.stop();
     }
   }
 
-  async function handleSelectBanner(bannerUrl) {
+  async function handleSaveBanner() {
+    if (selectedBanner === bannerUrl) {
+      showWarning("Você já está usando este banner.");
+      return;
+    }
+
     try {
-      await updateBanner(bannerUrl);
+      bannerLoading.start();
+
+      await updateBanner(selectedBanner);
+
+      showSuccess("Banner atualizado com sucesso!");
 
       onSaved();
     } catch (error) {
       console.error(error);
 
-      showWarning("Erro ao atualizar banner.");
+      showError("Erro ao atualizar banner.");
+    } finally {
+      bannerLoading.stop();
     }
   }
 
@@ -105,6 +147,8 @@ export default function AvatarModal({
     }
 
     try {
+      usernameLoading.start();
+
       await updateUsername(usernameFormatted);
 
       showSuccess("Username atualizado com sucesso!");
@@ -114,6 +158,8 @@ export default function AvatarModal({
       console.error(error);
 
       showError(error?.message || "Erro ao atualizar username.");
+    } finally {
+      usernameLoading.stop();
     }
   }
 
@@ -159,11 +205,30 @@ export default function AvatarModal({
           </button>
         </div>
 
+        <div className="profile-preview">
+          <img
+            src={selectedBanner}
+            alt="Banner Preview"
+            className="profile-preview-banner"
+          />
+
+          <img
+            src={selectedAvatar}
+            alt="Avatar Preview"
+            className="profile-preview-avatar"
+          />
+
+          <div className="profile-preview-name">
+            @{newUsername || username || "seu_nome"}
+          </div>
+        </div>
+
         {activeTab === "avatar" && (
           <>
             <div className="profile-unlock-info">
               Avatares desbloqueados • {unlockedAvatars}/{avatars.length}
             </div>
+
             <div className="avatar-content">
               <div className="avatar-grid">
                 {avatars.map((avatar, index) => {
@@ -172,8 +237,12 @@ export default function AvatarModal({
                   return (
                     <button
                       key={avatar}
-                      className={`avatar-option ${!unlocked ? "locked" : ""}`}
-                      disabled={!unlocked}
+                      className={`
+                      avatar-option
+                      ${selectedAvatar === avatar ? "selected" : ""}
+                      ${!unlocked ? "locked" : ""}
+                    `}
+                      disabled={!unlocked || avatarLoading.loading}
                       onClick={() => unlocked && handleSelectAvatar(avatar)}
                     >
                       <img src={avatar} alt={`Avatar ${index + 1}`} />
@@ -192,6 +261,7 @@ export default function AvatarModal({
             <div className="profile-unlock-info">
               Banners desbloqueados • {unlockedBanners}/{banners.length}
             </div>
+
             <div className="banner-content">
               <div className="banner-grid">
                 {banners.map((banner, index) => {
@@ -200,8 +270,12 @@ export default function AvatarModal({
                   return (
                     <button
                       key={banner}
-                      className={`banner-option ${!unlocked ? "locked" : ""}`}
-                      disabled={!unlocked}
+                      className={`
+                      banner-option
+                      ${selectedBanner === banner ? "selected" : ""}
+                      ${!unlocked ? "locked" : ""}
+                    `}
+                      disabled={!unlocked || bannerLoading.loading}
                       onClick={() => unlocked && handleSelectBanner(banner)}
                     >
                       <img src={banner} alt={`Banner ${index + 1}`} />
@@ -214,6 +288,7 @@ export default function AvatarModal({
             </div>
           </>
         )}
+
         {activeTab === "username" && (
           <div className="username-content">
             <h3>Nome de usuário</h3>
@@ -228,6 +303,14 @@ export default function AvatarModal({
 
             <div className="username-preview">
               mangasdrops.online/u/{newUsername || "seu_nome"}
+            </div>
+
+            <div className="usernameRulesBox">
+              <p>✓ Apenas letras minúsculas (a-z)</p>
+              <p>✓ Números (0-9)</p>
+              <p>✓ Underline (_)</p>
+              <p>✓ Entre 3 e 20 caracteres</p>
+              <p>✕ Espaços e caracteres especiais não são permitidos</p>
             </div>
 
             <div className="username-form">
@@ -246,13 +329,38 @@ export default function AvatarModal({
               <button
                 className="save-username-btn"
                 onClick={handleChangeUsername}
+                disabled={usernameLoading.loading}
               >
-                Salvar
+                {usernameLoading.loading ? "Salvando..." : "Salvar"}
               </button>
             </div>
           </div>
         )}
       </div>
+
+      {(activeTab === "avatar" || activeTab === "banner") && (
+        <div className="floating-save-bar">
+          <button
+            className="save-profile-btn"
+            onClick={
+              activeTab === "avatar" ? handleSaveAvatar : handleSaveBanner
+            }
+            disabled={
+              activeTab === "avatar"
+                ? avatarLoading.loading
+                : bannerLoading.loading
+            }
+          >
+            {activeTab === "avatar"
+              ? avatarLoading.loading
+                ? "Salvando..."
+                : "Salvar Avatar"
+              : bannerLoading.loading
+                ? "Salvando..."
+                : "Salvar Banner"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
