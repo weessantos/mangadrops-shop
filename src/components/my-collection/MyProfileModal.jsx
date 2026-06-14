@@ -172,9 +172,33 @@ export default function AvatarModal({
         <div className="avatar-modal-header">
           <h2>Editar Perfil</h2>
 
-          <button className="avatar-modal-close" onClick={onClose}>
-            ✕
-          </button>
+          <div className="avatar-modal-actions">
+            {(activeTab === "avatar" || activeTab === "banner") && (
+              <button
+                className="save-profile-btn header-save-btn"
+                onClick={
+                  activeTab === "avatar" ? handleSaveAvatar : handleSaveBanner
+                }
+                disabled={
+                  activeTab === "avatar"
+                    ? avatarLoading.loading
+                    : bannerLoading.loading
+                }
+              >
+                {activeTab === "avatar"
+                  ? avatarLoading.loading
+                    ? "Salvando..."
+                    : "Salvar"
+                  : bannerLoading.loading
+                    ? "Salvando..."
+                    : "Salvar"}
+              </button>
+            )}
+
+            <button className="avatar-modal-close" onClick={onClose}>
+              ✕
+            </button>
+          </div>
         </div>
 
         <p className="avatar-modal-subtitle">
@@ -337,30 +361,6 @@ export default function AvatarModal({
           </div>
         )}
       </div>
-
-      {(activeTab === "avatar" || activeTab === "banner") && (
-        <div className="floating-save-bar">
-          <button
-            className="save-profile-btn"
-            onClick={
-              activeTab === "avatar" ? handleSaveAvatar : handleSaveBanner
-            }
-            disabled={
-              activeTab === "avatar"
-                ? avatarLoading.loading
-                : bannerLoading.loading
-            }
-          >
-            {activeTab === "avatar"
-              ? avatarLoading.loading
-                ? "Salvando..."
-                : "Salvar Avatar"
-              : bannerLoading.loading
-                ? "Salvando..."
-                : "Salvar Banner"}
-          </button>
-        </div>
-      )}
     </div>
   );
 }

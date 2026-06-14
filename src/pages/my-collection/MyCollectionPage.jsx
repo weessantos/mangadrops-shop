@@ -71,6 +71,8 @@ export default function MyCollectionPage() {
 
   const [visibleCount, setVisibleCount] = useState(20);
 
+  const [loadingCollectionId, setLoadingCollectionId] = useState(null);
+
   const loadMoreRef = useRef(null);
 
   const {
@@ -341,12 +343,17 @@ export default function MyCollectionPage() {
           {visibleSeries.map((serie) => (
             <div
               key={serie.series_id}
-              className="series-card"
-              onClick={() =>
+              className={`series-card ${
+                loadingCollectionId === serie.series_id ? "loading" : ""
+              }`}
+              onClick={() => {
+                setLoadingCollectionId(serie.series_id);
+
                 setSearchParams({
                   collection: serie.series_id,
-                })
-              }
+                  slug: serie.title,
+                });
+              }}
             >
               <img
                 src={serie.thumb}
@@ -354,6 +361,13 @@ export default function MyCollectionPage() {
                 className="series-thumb"
                 loading="lazy"
               />
+              {loadingCollectionId === serie.series_id && (
+                <div className="series-loading-overlay">
+                  <div className="series-spinner" />
+
+                  <span>Abrindo coleção...</span>
+                </div>
+              )}
               <div className="series-content">
                 <h2>{serie.title}</h2>
 
@@ -434,7 +448,10 @@ export default function MyCollectionPage() {
         <MyCollectionModal
           collectionId={collectionId}
           onClose={() => {
+            setLoadingCollectionId(null);
+
             setSearchParams({});
+
             reload();
           }}
         />

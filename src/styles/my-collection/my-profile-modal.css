@@ -57,18 +57,46 @@
   justify-content: space-between;
 
   align-items: center;
-
-  margin-bottom: 12px;
 }
 
-.avatar-modal-header h2 {
-  margin: 0;
+.avatar-modal-actions {
+  display: flex;
 
-  font-family: "Russo One", sans-serif;
+  align-items: center;
 
-  font-size: 28px;
+  gap: 12px;
+}
 
-  font-weight: 400;
+.avatar-modal-header-left {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  flex: 0 0 auto;
+}
+
+.header-save-btn {
+  height: 38px;
+
+  padding: 0 14px;
+
+  border: 1px solid rgba(239, 68, 68, 0.35);
+
+  border-radius: 10px;
+
+  background: #ef4444;
+
+  color: #fff;
+
+  font-size: 0.85rem;
+
+  font-weight: 700;
+
+  white-space: nowrap;
+
+  cursor: pointer;
 }
 
 .avatar-modal-close {
@@ -811,53 +839,6 @@
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-.floating-save-bar {
-  position: fixed;
-
-  right: 24px;
-  bottom: 10px;
-
-  z-index: 100001;
-}
-
-.save-profile-btn {
-  min-width: 150px;
-  height: 56px;
-
-  padding: 0 24px;
-
-  border: none;
-  border-radius: 16px;
-
-  background: #ef4444;
-  color: #fff;
-
-  font-size: 0.95rem;
-  font-weight: 700;
-
-  cursor: pointer;
-
-  transition: all 0.2s ease;
-
-  box-shadow:
-    0 10px 30px rgba(239, 68, 68, 0.35),
-    0 0 20px rgba(239, 68, 68, 0.2);
-}
-
-.save-profile-btn:hover {
-  transform: translateY(-2px);
-
-  background: #dc2626;
-}
-
-.save-profile-btn:disabled {
-  opacity: 0.7;
-
-  cursor: not-allowed;
-
-  transform: none;
-}
-
 /* ==========================================
    SCROLL
 ========================================== */
@@ -892,6 +873,18 @@
   .avatar-modal {
     max-height: 90dvh;
     overflow-y: auto;
+  }
+
+  .avatar-modal-header-left {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 10px;
+  }
+
+  .header-save-btn {
+    width: 100%;
   }
 
   .username-content {

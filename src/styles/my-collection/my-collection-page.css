@@ -129,6 +129,64 @@
   -webkit-mask-image: linear-gradient(to bottom, black 75%, transparent 100%);
 }
 
+.series-loading-overlay {
+  position: absolute;
+
+  inset: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 12px;
+
+  background: rgba(0, 0, 0, 0.75);
+
+  backdrop-filter: blur(4px);
+
+  z-index: 20;
+
+  border-radius: inherit;
+}
+
+.series-spinner {
+  width: 32px;
+  height: 32px;
+
+  border: 3px solid rgba(255, 255, 255, 0.15);
+
+  border-top-color: #ef4444;
+
+  border-radius: 50%;
+
+  animation: seriesSpin 0.8s linear infinite;
+}
+
+@keyframes seriesSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.series-loading-overlay span {
+  color: white;
+
+  font-size: 0.9rem;
+
+  font-weight: 600;
+}
+
+.series-card.loading {
+  pointer-events: none;
+  transform: scale(0.95);
+
+  opacity: 0.85;
+}
+
 .series-content {
   padding: 0 18px 18px 18px;
 }
