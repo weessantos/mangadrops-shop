@@ -200,7 +200,6 @@ export default function MyVolumeModal({
 
   async function handleSave() {
     if (status === "owned" && (!price || Number(price) <= 0)) {
-      console.log("Toast disparou");
       showError("Informe o valor pago pelo volume.");
       return;
     }
@@ -214,7 +213,6 @@ export default function MyVolumeModal({
       data: { user },
     } = await supabaseClient.auth.getUser();
 
-    console.log("Status ao salvar:", status);
 
     // Não possuo = remove da coleção
     if (status === "missing") {

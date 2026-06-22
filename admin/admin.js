@@ -940,13 +940,6 @@ function renderVolumeCard({ volume, series, prefix }) {
     number: volume.number,
   });
 
-  console.log("========== IMG DEBUG ==========");
-  console.log("Volume:", volume.title);
-  console.log("Prefix volume:", volume.prefix);
-  console.log("Parent:", series.parent);
-  console.log("URL gerada:", imgSrc);
-  console.log("===============================");
-
   div.innerHTML = `
     <div class="card-header">
       <div class="title-with-thumb">
@@ -2139,25 +2132,51 @@ async function openCreateVolume(prefix) {
   const next = volumes.length ? volumes[0].number + 1 : 1;
   const num = String(next).padStart(2, "0");
 
-  const { data: series } = await supabaseClient
+  const { data: series, error: seriesError } = await supabaseClient
     .from("series")
     .select("id, title")
     .eq("prefix", prefix)
     .single();
 
+  if (seriesError || !series) {
+    showToast("Erro ao localizar série ❌");
+    return;
+  }
+
   const title = `${series.title} Vol. ${num}`;
 
-  await supabaseClient.from("volumes").insert([
-    {
-      prefix: prefix,
-      title,
-      number: next,
-      series_id: series.id,
-      added_at: new Date().toISOString().split("T")[0],
-    },
-  ]);
+  const { error: insertError } = await supabaseClient
+    .from("volumes")
+    .insert([
+      {
+        prefix,
+        title,
+        number: next,
+        series_id: series.id,
+        added_at: new Date().toISOString().split("T")[0],
+      },
+    ]);
 
-  console.log(series);
+  if (insertError) {
+    console.error(insertError);
+    showToast("Erro ao criar volume ❌");
+    return;
+  }
+
+  const { error: updateError } = await supabaseClient
+    .from("series")
+    .update({
+      total_volumes: next,
+    })
+    .eq("id", series.id);
+
+  if (updateError) {
+    console.error(updateError);
+    showToast("Volume criado, mas não foi possível atualizar o total ⚠️");
+  }
+
+  showToast(`Volume ${num} criado ✅`);
+
   loadVolumes(prefix);
 }
 
@@ -2406,6 +2425,23 @@ async function deleteVolume(prefix, number) {
       .eq("number", number);
 
     if (error) throw error;
+
+    // Recalcula o maior volume restante
+    const { data: volumes } = await supabaseClient
+      .from("volumes")
+      .select("number")
+      .eq("prefix", prefix)
+      .order("number", { ascending: false })
+      .limit(1);
+
+    const newTotal = volumes?.length ? volumes[0].number : 0;
+
+    await supabaseClient
+      .from("series")
+      .update({
+        total_volumes: newTotal,
+      })
+      .eq("prefix", prefix);
 
     showToast("Volume deletado 🗑");
 
