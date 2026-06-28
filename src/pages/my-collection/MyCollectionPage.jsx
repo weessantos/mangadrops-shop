@@ -71,6 +71,8 @@ export default function MyCollectionPage() {
 
   const [visibleCount, setVisibleCount] = useState(20);
 
+  const [needReload, setNeedReload] = useState(false);
+
   const [loadingCollectionId, setLoadingCollectionId] = useState(null);
 
   const loadMoreRef = useRef(null);
@@ -104,6 +106,17 @@ export default function MyCollectionPage() {
   const visibleSeries = series.slice(0, visibleCount);
 
   const handleLogout = useLogout();
+
+  useEffect(() => {
+    if (!collectionId) {
+      setLoadingCollectionId(null);
+
+      if (needReload) {
+        reload();
+        setNeedReload(false);
+      }
+    }
+  }, [collectionId, needReload]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -447,12 +460,11 @@ export default function MyCollectionPage() {
       {collectionId && (
         <MyCollectionModal
           collectionId={collectionId}
+          onLoaded={() => setLoadingCollectionId(null)}
+          onChanged={() => setNeedReload(true)}
           onClose={() => {
             setLoadingCollectionId(null);
-
             setSearchParams({});
-
-            reload();
           }}
         />
       )}

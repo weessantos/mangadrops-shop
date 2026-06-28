@@ -1,0 +1,163 @@
+/* Overlay */
+
+.my-edition-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  padding: 24px;
+}
+
+/* Modal */
+
+.my-edition-modal {
+  width: 100%;
+  max-width: 560px;
+  background: #101010;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  animation: modalFade .2s ease;
+}
+
+.my-edition-modal h2 {
+  margin: 0 0 24px;
+  font-size: 1.6rem;
+  color: #fff;
+}
+
+.edition-description {
+  margin: -10px 0 24px;
+  color: #9ca3af;
+  font-size: .92rem;
+  line-height: 1.5;
+}
+
+/* Campos */
+
+.edition-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.edition-field label {
+  font-size: .9rem;
+  font-weight: 600;
+  color: #cfcfcf;
+}
+
+.edition-field input,
+.edition-field select,
+.edition-field textarea {
+  width: 100%;
+  background: #1b1b1b;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: .95rem;
+  font-family: inherit;
+  transition: .2s;
+}
+
+.edition-field input:focus,
+.edition-field select:focus,
+.edition-field textarea:focus {
+  outline: none;
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139,92,246,.18);
+}
+
+.edition-field textarea {
+  resize: vertical;
+  min-height: 130px;
+}
+
+.edition-field small {
+  align-self: flex-end;
+  color: #8d8d8d;
+  font-size: .8rem;
+}
+
+/* Botões */
+
+.edition-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.edition-cancel-btn,
+.edition-save-btn {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 22px;
+  font-size: .95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.edition-cancel-btn {
+  background: #232323;
+  color: #fff;
+}
+
+.edition-cancel-btn:hover {
+  background: #2d2d2d;
+}
+
+.edition-save-btn {
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  color: white;
+}
+
+.edition-save-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(139,92,246,.35);
+}
+
+.edition-save-btn:disabled,
+.edition-cancel-btn:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+/* Animação */
+
+@keyframes modalFade {
+  from {
+    opacity: 0;
+    transform: scale(.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 700px) {
+  .my-edition-modal {
+    padding: 22px;
+    border-radius: 18px;
+  }
+
+  .edition-actions {
+    flex-direction: column-reverse;
+  }
+
+  .edition-actions button {
+    width: 100%;
+  }
+}

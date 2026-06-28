@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabaseClient } from "../../lib/supabase";
+
 import "../../styles/my-collection/my-collection-modal.css";
 
 import { useLockBodyScroll } from "../../hooks/my-collection-hooks/useLockBodyScroll";
@@ -7,8 +8,14 @@ import { STORE_OPTIONS } from "../../utils/my-collection/stores";
 import { showError, showSuccess, showWarning } from "../../utils/alertFeedback";
 import { img } from "../../utils/images";
 import MyVolumeModal from "./MyVolumeModal";
+import MyCollectionEditionModal from "./MyCollectionEditionModal";
 
-export default function MyCollectionModal({ collectionId, onClose }) {
+export default function MyCollectionModal({
+  collectionId,
+  onClose,
+  onLoaded,
+  onChanged,
+}) {
   const [volumes, setVolumes] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,6 +38,54 @@ export default function MyCollectionModal({ collectionId, onClose }) {
   const [favoriteWorkId, setFavoriteWorkId] = useState(null);
   const [savingFavorite, setSavingFavorite] = useState(false);
 
+  const [hasChanges, setHasChanges] = useState(false);
+
+  const [showEditionDetails, setShowEditionDetails] = useState(false);
+
+  const [showEditionModal, setShowEditionModal] = useState(false);
+
+  const [seriesMetadata, setSeriesMetadata] = useState(null);
+
+  const popoverRef = useRef(null);
+  const buttonRef = useRef(null);
+
+  const [popoverStyle, setPopoverStyle] = useState({});
+
+  useEffect(() => {
+    if (!showEditionDetails) return;
+
+    function handleClickOutside(e) {
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(e.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target)
+      ) {
+        setShowEditionDetails(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showEditionDetails]);
+
+  useEffect(() => {
+    if (!showEditionDetails) return;
+
+    requestAnimationFrame(positionPopover);
+
+    window.addEventListener("resize", positionPopover);
+    window.addEventListener("scroll", positionPopover, true);
+
+    return () => {
+      window.removeEventListener("resize", positionPopover);
+      window.removeEventListener("scroll", positionPopover, true);
+    };
+  }, [showEditionDetails]);
+
   useLockBodyScroll();
 
   useEffect(() => {
@@ -38,6 +93,7 @@ export default function MyCollectionModal({ collectionId, onClose }) {
   }, [collectionId]);
 
   async function loadCollection() {
+    setHasChanges(false);
     const {
       data: { user },
     } = await supabaseClient.auth.getUser();
@@ -74,10 +130,6 @@ export default function MyCollectionModal({ collectionId, onClose }) {
       return;
     }
 
-    const statusMap = new Map(
-      userCollection.map((item) => [item.volume_id, item.status]),
-    );
-
     const collectionMap = new Map(
       userCollection.map((item) => [item.volume_id, item]),
     );
@@ -95,12 +147,83 @@ export default function MyCollectionModal({ collectionId, onClose }) {
       };
     });
 
+    const mainSeries =
+      volumesWithStatus.find((v) => v.parent_series_id === null) ||
+      volumesWithStatus[0];
+
+    const { data: metadata, error: metadataError } = await supabaseClient
+      .from("user_series_metadata")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("series_id", mainSeries.series_id)
+      .maybeSingle();
+
+    setSeriesMetadata(metadata);
+
     setVolumes(volumesWithStatus);
     setLoading(false);
+    onLoaded?.();
+  }
+
+  function notifyChange() {
+    if (hasChanges) return;
+
+    setHasChanges(true);
+    onChanged?.();
   }
 
   if (loading) {
     return null;
+  }
+
+  function positionPopover() {
+    if (!buttonRef.current || !popoverRef.current) return;
+
+    // No mobile o CSS já centraliza o "modal"
+    if (window.innerWidth <= 920) return;
+
+    const button = buttonRef.current.getBoundingClientRect();
+
+    setPopoverStyle({
+      position: "fixed",
+      left: button.right + 30,
+      top: button.top - 20,
+    });
+
+    requestAnimationFrame(() => {
+      if (!popoverRef.current) return;
+
+      const popover = popoverRef.current.getBoundingClientRect();
+
+      const arrowTop = button.top + button.height / 2 - popover.top;
+
+      popoverRef.current.style.setProperty("--arrow-top", `${arrowTop}px`);
+    });
+  }
+
+  function getLanguageFlag(language) {
+    switch (language) {
+      case "Inglês":
+        return "/assets/my-collection/flags/us.png";
+
+      case "Japonês":
+        return "/assets/my-collection/flags/jp.png";
+
+      case "Francês":
+        return "/assets/my-collection/flags/fr.png";
+
+      case "Espanhol":
+        return "/assets/my-collection/flags/es.png";
+
+      case "Italiano":
+        return "/assets/my-collection/flags/it.png";
+
+      case "Alemão":
+        return "/assets/my-collection/flags/de.png";
+
+      default:
+        return "/assets/my-collection/flags/br.png";
+    }
   }
 
   const totalVolumes = volumes.length;
@@ -117,6 +240,17 @@ export default function MyCollectionModal({ collectionId, onClose }) {
 
   const mainSeries =
     volumes.find((v) => v.parent_series_id === null) || volumes[0];
+
+  const { edition_publisher, edition_language, edition_notes } =
+    seriesMetadata ?? {};
+
+  const publisher = edition_publisher || mainSeries.brand;
+
+  const language = edition_language || "Português";
+
+  const notes = edition_notes || "";
+
+  const hasCustomEdition = !!seriesMetadata;
 
   const mainVolumes = volumes.filter(
     (v) => v.series_id === mainSeries.series_id,
@@ -161,6 +295,8 @@ export default function MyCollectionModal({ collectionId, onClose }) {
   }
 
   function updateVolumeStatus(volumeId, newStatus) {
+    notifyChange();
+
     setVolumes((current) =>
       current.map((volume) =>
         volume.id === volumeId
@@ -226,6 +362,8 @@ export default function MyCollectionModal({ collectionId, onClose }) {
 
     setShowBulkModal(false);
 
+    notifyChange();
+
     showSuccess(
       `${selectedVolumes.length} volumes adicionados à coleção com sucesso!`,
     );
@@ -277,8 +415,8 @@ export default function MyCollectionModal({ collectionId, onClose }) {
             </button>
           </div>
 
-          <div className="my-collection-content tablet-scale-strong ">
-            <aside className="my-collection-sidebar tablet-scale-strong ">
+          <div className="my-collection-content tablet-scale-strong">
+            <aside className="my-collection-sidebar tablet-scale-strong">
               <div className="collection-sidebar-top">
                 <img
                   src={mainSeries.thumb}
@@ -294,7 +432,7 @@ export default function MyCollectionModal({ collectionId, onClose }) {
                   )}
 
                   <div className="collection-badges">
-                    {mainSeries.brand && <span>🏢 {mainSeries.brand}</span>}
+                    <span>🏢 {publisher}</span>
 
                     {mainSeries.genre && <span>🎭 {mainSeries.genre}</span>}
 
@@ -303,16 +441,32 @@ export default function MyCollectionModal({ collectionId, onClose }) {
                         ✍️ {mainSeries.author}
                       </span>
                     )}
+                    <span>
+                      <img
+                        src={getLanguageFlag(language)}
+                        alt={language}
+                        className="language-flag"
+                      />
+                      {language}
+                    </span>
 
-                    {mainSeries.edition_label && (
-                      <span>📚 {mainSeries.edition_label}</span>
-                    )}
+                    <span>
+                      <button
+                        ref={buttonRef}
+                        className="collection-badge-button"
+                        onClick={() => setShowEditionDetails((prev) => !prev)}
+                      >
+                        📝 Observações
+                      </button>
+                    </span>
                   </div>
                 </div>
               </div>
+
               <div className="collection-sidebar-actions">
                 <div className="collection-investment">
                   <span className="investment-label">💰 Investimento</span>
+
                   <div className="investment-value">
                     <span>
                       {showInvestment
@@ -328,6 +482,7 @@ export default function MyCollectionModal({ collectionId, onClose }) {
                     </button>
                   </div>
                 </div>
+
                 <button
                   className="bulk-purchase-btn"
                   onClick={() => setShowBulkModal(true)}
@@ -335,6 +490,7 @@ export default function MyCollectionModal({ collectionId, onClose }) {
                   Preencher vários volumes
                 </button>
               </div>
+
               <div className="mobile-progress">
                 <div className="footer-progress-header">
                   <span>
@@ -354,6 +510,7 @@ export default function MyCollectionModal({ collectionId, onClose }) {
                 </div>
               </div>
             </aside>
+
             <section className="my-collection-volumes">
               {groupedVolumes.map((group) => (
                 <div
@@ -372,6 +529,7 @@ export default function MyCollectionModal({ collectionId, onClose }) {
                       {isFavoriteWork ? "⭐ Favorita" : "☆ Favoritar"}
                     </button>
                   </div>
+
                   <div
                     className={`${
                       group.isExtra
@@ -403,6 +561,7 @@ export default function MyCollectionModal({ collectionId, onClose }) {
                           className="collection-volume-cover"
                           loading="lazy"
                         />
+
                         <div
                           className={`collection-volume-label ${
                             volume.status === "owned"
@@ -420,6 +579,44 @@ export default function MyCollectionModal({ collectionId, onClose }) {
                 </div>
               ))}
             </section>
+
+            {showEditionDetails && (
+              <div
+                ref={popoverRef}
+                className="collection-edition-popover"
+                style={popoverStyle}
+              >
+                <div className="collection-edition-popover-header">
+                  <h4>📝 Observações</h4>
+
+                  <button
+                    className="popover-close"
+                    onClick={() => setShowEditionDetails(false)}
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {notes ? (
+                  <div className="edition-item">
+                    <p>{notes}</p>
+                  </div>
+                ) : (
+                  <p className="edition-empty">
+                    Nenhuma observação adicionada para esta coleção.
+                  </p>
+                )}
+
+                <button
+                  className="edit-edition-btn"
+                  onClick={() => setShowEditionModal(true)}
+                >
+                  {hasCustomEdition
+                    ? "✏️ Editar informações"
+                    : "➕ Adicionar informações"}
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="my-collection-modal-footer tablet-scale-strong ">
@@ -592,6 +789,18 @@ export default function MyCollectionModal({ collectionId, onClose }) {
           onSelectVolume={setSelectedVolume}
           onClose={() => setSelectedVolume(null)}
           onSaved={updateVolumeStatus}
+        />
+      )}
+      {showEditionModal && (
+        <MyCollectionEditionModal
+          open={showEditionModal}
+          onClose={() => setShowEditionModal(false)}
+          seriesId={mainSeries.series_id}
+          metadata={seriesMetadata}
+          onSaved={(metadata) => {
+            setSeriesMetadata(metadata);
+            notifyChange();
+          }}
         />
       )}
     </>
