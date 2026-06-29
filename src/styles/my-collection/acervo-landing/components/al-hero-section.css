@@ -1,0 +1,575 @@
+/* ===========================
+   HERO
+=========================== */
+
+.al-hero {
+  position: relative;
+
+  min-height: 100vh;
+
+  overflow: hidden;
+
+  padding: 32px 80px;
+
+  background:
+    radial-gradient(
+      circle at 82% 18%,
+      rgba(123, 92, 255, 0.05),
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 10% 65%,
+      rgba(0, 174, 255, 0.025),
+      transparent 50%
+    ),
+    #020202;
+}
+
+.al-hero::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03),
+    transparent 220px
+  );
+}
+
+/* ===========================
+   HEADER
+=========================== */
+
+.al-hero-header {
+  position: relative;
+
+  z-index: 50;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+}
+
+.al-hero-header img {
+  width: 100px;
+  user-select: none;
+
+  transition:
+    transform .35s ease,
+    filter .35s ease;
+}
+
+.al-hero-header img:hover {
+  transform: scale(1.03);
+
+  filter: drop-shadow(
+    0 0 22px
+    color-mix(in srgb, var(--accent) 35%, transparent)
+  );
+}
+
+/* ===========================
+   ACTIONS
+=========================== */
+
+.al-hero-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+}
+
+.al-hero-actions button {
+  height: 46px;
+
+  padding: 0 22px;
+
+  border-radius: 999px;
+
+  font-size: .94rem;
+
+  font-weight: 600;
+
+  font-family: inherit;
+
+  cursor: pointer;
+
+  transition:
+    all .28s ease;
+}
+
+.al-hero-actions button:first-child {
+
+  color: rgba(255,255,255,.92);
+
+  background: transparent;
+
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.al-hero-actions button:first-child:hover {
+
+  background: rgba(255,255,255,.05);
+
+  border-color: rgba(255,255,255,.16);
+
+  transform: translateY(-2px);
+}
+
+.al-hero-actions button:last-child {
+
+  color: white;
+
+  border: none;
+
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 100%, white 12%),
+    var(--accent)
+  );
+
+  box-shadow:
+    0 10px 32px
+    color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.al-hero-actions button:last-child:hover {
+
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    0 18px 46px
+    color-mix(in srgb, var(--accent) 50%, transparent);
+}
+
+/* ===========================
+   LAYOUT
+=========================== */
+
+.al-hero-layout {
+  position: relative;
+
+  z-index: 10;
+
+  display: grid;
+
+  grid-template-columns: 520px minmax(1200px, 1fr);
+
+  align-items: center;
+
+  gap: 80px;
+
+  min-height: calc(100vh - 110px);
+}
+
+/* ===========================
+   TEXTO
+=========================== */
+
+.al-hero-copy {
+  position: relative;
+
+  z-index: 30;
+}
+
+.al-hero-tag {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 8px 18px;
+
+  border-radius: 999px;
+
+  background: rgba(124, 77, 255, 0.14);
+
+  border: 1px solid rgba(124, 77, 255, 0.35);
+
+  color: #c8b8ff;
+
+  font-size: 0.85rem;
+
+  font-weight: 700;
+}
+
+.al-hero-tag span {
+  opacity: 0.55;
+}
+
+.al-hero-copy h1 {
+  margin: 30px 0 0;
+
+  font-family: "Russo One", sans-serif;
+
+  font-size: 4.2rem;
+
+  line-height: 1.05;
+
+  color: white;
+}
+
+.al-hero-copy p {
+  margin-top: 28px;
+
+  font-size: 1.2rem;
+
+  line-height: 1.8;
+
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* ===========================
+   HERO BUTTONS
+=========================== */
+
+.al-hero-buttons {
+  display: flex;
+
+  align-items: center;
+
+  gap: 18px;
+
+  margin-top: 42px;
+}
+
+.al-hero-buttons button {
+  height: 56px;
+
+  padding: 0 28px;
+
+  border: none;
+
+  border-radius: 18px;
+
+  font-size: 0.98rem;
+
+  font-weight: 700;
+
+  font-family: inherit;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.28s ease,
+    background 0.28s ease,
+    color 0.28s ease,
+    box-shadow 0.28s ease,
+    border-color 0.28s ease;
+}
+
+.al-hero-buttons button:hover {
+  transform: translateY(-3px);
+}
+
+.al-hero-buttons .primary {
+  color: white;
+
+  background: var(--accent);
+
+  box-shadow:
+    0 14px 40px color-mix(in srgb, var(--accent) 35%, transparent),
+    inset 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.al-hero-buttons .primary:hover {
+  box-shadow:
+    0 22px 60px color-mix(in srgb, var(--accent) 55%, transparent),
+    inset 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.al-hero-buttons button:not(.primary) {
+  color: rgba(255, 255, 255, 0.9);
+
+  background: rgba(255, 255, 255, 0.05);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  backdrop-filter: blur(18px);
+
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.al-hero-buttons button:not(.primary):hover {
+  background: rgba(255, 255, 255, 0.08);
+
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+/* ===========================
+   STAGE
+=========================== */
+
+.al-stage-wrapper {
+  position: relative;
+
+  width: 100%;
+
+  height: 760px;
+
+  perspective: 2200px;
+
+  transform: translateX(-120px);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+}
+
+.al-stage {
+  position: relative;
+
+  width: 1800px;
+
+  height: 760px;
+
+  margin-left: -180px;
+
+  perspective: 3200px;
+}
+
+.al-stage-glow {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 1500px;
+  height: 1000px;
+
+  border-radius: 999px;
+
+  pointer-events: none;
+
+  transform: translate(-50%, -50%);
+
+  background: radial-gradient(
+    ellipse at center,
+
+    color-mix(in srgb, var(--accent) 18%, transparent),
+    transparent 72%
+  );
+
+  filter: blur(180px);
+
+  opacity: 0.9;
+
+  z-index: 0;
+}
+
+.al-stage-card {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 760px;
+
+  transform-style: preserve-3d;
+
+  transform-origin: center;
+
+  transition:
+    transform 0.9s cubic-bezier(0.22, 0.8, 0.2, 1),
+    opacity 0.8s,
+    filter 0.8s;
+
+  will-change: transform;
+}
+
+.al-stage-card::before {
+  content: "";
+
+  position: absolute;
+
+  left: 8%;
+  right: 8%;
+
+  top: 14%;
+
+  bottom: 14%;
+
+  background: var(--accent);
+
+  border-radius: 40px;
+
+  filter: blur(70px);
+
+  opacity: 0;
+
+  transform: scale(0.92);
+
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease,
+    filter 0.8s ease;
+
+  z-index: -1;
+}
+
+.al-stage-card img {
+  display: block;
+
+  width: 100%;
+
+  height: auto;
+
+  border-radius: 24px;
+
+  box-shadow:
+    0 70px 120px rgba(0, 0, 0, 0.55),
+    0 25px 80px color-mix(in srgb, var(--accent) 18%, transparent),
+    0 0 140px color-mix(in srgb, var(--accent) 12%, transparent);
+
+  user-select: none;
+}
+
+.al-stage-card.active {
+  filter: none !important;
+}
+
+.al-stage-card.active::before {
+  opacity: 0.28;
+
+  transform: scale(1.5);
+
+  filter: blur(90px);
+}
+
+@keyframes heroGlow {
+  0% {
+    transform: scale(1);
+
+    opacity: 0.15;
+  }
+
+  50% {
+    transform: scale(1.12);
+
+    opacity: 0.26;
+  }
+
+  100% {
+    transform: scale(1);
+
+    opacity: 0.15;
+  }
+}
+
+.al-card-shadow,
+.al-card-reflection,
+.al-card-border {
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  border-radius: 24px;
+}
+
+.al-card-border {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.al-card-shadow {
+  box-shadow: 0 60px 120px rgba(0, 0, 0, 0.45);
+}
+
+.al-card-reflection {
+  opacity: 0.18;
+
+  background: linear-gradient(
+    115deg,
+    transparent 15%,
+
+    rgba(255, 255, 255, 0.18) 50%,
+
+    transparent 85%
+  );
+
+  mix-blend-mode: screen;
+}
+
+.al-stage-light {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 900px;
+
+  height: 900px;
+
+  pointer-events: none;
+
+  transform: translate(-50%, -50%);
+
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.22),
+    transparent 55%
+  );
+
+  mix-blend-mode: screen;
+
+  opacity: 0.18;
+
+  filter: blur(120px);
+
+  z-index: 2;
+}
+
+/* ===========================
+   HERO TEXT ANIMATION
+=========================== */
+
+.text-enter {
+  animation: heroTextEnter 900ms cubic-bezier(0.22, 0.8, 0.2, 1) both;
+}
+
+.delay-1 {
+  animation-delay: 180ms;
+}
+
+.delay-2 {
+  animation-delay: 380ms;
+}
+
+.delay-3 {
+  animation-delay: 600ms;
+}
+
+@keyframes heroTextEnter {
+  from {
+    opacity: 0;
+
+    transform: translateX(-160px);
+
+    filter: blur(16px);
+  }
+
+  60% {
+    filter: blur(2px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateX(0);
+
+    filter: blur(0);
+  }
+}

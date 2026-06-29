@@ -39,6 +39,7 @@ import CollectionHero, {
   CollectionsHero,
 } from "./components/CollectionHero.jsx";
 
+import AcervoLandingPage from "./pages/my-collection/acervo-landing/AcervoLandingPage.jsx";
 import LoginPage from "./pages/my-auth/MyLoginPage.jsx";
 import RegisterPage from "./pages/my-auth/MyRegisterPage.jsx";
 import ResetPasswordPage from "./pages/my-auth/MyResetPasswordPage.jsx";
@@ -1274,6 +1275,8 @@ function AppRoutes() {
         <Route path="/:seriesSlug/:volumeId" element={<AppShell />} />
 
         {/* Rotas para parte de coleção de usuário (login, registro, minha coleção) */}
+        <Route path="/teste-acervo" element={<AcervoLandingPage />} />
+
         <Route path="/auth/login" element={<LoginPage />} />
 
         <Route path="/auth/registrar" element={<RegisterPage />} />

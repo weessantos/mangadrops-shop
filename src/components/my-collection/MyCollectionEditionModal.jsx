@@ -9,6 +9,7 @@ const LANGUAGE_OPTIONS = [
   "Francês",
   "Espanhol",
   "Italiano",
+  "Alemão"
 ];
 
 export default function MyCollectionEditionModal({
@@ -123,7 +124,7 @@ export default function MyCollectionEditionModal({
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
           >
-            <option value="">🇧🇷 Português (Padrão)</option>
+            <option value="">Português (Padrão)</option>
 
             {LANGUAGE_OPTIONS.map((item) => (
               <option key={item} value={item}>
