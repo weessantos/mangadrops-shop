@@ -1,0 +1,283 @@
+.al-footer {
+  position: relative;
+
+  padding: 80px 40px 36px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.02));
+}
+
+.al-footer::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  background: radial-gradient(
+    circle at top,
+    rgba(83, 20, 231, 0.08),
+    transparent 65%
+  );
+
+  pointer-events: none;
+}
+
+.al-footer-container {
+  position: relative;
+  z-index: 2;
+
+  max-width: 1450px;
+  margin: 0 auto;
+}
+
+/* ===================================================== */
+/* TOPO */
+/* ===================================================== */
+
+.al-footer-top {
+  display: grid;
+  grid-template-columns: minmax(380px, 1fr) auto;
+
+  gap: 90px;
+
+  align-items: start;
+}
+
+/* ===================================================== */
+/* BRAND */
+/* ===================================================== */
+
+.al-footer-brand {
+  max-width: 520px;
+}
+
+.al-footer-brand-header {
+  display: flex;
+  align-items: center;
+
+  gap: 22px;
+}
+
+.al-footer-logo {
+  width: 78px;
+
+  flex-shrink: 0;
+
+  cursor: pointer;
+
+  transition: transform 0.25s ease;
+}
+
+.al-footer-logo:hover {
+  transform: scale(1.05);
+}
+
+.al-footer-brand-title h3 {
+  margin: 0;
+
+  color: #fff;
+
+  font-family: "Russo One", sans-serif;
+  font-size: 1.55rem;
+  font-weight: 400;
+}
+
+.al-footer-brand-title span {
+  display: block;
+
+  margin-top: 6px;
+
+  color: rgba(255, 255, 255, 0.55);
+
+  font-size: 0.95rem;
+}
+
+.al-footer-brand-content {
+  margin-top: 28px;
+}
+
+.al-footer-brand p {
+  color: rgba(255, 255, 255, 0.68);
+
+  line-height: 1.9;
+}
+
+/* ===================================================== */
+/* REDES */
+/* ===================================================== */
+
+.al-footer-socials {
+  display: flex;
+
+  gap: 14px;
+
+  margin-top: 30px;
+}
+
+.al-footer-socials a {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+
+  color: white;
+
+  background: rgba(255, 255, 255, 0.04);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  transition: 0.28s;
+}
+
+.al-footer-socials a:hover {
+  transform: translateY(-4px);
+
+  color: #8d6dff;
+
+  border-color: rgba(83, 20, 231, 0.35);
+
+  background: rgba(83, 20, 231, 0.08);
+}
+
+/* ===================================================== */
+/* LINKS */
+/* ===================================================== */
+
+.al-footer-links {
+  display: grid;
+  grid-template-columns: repeat(3, 180px);
+
+  gap: 48px;
+}
+
+.al-footer-links h4 {
+  margin-bottom: 22px;
+
+  color: white;
+
+  font-size: 1rem;
+}
+
+.al-footer-links a {
+  display: block;
+
+  margin-bottom: 15px;
+
+  color: rgba(255, 255, 255, 0.62);
+
+  text-decoration: none;
+
+  transition: 0.25s;
+}
+
+.al-footer-links a:hover {
+  color: white;
+}
+
+/* ===================================================== */
+/* RODAPÉ */
+/* ===================================================== */
+
+.al-footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 20px;
+
+  margin-top: 70px;
+  padding-top: 26px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+  color: rgba(255, 255, 255, 0.45);
+
+  font-size: 0.92rem;
+}
+
+/* ===================================================== */
+/* TABLET */
+/* ===================================================== */
+
+@media (max-width: 1100px) {
+  .al-footer-top {
+    grid-template-columns: 1fr;
+
+    gap: 60px;
+  }
+
+  .al-footer-links {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ===================================================== */
+/* MOBILE */
+/* ===================================================== */
+
+@media (max-width: 768px) {
+  .al-footer {
+    padding: 60px 24px 28px;
+  }
+
+  .al-footer-top {
+    gap: 54px;
+  }
+
+  .al-footer-brand {
+    max-width: none;
+
+    text-align: center;
+  }
+
+  .al-footer-brand-header {
+    justify-content: center;
+  }
+
+  .al-footer-brand-title {
+    text-align: left;
+  }
+
+  .al-footer-brand p {
+    max-width: 430px;
+
+    margin: 0 auto;
+  }
+
+  .al-footer-socials {
+    justify-content: center;
+  }
+
+  .al-footer-links {
+    grid-template-columns: 1fr;
+
+    gap: 40px;
+
+    text-align: center;
+  }
+
+  .al-footer-links > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .al-footer-links h4 {
+    margin-bottom: 18px;
+  }
+
+  .al-footer-links a {
+    margin-bottom: 16px;
+  }
+
+  .al-footer-bottom {
+    flex-direction: column;
+
+    text-align: center;
+  }
+}

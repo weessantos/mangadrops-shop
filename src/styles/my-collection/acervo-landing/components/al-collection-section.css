@@ -344,6 +344,10 @@
   height: 54px;
 }
 
+.al-collection-card:hover .al-collection-icon {
+  transform: translateY(-4px) rotate(-4deg);
+}
+
 /* ================================================= */
 
 .al-collection-value {

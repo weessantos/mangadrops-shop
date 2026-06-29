@@ -13,6 +13,7 @@ import {
 import "./styles/global.css";
 
 import Loader from "./components/Loader.jsx";
+import NotFoundPage from "./components/NotFoundPage.jsx";
 import GlobalToast from "./components/common/GlobalToast";
 import Header from "./components/Header.jsx";
 import HomeHero from "./components/HomeHero.jsx";
@@ -235,6 +236,8 @@ function AppShell() {
     );
   }, [releases, releasesPage]);
 
+  const seriesExists = seriesBySlug.has(seriesSlug);
+
   //🔹 Tipos de páginas
   const pageType = location.pathname.startsWith("/lancamentos")
     ? "releases"
@@ -268,7 +271,7 @@ function AppShell() {
 
   const isSearchPage = pageType === "search";
 
-  const isCollectionPage = Boolean(seriesSlug && !volumeId);
+  const isCollectionPage = Boolean(seriesSlug && !volumeId && seriesExists);
 
   //🔹 Títulos de das páginas
   const PAGE_CONTENT = {
@@ -1002,6 +1005,10 @@ function AppShell() {
     return <Loader />;
   }
 
+  if (seriesSlug && !seriesExists) {
+    return <NotFoundPage />;
+  }
+
   // ========================================
   // PAGE HELPERS
   // ========================================
@@ -1293,6 +1300,8 @@ function AppRoutes() {
         />
 
         <Route path="/u/:username" element={<MyPublicProfile />} />
+
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
       {/* 🔥 modal SOMENTE quando veio da home */}
       {volumeId && (

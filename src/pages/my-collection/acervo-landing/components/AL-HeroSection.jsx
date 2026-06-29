@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useALHeroEngine from "../../../../hooks/my-collection-hooks/acervo-landing/al-hero-engine.js";
 import "../../../../styles/my-collection/acervo-landing/components/al-hero-section.css";
 
@@ -71,6 +72,7 @@ const slides = [
 ];
 
 export default function ALHeroSection() {
+  const navigate = useNavigate();
   const heroEngine = useALHeroEngine(slides);
 
   const {
@@ -295,12 +297,19 @@ export default function ALHeroSection() {
       }}
     >
       <header className="al-hero-header">
-        <img src="/assets/logo.png" alt="Mangá Drops" />
+        <img
+          src="/assets/logo.png"
+          alt="Mangá Drops"
+          className="al-hero-logo"
+          onClick={() => navigate("/")}
+        />
 
         <div className="al-hero-actions">
-          <button>Entrar</button>
+          <button onClick={() => navigate("/auth/login")}>Entrar</button>
 
-          <button>Criar conta</button>
+          <button onClick={() => navigate("/auth/registrar")}>
+            Criar conta
+          </button>
         </div>
       </header>
 
