@@ -1,9 +1,10 @@
+/* ===========================================================
+   DEVICES SECTION
+=========================================================== */
+
 .al-devices-section {
   position: relative;
-
   overflow: hidden;
-
-  padding: 140px 40px;
 }
 
 .al-devices-section::before {
@@ -25,19 +26,23 @@
   position: relative;
   z-index: 2;
 
+  width: 100%;
   max-width: 1450px;
 
   margin: 0 auto;
 
+  min-height: calc(100dvh - 160px);
+
+  padding: clamp(50px, 6vh, 80px) 40px;
+
   display: grid;
   grid-template-columns: 1fr 1fr;
-
-  gap: 70px;
-
   align-items: center;
 }
 
-/* ===================================== */
+/* ===========================================================
+   CONTENT
+=========================================================== */
 
 .al-devices-content {
   max-width: 620px;
@@ -51,7 +56,6 @@
   border-radius: 999px;
 
   background: rgba(83, 20, 231, 0.12);
-
   border: 1px solid rgba(83, 20, 231, 0.22);
 
   color: #8d6dff;
@@ -59,29 +63,57 @@
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.18em;
+
+  opacity: 0;
+  transform: translateY(20px);
+
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
 }
 
 .al-devices-title {
-  margin-top: 28px;
+  margin-top: 24px;
 
-  color: white;
+  color: #fff;
 
-  font-size: clamp(2.5rem, 4vw, 4rem);
-
+  font-size: clamp(2.4rem, 4vw, 3.9rem);
   line-height: 1.08;
+
+  opacity: 0;
+  transform: translateY(20px);
+
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
 }
 
 .al-devices-subtitle {
-  margin-top: 26px;
+  margin-top: 22px;
 
   color: rgba(255, 255, 255, 0.68);
 
   font-size: 1.08rem;
-
   line-height: 1.9;
+
+  opacity: 0;
+  transform: translateY(20px);
+
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
 }
 
-/* ===================================== */
+.al-devices-tag.show,
+.al-devices-title.show,
+.al-devices-subtitle.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===========================================================
+   CHIPS
+=========================================================== */
 
 .al-devices-list {
   display: flex;
@@ -89,7 +121,7 @@
 
   gap: 16px;
 
-  margin-top: 40px;
+  margin-top: 34px;
 }
 
 .al-device-chip {
@@ -103,78 +135,184 @@
   border-radius: 999px;
 
   background: rgba(255, 255, 255, 0.04);
-
   border: 1px solid rgba(255, 255, 255, 0.08);
 
   color: rgba(255, 255, 255, 0.9);
 
-  transition: .3s;
+  opacity: 0;
+  transform: translateY(20px);
+
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease,
+    background 0.3s ease,
+    border-color 0.3s ease;
+
+  transition-delay: inherit;
+}
+
+.al-device-chip.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .al-device-chip:hover {
   transform: translateY(-3px);
 
-  border-color: rgba(83, 20, 231, .4);
-
-  background: rgba(83, 20, 231, .08);
+  background: rgba(83, 20, 231, 0.08);
+  border-color: rgba(83, 20, 231, 0.4);
 }
 
 .al-device-chip svg {
   color: #8d6dff;
 }
 
-/* ===================================== */
-
+/* ===========================================================
+   PREVIEW
+=========================================================== */
 .al-devices-preview {
   position: relative;
 
-  min-height: 620px;
+  margin-left: 0px;
+  width: calc(100% + 140px);
+  height: 920px;
 
-  border-radius: 36px;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,.04),
-      rgba(255,255,255,.02)
-    );
-
-  border: 1px solid rgba(255,255,255,.06);
-
-  overflow: hidden;
+  isolation: isolate;
+}
+.al-devices-preview.show {
+  opacity: 1;
+  transform: translateX(0);
 }
 
-/* Placeholder até colocarmos os mockups */
-
-.al-devices-preview::before {
-  content: "Mockup dos dispositivos";
+.al-devices-preview::after {
+  content: "";
 
   position: absolute;
   inset: 0;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: radial-gradient(
+    circle at center,
+    rgba(109, 72, 255, 0.18),
+    transparent 70%
+  );
 
-  color: rgba(255,255,255,.28);
+  filter: blur(90px);
 
-  font-size: 1rem;
-  letter-spacing: .12em;
+  pointer-events: none;
 }
 
-/* ===================================== */
+.al-devices-stack {
+  position: absolute;
+
+  inset: 0;
+}
+
+/* ===========================================================
+   DEVICES
+=========================================================== */
+
+.al-device-mockup {
+  position: absolute;
+
+  display: block;
+
+  user-select: none;
+  pointer-events: none;
+
+  max-width: none;
+
+  opacity: 0;
+
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ===========================================================
+   IMAC
+=========================================================== */
+
+.al-device-imac {
+  width: 750px;
+
+  position: absolute;
+
+  left: 15%;
+  bottom: 300px;
+
+  transform: translateX(-50%);
+
+  z-index: 1;
+}
+
+/* ===========================================================
+   IPAD
+=========================================================== */
+
+.al-device-ipad {
+  width: 350px;
+
+  position: absolute;
+
+  left: 0%;
+  bottom: 160px;
+
+  transform: translateX(-50%);
+
+  z-index: 4;
+}
+
+/* ===========================================================
+   IPHONE
+=========================================================== */
+
+.al-device-iphone {
+  width: 130px;
+
+  position: absolute;
+
+  left: 38%;
+  bottom: 120px;
+
+  transform: translateX(-50%);
+
+  z-index: 5;
+}
+
+/* ===========================================================
+   SHOW
+=========================================================== */
+
+.al-device-mockup.show {
+  opacity: 1;
+}
+
+.al-device-imac.show,
+.al-device-macbook.show,
+.al-device-ipad.show,
+.al-device-iphone.show {
+  transform: translateY(0);
+}
+
+/* ===========================================================
+   TABLET
+=========================================================== */
 
 @media (max-width: 1100px) {
+  .al-device-mockup {
+    opacity: 1;
+  }
+  .al-devices-section {
+    min-height: auto;
+  }
 
   .al-devices-container {
     grid-template-columns: 1fr;
-
-    gap: 60px;
+    gap: 50px;
   }
 
   .al-devices-content {
     max-width: 100%;
-
     text-align: center;
   }
 
@@ -182,12 +320,94 @@
     justify-content: center;
   }
 
+  .al-devices-preview {
+    width: unset;
+    min-height: auto;
+    max-height: 600px;
+  }
+
+  /* Esconde a composição desktop */
+  .al-device-scene-desktop {
+    display: none;
+  }
+
+  /* As três cenas passam a existir */
+  .al-device-scene-imac,
+  .al-device-scene-ipad,
+  .al-device-scene-iphone {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    opacity: 0;
+
+    animation: deviceCycle 12s infinite;
+  }
+
+  .al-device-scene-imac {
+    animation-delay: 0s;
+  }
+
+  .al-device-scene-ipad {
+    animation-delay: 4s;
+  }
+
+  .al-device-scene-iphone {
+    animation-delay: 8s;
+  }
+
+  /* Tamanhos */
+
+  .al-device-imac-single {
+    width: 800px;
+  }
+
+  .al-device-ipad-single {
+    width: 400px;
+  }
+
+  .al-device-iphone-single {
+    width: 250px;
+  }
+
+  @keyframes deviceCycle {
+    0% {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+
+    8% {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    28% {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    36% {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+
+    100% {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
 }
 
-@media (max-width: 768px) {
+/* ===========================================================
+   MOBILE
+=========================================================== */
 
+@media (max-width: 768px) {
   .al-devices-section {
-    padding: 100px 24px;
+    padding: 80px 24px;
   }
 
   .al-devices-title {
@@ -198,18 +418,40 @@
     font-size: 1rem;
   }
 
-  .al-devices-preview {
-    min-height: 420px;
-  }
-
   .al-devices-list {
+    flex-direction: row;
+    flex-wrap: nowrap;
     gap: 12px;
   }
 
   .al-device-chip {
     width: 100%;
-
     justify-content: center;
   }
 
+  .al-device-chip span {
+    display: none;
+  }
+
+  .al-devices-preview {
+    max-height: 400px;
+  }
+
+  .al-device-scene-imac {
+    align-items: center;
+  }
+
+  /* Tamanhos */
+
+  .al-device-imac-single {
+    width: 380px;
+  }
+
+  .al-device-ipad-single {
+    width: 300px;
+  }
+
+  .al-device-iphone-single {
+    width: 250px;
+  }
 }

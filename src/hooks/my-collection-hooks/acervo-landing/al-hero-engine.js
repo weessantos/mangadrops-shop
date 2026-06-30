@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-export default function useALHeroEngine(slides) {
+export default function useALHeroEngine(slides, isSimpleHero) {
   // ===================================
   // REFS
   // ===================================
@@ -452,12 +452,35 @@ export default function useALHeroEngine(slides) {
   // ===================================
 
   useEffect(() => {
+    if (isSimpleHero) return;
+
     const timer = setInterval(() => {
       rotateLayout(1);
     }, 4500);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [isSimpleHero]);
+
+  useEffect(() => {
+    if (!isSimpleHero) return;
+
+    const timer = setInterval(() => {
+      setActiveSlide((prev) => {
+        const next = (prev + 1) % slides.length;
+
+        setDisplaySlide(slides[next]);
+        setTextEntering(false);
+
+        requestAnimationFrame(() => {
+          setTextEntering(true);
+        });
+
+        return next;
+      });
+    }, 4500);
+
+    return () => clearInterval(timer);
+  }, [isSimpleHero, slides]);
 
   // ===================================
   // LOOP

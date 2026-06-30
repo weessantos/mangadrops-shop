@@ -5,6 +5,7 @@ import {
   Globe2,
   BadgeCheck,
 } from "lucide-react";
+import { useInView } from "react-intersection-observer";
 import useALCollectionSectionData from "../../../../hooks/my-collection-hooks/acervo-landing/al-collection-section-data.js";
 import "../../../../styles/my-collection/acervo-landing/components/al-collection-section.css";
 
@@ -52,6 +53,11 @@ const STATS = [
 ];
 
 export default function ALCollectionSection() {
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.2,
+  });
+
   const { stats, displayStats, covers, featuredRef } =
     useALCollectionSectionData();
 
@@ -72,95 +78,110 @@ export default function ALCollectionSection() {
   };
 
   return (
-    <section className="al-collection-section">
-      <div className="al-collection-container">
-        <div className="al-collection-quote">
-          <span className="al-collection-tag">O UNIVERSO DO MANGÁ DROPS</span>
+    <div ref={ref} className="al-collection-container">
+      <div className="al-collection-quote">
+        <span
+          className={`al-collection-tag ${inView ? "show" : ""}`}
+          style={{ transitionDelay: "0ms" }}
+        >
+          O UNIVERSO DO MANGÁ DROPS
+        </span>
 
-          <h2 className="al-collection-title">
-            Tudo o que sua coleção precisa,
-            <br />
-            em um único lugar.
-          </h2>
+        <h2
+          className={`al-collection-title ${inView ? "show" : ""}`}
+          style={{ transitionDelay: "150ms" }}
+        >
+          Tudo o que sua coleção precisa,
+          em um único lugar.
+        </h2>
 
-          <p className="al-collection-subtitle">
-            Um catálogo completo, ferramentas para colecionadores e um perfil
-            totalmente personalizado para acompanhar cada volume da sua jornada.
-          </p>
-        </div>
+        <p
+          className={`al-collection-subtitle ${inView ? "show" : ""}`}
+          style={{ transitionDelay: "300ms" }}
+        >
+          Um catálogo completo, ferramentas para colecionadores e um perfil
+          totalmente personalizado para acompanhar cada volume da sua jornada.
+        </p>
+      </div>
 
-        <div className="al-collection-grid">
-          <article
-            ref={featuredRef}
-            className="al-collection-card featured"
-            style={{ "--accent": STATS[0].accent }}
-          >
-            <div className="featured-background">
-              {Array.from({ length: 6 }).map((_, column) => {
-                const columnCovers = covers.filter(
-                  (_, index) => index % 6 === column,
-                );
-
-                return (
-                  <div
-                    key={column}
-                    className={`featured-column column-${column + 1}`}
-                  >
-                    {columnCovers.map((cover, index) => (
-                      <img
-                        key={`${column}-${index}`}
-                        src={cover}
-                        alt=""
-                        className="featured-cover"
-                        draggable={false}
-                      />
-                    ))}
-                  </div>
-                );
-              })}
-            </div>
-            <div className="featured-overlay" />
-
-            <div className="featured-content">
-              <div className="al-collection-icon">
-                <BookOpen size={34} strokeWidth={2} />
-              </div>
-
-              <span className="al-collection-value">{statValues.volumes}</span>
-
-              <h3>{STATS[0].title}</h3>
-
-              <p>{STATS[0].description}</p>
-            </div>
-          </article>
-
-          <div className="al-collection-side">
-            {STATS.slice(1).map((item) => {
-              const Icon = item.icon;
+      <div className="al-collection-grid">
+        <article
+          ref={featuredRef}
+          className={`al-collection-card featured ${inView ? "show" : ""}`}
+          style={{
+            "--accent": STATS[0].accent,
+            "--delay": "500ms",
+          }}
+        >
+          <div className="featured-background">
+            {Array.from({ length: 6 }).map((_, column) => {
+              const columnCovers = covers.filter(
+                (_, index) => index % 6 === column,
+              );
 
               return (
-                <article
-                  key={item.id}
-                  className="al-collection-card small"
-                  style={{ "--accent": item.accent }}
+                <div
+                  key={column}
+                  className={`featured-column column-${column + 1}`}
                 >
-                  <div className="al-collection-icon">
-                    <Icon size={26} strokeWidth={2} />
-                  </div>
-
-                  <span className="al-collection-value">
-                    {statValues[item.id]}
-                  </span>
-
-                  <h3>{item.title}</h3>
-
-                  <p>{item.description}</p>
-                </article>
+                  {columnCovers.map((cover, index) => (
+                    <img
+                      key={`${column}-${index}`}
+                      src={cover}
+                      alt=""
+                      className="featured-cover"
+                      draggable={false}
+                    />
+                  ))}
+                </div>
               );
             })}
           </div>
+
+          <div className="featured-overlay" />
+
+          <div className="featured-content">
+            <div className="al-collection-icon">
+              <BookOpen size={34} strokeWidth={2} />
+            </div>
+
+            <span className="al-collection-value">{statValues.volumes}</span>
+
+            <h3>{STATS[0].title}</h3>
+
+            <p>{STATS[0].description}</p>
+          </div>
+        </article>
+
+        <div className="al-collection-side">
+          {STATS.slice(1).map((item, index) => {
+            const Icon = item.icon;
+
+            return (
+              <article
+                key={item.id}
+                className={`al-collection-card small ${inView ? "show" : ""}`}
+                style={{
+                  "--accent": item.accent,
+                  "--delay": `${700 + index * 180}ms`,
+                }}
+              >
+                <div className="al-collection-icon">
+                  <Icon size={26} strokeWidth={2} />
+                </div>
+
+                <span className="al-collection-value">
+                  {statValues[item.id]}
+                </span>
+
+                <h3>{item.title}</h3>
+
+                <p>{item.description}</p>
+              </article>
+            );
+          })}
         </div>
       </div>
-    </section>
+    </div>
   );
 }

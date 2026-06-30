@@ -1,5 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { useInView } from "react-intersection-observer";
 
 import "../../../../styles/my-collection/acervo-landing/components/al-faq-section.css";
 
@@ -37,7 +38,12 @@ const FAQ_ITEMS = [
 ];
 
 export default function ALFAQSection() {
-  const [opened, setOpened] = useState(null);
+  const [opened, setOpened] = useState(-1);
+
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.2,
+  });
 
   function toggle(index) {
     setOpened((current) => (current === index ? -1 : index));
@@ -45,13 +51,26 @@ export default function ALFAQSection() {
 
   return (
     <section className="al-faq-section">
-      <div className="al-faq-container">
+      <div ref={ref} className="al-faq-container">
         <div className="al-faq-header">
-          <span className="al-faq-tag">PERGUNTAS FREQUENTES</span>
+          <span
+            className={`al-faq-tag ${inView ? "show" : ""}`}
+            style={{ transitionDelay: "0ms" }}
+          >
+            PERGUNTAS FREQUENTES
+          </span>
 
-          <h2 className="al-faq-title">Tire suas dúvidas antes de começar.</h2>
+          <h2
+            className={`al-faq-title ${inView ? "show" : ""}`}
+            style={{ transitionDelay: "150ms" }}
+          >
+            Tire suas dúvidas antes de começar.
+          </h2>
 
-          <p className="al-faq-subtitle">
+          <p
+            className={`al-faq-subtitle ${inView ? "show" : ""}`}
+            style={{ transitionDelay: "300ms" }}
+          >
             Reunimos as principais perguntas para que você possa conhecer o
             Mangá Drops com tranquilidade.
           </p>
@@ -64,7 +83,12 @@ export default function ALFAQSection() {
             return (
               <article
                 key={item.question}
-                className={`al-faq-item ${active ? "active" : ""}`}
+                className={`al-faq-item ${active ? "active" : ""} ${
+                  inView ? "show" : ""
+                }`}
+                style={{
+                  transitionDelay: `${450 + index * 120}ms`,
+                }}
               >
                 <button
                   type="button"
@@ -85,29 +109,6 @@ export default function ALFAQSection() {
               </article>
             );
           })}
-        </div>
-        <div className="al-final-cta">
-          <span className="al-final-tag">COMECE AGORA</span>
-
-          <h2 className="al-final-title">
-            Sua coleção merece um lugar
-            <br />
-            para crescer.
-          </h2>
-
-          <p className="al-final-subtitle">
-            Crie sua conta gratuitamente, organize seus mangás, acompanhe sua
-            evolução e compartilhe sua coleção com outros apaixonados por
-            mangás.
-          </p>
-
-          <div className="al-final-actions">
-            <button className="al-primary-button">
-              Criar conta gratuitamente
-            </button>
-
-            <button className="al-secondary-button">Entrar</button>
-          </div>
         </div>
       </div>
     </section>

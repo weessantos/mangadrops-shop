@@ -2,7 +2,7 @@
   position: relative;
   overflow: hidden;
 
-  padding: 160px 40px;
+  min-height: 100dvh;
 }
 
 .al-collection-section::before {
@@ -23,8 +23,13 @@
   z-index: 2;
 
   max-width: 1450px;
+  margin: 0 auto;
 
-  margin: auto;
+  min-height: calc(100dvh - 160px);
+  padding: clamp(50px, 6vh, 80px) 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .al-collection-quote {
@@ -58,7 +63,7 @@
 
   color: white;
 
-  font-size: clamp(2.6rem, 5vw, 4.6rem);
+  font-size: clamp(2.3rem, 4vw, 3.7rem);
 
   line-height: 1.08;
 }
@@ -78,22 +83,40 @@
 /* ================================================= */
 
 .al-collection-grid {
-  margin-top: 100px;
+  margin-top: 50px;
 
   display: grid;
 
   grid-template-columns: 1.6fr 1fr;
 
   gap: 28px;
+  zoom: 0.9;
 }
 
 .al-collection-side {
   display: grid;
 
-  gap: 20px;
+  gap: 16px;
+}
+/* ================================================= */
+
+.al-collection-tag,
+.al-collection-title,
+.al-collection-subtitle {
+  opacity: 0;
+  transform: translateY(20px);
+
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
 }
 
-/* ================================================= */
+.al-collection-tag.show,
+.al-collection-title.show,
+.al-collection-subtitle.show {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 .al-collection-card {
   position: relative;
@@ -107,6 +130,19 @@
   transition: 0.35s;
 
   overflow: hidden;
+
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+
+  transition-delay: var(--delay);
+}
+
+.al-collection-card.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .al-collection-card:hover {
@@ -146,13 +182,14 @@
   display: flex;
   align-items: center;
 
-  padding: 48px;
+  padding: 36px;
 
   isolation: isolate;
 }
 
 .al-collection-card.small {
-  padding: 24px 26px;
+  min-height: 170px;
+  padding: 20px 24px;
 }
 
 /* ========================= */
@@ -439,5 +476,9 @@
 
   .al-collection-value {
     font-size: 3.4rem;
+  }
+
+  .al-collection-container {
+    padding: 90px 24px;
   }
 }

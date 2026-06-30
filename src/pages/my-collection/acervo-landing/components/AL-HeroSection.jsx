@@ -71,9 +71,10 @@ const slides = [
   },
 ];
 
-export default function ALHeroSection() {
+export default function ALHeroSection({ mobile = false }) {
   const navigate = useNavigate();
-  const heroEngine = useALHeroEngine(slides);
+  const isSimpleHero = mobile;
+  const heroEngine = useALHeroEngine(slides, isSimpleHero);
 
   const {
     heroRef,
@@ -315,15 +316,31 @@ export default function ALHeroSection() {
 
       <div className="al-hero-layout">
         <div className="al-hero-copy">
-          {/* <span className={`al-hero-tag ${textEntering ? "text-enter" : ""}`}>
-            {String(activeSlide + 1).padStart(2, "0")}
-
-            <span>/ {String(slides.length).padStart(2, "0")}</span>
-          </span> */}
-
-          <h1 className={textEntering ? "text-enter delay-1" : ""}>
+          <h1 className={textEntering ? "text-enter delay-2" : ""}>
             {currentSlide.title}
           </h1>
+
+          {isSimpleHero && (
+            <div className="al-stage-mobile">
+              <img
+                key={currentSlide.id}
+                src={currentSlide.image}
+                alt={currentSlide.title}
+                className={`al-mobile-image ${
+                  textEntering ? "image-enter delay-image" : ""
+                }`}
+              />
+
+              <div className="al-mobile-dots">
+                {slides.map((_, index) => (
+                  <span
+                    key={index}
+                    className={index === activeSlide ? "active" : ""}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
 
           <p className={textEntering ? "text-enter delay-2" : ""}>
             {currentSlide.subtitle}
@@ -335,40 +352,38 @@ export default function ALHeroSection() {
             }`}
           >
             <button className="primary">Criar conta gratuitamente</button>
-
             <button>Já tenho conta</button>
           </div>
         </div>
 
-        <div className="al-stage-wrapper">
-          <div ref={glowRef} className="al-stage-glow" />
-          <div ref={lightRef} className="al-stage-light" />
-          <div
-            ref={stageRef}
-            className="al-stage"
-            style={{
-              "--accent": currentSlide.accent,
-            }}
-          >
-            {slides.map((slide, index) => {
-              return (
+        {!isSimpleHero && (
+          <div className="al-stage-wrapper">
+            <div ref={glowRef} className="al-stage-glow" />
+            <div ref={lightRef} className="al-stage-light" />
+
+            <div
+              ref={stageRef}
+              className="al-stage"
+              style={{
+                "--accent": currentSlide.accent,
+              }}
+            >
+              {slides.map((slide, index) => (
                 <div
                   key={slide.id}
                   ref={(el) => registerCard(el, index)}
                   className="al-stage-card"
                 >
                   <div className="al-card-shadow" />
-
                   <div className="al-card-reflection" />
-
                   <div className="al-card-border" />
 
                   <img src={slide.image} alt={slide.title} />
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

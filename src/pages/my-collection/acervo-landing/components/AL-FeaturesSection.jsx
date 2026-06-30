@@ -1,5 +1,5 @@
 import "../../../../styles/my-collection/acervo-landing/components/al-features-section.css";
-
+import { useInView } from "react-intersection-observer";
 import { UserRoundPlus, LibraryBig, Trophy, Share2 } from "lucide-react";
 
 const FEATURES = [
@@ -38,29 +38,48 @@ const FEATURES = [
 ];
 
 export default function ALFeaturesSection() {
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.2,
+  });
+
   return (
     <section className="al-features-section">
-      <div className="al-features-container">
-        <span className="al-features-tag">COMO FUNCIONA</span>
+      <div ref={ref} className="al-features-container">
+        <span
+          className={`al-features-tag ${inView ? "show" : ""}`}
+          style={{ transitionDelay: "0ms" }}
+        >
+          COMO FUNCIONA
+        </span>
 
-        <h2 className="al-features-title">
+        <h2
+          className={`al-features-title ${inView ? "show" : ""}`}
+          style={{ transitionDelay: "150ms" }}
+        >
           Sua jornada começa em poucos passos.
         </h2>
 
-        <p className="al-features-subtitle">
+        <p
+          className={`al-features-subtitle ${inView ? "show" : ""}`}
+          style={{ transitionDelay: "300ms" }}
+        >
           Do primeiro volume ao perfil público, o Mangá Drops acompanha toda a
           evolução da sua coleção.
         </p>
 
         <div className="al-features-grid">
-          {FEATURES.map((feature) => {
+          {FEATURES.map((feature, index) => {
             const Icon = feature.icon;
 
             return (
               <div
                 key={feature.id}
-                className="al-feature-card"
-                style={{ "--accent": feature.accent }}
+                className={`al-feature-card ${inView ? "show" : ""}`}
+                style={{
+                  "--accent": feature.accent,
+                  "--delay": `${500 + index * 150}ms`,
+                }}
               >
                 <div className="al-feature-icon">
                   <Icon size={30} strokeWidth={2} />

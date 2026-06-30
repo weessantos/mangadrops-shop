@@ -5,11 +5,11 @@
 .al-hero {
   position: relative;
 
-  min-height: 100vh;
+  min-height: 100dvh;
 
   overflow: hidden;
 
-  padding: 32px 80px;
+  padding: 15px 80px 32px 80px;
 
   background:
     radial-gradient(
@@ -167,7 +167,7 @@
 
   gap: 80px;
 
-  min-height: calc(100vh - 110px);
+  min-height: calc(100dvh - 110px);
 }
 
 /* ===========================
@@ -374,7 +374,7 @@
   left: 50%;
   top: 50%;
 
-  width: 760px;
+  width: clamp(550px, 35vw, 720px);
 
   transform-style: preserve-3d;
 
@@ -570,5 +570,228 @@
     transform: translateX(0);
 
     filter: blur(0);
+  }
+}
+/* ===========================
+   IMAGE ANIMATION
+=========================== */
+
+.image-enter {
+  animation: heroImageEnter 900ms cubic-bezier(0.22, 0.8, 0.2, 1) both;
+}
+
+.delay-image {
+  animation-delay: 80ms;
+}
+
+@keyframes heroImageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.96);
+    filter: blur(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* ===========================================================
+   MOBILE HERO
+=========================================================== */
+
+.al-stage-mobile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+
+  gap: 28px;
+}
+
+.al-mobile-image {
+  display: block;
+
+  width: min(92vw, 430px);
+  max-width: 100%;
+  height: auto;
+
+  border-radius: 28px;
+
+  box-shadow:
+    0 40px 90px rgba(0, 0, 0, 0.45),
+    0 0 80px rgba(83, 20, 231, 0.18);
+
+  user-select: none;
+  pointer-events: none;
+}
+
+.al-mobile-dots {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.al-mobile-dots span {
+  width: 10px;
+  height: 10px;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.22);
+
+  transition: all 0.35s ease;
+}
+
+.al-mobile-dots span.active {
+  width: 34px;
+
+  border-radius: 999px;
+
+  background: var(--accent);
+  box-shadow: 0 0 18px var(--accent);
+}
+
+@keyframes heroMobileImage {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 1000px) {
+  .al-hero-header img {
+    width: 60px;
+  }
+  .al-hero-actions button {
+    height: 42px;
+    padding: 0 22px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+  }
+  .al-stage,
+  .al-hero-buttons,
+  .al-stage-glow,
+  .al-stage-light {
+    display: none;
+  }
+
+  .al-stage-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    min-height: auto;
+    transform: unset;
+  }
+
+  .al-hero {
+    min-height: 100dvh;
+    padding: 10px 24px 48px;
+  }
+
+  .al-hero-layout {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 48px;
+  }
+
+  .al-hero-copy {
+    order: 1;
+
+    width: 100%;
+    max-width: 420px;
+
+    text-align: center;
+  }
+
+  .al-stage-mobile {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .al-mobile-image {
+    width: min(82vw, 520px);
+    border-radius: 5px;
+    height: auto;
+    display: block;
+  }
+
+  .al-hero-buttons {
+    justify-content: center;
+  }
+
+  .al-hero-copy {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .al-hero-copy h1 {
+    font-size: clamp(2rem, 8vw, 3rem);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+
+    margin-bottom: 28px;
+  }
+
+  .al-hero-copy p {
+    max-width: 340px;
+
+    margin: 30px auto 0;
+
+    font-size: 1.1rem;
+    line-height: 1.8;
+  }
+
+  .al-stage-mobile {
+    margin: 34px auto 0;
+    max-width: 100%;
+  }
+
+  .al-mobile-image {
+    width: 100%;
+    max-width: 520px;
+
+    margin: 0 auto;
+  }
+
+  .al-mobile-dots {
+    margin-top: 22px;
+  }
+
+  .al-hero-buttons {
+    margin-top: 36px;
+    justify-content: center;
+  }
+}
+
+/* FIX DO HERO 3D */
+
+@media (min-width: 1300px) and (max-width: 1500px) {
+  .al-stage {
+    margin-left: -400px;
+  }
+}
+
+@media (min-width: 1001px) and (max-width: 1299px) {
+  .al-stage {
+    margin-left: -600px;
   }
 }

@@ -1,9 +1,17 @@
+/* ===========================================================
+   FAQ SECTION
+=========================================================== */
+
 .al-faq-section {
   position: relative;
-
   overflow: hidden;
 
-  padding: 140px 40px;
+  min-height: 100dvh;
+
+  display: flex;
+  align-items: center;
+
+  padding: clamp(60px, 7vh, 90px) 40px;
 }
 
 .al-faq-section::before {
@@ -17,18 +25,23 @@
     rgba(83, 20, 231, 0.08),
     transparent 70%
   );
+
+  pointer-events: none;
 }
 
 .al-faq-container {
   position: relative;
   z-index: 2;
 
+  width: 100%;
   max-width: 1100px;
 
   margin: 0 auto;
 }
 
-/* ================================= */
+/* ===========================================================
+   HEADER
+=========================================================== */
 
 .al-faq-header {
   text-align: center;
@@ -42,7 +55,6 @@
   border-radius: 999px;
 
   background: rgba(83, 20, 231, 0.12);
-
   border: 1px solid rgba(83, 20, 231, 0.22);
 
   color: #8d6dff;
@@ -53,54 +65,55 @@
 }
 
 .al-faq-title {
-  margin-top: 26px;
+  margin-top: 24px;
 
-  color: white;
+  color: #fff;
 
   font-size: clamp(2.4rem, 4vw, 3.8rem);
-
   line-height: 1.08;
 }
 
 .al-faq-subtitle {
-  margin: 26px auto 0;
+  margin: 22px auto 0;
 
   max-width: 700px;
 
   color: rgba(255, 255, 255, 0.68);
 
   font-size: 1.08rem;
-
   line-height: 1.9;
 }
 
-/* ================================= */
+/* ===========================================================
+   LIST
+=========================================================== */
 
 .al-faq-list {
-  margin-top: 70px;
+  margin-top: 48px;
 
   display: flex;
   flex-direction: column;
 
-  gap: 18px;
+  gap: 14px;
 }
 
 .al-faq-item {
-  background: rgba(255, 255, 255, 0.03);
-
-  border: 1px solid rgba(255, 255, 255, 0.06);
-
-  border-radius: 22px;
-
   overflow: hidden;
 
-  transition: 0.35s;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  background: rgba(255, 255, 255, 0.03);
+
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .al-faq-item:hover {
-  border-color: rgba(83, 20, 231, 0.25);
-
   background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(83, 20, 231, 0.25);
 }
 
 .al-faq-item.active {
@@ -109,52 +122,56 @@
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
 }
 
-/* ================================= */
+/* ===========================================================
+   QUESTION
+=========================================================== */
 
 .al-faq-question {
   width: 100%;
-
-  padding: 28px 30px;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  gap: 30px;
+  gap: 24px;
 
-  background: transparent;
+  padding: 22px 26px;
 
   border: none;
+  background: transparent;
 
   cursor: pointer;
 
-  color: white;
+  color: #fff;
 
   text-align: left;
 
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 600;
 }
 
 .al-faq-arrow {
   color: rgba(255, 255, 255, 0.55);
 
-  transition: 0.35s;
+  transition:
+    transform 0.3s ease,
+    color 0.3s ease;
 }
 
 .al-faq-arrow.rotate {
   transform: rotate(180deg);
-
   color: #8d6dff;
 }
 
-/* ================================= */
+/* ===========================================================
+   ANSWER
+=========================================================== */
 
 .al-faq-answer {
   display: grid;
   grid-template-rows: 0fr;
 
-  transition: 0.35s ease;
+  transition: grid-template-rows 0.35s ease;
 }
 
 .al-faq-answer.open {
@@ -164,26 +181,66 @@
 .al-faq-answer p {
   overflow: hidden;
 
-  padding: 0 30px;
+  margin: 0;
+  padding: 0 26px;
 
   color: rgba(255, 255, 255, 0.68);
 
   line-height: 1.9;
-
-  margin: 0;
 }
 
 .al-faq-answer.open p {
-  padding-bottom: 30px;
+  padding-bottom: 24px;
 }
 
-/* ================================= */
+/* ===========================================================
+   HEADER ANIMATION
+=========================================================== */
+
+.al-faq-tag,
+.al-faq-title,
+.al-faq-subtitle {
+  opacity: 0;
+  transform: translateY(20px);
+
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+
+.al-faq-tag.show,
+.al-faq-title.show,
+.al-faq-subtitle.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===========================================================
+   FAQ ENTRANCE
+=========================================================== */
+
+.al-faq-item {
+  opacity: 0;
+  transform: translateY(24px);
+
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease,
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.al-faq-item.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===========================================================
+   MOBILE
+=========================================================== */
 
 @media (max-width: 768px) {
-  .al-faq-section {
-    padding: 100px 24px;
-  }
-
   .al-faq-title {
     font-size: 2.2rem;
   }
@@ -192,177 +249,21 @@
     font-size: 1rem;
   }
 
+  .al-faq-list {
+    margin-top: 40px;
+  }
+
   .al-faq-question {
-    padding: 22px;
+    padding: 20px;
 
     font-size: 1rem;
   }
 
   .al-faq-answer p {
-    padding: 0 22px;
+    padding: 0 20px;
   }
 
   .al-faq-answer.open p {
-    padding-bottom: 22px;
-  }
-}
-
-.al-final-cta {
-  margin-top: 120px;
-
-  text-align: center;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.al-final-tag {
-  display: inline-flex;
-
-  padding: 8px 18px;
-
-  border-radius: 999px;
-
-  background: rgba(83, 20, 231, 0.12);
-
-  border: 1px solid rgba(83, 20, 231, 0.25);
-
-  color: #8d6dff;
-
-  font-size: 0.72rem;
-  font-weight: 700;
-
-  letter-spacing: 0.18em;
-}
-
-.al-final-title {
-  margin-top: 26px;
-
-  color: white;
-
-  font-size: clamp(2.4rem, 4vw, 3.8rem);
-
-  line-height: 1.08;
-}
-
-.al-final-subtitle {
-  margin-top: 24px;
-
-  max-width: 720px;
-
-  color: rgba(255, 255, 255, 0.68);
-
-  font-size: 1.08rem;
-
-  line-height: 1.9;
-}
-
-.al-final-actions {
-  margin-top: 46px;
-
-  display: flex;
-
-  gap: 18px;
-
-  flex-wrap: wrap;
-
-  justify-content: center;
-}
-
-.al-final-actions {
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 18px;
-
-  margin-top: 42px;
-}
-
-.al-final-actions button {
-  height: 56px;
-
-  padding: 0 28px;
-
-  border: none;
-
-  border-radius: 18px;
-
-  font-size: 0.98rem;
-  font-weight: 700;
-
-  font-family: inherit;
-
-  cursor: pointer;
-
-  transition:
-    transform 0.28s ease,
-    background 0.28s ease,
-    color 0.28s ease,
-    box-shadow 0.28s ease,
-    border-color 0.28s ease;
-}
-
-.al-final-actions button:hover {
-  transform: translateY(-3px);
-}
-
-/* ========================= */
-/* Botão Principal */
-/* ========================= */
-
-.al-final-actions .primary {
-  color: white;
-
-  background: #5314e7;
-
-  box-shadow:
-    0 14px 40px rgba(83, 20, 231, 0.35),
-    inset 0 1px rgba(255, 255, 255, 0.15);
-}
-
-.al-final-actions .primary:hover {
-  box-shadow:
-    0 22px 60px rgba(83, 20, 231, 0.55),
-    inset 0 1px rgba(255, 255, 255, 0.2);
-}
-
-/* ========================= */
-/* Botão Secundário */
-/* ========================= */
-
-.al-final-actions button:not(.primary) {
-  color: rgba(255, 255, 255, 0.9);
-
-  background: rgba(255, 255, 255, 0.05);
-
-  border: 1px solid rgba(255, 255, 255, 0.08);
-
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-}
-
-.al-final-actions button:not(.primary):hover {
-  background: rgba(255, 255, 255, 0.08);
-
-  border-color: rgba(255, 255, 255, 0.16);
-}
-
-/* ========================= */
-/* Mobile */
-/* ========================= */
-
-@media (max-width: 768px) {
-  .al-final-actions {
-    width: 100%;
-
-    flex-direction: column;
-  }
-
-  .al-final-actions button {
-    width: 100%;
-    max-width: 340px;
+    padding-bottom: 20px;
   }
 }

@@ -1,11 +1,17 @@
+/* ===========================================================
+   FOOTER
+=========================================================== */
+
 .al-footer {
   position: relative;
+  overflow: hidden;
 
-  padding: 80px 40px 36px;
+  min-height: 100dvh;
 
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
 
-  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.02));
+  padding: clamp(60px, 7vh, 90px) 40px 0;
 }
 
 .al-footer::before {
@@ -15,9 +21,9 @@
   inset: 0;
 
   background: radial-gradient(
-    circle at top,
-    rgba(83, 20, 231, 0.08),
-    transparent 65%
+    circle at top center,
+    rgba(83, 20, 231, 0.12),
+    transparent 55%
   );
 
   pointer-events: none;
@@ -27,92 +33,192 @@
   position: relative;
   z-index: 2;
 
+  width: 100%;
   max-width: 1450px;
+
   margin: 0 auto;
-}
 
-/* ===================================================== */
-/* TOPO */
-/* ===================================================== */
+  min-height: calc(100dvh - clamp(60px, 7vh, 90px) * 2);
 
-.al-footer-top {
-  display: grid;
-  grid-template-columns: minmax(380px, 1fr) auto;
-
-  gap: 90px;
-
-  align-items: start;
-}
-
-/* ===================================================== */
-/* BRAND */
-/* ===================================================== */
-
-.al-footer-brand {
-  max-width: 520px;
-}
-
-.al-footer-brand-header {
   display: flex;
-  align-items: center;
-
-  gap: 22px;
+  flex-direction: column;
 }
 
-.al-footer-logo {
-  width: 78px;
+/* ===========================================================
+   CTA
+=========================================================== */
 
-  flex-shrink: 0;
+.al-footer-cta {
+  text-align: center;
+}
+
+.al-footer-tag {
+  display: inline-flex;
+
+  padding: 8px 18px;
+
+  border-radius: 999px;
+
+  background: rgba(83, 20, 231, 0.12);
+  border: 1px solid rgba(83, 20, 231, 0.22);
+
+  color: #8d6dff;
+
+  font-size: 0.72rem;
+  font-weight: 700;
+
+  letter-spacing: 0.18em;
+}
+
+.al-footer-title {
+  margin-top: 24px;
+
+  color: white;
+
+  font-size: clamp(2.7rem, 5vw, 4.8rem);
+  line-height: 1.05;
+}
+
+.al-footer-subtitle {
+  margin: 24px auto 0;
+
+  max-width: 760px;
+
+  color: rgba(255, 255, 255, 0.68);
+
+  font-size: 1.08rem;
+  line-height: 1.9;
+}
+
+.al-footer-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  gap: 18px;
+
+  margin-top: 42px;
+}
+
+.al-footer-actions button {
+  height: 58px;
+
+  padding: 0 34px;
+
+  border-radius: 18px;
+
+  border: none;
+
+  font: inherit;
+  font-weight: 700;
 
   cursor: pointer;
 
-  transition: transform 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.al-footer-actions button:hover {
+  transform: translateY(-3px);
+}
+
+.al-footer-actions .al-primary-button {
+  color: #fff;
+
+  background: linear-gradient(180deg, #6a2cff 0%, #5314e7 100%);
+
+  box-shadow:
+    0 14px 40px rgba(83, 20, 231, 0.35),
+    inset 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.al-footer-actions .al-primary-button:hover {
+  background: linear-gradient(180deg, #7440ff 0%, #5c1df0 100%);
+
+  box-shadow:
+    0 22px 60px rgba(83, 20, 231, 0.55),
+    inset 0 1px rgba(255, 255, 255, 0.2);
+}
+
+/* ===========================================================
+   DIVIDER
+=========================================================== */
+
+.al-footer-divider {
+  width: 100%;
+  height: 1px;
+
+  margin: 80px 0 70px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.16),
+    rgba(255, 255, 255, 0.08),
+    transparent
+  );
+}
+
+/* ===========================================================
+   CONTENT
+=========================================================== */
+
+.al-footer-content {
+  display: grid;
+  grid-template-columns: 1.3fr 2fr;
+
+  gap: 90px;
+
+  flex: 1;
+
+  align-items: center;
+}
+
+.al-footer-brand {
+  display: flex;
+  flex-direction: column;
+}
+
+.al-footer-logo {
+  width: 72px;
+
+  cursor: pointer;
+
+  transition: transform 0.3s ease;
 }
 
 .al-footer-logo:hover {
   transform: scale(1.05);
 }
 
-.al-footer-brand-title h3 {
-  margin: 0;
+.al-footer-brand-text h3 {
+  margin-top: 24px;
 
-  color: #fff;
+  color: white;
 
-  font-family: "Russo One", sans-serif;
-  font-size: 1.55rem;
-  font-weight: 400;
+  font-size: 2rem;
 }
 
-.al-footer-brand-title span {
-  display: block;
+.al-footer-brand-text p {
+  margin-top: 20px;
 
-  margin-top: 6px;
+  max-width: 420px;
 
-  color: rgba(255, 255, 255, 0.55);
-
-  font-size: 0.95rem;
-}
-
-.al-footer-brand-content {
-  margin-top: 28px;
-}
-
-.al-footer-brand p {
-  color: rgba(255, 255, 255, 0.68);
+  color: rgba(255, 255, 255, 0.65);
 
   line-height: 1.9;
 }
-
-/* ===================================================== */
-/* REDES */
-/* ===================================================== */
 
 .al-footer-socials {
   display: flex;
 
   gap: 14px;
 
-  margin-top: 30px;
+  margin-top: 28px;
 }
 
 .al-footer-socials a {
@@ -123,36 +229,30 @@
   align-items: center;
   justify-content: center;
 
-  border-radius: 14px;
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.05);
 
   color: white;
 
-  background: rgba(255, 255, 255, 0.04);
-
-  border: 1px solid rgba(255, 255, 255, 0.08);
-
-  transition: 0.28s;
+  transition: 0.3s;
 }
 
 .al-footer-socials a:hover {
+  background: #5314e7;
+
   transform: translateY(-4px);
-
-  color: #8d6dff;
-
-  border-color: rgba(83, 20, 231, 0.35);
-
-  background: rgba(83, 20, 231, 0.08);
 }
 
-/* ===================================================== */
-/* LINKS */
-/* ===================================================== */
+/* ===========================================================
+   LINKS
+=========================================================== */
 
 .al-footer-links {
   display: grid;
-  grid-template-columns: repeat(3, 180px);
+  grid-template-columns: repeat(3, 1fr);
 
-  gap: 48px;
+  gap: 50px;
 }
 
 .al-footer-links h4 {
@@ -163,35 +263,44 @@
   font-size: 1rem;
 }
 
-.al-footer-links a {
+.al-footer-links button {
   display: block;
 
-  margin-bottom: 15px;
+  padding: 0;
+  margin-bottom: 16px;
+
+  border: none;
+  background: none;
 
   color: rgba(255, 255, 255, 0.62);
 
-  text-decoration: none;
+  cursor: pointer;
+
+  font: inherit;
+
+  text-align: left;
 
   transition: 0.25s;
 }
 
-.al-footer-links a:hover {
+.al-footer-links button:hover {
   color: white;
+
+  transform: translateX(5px);
 }
 
-/* ===================================================== */
-/* RODAPÉ */
-/* ===================================================== */
+/* ===========================================================
+   BOTTOM
+=========================================================== */
 
 .al-footer-bottom {
+  margin-top: auto;
+
+  padding-top: 28px;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  gap: 20px;
-
-  margin-top: 70px;
-  padding-top: 26px;
 
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 
@@ -200,79 +309,119 @@
   font-size: 0.92rem;
 }
 
-/* ===================================================== */
-/* TABLET */
-/* ===================================================== */
+/* ===========================================================
+   ENTRANCE ANIMATION
+=========================================================== */
+
+.al-footer-tag,
+.al-footer-title,
+.al-footer-subtitle,
+.al-footer-actions,
+.al-footer-divider,
+.al-footer-content,
+.al-footer-bottom {
+  opacity: 0;
+  transform: translateY(24px);
+
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+}
+
+.al-footer-tag.show,
+.al-footer-title.show,
+.al-footer-subtitle.show,
+.al-footer-actions.show,
+.al-footer-divider.show,
+.al-footer-content.show,
+.al-footer-bottom.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===========================================================
+   TABLET
+=========================================================== */
 
 @media (max-width: 1100px) {
-  .al-footer-top {
+  .al-footer {
+    min-height: auto;
+  }
+
+  .al-footer-content {
     grid-template-columns: 1fr;
 
     gap: 60px;
   }
 
+  .al-footer-brand {
+    align-items: center;
+
+    text-align: center;
+  }
+
+  .al-footer-brand-text p {
+    max-width: 100%;
+  }
+
   .al-footer-links {
     grid-template-columns: repeat(3, 1fr);
+
+    gap: 32px;
+
+    text-align: center;
+  }
+
+  .al-footer-links button {
+    text-align: center;
   }
 }
 
-/* ===================================================== */
-/* MOBILE */
-/* ===================================================== */
+/* ===========================================================
+   MOBILE
+=========================================================== */
 
 @media (max-width: 768px) {
   .al-footer {
-    padding: 60px 24px 28px;
+    padding: 80px 24px;
   }
 
-  .al-footer-top {
-    gap: 54px;
+  .al-footer-title {
+    font-size: 2.35rem;
   }
 
-  .al-footer-brand {
-    max-width: none;
-
-    text-align: center;
+  .al-footer-subtitle {
+    font-size: 1rem;
   }
 
-  .al-footer-brand-header {
-    justify-content: center;
-  }
+  .al-footer-actions {
+    width: 100%;
 
-  .al-footer-brand-title {
-    text-align: left;
-  }
-
-  .al-footer-brand p {
-    max-width: 430px;
-
-    margin: 0 auto;
-  }
-
-  .al-footer-socials {
-    justify-content: center;
-  }
-
-  .al-footer-links {
-    grid-template-columns: 1fr;
-
-    gap: 40px;
-
-    text-align: center;
-  }
-
-  .al-footer-links > div {
-    display: flex;
     flex-direction: column;
-    align-items: center;
   }
 
-  .al-footer-links h4 {
-    margin-bottom: 18px;
+  .al-footer-actions button {
+    width: 100%;
   }
 
-  .al-footer-links a {
-    margin-bottom: 16px;
+  .al-footer-divider {
+    margin: 60px 0;
+  }
+
+  @media (max-width: 768px) {
+    .al-footer-links {
+      grid-template-columns: 1fr;
+      gap: 36px;
+
+      justify-items: center;
+      text-align: center;
+    }
+
+    .al-footer-links > div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
   }
 
   .al-footer-bottom {
