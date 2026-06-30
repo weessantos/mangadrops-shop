@@ -1,3 +1,5 @@
+import { Helmet } from "react-helmet-async";
+
 import { useLayoutEffect, useEffect, useState } from "react";
 
 import ALLandingScroller from "./components/AL-LandingScroller";
@@ -38,6 +40,44 @@ export default function AcervoLandingPage() {
 
   return (
     <>
+      <Helmet>
+        <title>
+          Organize sua coleção de mangás gratuitamente | Mangá Drops
+        </title>
+
+        <meta
+          name="description"
+          content="Organize sua coleção de mangás gratuitamente. Catalogue volumes, acompanhe seu progresso, desbloqueie conquistas, evolua de nível e compartilhe seu perfil público no Mangá Drops."
+        />
+
+        <link
+          rel="canonical"
+          href="https://www.mangasdrops.online/acervo-manga-drops"
+        />
+
+        <meta property="og:type" content="website" />
+
+        <meta
+          property="og:title"
+          content="Organize sua coleção de mangás gratuitamente | Mangá Drops"
+        />
+
+        <meta
+          property="og:description"
+          content="A plataforma gratuita para organizar sua coleção de mangás."
+        />
+
+        <meta
+          property="og:url"
+          content="https://www.mangasdrops.online/acervo-manga-drops"
+        />
+
+        <meta
+          property="og:image"
+          content="https://www.mangasdrops.online/assets/seo/acervo-og.jpg"
+        />
+      </Helmet>
+
       <ALLandingScroller />
 
       <main className="acervo-landing">

@@ -20,7 +20,6 @@
  *
  * ==========================================================
  */
-import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabaseClient } from "../../lib/supabase";
 import {
@@ -41,7 +40,6 @@ import { getCollectorLevel } from "../../utils/my-collection/collectorLevel";
 import { registerDailyLogin, getLoyaltyLevel } from "./loyalty.js";
 
 export function useCollectionStats() {
-  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
 
@@ -110,12 +108,6 @@ export function useCollectionStats() {
       const {
         data: { user },
       } = await supabaseClient.auth.getUser();
-
-      // Não logado
-      if (!user) {
-        navigate("/auth/login");
-        return;
-      }
 
       // ==========================================
       // LOGIN DIÁRIO

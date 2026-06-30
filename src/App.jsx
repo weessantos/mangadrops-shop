@@ -12,6 +12,7 @@ import {
 } from "react-router-dom";
 import "./styles/global.css";
 
+import CollectionRoute from "./routes/CollectionRoute.jsx";
 import Loader from "./components/Loader.jsx";
 import NotFoundPage from "./components/NotFoundPage.jsx";
 import GlobalToast from "./components/common/GlobalToast";
@@ -1282,7 +1283,7 @@ function AppRoutes() {
         <Route path="/:seriesSlug/:volumeId" element={<AppShell />} />
 
         {/* Rotas para parte de coleção de usuário (login, registro, minha coleção) */}
-        <Route path="/teste-acervo" element={<AcervoLandingPage />} />
+        <Route path="/acervo-manga-drops" element={<AcervoLandingPage />} />
 
         <Route path="/auth/login" element={<LoginPage />} />
 
@@ -1292,7 +1293,7 @@ function AppRoutes() {
 
         <Route path="/auth/redefinir-senha" element={<NewPasswordPage />} />
 
-        <Route path="/minha-colecao" element={<MyCollectionPage />} />
+        <Route path="/minha-colecao" element={<CollectionRoute />} />
 
         <Route
           path="/minhas-conquistas"

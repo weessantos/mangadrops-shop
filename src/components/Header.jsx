@@ -213,17 +213,7 @@ export default function Header({
     setTimeout(updateScrollState, 350);
   };
 
-  async function handleCollectionClick() {
-    const {
-      data: { user },
-    } = await supabaseClient.auth.getUser();
-
-    if (!user) {
-      navigate("/auth/login");
-
-      return;
-    }
-
+  function handleCollectionClick() {
     navigate("/minha-colecao");
   }
 

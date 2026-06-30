@@ -165,13 +165,8 @@ export default function MyCollectionPage() {
   return (
     <>
       <Helmet>
-        <title>Mangá Drops Acervo | Organize sua coleção de mangás</title>
-
-        <meta
-          name="description"
-          content="Controle volumes, acompanhe séries completas, wishlist, conquistas e estatísticas da sua coleção de mangás."
-        />
-      </Helmet>{" "}
+        <title>Meu Acervo | Mangá Drops</title>
+      </Helmet>
       {/* Header */}
       <MyCollectionHeader onLogout={handleLogout} currentPage="collection" />
       <div className="collection-page">
